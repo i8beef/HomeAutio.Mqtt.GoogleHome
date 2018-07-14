@@ -18,24 +18,16 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
         /// <returns></returns>
         protected abstract T Create(Type objectType, JObject jsonObject);
 
-        /// <summary>
-        /// Determines whether an instance of the current System.Type can be assigned from an instance of the specified Type.
-        /// </summary>
-        /// <param name="objectType"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public override bool CanConvert(Type objectType)
         {
             return typeof(T).IsAssignableFrom(objectType);
         }
 
-        /// <summary>
-        /// Reads JSON and returns the appropriate object
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <param name="objectType"></param>
-        /// <param name="existingValue"></param>
-        /// <param name="serializer"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
+        public override bool CanWrite { get { return false; } }
+
+        /// <inheritdoc />
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             // load the json string
@@ -51,12 +43,7 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
             return target;
         }
 
-        /// <summary>
-        /// Creates the JSON based on the object passed in
-        /// </summary>
-        /// <param name="writer"></param>
-        /// <param name="value"></param>
-        /// <param name="serializer"></param>
+        /// <inheritdoc />
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             throw new NotImplementedException();

@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,11 +20,18 @@ namespace HomeAutio.Mqtt.GoogleHome
     /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// Configuration.
+        /// </summary>
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -45,8 +53,10 @@ namespace HomeAutio.Mqtt.GoogleHome
             {
                 var stateValues = serviceProvider.GetService<DeviceConfiguration>().Values
                     .SelectMany(x => x.Traits)
-                    .Where(x => x.Trait != "action.devices.traits.CameraStream") // Ignore the special little snowflake
-                    .SelectMany(x => x.State.Values);
+                    //.Where(x => x.Trait != "action.devices.traits.CameraStream") // Ignore the special little snowflake
+                    .SelectMany(x => x.State.Values)
+                    .Select(x => x.Topic)
+                    .Where(x => x != null);
 
                 // Flatten state to get real topicss
                 var topics = stateValues.OfType<string>()
@@ -68,7 +78,13 @@ namespace HomeAutio.Mqtt.GoogleHome
                     Configuration.GetValue<string>("brokerUsername"),
                     Configuration.GetValue<string>("brokerPassword")));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .AddJsonOptions(opt =>
+                {
+                    opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    opt.SerializerSettings.Converters.Add(new StringEnumConverter());
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         /// <summary>

@@ -108,45 +108,53 @@ namespace HomeAutio.Mqtt.GoogleHome
 
                 foreach (var execution in command.Execution)
                 {
+                    // Check if device supports the requested command class
                     if (deviceSupportedCommands.ContainsKey(execution.Command))
                     {
                         // Find the specific commands supported parameters it can handle
                         var deviceSupportedParams = deviceSupportedCommands[execution.Command];
-                        foreach (var parameter in execution.Params)
+
+                        // Flatten the parameters
+                        var flattenedParams = new Dictionary<string, object>();
+                        foreach (var param in execution.Params)
                         {
+                            var paramValueAsDictionary = param.Value as IDictionary<string, object>;
+                            if (paramValueAsDictionary != null)
+                            {
+                                // Add each of the sub params as a flattened, prefixed parameter
+                                foreach (var subParam in paramValueAsDictionary)
+                                {
+                                    flattenedParams.Add(param.Key + '.' + subParam.Key, subParam.Value);
+                                }
+                            }
+                            else
+                            {
+                                // Pipe through original value
+                                flattenedParams.Add(param.Key, param.Value);
+                            }
+                        }
+
+                        foreach (var parameter in flattenedParams)
+                        {
+                            // Check if device supports the requested parameter
                             if (deviceSupportedParams.ContainsKey(parameter.Key))
                             {
-                                switch (parameter.Value)
-                                {
-                                    case IDictionary<string, object> dictionaryObject:
-                                        foreach (var subParam in dictionaryObject)
-                                        {
-                                            if (((IDictionary<string, object>)deviceSupportedParams[parameter.Key]).ContainsKey(subParam.Key))
-                                            {
-                                                // Send command
-                                                var subTopic = ((IDictionary<string, object>)deviceSupportedParams[parameter.Key])[subParam.Key] as string;
-                                                var subPayload = subParam.Value.ToString();
-                                                await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-                                                    .WithTopic(subTopic)
-                                                    .WithPayload(subPayload)
-                                                    .WithAtLeastOnceQoS()
-                                                    .Build())
-                                                    .ConfigureAwait(false);
-                                            }
-                                        }
-                                        break;
-                                    default:
-                                        // Send command
-                                        var topic = deviceSupportedParams[parameter.Key] as string;
-                                        var payload = parameter.Value.ToString();
-                                        await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-                                            .WithTopic(topic)
-                                            .WithPayload(payload)
-                                            .WithAtLeastOnceQoS()
-                                            .Build())
-                                            .ConfigureAwait(false);
-                                        break;
-                                }
+                                var deviceState = _deviceConfig[device.Id].Traits
+                                    .Where(x => x.Commands.ContainsKey(execution.Command))
+                                    .SelectMany(x => x.State)
+                                    .Where(x => x.Key == parameter.Key)
+                                    .Select(x => x.Value)
+                                    .FirstOrDefault();
+
+                                // Send the MQTT message
+                                var topic = deviceSupportedParams[parameter.Key];
+                                var payload = MapValue(deviceState, parameter.Key, parameter.Value);
+                                await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                                    .WithTopic(topic)
+                                    .WithPayload(payload)
+                                    .WithAtLeastOnceQoS()
+                                    .Build())
+                                    .ConfigureAwait(false);
                             }
                         }
                     }
@@ -155,6 +163,33 @@ namespace HomeAutio.Mqtt.GoogleHome
         }
 
         #endregion
+
+        /// <summary>
+        /// Handles mapping some common state values to google acceptable state values.
+        /// </summary>
+        /// <param name="paramKey">Param key.</param>
+        /// <param name="stateValue">State value.</param>
+        /// <returns>Remapped value.</returns>
+        private string MapValue(DeviceState deviceState, string paramKey, object stateValue)
+        {
+            // Default to string version of passed parameter value
+            var mappedValue = stateValue.ToString();
+
+            if (deviceState.ValueMap != null && deviceState.ValueMap.Count > 0)
+            {
+                foreach (var valueMap in deviceState.ValueMap)
+                {
+                    if (valueMap.MatchesGoogle(stateValue))
+                    {
+                        // Do value comparison, break on first match
+                        mappedValue = valueMap.ConvertToMqtt(stateValue);
+                        break;
+                    }
+                }
+            }
+
+            return mappedValue;
+        }
 
         #region IDisposable Support
 

@@ -7,8 +7,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
     {
         public DeviceTrait()
         {
-            Commands = new Dictionary<string, IDictionary<string, object>>();
-            State = new Dictionary<string, object>();
+            Commands = new Dictionary<string, IDictionary<string, string>>();
+            State = new Dictionary<string, DeviceState>();
         }
 
         public string Trait { get; set; }
@@ -16,10 +16,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         [JsonConverter(typeof(ObjectDictionaryConverter))]
         public IDictionary<string, object> Attributes { get; set; }
 
-        [JsonProperty(ItemConverterType = typeof(ObjectDictionaryConverter))]
-        public IDictionary<string, IDictionary<string, object>> Commands { get; set; }
-
-        [JsonConverter(typeof(ObjectDictionaryConverter))]
-        public IDictionary<string, object> State { get; set; }
+        public IDictionary<string, IDictionary<string, string>> Commands { get; set; }
+        public IDictionary<string, DeviceState> State { get; set; }
     }
 }

@@ -5,15 +5,21 @@ using System.Collections.Generic;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
+    /// <summary>
+    /// Object dictionary converter.
+    /// </summary>
     public class ObjectDictionaryConverter : JsonConverter
     {
+        /// <inheritdoc />
         public override bool CanConvert(Type objectType) { return typeof(IDictionary<string, object>).IsAssignableFrom(objectType); }
 
+        /// <inheritdoc />
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             return ReadValue(reader);
         }
 
+        /// <inheritdoc />
         private object ReadValue(JsonReader reader)
         {
             while (reader.TokenType == JsonToken.Comment)
@@ -95,6 +101,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             throw new JsonSerializationException("Unexpected end when reading IDictionary<string, object>");
         }
 
+        /// <inheritdoc />
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             WriteValue(writer, value);

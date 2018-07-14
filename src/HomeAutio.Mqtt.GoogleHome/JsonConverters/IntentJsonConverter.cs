@@ -9,12 +9,7 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
     /// </summary>
     public class IntentJsonConverter : CustomJsonConverter<IntentBase>
     {
-        /// <summary>
-        /// The class that will create Intents when proper json objects are passed in
-        /// </summary>
-        /// <param name="objectType"></param>
-        /// <param name="jsonObject"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
         protected override IntentBase Create(Type objectType, JObject jsonObject)
         {
             // examine the intent value

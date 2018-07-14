@@ -2,6 +2,7 @@
 {
     public class DisconnectIntent : IntentBase
     {
+        /// <inheritdoc />
         public override IntentType Intent => IntentType.Disconnect;
     }
 }

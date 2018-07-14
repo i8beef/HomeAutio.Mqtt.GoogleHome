@@ -4,7 +4,6 @@ using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Controllers
 {
@@ -74,23 +73,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             {
                 case Models.Request.SyncIntent syncIntent:
                     response.Payload = HandleSyncIntent(syncIntent);
-
                     return Ok(response);
-                    break;
                 case Models.Request.QueryIntent queryIntent:
                     response.Payload = HandleQueryIntent(queryIntent);
-
                     return Ok(response);
-                    break;
                 case Models.Request.ExecuteIntent executeIntent:
                     response.Payload = HandleExecuteIntent(executeIntent);
-
                     return Ok(response);
-                    break;
                 case Models.Request.DisconnectIntent disconnectIntent:
                     // Do nothing?
                     return Ok();
-                    break;
             }
 
             // No valid intents found, return error
@@ -116,8 +108,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 var commandResponse = new Models.Response.Command
                 {
                     Status = Models.Response.CommandStatus.Success,
-                    Ids = command.Devices.Select(x => x.Id).ToList(),
-                    States = command.Execution.SelectMany(x => x.Params).ToDictionary(x => x.Key, x => x.Value)
+                    Ids = command.Devices.Select(x => x.Id).ToList()
                 };
 
                 // Generate states
@@ -127,20 +118,23 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                     // Handle camera stream commands
                     if (execution.Command == "action.devices.commands.GetCameraStream")
                     {
+                        // Only allow a single cast command at once
                         if (command.Devices.Count() == 1)
                         {
+                            // Get the first trait for the camera, as this should be the only trait available
                             var trait = _deviceConfiguration[command.Devices[0].Id].Traits.FirstOrDefault();
                             if (trait != null)
                             {
                                 foreach (var state in trait.State)
                                 {
-                                    states.Add(state.Key, state.Value);
+                                    states.Add(state.Key, MapValue(state.Value, state.Key, null));
                                 }
                             }
                         }
                     }
                     else
                     {
+                        // Copy the incoming state values, rather than getting current
                         foreach (var param in execution.Params)
                         {
                             // Handle remapping of Modes and Toggles
@@ -157,7 +151,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                                 states.Add(param.Key, param.Value);
                             }
                         }
-
                     }
                 }
 
@@ -183,29 +176,42 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                     x =>
                     {
                         var device = _deviceConfiguration[x.Id];
-                        var paramaters = new Dictionary<string, object>();
+                        var parameters = new Dictionary<string, object>();
                         foreach (var stateParam in device.Traits
                             .Where(trait => trait.Trait != "action.devices.traits.CameraStream")
-                            .SelectMany(trait => trait.State))
+                            .SelectMany(trait => trait.State)
+                            .Where(state => state.Value.Topic != null))
                         {
-                            var subStateParams = stateParam.Value as IDictionary<string, object>;
-                            if (subStateParams != null)
+                            // Ignore things with no state
+                            if (!_stateCache.ContainsKey(stateParam.Value.Topic))
+                                continue;
+
+                            // Convert state
+                            var value = _stateCache[stateParam.Value.Topic];
+                            if (stateParam.Key.Contains('.'))
                             {
-                                var subParamDictionary = new Dictionary<string, object>();
-                                foreach (var subStateParam in subStateParams)
-                                {
-                                    subParamDictionary.Add(subStateParam.Key, _stateCache[subStateParam.Value as string]);
-                                }
-                                paramaters.Add(stateParam.Key, subParamDictionary as IDictionary<string, object>);
+                                // Parameter is a cmplex object
+                                var complexParameterParts = stateParam.Key.Split('.');
+                                if (complexParameterParts.Count() > 2)
+                                    throw new System.Exception("Status key contained more than one '.'");
+
+                                // Ensure root key is present
+                                if (!parameters.Keys.Contains(complexParameterParts[0]))
+                                    parameters.Add(complexParameterParts[0], new Dictionary<string, object>());
+
+                                // Add parameter
+                                var complexValue = (IDictionary<string, object>)parameters[complexParameterParts[0]];
+                                complexValue.Add(
+                                    complexParameterParts[1],
+                                    MapValue(stateParam.Value, stateParam.Key, value));
                             }
                             else
                             {
-                                var val = _stateCache[stateParam.Value as string];
-                                paramaters.Add(stateParam.Key, _stateCache[stateParam.Value as string]);
+                                parameters.Add(stateParam.Key, MapValue(stateParam.Value, stateParam.Key, value));
                             }
                         }
 
-                        return paramaters as IDictionary<string, object>;
+                        return parameters as IDictionary<string, object>;
                     })
             };
 
@@ -240,6 +246,47 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             };
 
             return syncResponsePayload;
+        }
+
+        /// <summary>
+        /// Handles mapping some common state values to google acceptable state values.
+        /// </summary>
+        /// <param name="paramKey">Param key.</param>
+        /// <param name="stateValue">State value.</param>
+        /// <returns>Remapped value.</returns>
+        private object MapValue(DeviceState deviceState, string paramKey, string stateValue)
+        {
+            // Default to to an attempted conversion to the Google type
+            object mappedValue = null;
+            switch (deviceState.GoogleType)
+            {
+                case GoogleType.Bool:
+                    if (bool.TryParse(stateValue, out bool boolValue))
+                        mappedValue = boolValue;
+                    break;
+                case GoogleType.Numeric:
+                    if (decimal.TryParse(stateValue, out decimal decimalValue))
+                        mappedValue = decimalValue;
+                    break;
+                case GoogleType.String:
+                    mappedValue = stateValue;
+                    break;
+            }
+
+            if (deviceState.ValueMap != null && deviceState.ValueMap.Count > 0)
+            {
+                foreach (var valueMap in deviceState.ValueMap)
+                {
+                    if (valueMap.MatchesMqtt(stateValue))
+                    {
+                        // Do value comparison, break on first match
+                        mappedValue = valueMap.ConvertToGoogle(stateValue);
+                        break;
+                    }
+                }
+            }
+
+            return mappedValue;
         }
     }
 }
