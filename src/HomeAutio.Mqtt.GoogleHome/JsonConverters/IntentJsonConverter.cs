@@ -1,6 +1,6 @@
-﻿using HomeAutio.Mqtt.GoogleHome.Models.Request;
+﻿using System;
+using HomeAutio.Mqtt.GoogleHome.Models.Request;
 using Newtonsoft.Json.Linq;
-using System;
 
 namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
 {
@@ -13,7 +13,7 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
         protected override IntentBase Create(Type objectType, JObject jsonObject)
         {
             // examine the intent value
-            string typeName = (jsonObject["intent"]).ToString();
+            string typeName = jsonObject["intent"].ToString();
 
             // based on the intent, instantiate and return a new object
             switch (typeName)

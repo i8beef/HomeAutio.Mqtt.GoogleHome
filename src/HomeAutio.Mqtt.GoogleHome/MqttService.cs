@@ -1,40 +1,44 @@
-﻿using Easy.MessageHub;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Easy.MessageHub;
 using HomeAutio.Mqtt.Core;
 using HomeAutio.Mqtt.GoogleHome.Models.Request;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
+    /// <summary>
+    /// MQTT Service.
+    /// </summary>
     public class MqttService : ServiceBase
     {
-        private ILogger<MqttService> _log;
-        private bool _disposed = false;
+        private readonly ILogger<MqttService> _log;
 
         private readonly DeviceConfiguration _deviceConfig;
         private readonly StateCache _stateCache;
         private readonly IMessageHub _messageHub;
         private readonly IList<Guid> _messageHubSubscriptions = new List<Guid>();
 
+        private bool _disposed = false;
+
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="MqttService"/> class.
         /// </summary>
-        /// <param name="applicationLifetime"></param>
-        /// <param name="logger"></param>
-        /// <param name="deviceConfiguration"></param>
-        /// <param name="stateCache"></param>
-        /// <param name="messageHub"></param>
-        /// <param name="brokerIp"></param>
-        /// <param name="brokerPort"></param>
-        /// <param name="brokerUsername"></param>
-        /// <param name="brokerPassword"></param>
+        /// <param name="applicationLifetime">Application lifetime instance.</param>
+        /// <param name="logger">Logging instance.</param>
+        /// <param name="deviceConfiguration">Ddevice configuration.</param>
+        /// <param name="stateCache">State cache,</param>
+        /// <param name="messageHub">Message hub.</param>
+        /// <param name="brokerIp">MQTT broker IP.</param>
+        /// <param name="brokerPort">MQTT broker port.</param>
+        /// <param name="brokerUsername">MQTT broker username.</param>
+        /// <param name="brokerPassword">MQTT broker password.</param>
         public MqttService(
             IApplicationLifetime applicationLifetime,
             ILogger<MqttService> logger,
@@ -62,6 +66,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             }
         }
 
+        /// <inheritdoc />
         protected override Task StartServiceAsync(CancellationToken cancellationToken)
         {
             // Subscribe to event aggregator
@@ -70,6 +75,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         protected override Task StopServiceAsync(CancellationToken cancellationToken)
         {
             // Unsubscribe all message hub subscriptions
@@ -81,6 +87,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         protected override void Mqtt_MqttMsgPublishReceived(object sender, MqttApplicationMessageReceivedEventArgs e)
         {
             if (_stateCache.ContainsKey(e.ApplicationMessage.Topic))
@@ -167,6 +174,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <summary>
         /// Handles mapping some common state values to google acceptable state values.
         /// </summary>
+        /// <param name="deviceState">Device state configuration.</param>
         /// <param name="paramKey">Param key.</param>
         /// <param name="stateValue">State value.</param>
         /// <returns>Remapped value.</returns>

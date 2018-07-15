@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
 
 namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
 {
@@ -10,12 +10,15 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
     /// <typeparam name="T">The type of object being passed in</typeparam>
     public abstract class CustomJsonConverter<T> : JsonConverter
     {
+        /// <inheritdoc />
+        public override bool CanWrite { get { return false; } }
+
         /// <summary>
         /// Abstract method which implements the appropriate create method
         /// </summary>
-        /// <param name="objectType"></param>
-        /// <param name="jsonObject"></param>
-        /// <returns></returns>
+        /// <param name="objectType">The type of object to create.</param>
+        /// <param name="jsonObject">The source JSON object.</param>
+        /// <returns>An instance of the specified type.</returns>
         protected abstract T Create(Type objectType, JObject jsonObject);
 
         /// <inheritdoc />
@@ -23,9 +26,6 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
         {
             return typeof(T).IsAssignableFrom(objectType);
         }
-
-        /// <inheritdoc />
-        public override bool CanWrite { get { return false; } }
 
         /// <inheritdoc />
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

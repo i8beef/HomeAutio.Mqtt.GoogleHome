@@ -21,12 +21,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         private readonly StateCache _stateCache;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="GoogleHomeController"/> class.
         /// </summary>
-        /// <param name="configuration"></param>
-        /// <param name="messageHub"></param>
-        /// <param name="deviceConfiguration"></param>
-        /// <param name="stateCache"></param>
+        /// <param name="configuration">Configuration.</param>
+        /// <param name="messageHub">Message nhub.</param>
+        /// <param name="deviceConfiguration">Device configuration.</param>
+        /// <param name="stateCache">State cache.</param>
         public GoogleHomeController(
             IConfiguration configuration,
             IMessageHub messageHub,
@@ -48,7 +48,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult Post([FromBody]Models.Request.Request request)
         {
-            // Begin building Response 
+            // Begin building Response
             var response = new Models.Response.Response { RequestId = request.RequestId };
 
             // Smart Home Intents use a single object in inputs, containing the intent value, and a payload object with automation-specific objects.
@@ -71,7 +71,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                     response.Payload = HandleExecuteIntent(executeIntent);
                     return Ok(response);
                 case Models.Request.DisconnectIntent disconnectIntent:
-                    // Do nothing?
                     return Ok();
             }
 
@@ -241,6 +240,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <summary>
         /// Handles mapping some common state values to google acceptable state values.
         /// </summary>
+        /// <param name="deviceState">Device state config.</param>
         /// <param name="paramKey">Param key.</param>
         /// <param name="stateValue">State value.</param>
         /// <returns>Remapped value.</returns>

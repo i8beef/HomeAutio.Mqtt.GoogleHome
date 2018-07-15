@@ -2,6 +2,23 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <PackageProjectUrl>https://github.com/i8beef/HomeAutio.Mqtt.GoogleHome</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/i8beef/HomeAutio.Mqtt.GoogleHome/blob/master/LICENSE</PackageLicenseUrl>
+    <Company></Company>
+    <Product>HomeAutio.Mqtt.GoogleHome</Product>
+    <Version>1.0.0.0</Version>
+    <PackageId>HomeAutio.Mqtt.GoogleHome</PackageId>
+    <Authors>Michael Hallock</Authors>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp2.1\HomeAutio.Mqtt.GoogleHome.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.1\HomeAutio.Mqtt.GoogleHome.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,6 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="I8Beef.CodeAnalysis.RuleSet" Version="1.0.15">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Easy.MessageHub" Version="3.4.0" />
     <PackageReference Include="HomeAutio.Mqtt.Core" Version="2.0.0.33" />
     <PackageReference Include="IdentityServer4" Version="2.2.0" />

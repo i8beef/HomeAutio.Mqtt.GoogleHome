@@ -1,4 +1,9 @@
-﻿using Easy.MessageHub;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Identity;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using IdentityServer4.AccessTokenValidation;
@@ -12,11 +17,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
@@ -26,9 +26,9 @@ namespace HomeAutio.Mqtt.GoogleHome
     public class Startup
     {
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
-        /// <param name="configuration"></param>
+        /// <param name="configuration">The configuration.</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -39,7 +39,10 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             // Add message hub instance
@@ -58,7 +61,6 @@ namespace HomeAutio.Mqtt.GoogleHome
             {
                 var stateValues = serviceProvider.GetService<DeviceConfiguration>().Values
                     .SelectMany(x => x.Traits)
-                    //.Where(x => x.Trait != "action.devices.traits.CameraStream") // Ignore the special little snowflake
                     .SelectMany(x => x.State.Values)
                     .Select(x => x.Topic)
                     .Where(x => x != null);
@@ -68,7 +70,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     .Union(stateValues.OfType<IDictionary<string, object>>()
                         .SelectMany(x => x.Values)
                         .OfType<string>());
-                return new StateCache(topics.ToDictionary(x => x, x => ""));
+                return new StateCache(topics.ToDictionary(x => x, x => string.Empty));
             });
 
             // Setup client
@@ -131,7 +133,6 @@ namespace HomeAutio.Mqtt.GoogleHome
                     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-
                 }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.LoginPath = "/Account/Login";
@@ -149,8 +150,8 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <summary>
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
-        /// <param name="app"></param>
-        /// <param name="env"></param>
+        /// <param name="app">The app builder.</param>
+        /// <param name="env">The hosting environment.</param>
         public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
             if (env.IsDevelopment())

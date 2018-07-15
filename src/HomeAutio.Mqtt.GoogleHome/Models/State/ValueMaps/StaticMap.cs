@@ -1,5 +1,8 @@
 ﻿namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
 {
+    /// <summary>
+    /// Static based value map.
+    /// </summary>
     public class StaticMap : MapBase
     {
         /// <inheritdoc />

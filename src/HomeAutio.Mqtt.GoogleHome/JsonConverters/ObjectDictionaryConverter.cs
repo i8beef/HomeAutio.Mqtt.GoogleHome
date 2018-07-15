@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
@@ -19,7 +19,11 @@ namespace HomeAutio.Mqtt.GoogleHome
             return ReadValue(reader);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Reads the current value.
+        /// </summary>
+        /// <param name="reader">JSON reader.</param>
+        /// <returns>The read object.</returns>
         private object ReadValue(JsonReader reader)
         {
             while (reader.TokenType == JsonToken.Comment)
@@ -43,11 +47,15 @@ namespace HomeAutio.Mqtt.GoogleHome
                 case JsonToken.Bytes:
                     return reader.Value;
                 default:
-                    throw new JsonSerializationException
-                        (string.Format("Unexpected token when converting IDictionary<string, object>: {0}", reader.TokenType));
+                    throw new JsonSerializationException(string.Format("Unexpected token when converting IDictionary<string, object>: {0}", reader.TokenType));
             }
         }
 
+        /// <summary>
+        /// Reads the current array value.
+        /// </summary>
+        /// <param name="reader">JSON reader.</param>
+        /// <returns>The read object.</returns>
         private object ReadArray(JsonReader reader)
         {
             IList<object> list = new List<object>();
@@ -71,6 +79,11 @@ namespace HomeAutio.Mqtt.GoogleHome
             throw new JsonSerializationException("Unexpected end when reading IDictionary<string, object>");
         }
 
+        /// <summary>
+        /// Reads the current object value.
+        /// </summary>
+        /// <param name="reader">JSON reader.</param>
+        /// <returns>The read object.</returns>
         private object ReadObject(JsonReader reader)
         {
             var obj = new Dictionary<string, object>();
@@ -107,6 +120,11 @@ namespace HomeAutio.Mqtt.GoogleHome
             WriteValue(writer, value);
         }
 
+        /// <summary>
+        /// Writes the current value.
+        /// </summary>
+        /// <param name="writer">JSON writer.</param>
+        /// <param name="value">The value to write.</param>
         private void WriteValue(JsonWriter writer, object value)
         {
             if (value != null)
@@ -131,6 +149,11 @@ namespace HomeAutio.Mqtt.GoogleHome
             }
         }
 
+        /// <summary>
+        /// Writes the current object value.
+        /// </summary>
+        /// <param name="writer">JSON writer.</param>
+        /// <param name="value">The value to write.</param>
         private void WriteObject(JsonWriter writer, object value)
         {
             writer.WriteStartObject();
@@ -140,9 +163,15 @@ namespace HomeAutio.Mqtt.GoogleHome
                 writer.WritePropertyName(kvp.Key);
                 WriteValue(writer, kvp.Value);
             }
+
             writer.WriteEndObject();
         }
 
+        /// <summary>
+        /// Writes the current array value.
+        /// </summary>
+        /// <param name="writer">JSON writer.</param>
+        /// <param name="value">The value to write.</param>
         private void WriteArray(JsonWriter writer, object value)
         {
             writer.WriteStartArray();
@@ -151,6 +180,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             {
                 WriteValue(writer, o);
             }
+
             writer.WriteEndArray();
         }
     }
