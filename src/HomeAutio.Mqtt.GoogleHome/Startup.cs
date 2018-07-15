@@ -1,5 +1,7 @@
 ﻿using Easy.MessageHub;
+using HomeAutio.Mqtt.GoogleHome.Identity;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -78,6 +80,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     Configuration.GetValue<string>("brokerUsername"),
                     Configuration.GetValue<string>("brokerPassword")));
 
+            // MVC
             services.AddMvc()
                 .AddJsonOptions(opt =>
                 {
@@ -85,6 +88,23 @@ namespace HomeAutio.Mqtt.GoogleHome
                     opt.SerializerSettings.Converters.Add(new StringEnumConverter());
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            // Identity Server 4
+            services.AddIdentityServer()
+                .AddInMemoryClients(Clients.Get(Configuration))
+                .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
+                .AddInMemoryApiResources(Resources.GetApiResources(Configuration))
+                .AddTestUsers(Users.Get(Configuration))
+                .AddDeveloperSigningCredential();
+
+            // Turn on IdentityServer token authentication for API endpoints
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = Configuration.GetValue<string>("oauth:authority"); ;
+                    options.ApiName = Configuration.GetValue<string>("oauth:resourceName");
+                    options.RequireHttpsMetadata = false;
+                });
         }
 
         /// <summary>
@@ -99,7 +119,9 @@ namespace HomeAutio.Mqtt.GoogleHome
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
             app.UseMvc();
+            app.UseIdentityServer();
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
@@ -37,25 +38,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             _stateCache = stateCache;
         }
 
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok(_deviceConfiguration);
-        }
-
-        [HttpGet]
-        [Route("currentState")]
-        public IActionResult GetCurrentState()
-        {
-            return Ok(_stateCache);
-        }
-
         /// <summary>
         /// Post handler.
         /// </summary>
         /// <param name="request">Request.</param>
         /// <returns>Response.</returns>
         [HttpPost]
+        [Authorize]
         public IActionResult Post([FromBody]Models.Request.Request request)
         {
             // Begin building Response 
