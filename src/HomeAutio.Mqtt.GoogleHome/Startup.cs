@@ -117,7 +117,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 {
                     options.Authority = Configuration.GetValue<string>("oauth:authority");
                     options.ApiName = Configuration.GetValue<string>("oauth:resourceName");
-                    options.RequireHttpsMetadata = false;
+                    options.RequireHttpsMetadata = Configuration.GetValue<bool>("oauth:requireSSL");
                 });
         }
 
