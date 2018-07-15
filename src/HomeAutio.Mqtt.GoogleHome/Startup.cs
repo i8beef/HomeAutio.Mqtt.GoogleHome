@@ -2,6 +2,7 @@
 using HomeAutio.Mqtt.GoogleHome.Identity;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -91,17 +93,29 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             // Identity Server 4
             services.AddIdentityServer()
+                .AddDeveloperSigningCredential()
                 .AddInMemoryClients(Clients.Get(Configuration))
                 .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
                 .AddInMemoryApiResources(Resources.GetApiResources(Configuration))
-                .AddTestUsers(Users.Get(Configuration))
-                .AddDeveloperSigningCredential();
+                .AddTestUsers(Users.Get(Configuration));
 
             // Turn on IdentityServer token authentication for API endpoints
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(options =>
+            services
+                .AddAuthentication(options =>
                 {
-                    options.Authority = Configuration.GetValue<string>("oauth:authority"); ;
+                    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+                }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.LogoutPath = "/Account/Logout";
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                    options.SlidingExpiration = true;
+                }).AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.Authority = Configuration.GetValue<string>("oauth:authority");
                     options.ApiName = Configuration.GetValue<string>("oauth:resourceName");
                     options.RequireHttpsMetadata = false;
                 });
@@ -119,8 +133,9 @@ namespace HomeAutio.Mqtt.GoogleHome
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseMvcWithDefaultRoute();
             app.UseIdentityServer();
         }
     }

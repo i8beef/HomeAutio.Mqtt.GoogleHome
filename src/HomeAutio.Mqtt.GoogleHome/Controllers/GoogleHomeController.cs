@@ -2,6 +2,7 @@
 using System.Linq;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -44,7 +45,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <param name="request">Request.</param>
         /// <returns>Response.</returns>
         [HttpPost]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult Post([FromBody]Models.Request.Request request)
         {
             // Begin building Response 
