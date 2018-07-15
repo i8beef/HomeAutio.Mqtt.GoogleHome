@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
@@ -92,14 +93,38 @@ namespace HomeAutio.Mqtt.GoogleHome
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Identity Server 4
-            services.AddIdentityServer()
-                .AddDeveloperSigningCredential()
-                .AddInMemoryClients(Clients.Get(Configuration))
-                .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
-                .AddInMemoryApiResources(Resources.GetApiResources(Configuration))
-                .AddTestUsers(Users.Get(Configuration));
+            var signingCertFile = Configuration.GetValue<string>("oauth:signingCert:file");
+            var signingCertPassPhrase = Configuration.GetValue<string>("oauth:signingCert:passPhrase");
+            X509Certificate2 cert = null;
+            if (signingCertFile != null)
+            {
+                if (!File.Exists(signingCertFile))
+                {
+                    throw new FileNotFoundException("Signing Certificate is missing!");
+                }
 
-            // Turn on IdentityServer token authentication for API endpoints
+                cert = signingCertPassPhrase != null ?
+                    new X509Certificate2(signingCertFile, signingCertPassPhrase) :
+                    new X509Certificate2(signingCertFile);
+
+                services.AddIdentityServer()
+                    .AddSigningCredential(cert)
+                    .AddInMemoryClients(Clients.Get(Configuration))
+                    .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
+                    .AddInMemoryApiResources(Resources.GetApiResources(Configuration))
+                    .AddTestUsers(Users.Get(Configuration));
+            }
+            else
+            {
+                services.AddIdentityServer()
+                    .AddDeveloperSigningCredential()
+                    .AddInMemoryClients(Clients.Get(Configuration))
+                    .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
+                    .AddInMemoryApiResources(Resources.GetApiResources(Configuration))
+                    .AddTestUsers(Users.Get(Configuration));
+            }
+
+            // Turn on authorization via Cookie (signin, default) and Bearer (API)
             services
                 .AddAuthentication(options =>
                 {
