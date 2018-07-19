@@ -7,6 +7,7 @@ using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Identity;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using IdentityServer4.AccessTokenValidation;
+using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -95,10 +96,12 @@ namespace HomeAutio.Mqtt.GoogleHome
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Identity Server 4
+            services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
+
             var signingCertFile = Configuration.GetValue<string>("oauth:signingCert:file");
             var signingCertPassPhrase = Configuration.GetValue<string>("oauth:signingCert:passPhrase");
             X509Certificate2 cert = null;
-            if (signingCertFile != null)
+            if (!string.IsNullOrEmpty(signingCertFile))
             {
                 if (!File.Exists(signingCertFile))
                 {
@@ -142,7 +145,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 }).AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority = Configuration.GetValue<string>("oauth:authority");
-                    options.ApiName = Configuration.GetValue<string>("oauth:resourceName");
+                    options.ApiName = Configuration.GetValue<string>("oauth:resources:0:resourceName");
                     options.RequireHttpsMetadata = Configuration.GetValue<bool>("oauth:requireSSL");
                 });
         }

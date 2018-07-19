@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using IdentityServer4.Test;
 using Microsoft.Extensions.Configuration;
@@ -17,16 +18,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <returns>A list of <see cref="TestUser"/>.</returns>
         public static List<TestUser> Get(IConfiguration configuration)
         {
-            return new List<TestUser>
-            {
-                new TestUser
+            var usersSection = configuration.GetSection("oauth:users");
+
+            return usersSection.GetChildren()
+                .Select(x => new TestUser
                 {
-                    SubjectId = configuration.GetValue<string>("oauth:subjectId"),
-                    Username = configuration.GetValue<string>("oauth:username"),
-                    Password = configuration.GetValue<string>("oauth:password"),
+                    SubjectId = x.GetValue<string>("subjectId"),
+                    Username = x.GetValue<string>("username"),
+                    Password = x.GetValue<string>("password"),
                     Claims = new List<Claim>()
-                }
-            };
+                })
+                .ToList();
         }
     }
 }

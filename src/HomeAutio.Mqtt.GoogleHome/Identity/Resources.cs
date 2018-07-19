@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using IdentityServer4.Models;
 using Microsoft.Extensions.Configuration;
 
@@ -31,18 +32,18 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <returns>A list of <see cref="ApiResource"/>.</returns>
         public static IEnumerable<ApiResource> GetApiResources(IConfiguration configuration)
         {
-            return new List<ApiResource>
-            {
-                new ApiResource
+            var clientsSection = configuration.GetSection("oauth:resources");
+
+            return clientsSection.GetChildren()
+                .Select(x => new ApiResource
                 {
-                    Name = configuration.GetValue<string>("oauth:resourceName"),
-                    DisplayName = configuration.GetValue<string>("oauth:resourceName"),
-                    Description = configuration.GetValue<string>("oauth:resourceName"),
+                    Name = x.GetValue<string>("resourceName"),
+                    DisplayName = x.GetValue<string>("resourceName"),
+                    Description = x.GetValue<string>("resourceName"),
                     UserClaims = new List<string>(),
-                    ApiSecrets = new List<Secret> { new Secret(configuration.GetValue<string>("oauth:clientSecret").Sha256()) },
+                    ApiSecrets = new List<Secret>(),
                     Scopes = new List<Scope> { new Scope("api") }
-                }
-            };
+                });
         }
     }
 }
