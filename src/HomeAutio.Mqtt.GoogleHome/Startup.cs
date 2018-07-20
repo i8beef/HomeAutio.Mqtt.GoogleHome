@@ -100,7 +100,6 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             var signingCertFile = Configuration.GetValue<string>("oauth:signingCert:file");
             var signingCertPassPhrase = Configuration.GetValue<string>("oauth:signingCert:passPhrase");
-            X509Certificate2 cert = null;
             if (!string.IsNullOrEmpty(signingCertFile))
             {
                 if (!File.Exists(signingCertFile))
@@ -108,7 +107,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     throw new FileNotFoundException("Signing Certificate is missing!");
                 }
 
-                cert = signingCertPassPhrase != null ?
+                var cert = signingCertPassPhrase != null ?
                     new X509Certificate2(signingCertFile, signingCertPassPhrase) :
                     new X509Certificate2(signingCertFile);
 
