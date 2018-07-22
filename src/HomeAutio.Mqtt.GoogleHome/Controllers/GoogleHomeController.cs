@@ -16,7 +16,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     [Route("/google/home")]
     public class GoogleHomeController : Controller
     {
-        private readonly ILogger<MqttService> _log;
+        private readonly ILogger<GoogleHomeController> _log;
 
         private readonly IConfiguration _config;
         private readonly IMessageHub _messageHub;
@@ -38,6 +38,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             DeviceConfiguration deviceConfiguration,
             StateCache stateCache)
         {
+            _log = logger;
             _config = configuration;
             _messageHub = messageHub;
             _deviceConfiguration = deviceConfiguration;

@@ -31,28 +31,20 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <summary>
         /// Initializes a new instance of the <see cref="MqttService"/> class.
         /// </summary>
-        /// <param name="applicationLifetime">Application lifetime instance.</param>
         /// <param name="logger">Logging instance.</param>
         /// <param name="deviceConfiguration">Ddevice configuration.</param>
         /// <param name="stateCache">State cache,</param>
         /// <param name="messageHub">Message hub.</param>
         /// <param name="googleHomeGraphClient">Google Home Graph API client.</param>
-        /// <param name="brokerIp">MQTT broker IP.</param>
-        /// <param name="brokerPort">MQTT broker port.</param>
-        /// <param name="brokerUsername">MQTT broker username.</param>
-        /// <param name="brokerPassword">MQTT broker password.</param>
+        /// <param name="brokerSettings">MQTT broker settings.</param>
         public MqttService(
-            IApplicationLifetime applicationLifetime,
             ILogger<MqttService> logger,
             DeviceConfiguration deviceConfiguration,
             StateCache stateCache,
             IMessageHub messageHub,
             GoogleHomeGraphClient googleHomeGraphClient,
-            string brokerIp,
-            int brokerPort = 1883,
-            string brokerUsername = null,
-            string brokerPassword = null)
-            : base(applicationLifetime, logger, brokerIp, brokerPort, brokerUsername, brokerPassword, "google/home/")
+            BrokerSettings brokerSettings)
+            : base(logger, brokerSettings, "google/home/")
         {
             _log = logger;
             _deviceConfig = deviceConfiguration;

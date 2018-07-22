@@ -82,7 +82,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Google Home Graph client
             services.AddSingleton<GoogleHomeGraphClient>(serviceProvider =>
             {
-                var googleHomeServiceAccountFile = Configuration.GetValue<string>("googleHomeGraphApiAccountFile");
+                var googleHomeServiceAccountFile = Configuration.GetValue<string>("googleHomeGraph:serviceAccountFile");
                 if (!string.IsNullOrEmpty(googleHomeServiceAccountFile) && File.Exists(googleHomeServiceAccountFile))
                 {
                     var googleHomeServiceAccountFileContents = File.ReadAllText(googleHomeServiceAccountFile);
@@ -91,28 +91,35 @@ namespace HomeAutio.Mqtt.GoogleHome
                         serviceProvider.GetRequiredService<ILogger<GoogleHomeGraphClient>>(),
                         serviceProvider.GetRequiredService<IHttpClientFactory>(),
                         serviceAccount,
-                        Configuration.GetValue<string>("googleHomeAgentUserId"),
-                        Configuration.GetValue<string>("googleHomeGraphApiKey"));
+                        Configuration.GetValue<string>("googleHomeGraph:agentUserId"),
+                        Configuration.GetValue<string>("googleHomeGraph:apiKey"));
                 }
 
                 return null;
             });
 
             // Setup client
-            services.AddSingleton<IHostedService, MqttService>(serviceProvider => new MqttService(
-                    serviceProvider.GetRequiredService<Microsoft.Extensions.Hosting.IApplicationLifetime>(),
+            services.AddSingleton<IHostedService, MqttService>(serviceProvider =>
+            {
+                var brokerSettings = new Core.BrokerSettings
+                {
+                    BrokerIp = Configuration.GetValue<string>("mqtt:brokerIp"),
+                    BrokerPort = Configuration.GetValue<int>("mqtt:brokerPort"),
+                    BrokerUsername = Configuration.GetValue<string>("mqtt:brokerUsername"),
+                    BrokerPassword = Configuration.GetValue<string>("mqtt:brokerPassword")
+                };
+
+                return new MqttService(
                     serviceProvider.GetRequiredService<ILogger<MqttService>>(),
                     serviceProvider.GetRequiredService<DeviceConfiguration>(),
                     serviceProvider.GetRequiredService<StateCache>(),
                     serviceProvider.GetRequiredService<IMessageHub>(),
                     serviceProvider.GetService<GoogleHomeGraphClient>(),
-                    Configuration.GetValue<string>("brokerIp"),
-                    Configuration.GetValue<int>("brokerPort"),
-                    Configuration.GetValue<string>("brokerUsername"),
-                    Configuration.GetValue<string>("brokerPassword")));
+                    brokerSettings);
+            });
 
-            // MVC
-            services.AddMvc()
+        // MVC
+        services.AddMvc()
                 .AddJsonOptions(opt =>
                 {
                     opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
