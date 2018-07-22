@@ -118,8 +118,8 @@ namespace HomeAutio.Mqtt.GoogleHome
                     brokerSettings);
             });
 
-        // MVC
-        services.AddMvc()
+            // MVC
+            services.AddMvc()
                 .AddJsonOptions(opt =>
                 {
                     opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
