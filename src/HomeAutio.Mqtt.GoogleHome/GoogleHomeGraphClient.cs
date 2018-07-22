@@ -18,11 +18,13 @@ namespace HomeAutio.Mqtt.GoogleHome
     public class GoogleHomeGraphClient
     {
         private const string _googleHomeGraphApiReportStateUri = "https://homegraph.googleapis.com/v1/devices:reportStateAndNotification";
+        private const string _googleHomeGraphApiRequestSyncUri = "https://homegraph.googleapis.com/v1/devices:requestSync";
         private const string _homeGraphScope = "https://www.googleapis.com/auth/homegraph";
 
         private readonly ILogger<GoogleHomeGraphClient> _log;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _agentUserId;
+        private readonly string _googleHomeGraphApiKey;
         private readonly ServiceAccount _serviceAccount;
 
         private AccessTokenResponse _accessToken;
@@ -35,12 +37,43 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <param name="httpClientFactory">HttpClient factory.</param>
         /// <param name="serviceAccount">Service account information.</param>
         /// <param name="agentUserId">Agent user id.</param>
-        public GoogleHomeGraphClient(ILogger<GoogleHomeGraphClient> logger, IHttpClientFactory httpClientFactory, ServiceAccount serviceAccount, string agentUserId)
+        /// <param name="googleHomeGraphApiKey">Google Home Graph API key.</param>
+        public GoogleHomeGraphClient(
+            ILogger<GoogleHomeGraphClient> logger,
+            IHttpClientFactory httpClientFactory,
+            ServiceAccount serviceAccount,
+            string agentUserId,
+            string googleHomeGraphApiKey)
         {
             _log = logger;
             _httpClientFactory = httpClientFactory;
             _agentUserId = agentUserId;
+            _googleHomeGraphApiKey = googleHomeGraphApiKey;
             _serviceAccount = serviceAccount;
+        }
+
+        /// <summary>
+        /// Send Google Home Graph request sync.
+        /// </summary>
+        /// <returns>An awaitable <see cref="Task"/>.</returns>
+        public async Task RequestSyncAsync()
+        {
+            var request = new Request
+            {
+                AgentUserId = _agentUserId
+            };
+
+            var requestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(_googleHomeGraphApiRequestSyncUri + "?key=" + _googleHomeGraphApiKey),
+                Content = new StringContent(JsonConvert.SerializeObject(request))
+            };
+
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.SendAsync(requestMessage);
+
+            _log.LogInformation("Sent REQUEST_SYNC to Google Home Graph");
         }
 
         /// <summary>
@@ -61,7 +94,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 }
             }
 
-            var requestMessage = new Request
+            var request = new Request
             {
                 RequestId = Guid.NewGuid().ToString(),
                 AgentUserId = _agentUserId,
@@ -76,18 +109,18 @@ namespace HomeAutio.Mqtt.GoogleHome
                 }
             };
 
-            var request = new HttpRequestMessage
+            var requestMessage = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(_googleHomeGraphApiReportStateUri),
-                Content = new StringContent(JsonConvert.SerializeObject(requestMessage))
+                Content = new StringContent(JsonConvert.SerializeObject(request))
             };
 
             // Add access token
-            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken.AccessToken);
+            requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken.AccessToken);
 
             var client = _httpClientFactory.CreateClient();
-            var response = await client.SendAsync(request);
+            var response = await client.SendAsync(requestMessage);
 
             _log.LogInformation("Sent update to Google Home Graph for devices: " + string.Join(", ", devices.Select(x => x.Id)));
         }
