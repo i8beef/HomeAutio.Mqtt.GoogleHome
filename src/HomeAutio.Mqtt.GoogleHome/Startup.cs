@@ -88,6 +88,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     var googleHomeServiceAccountFileContents = File.ReadAllText(googleHomeServiceAccountFile);
                     var serviceAccount = JsonConvert.DeserializeObject<ServiceAccount>(googleHomeServiceAccountFileContents);
                     return new GoogleHomeGraphClient(
+                        serviceProvider.GetRequiredService<ILogger<GoogleHomeGraphClient>>(),
                         serviceProvider.GetRequiredService<IHttpClientFactory>(),
                         serviceAccount,
                         Configuration.GetValue<string>("googleHomeAgentUserId"));
@@ -103,7 +104,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     serviceProvider.GetRequiredService<DeviceConfiguration>(),
                     serviceProvider.GetRequiredService<StateCache>(),
                     serviceProvider.GetRequiredService<IMessageHub>(),
-                    serviceProvider.GetRequiredService<GoogleHomeGraphClient>(),
+                    serviceProvider.GetService<GoogleHomeGraphClient>(),
                     Configuration.GetValue<string>("brokerIp"),
                     Configuration.GetValue<int>("brokerPort"),
                     Configuration.GetValue<string>("brokerUsername"),

@@ -6,6 +6,7 @@ using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace HomeAutio.Mqtt.GoogleHome.Controllers
 {
@@ -15,6 +16,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     [Route("/google/home")]
     public class GoogleHomeController : Controller
     {
+        private readonly ILogger<MqttService> _log;
+
         private readonly IConfiguration _config;
         private readonly IMessageHub _messageHub;
         private readonly DeviceConfiguration _deviceConfiguration;
@@ -23,11 +26,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleHomeController"/> class.
         /// </summary>
+        /// <param name="logger">Logging instance.</param>
         /// <param name="configuration">Configuration.</param>
         /// <param name="messageHub">Message nhub.</param>
         /// <param name="deviceConfiguration">Device configuration.</param>
         /// <param name="stateCache">State cache.</param>
         public GoogleHomeController(
+            ILogger<GoogleHomeController> logger,
             IConfiguration configuration,
             IMessageHub messageHub,
             DeviceConfiguration deviceConfiguration,
@@ -86,8 +91,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>A <see cref="Models.Response.ExecutionResponsePayload"/>.</returns>
         private Models.Response.ExecutionResponsePayload HandleExecuteIntent(Models.Request.ExecuteIntent intent)
         {
-            var executionResponsePayload = new Models.Response.ExecutionResponsePayload();
+            _log.LogInformation(string.Format(
+                "Received EXECUTE intent for commands: {0}",
+                string.Join(",", intent.Payload.Commands
+                    .SelectMany(x => x.Execution)
+                    .Select(x => x.Command))));
 
+            var executionResponsePayload = new Models.Response.ExecutionResponsePayload();
             foreach (var command in intent.Payload.Commands)
             {
                 // Convert command to a event to publish
@@ -158,6 +168,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>A <see cref="Models.Response.QueryResponsePayload"/>.</returns>
         private Models.Response.QueryResponsePayload HandleQueryIntent(Models.Request.QueryIntent intent)
         {
+            _log.LogInformation("Received QUERY intent for devices: " + string.Join(", ", intent.Payload.Devices.Select(x => x.Id)));
+
             var queryResponsePayload = new Models.Response.QueryResponsePayload
             {
                 Devices = intent.Payload.Devices.ToDictionary(
@@ -175,6 +187,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>A <see cref="Models.Response.SyncResponsePayload"/>.</returns>
         private Models.Response.SyncResponsePayload HandleSyncIntent(Models.Request.SyncIntent intent)
         {
+            _log.LogInformation("Received SYNC intent");
+
             var syncResponsePayload = new Models.Response.SyncResponsePayload
             {
                 AgentUserId = _config.GetValue<string>("googleHomeAgentUserId"),

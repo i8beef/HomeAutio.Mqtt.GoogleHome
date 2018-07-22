@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
@@ -19,6 +20,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         private const string _googleHomeGraphApiReportStateUri = "https://homegraph.googleapis.com/v1/devices:reportStateAndNotification";
         private const string _homeGraphScope = "https://www.googleapis.com/auth/homegraph";
 
+        private readonly ILogger<GoogleHomeGraphClient> _log;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _agentUserId;
         private readonly ServiceAccount _serviceAccount;
@@ -29,11 +31,13 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleHomeGraphClient"/> class.
         /// </summary>
+        /// <param name="logger">Logging instance.</param>
         /// <param name="httpClientFactory">HttpClient factory.</param>
         /// <param name="serviceAccount">Service account information.</param>
         /// <param name="agentUserId">Agent user id.</param>
-        public GoogleHomeGraphClient(IHttpClientFactory httpClientFactory, ServiceAccount serviceAccount, string agentUserId)
+        public GoogleHomeGraphClient(ILogger<GoogleHomeGraphClient> logger, IHttpClientFactory httpClientFactory, ServiceAccount serviceAccount, string agentUserId)
         {
+            _log = logger;
             _httpClientFactory = httpClientFactory;
             _agentUserId = agentUserId;
             _serviceAccount = serviceAccount;
@@ -84,6 +88,8 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             var client = _httpClientFactory.CreateClient();
             var response = await client.SendAsync(request);
+
+            _log.LogInformation("Sent update to Google Home Graph for devices: " + string.Join(", ", devices.Select(x => x.Id)));
         }
 
         /// <summary>
@@ -93,6 +99,8 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <returns>An <see cref="AccessTokenResponse"/>.</returns>
         private async Task<AccessTokenResponse> GetAccessToken(string jwt)
         {
+            _log.LogDebug("Get/Refresh access token");
+
             var paramaters = new Dictionary<string, string>();
             paramaters.Add("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
             paramaters.Add("assertion", ConstructJwt());
@@ -106,8 +114,13 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             var client = _httpClientFactory.CreateClient();
             var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsAsync<AccessTokenResponse>();
+            var accessToken = await response.Content.ReadAsAsync<AccessTokenResponse>();
+
+            _log.LogDebug("Received access token: " + accessToken);
+
+            return accessToken;
         }
 
         /// <summary>
@@ -135,6 +148,8 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             var handler = new JwtSecurityTokenHandler();
             var token = handler.WriteToken(jwtToken);
+
+            _log.LogDebug("Built JWT request: " + token);
 
             return token;
         }

@@ -20,7 +20,9 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Setup config
             var config = new ConfigurationBuilder()
                 .SetBasePath(Environment.CurrentDirectory)
+                .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json", optional: false)
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
                 .Build();
 
             // Setup logging
