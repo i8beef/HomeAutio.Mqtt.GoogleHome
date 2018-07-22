@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Identity;
+using HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using IdentityServer4.AccessTokenValidation;
 using IdentityServer4.Stores;
@@ -46,6 +48,9 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            // Http client factory registration.
+            services.AddHttpClient();
+
             // Add message hub instance
             services.AddSingleton<IMessageHub>(serviceProvider => MessageHub.Instance);
 
@@ -74,6 +79,23 @@ namespace HomeAutio.Mqtt.GoogleHome
                 return new StateCache(topics.ToDictionary(x => x, x => string.Empty));
             });
 
+            // Google Home Graph client
+            services.AddSingleton<GoogleHomeGraphClient>(serviceProvider =>
+            {
+                var googleHomeServiceAccountFile = Configuration.GetValue<string>("googleHomeHomeGraphApiAccountFile");
+                if (!string.IsNullOrEmpty(googleHomeServiceAccountFile) && File.Exists(googleHomeServiceAccountFile))
+                {
+                    var googleHomeServiceAccountFileContents = File.ReadAllText(googleHomeServiceAccountFile);
+                    var serviceAccount = JsonConvert.DeserializeObject<ServiceAccount>(googleHomeServiceAccountFileContents);
+                    return new GoogleHomeGraphClient(
+                        serviceProvider.GetRequiredService<IHttpClientFactory>(),
+                        serviceAccount,
+                        Configuration.GetValue<string>("googleHomeAgentUserId"));
+                }
+
+                return null;
+            });
+
             // Setup client
             services.AddSingleton<IHostedService, MqttService>(serviceProvider => new MqttService(
                     serviceProvider.GetRequiredService<Microsoft.Extensions.Hosting.IApplicationLifetime>(),
@@ -81,6 +103,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     serviceProvider.GetRequiredService<DeviceConfiguration>(),
                     serviceProvider.GetRequiredService<StateCache>(),
                     serviceProvider.GetRequiredService<IMessageHub>(),
+                    serviceProvider.GetRequiredService<GoogleHomeGraphClient>(),
                     Configuration.GetValue<string>("brokerIp"),
                     Configuration.GetValue<int>("brokerPort"),
                     Configuration.GetValue<string>("brokerUsername"),

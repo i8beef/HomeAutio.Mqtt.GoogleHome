@@ -24,6 +24,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         private readonly StateCache _stateCache;
         private readonly IMessageHub _messageHub;
         private readonly IList<Guid> _messageHubSubscriptions = new List<Guid>();
+        private readonly GoogleHomeGraphClient _googleHomeGraphClient;
 
         private bool _disposed = false;
 
@@ -35,6 +36,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <param name="deviceConfiguration">Ddevice configuration.</param>
         /// <param name="stateCache">State cache,</param>
         /// <param name="messageHub">Message hub.</param>
+        /// <param name="googleHomeGraphClient">Google Home Graph API client.</param>
         /// <param name="brokerIp">MQTT broker IP.</param>
         /// <param name="brokerPort">MQTT broker port.</param>
         /// <param name="brokerUsername">MQTT broker username.</param>
@@ -45,6 +47,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             DeviceConfiguration deviceConfiguration,
             StateCache stateCache,
             IMessageHub messageHub,
+            GoogleHomeGraphClient googleHomeGraphClient,
             string brokerIp,
             int brokerPort = 1883,
             string brokerUsername = null,
@@ -55,6 +58,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             _deviceConfig = deviceConfiguration;
             _stateCache = stateCache;
             _messageHub = messageHub;
+            _googleHomeGraphClient = googleHomeGraphClient;
 
             // Subscribe to google home based topics
             SubscribedTopics.Add(TopicRoot + "#");
@@ -93,9 +97,24 @@ namespace HomeAutio.Mqtt.GoogleHome
             if (_stateCache.ContainsKey(e.ApplicationMessage.Topic))
             {
                 _stateCache[e.ApplicationMessage.Topic] = e.ApplicationMessage.ConvertPayloadToString();
-            }
 
-            // TODO: If report state, report here
+                // Handle reportState
+                if (_googleHomeGraphClient != null)
+                {
+                    // Identify devices that handle reportState
+                    var devices = _deviceConfig.Values
+                        .Where(x => x.WillReportState)
+                        .Where(x => x.Traits.Any(trait => trait.State.Values.Any(state => state.Topic == e.ApplicationMessage.Topic)))
+                        .ToList();
+
+                    // Send updated to Google Home Graph
+                    if (devices.Count() > 0)
+                    {
+                        _googleHomeGraphClient.SendUpdatesAsync(devices, _stateCache)
+                            .GetAwaiter().GetResult();
+                    }
+                }
+            }
         }
 
         #region Google Home Handlers
@@ -155,7 +174,7 @@ namespace HomeAutio.Mqtt.GoogleHome
 
                                 // Send the MQTT message
                                 var topic = deviceSupportedParams[parameter.Key];
-                                var payload = MapValue(deviceState, parameter.Key, parameter.Value);
+                                var payload = deviceState.MapValueToMqtt(parameter.Key, parameter.Value);
                                 await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
                                     .WithTopic(topic)
                                     .WithPayload(payload)
@@ -170,34 +189,6 @@ namespace HomeAutio.Mqtt.GoogleHome
         }
 
         #endregion
-
-        /// <summary>
-        /// Handles mapping some common state values to google acceptable state values.
-        /// </summary>
-        /// <param name="deviceState">Device state configuration.</param>
-        /// <param name="paramKey">Param key.</param>
-        /// <param name="stateValue">State value.</param>
-        /// <returns>Remapped value.</returns>
-        private string MapValue(DeviceState deviceState, string paramKey, object stateValue)
-        {
-            // Default to string version of passed parameter value
-            var mappedValue = stateValue.ToString();
-
-            if (deviceState.ValueMap != null && deviceState.ValueMap.Count > 0)
-            {
-                foreach (var valueMap in deviceState.ValueMap)
-                {
-                    if (valueMap.MatchesGoogle(stateValue))
-                    {
-                        // Do value comparison, break on first match
-                        mappedValue = valueMap.ConvertToMqtt(stateValue);
-                        break;
-                    }
-                }
-            }
-
-            return mappedValue;
-        }
 
         #region IDisposable Support
 

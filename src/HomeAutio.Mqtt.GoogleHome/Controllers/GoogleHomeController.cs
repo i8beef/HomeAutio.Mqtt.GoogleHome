@@ -116,7 +116,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                             {
                                 foreach (var state in trait.State)
                                 {
-                                    states.Add(state.Key, MapValue(state.Value, state.Key, null));
+                                    states.Add(state.Key, state.Value.MapValueToGoogle(state.Key, null));
                                 }
                             }
                         }
@@ -162,46 +162,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             {
                 Devices = intent.Payload.Devices.ToDictionary(
                     x => x.Id,
-                    x =>
-                    {
-                        var device = _deviceConfiguration[x.Id];
-                        var parameters = new Dictionary<string, object>();
-                        foreach (var stateParam in device.Traits
-                            .Where(trait => trait.Trait != "action.devices.traits.CameraStream")
-                            .SelectMany(trait => trait.State)
-                            .Where(state => state.Value.Topic != null))
-                        {
-                            // Ignore things with no state
-                            if (!_stateCache.ContainsKey(stateParam.Value.Topic))
-                                continue;
-
-                            // Convert state
-                            var value = _stateCache[stateParam.Value.Topic];
-                            if (stateParam.Key.Contains('.'))
-                            {
-                                // Parameter is a cmplex object
-                                var complexParameterParts = stateParam.Key.Split('.');
-                                if (complexParameterParts.Count() > 2)
-                                    throw new System.Exception("Status key contained more than one '.'");
-
-                                // Ensure root key is present
-                                if (!parameters.Keys.Contains(complexParameterParts[0]))
-                                    parameters.Add(complexParameterParts[0], new Dictionary<string, object>());
-
-                                // Add parameter
-                                var complexValue = (IDictionary<string, object>)parameters[complexParameterParts[0]];
-                                complexValue.Add(
-                                    complexParameterParts[1],
-                                    MapValue(stateParam.Value, stateParam.Key, value));
-                            }
-                            else
-                            {
-                                parameters.Add(stateParam.Key, MapValue(stateParam.Value, stateParam.Key, value));
-                            }
-                        }
-
-                        return parameters as IDictionary<string, object>;
-                    })
+                    x => _deviceConfiguration[x.Id].GetGoogleState(_stateCache))
             };
 
             return queryResponsePayload;
@@ -235,48 +196,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             };
 
             return syncResponsePayload;
-        }
-
-        /// <summary>
-        /// Handles mapping some common state values to google acceptable state values.
-        /// </summary>
-        /// <param name="deviceState">Device state config.</param>
-        /// <param name="paramKey">Param key.</param>
-        /// <param name="stateValue">State value.</param>
-        /// <returns>Remapped value.</returns>
-        private object MapValue(DeviceState deviceState, string paramKey, string stateValue)
-        {
-            // Default to to an attempted conversion to the Google type
-            object mappedValue = null;
-            switch (deviceState.GoogleType)
-            {
-                case GoogleType.Bool:
-                    if (bool.TryParse(stateValue, out bool boolValue))
-                        mappedValue = boolValue;
-                    break;
-                case GoogleType.Numeric:
-                    if (decimal.TryParse(stateValue, out decimal decimalValue))
-                        mappedValue = decimalValue;
-                    break;
-                case GoogleType.String:
-                    mappedValue = stateValue;
-                    break;
-            }
-
-            if (deviceState.ValueMap != null && deviceState.ValueMap.Count > 0)
-            {
-                foreach (var valueMap in deviceState.ValueMap)
-                {
-                    if (valueMap.MatchesMqtt(stateValue))
-                    {
-                        // Do value comparison, break on first match
-                        mappedValue = valueMap.ConvertToGoogle(stateValue);
-                        break;
-                    }
-                }
-            }
-
-            return mappedValue;
         }
     }
 }
