@@ -1,0 +1,289 @@
+{
+  "google/home/dimmableLight": {
+    "id": "google/home/dimmableLight",
+    "type": "action.devices.types.LIGHT",
+    "willReportState": false,
+    "roomHint": "Some Room",
+    "name": {
+      "defaultNames": [],
+      "name": "dimmable light",
+      "nicknames": []
+    },
+    "deviceInfo": {
+      "manufacturer": "Some Company",
+      "model": "Some Model",
+      "hwVersion": "1.0",
+      "swVersion": "1.0"
+    },
+    "traits": [
+      {
+        "trait": "action.devices.traits.OnOff",
+        "commands": { "action.devices.commands.OnOff": { "on": "google/home/dimmableLight/set" } },
+        "state": {
+          "on": {
+            "topic": "google/home/dimmableLight",
+            "googleType": "bool",
+            "valueMap": [
+              {
+                "mqtt": "on",
+                "type": "value",
+                "google": true
+              },
+              {
+                "mqtt": "off",
+                "type": "value",
+                "google": false
+              },
+              {
+                "mqtt": "0",
+                "type": "value",
+                "google": false
+              },
+              {
+                "mqttMin": 1.0,
+                "mqttMax": 100.0,
+                "type": "range",
+                "google": true
+              }
+            ]
+          }
+        }
+      },
+      {
+        "trait": "action.devices.traits.Brightness",
+        "commands": { "action.devices.commands.BrightnessAbsolute": { "brightness": "google/home/dimmableLight/set" } },
+        "state": {
+          "brightness": {
+            "topic": "google/home/dimmableLight",
+            "googleType": "numeric",
+            "valueMap": [
+              {
+                "mqtt": "on",
+                "type": "value",
+                "google": 100
+              },
+              {
+                "mqtt": "off",
+                "type": "value",
+                "google": 0
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "google/home/switch": {
+    "id": "google/home/switch",
+    "type": "action.devices.types.SWITCH",
+    "willReportState": false,
+    "roomHint": "Some Room",
+    "name": {
+      "defaultNames": [],
+      "name": "switch",
+      "nicknames": []
+    },
+    "deviceInfo": {
+      "manufacturer": "Some Company",
+      "model": "Some Model",
+      "hwVersion": "1.0",
+      "swVersion": "1.0"
+    },
+    "traits": [
+      {
+        "trait": "action.devices.traits.OnOff",
+        "commands": { "action.devices.commands.OnOff": { "on": "google/home/switch/set" } },
+        "state": {
+          "on": {
+            "topic": "google/home/switch",
+            "googleType": "bool",
+            "valueMap": [
+              {
+                "mqtt": "on",
+                "type": "value",
+                "google": true
+              },
+              {
+                "mqtt": "off",
+                "type": "value",
+                "google": false
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "google/home/modeDevice": {
+    "id": "google/home/modeDevice",
+    "type": "action.devices.types.SWITCH",
+    "willReportState": false,
+    "roomHint": "Some Room",
+    "name": {
+      "defaultNames": [],
+      "name": "My Mode Device",
+      "nicknames": []
+    },
+    "deviceInfo": {
+      "manufacturer": "Some Company",
+      "model": "Some Model",
+      "hwVersion": "1.0",
+      "swVersion": "1.0"
+    },
+    "traits": [
+      {
+        "trait": "action.devices.traits.Modes",
+        "attributes": {
+          "availableModes": [
+            {
+              "name": "input source",
+              "name_values": [
+                {
+                  "name_synonym": [ "activity" ],
+                  "lang": "en"
+                }
+              ],
+              "settings": [
+                {
+                  "setting_name": "tv",
+                  "setting_values": [
+                    {
+                      "setting_synonym": [ "tv", "television" ],
+                      "lang": "en"
+                    }
+                  ]
+                },
+                {
+                  "setting_name": "media player",
+                  "setting_values": [
+                    {
+                      "setting_synonym": [ "shield", "chromecast" ],
+                      "lang": "en"
+                    }
+                  ]
+                },
+                {
+                  "setting_name": "game console",
+                  "setting_values": [
+                    {
+                      "setting_synonym": [ "PS4", "playstation", "playstation 4" ],
+                      "lang": "en"
+                    }
+                  ]
+                }
+              ],
+              "ordered": false
+            }
+          ]
+        },
+        "commands": { "action.devices.commands.SetModes": { "updateModeSettings.input source": "google/home/modeDevice/set" } },
+        "state": {
+          "currentModeSettings.input source": {
+            "topic": "google/home/modeDevice",
+            "googleType": "string",
+            "valueMap": [
+              {
+                "mqtt": "Watch TV",
+                "type": "value",
+                "google": "tv"
+              },
+              {
+                "mqtt": "Watch Shield TV",
+                "type": "value",
+                "google": "media player"
+              },
+              {
+                "mqtt": "Play PS4",
+                "type": "value",
+                "google": "game console"
+              },
+              {
+                "mqtt": "PowerOff",
+                "type": "value",
+                "google": "off"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "google/home/vacuum": {
+    "id": "google/home/vacuum",
+    "type": "action.devices.types.VACUUM",
+    "willReportState": false,
+    "roomHint": "Some Room",
+    "name": {
+      "defaultNames": [],
+      "name": "vacuum",
+      "nicknames": []
+    },
+    "deviceInfo": {
+      "manufacturer": "Some Company",
+      "model": "Some Model",
+      "hwVersion": "1.0",
+      "swVersion": "1.0"
+    },
+    "traits": [
+      {
+        "trait": "action.devices.traits.StartStop",
+        "attributes": { "pausable": false },
+        "commands": { "action.devices.commands.StartStop": { "start": "google/home/vacuum/clean/set" } },
+        "state": {
+          "isRunning": {
+            "topic": "google/home/vacuum/docked",
+            "googleType": "bool"
+          },
+          "isPaused": { "googleType": "bool" }
+        }
+      }
+    ]
+  },
+  "google/home/camera": {
+    "id": "google/home/camera",
+    "type": "action.devices.types.CAMERA",
+    "willReportState": false,
+    "roomHint": "Porch",
+    "name": {
+      "defaultNames": [],
+      "name": "camera",
+      "nicknames": []
+    },
+    "deviceInfo": {
+      "manufacturer": "Some Company",
+      "model": "Some Model",
+      "hwVersion": "1.0",
+      "swVersion": "1.0"
+    },
+    "traits": [
+      {
+        "trait": "action.devices.traits.CameraStream",
+        "attributes": {
+          "cameraStreamSupportedProtocols": [ "hls" ],
+          "cameraStreamNeedAuthToken": false,
+          "cameraStreamNeedDrmEncryption": false
+        },
+        "commands": { "action.devices.commands.GetCameraStream": {} },
+        "state": {
+          "cameraStreamAccessUrl": {
+            "googleType": "string",
+            "valueMap": [
+              {
+                "type": "static",
+                "google": "http://someHLSStreamUri"
+              }
+            ]
+          },
+          "cameraStreamReceiverAppId": {
+            "googleType": "string",
+            "valueMap": [ { "type": "static" } ]
+          },
+          "cameraStreamAuthToken": {
+            "googleType": "string",
+            "valueMap": [ { "type": "static" } ]
+          }
+        }
+      }
+    ]
+  }
+}

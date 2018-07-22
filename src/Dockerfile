@@ -21,6 +21,8 @@ FROM microsoft/dotnet:2.1-runtime-alpine AS runtime
 WORKDIR /app
 COPY --from=publish /app/HomeAutio.Mqtt.GoogleHome/out ./
 
+ENV ASPNETCORE_ENVIRONMENT Production
+
 EXPOSE 5000
-VOLUME ["/app/appsettings.json", "/app/googleDevices.json", "/app/tempkey.rsa", "/app/tokens.json", "/app/logs"]
+VOLUME ["/app/appsettings.Production.json", "/app/config", "/app/logs"]
 ENTRYPOINT ["dotnet", "HomeAutio.Mqtt.GoogleHome.dll"]

@@ -153,7 +153,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             else
             {
                 services.AddIdentityServer()
-                    .AddDeveloperSigningCredential()
+                    .AddDeveloperSigningCredential(true, "config/tempkey.rsa")
                     .AddInMemoryClients(Clients.Get(Configuration))
                     .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
                     .AddInMemoryApiResources(Resources.GetApiResources(Configuration))
