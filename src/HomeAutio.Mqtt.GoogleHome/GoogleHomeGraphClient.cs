@@ -16,11 +16,15 @@ namespace HomeAutio.Mqtt.GoogleHome
     /// </summary>
     public class GoogleHomeGraphClient
     {
+        private const string _googleHomeGraphApiReportStateUri = "https://homegraph.googleapis.com/v1/devices:reportStateAndNotification";
+        private const string _homeGraphScope = "https://www.googleapis.com/auth/homegraph";
+
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _agentUserId;
         private readonly ServiceAccount _serviceAccount;
 
         private AccessTokenResponse _accessToken;
+        private object _tokenRefreshLock = new object();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleHomeGraphClient"/> class.
@@ -44,9 +48,13 @@ namespace HomeAutio.Mqtt.GoogleHome
         public async Task SendUpdatesAsync(IList<Models.State.Device> devices, IDictionary<string, string> stateCache)
         {
             // Ensure access token is available
-            if (_accessToken == null || _accessToken.ExpiresAt <= DateTime.Now)
+            if (_accessToken == null || _accessToken.ExpiresAt <= DateTime.Now.AddMinutes(-1))
             {
-                _accessToken = await GetAccessToken(ConstructJwt());
+                lock (_tokenRefreshLock)
+                {
+                    _accessToken = GetAccessToken(ConstructJwt())
+                        .GetAwaiter().GetResult();
+                }
             }
 
             var requestMessage = new Request
@@ -67,7 +75,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("https://homegraph.googleapis.com/v1/devices:reportStateAndNotification"),
+                RequestUri = new Uri(_googleHomeGraphApiReportStateUri),
                 Content = new StringContent(JsonConvert.SerializeObject(requestMessage))
             };
 
@@ -114,7 +122,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256Signature);
 
             // Create auth token
-            var claims = new List<Claim> { new Claim("scope", "https://www.googleapis.com/auth/homegraph") };
+            var claims = new List<Claim> { new Claim("scope", _homeGraphScope) };
             var header = new JwtHeader(signingCredentials);
             var payload = new JwtPayload(
                 _serviceAccount.ClientEmail,

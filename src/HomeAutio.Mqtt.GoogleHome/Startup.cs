@@ -82,7 +82,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Google Home Graph client
             services.AddSingleton<GoogleHomeGraphClient>(serviceProvider =>
             {
-                var googleHomeServiceAccountFile = Configuration.GetValue<string>("googleHomeHomeGraphApiAccountFile");
+                var googleHomeServiceAccountFile = Configuration.GetValue<string>("googleHomeGraphApiAccountFile");
                 if (!string.IsNullOrEmpty(googleHomeServiceAccountFile) && File.Exists(googleHomeServiceAccountFile))
                 {
                     var googleHomeServiceAccountFileContents = File.ReadAllText(googleHomeServiceAccountFile);
