@@ -1,3 +1,4 @@
-tempkey.rsa
-tokens.json
-appsettings.Development.json
+config/tempkey.rsa
+config/tokens.json
+config/googleDevices.json
+appsettings.*.json

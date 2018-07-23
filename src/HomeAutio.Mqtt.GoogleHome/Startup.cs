@@ -82,20 +82,20 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Google Home Graph client
             services.AddSingleton<GoogleHomeGraphClient>(serviceProvider =>
             {
+                ServiceAccount serviceAccount = null;
                 var googleHomeServiceAccountFile = Configuration.GetValue<string>("googleHomeGraph:serviceAccountFile");
                 if (!string.IsNullOrEmpty(googleHomeServiceAccountFile) && File.Exists(googleHomeServiceAccountFile))
                 {
                     var googleHomeServiceAccountFileContents = File.ReadAllText(googleHomeServiceAccountFile);
-                    var serviceAccount = JsonConvert.DeserializeObject<ServiceAccount>(googleHomeServiceAccountFileContents);
-                    return new GoogleHomeGraphClient(
-                        serviceProvider.GetRequiredService<ILogger<GoogleHomeGraphClient>>(),
-                        serviceProvider.GetRequiredService<IHttpClientFactory>(),
-                        serviceAccount,
-                        Configuration.GetValue<string>("googleHomeGraph:agentUserId"),
-                        Configuration.GetValue<string>("googleHomeGraph:apiKey"));
+                    serviceAccount = JsonConvert.DeserializeObject<ServiceAccount>(googleHomeServiceAccountFileContents);
                 }
 
-                return null;
+                return new GoogleHomeGraphClient(
+                    serviceProvider.GetRequiredService<ILogger<GoogleHomeGraphClient>>(),
+                    serviceProvider.GetRequiredService<IHttpClientFactory>(),
+                    serviceAccount,
+                    Configuration.GetValue<string>("googleHomeGraph:agentUserId"),
+                    Configuration.GetValue<string>("googleHomeGraph:apiKey"));
             });
 
             // Setup client
@@ -114,7 +114,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     serviceProvider.GetRequiredService<DeviceConfiguration>(),
                     serviceProvider.GetRequiredService<StateCache>(),
                     serviceProvider.GetRequiredService<IMessageHub>(),
-                    serviceProvider.GetService<GoogleHomeGraphClient>(),
+                    serviceProvider.GetRequiredService<GoogleHomeGraphClient>(),
                     brokerSettings);
             });
 

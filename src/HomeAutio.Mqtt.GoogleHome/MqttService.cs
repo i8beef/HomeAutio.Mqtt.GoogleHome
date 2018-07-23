@@ -86,25 +86,27 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <inheritdoc />
         protected override void Mqtt_MqttMsgPublishReceived(object sender, MqttApplicationMessageReceivedEventArgs e)
         {
-            if (_stateCache.ContainsKey(e.ApplicationMessage.Topic))
+            if (e.ApplicationMessage.Topic == TopicRoot + "REQUEST_SYNC")
+            {
+                // Handle REQUEST_SYNC
+                _googleHomeGraphClient.RequestSyncAsync()
+                    .GetAwaiter().GetResult();
+            }
+            else if (_stateCache.ContainsKey(e.ApplicationMessage.Topic))
             {
                 _stateCache[e.ApplicationMessage.Topic] = e.ApplicationMessage.ConvertPayloadToString();
 
-                // Handle reportState
-                if (_googleHomeGraphClient != null)
-                {
-                    // Identify devices that handle reportState
-                    var devices = _deviceConfig.Values
-                        .Where(x => x.WillReportState)
-                        .Where(x => x.Traits.Any(trait => trait.State.Values.Any(state => state.Topic == e.ApplicationMessage.Topic)))
-                        .ToList();
+                // Identify devices that handle reportState
+                var devices = _deviceConfig.Values
+                    .Where(x => x.WillReportState)
+                    .Where(x => x.Traits.Any(trait => trait.State.Values.Any(state => state.Topic == e.ApplicationMessage.Topic)))
+                    .ToList();
 
-                    // Send updated to Google Home Graph
-                    if (devices.Count() > 0)
-                    {
-                        _googleHomeGraphClient.SendUpdatesAsync(devices, _stateCache)
-                            .GetAwaiter().GetResult();
-                    }
+                // Send updated to Google Home Graph
+                if (devices.Count() > 0)
+                {
+                    _googleHomeGraphClient.SendUpdatesAsync(devices, _stateCache)
+                        .GetAwaiter().GetResult();
                 }
             }
         }

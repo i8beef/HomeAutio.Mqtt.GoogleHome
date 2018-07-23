@@ -58,6 +58,13 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <returns>An awaitable <see cref="Task"/>.</returns>
         public async Task RequestSyncAsync()
         {
+            // If no api key has been provided, don't attempt to call
+            if (string.IsNullOrEmpty(_googleHomeGraphApiKey))
+            {
+                _log.LogWarning("REQUEST_SYNC triggered but Google Home Graph API was blank");
+                return;
+            }
+
             var request = new Request
             {
                 AgentUserId = _agentUserId
@@ -84,6 +91,13 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <returns>An awaitable <see cref="Task"/>.</returns>
         public async Task SendUpdatesAsync(IList<Models.State.Device> devices, IDictionary<string, string> stateCache)
         {
+            // If no service account has been provided, don't attempt to call
+            if (_serviceAccount == null)
+            {
+                _log.LogWarning("WillReportState triggered but Google Home Graph serviceAccountFile setting was blank, or the file didn't exist");
+                return;
+            }
+
             // Ensure access token is available
             if (_accessToken == null || _accessToken.ExpiresAt <= DateTime.Now.AddMinutes(-1))
             {
