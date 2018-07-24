@@ -145,7 +145,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     new X509Certificate2(signingCertFile, signingCertPassPhrase) :
                     new X509Certificate2(signingCertFile);
 
-                services.AddIdentityServer()
+                services.AddIdentityServer(options => options.IssuerUri = Configuration.GetValue<string>("oauth:authority"))
                     .AddSigningCredential(cert)
                     .AddInMemoryClients(Clients.Get(Configuration))
                     .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
@@ -154,7 +154,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             }
             else
             {
-                services.AddIdentityServer()
+                services.AddIdentityServer(options => options.IssuerUri = Configuration.GetValue<string>("oauth:authority"))
                     .AddDeveloperSigningCredential(true, "config/tempkey.rsa")
                     .AddInMemoryClients(Clients.Get(Configuration))
                     .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))

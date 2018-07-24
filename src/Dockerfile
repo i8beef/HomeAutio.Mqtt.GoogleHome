@@ -22,7 +22,9 @@ WORKDIR /app
 COPY --from=publish /app/HomeAutio.Mqtt.GoogleHome/out ./
 
 ENV ASPNETCORE_ENVIRONMENT Production
+ENV ASPNETCORE_URLS "http://*:80"
 
-EXPOSE 5000
+EXPOSE 80/tcp
+
 VOLUME ["/app/appsettings.Production.json", "/app/config", "/app/logs"]
 ENTRYPOINT ["dotnet", "HomeAutio.Mqtt.GoogleHome.dll"]
