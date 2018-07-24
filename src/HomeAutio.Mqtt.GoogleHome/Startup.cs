@@ -132,6 +132,12 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Identity Server 4
             services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
 
+            var pathBase = Environment.GetEnvironmentVariable("ASPNETCORE_PATHBASE");
+            var authority = Configuration.GetValue<string>("oauth:authority");
+            var publicOrigin = !string.IsNullOrEmpty(pathBase)
+                ? new Uri(new Uri(authority), pathBase).ToString()
+                : authority;
+
             var signingCertFile = Configuration.GetValue<string>("oauth:signingCert:file");
             var signingCertPassPhrase = Configuration.GetValue<string>("oauth:signingCert:passPhrase");
             if (!string.IsNullOrEmpty(signingCertFile))
@@ -145,7 +151,12 @@ namespace HomeAutio.Mqtt.GoogleHome
                     new X509Certificate2(signingCertFile, signingCertPassPhrase) :
                     new X509Certificate2(signingCertFile);
 
-                services.AddIdentityServer(options => options.IssuerUri = Configuration.GetValue<string>("oauth:authority"))
+                services
+                    .AddIdentityServer(options =>
+                    {
+                        options.IssuerUri = authority;
+                        options.PublicOrigin = publicOrigin;
+                    })
                     .AddSigningCredential(cert)
                     .AddInMemoryClients(Clients.Get(Configuration))
                     .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
@@ -154,7 +165,12 @@ namespace HomeAutio.Mqtt.GoogleHome
             }
             else
             {
-                services.AddIdentityServer(options => options.IssuerUri = Configuration.GetValue<string>("oauth:authority"))
+                services
+                    .AddIdentityServer(options =>
+                    {
+                        options.IssuerUri = authority;
+                        options.PublicOrigin = publicOrigin;
+                    })
                     .AddDeveloperSigningCredential(true, "config/tempkey.rsa")
                     .AddInMemoryClients(Clients.Get(Configuration))
                     .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
@@ -169,15 +185,17 @@ namespace HomeAutio.Mqtt.GoogleHome
                     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.LoginPath = "/Account/Login";
                     options.LogoutPath = "/Account/Logout";
                     options.ExpireTimeSpan = TimeSpan.FromHours(1);
                     options.SlidingExpiration = true;
-                }).AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
+                })
+                .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
                 {
-                    options.Authority = Configuration.GetValue<string>("oauth:authority");
+                    options.Authority = authority;
                     options.ApiName = Configuration.GetValue<string>("oauth:resources:0:resourceName");
                     options.RequireHttpsMetadata = Configuration.GetValue<bool>("oauth:requireSSL");
                 });
