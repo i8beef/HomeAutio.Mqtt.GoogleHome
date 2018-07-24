@@ -192,7 +192,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             var syncResponsePayload = new Models.Response.SyncResponsePayload
             {
-                AgentUserId = _config.GetValue<string>("googleHomeAgentUserId"),
+                AgentUserId = _config.GetValue<string>("googleHomeGraph:agentUserId"),
                 Devices = _deviceConfiguration.Values.Select(x => new Models.Response.Device
                 {
                     Id = x.Id,
