@@ -132,11 +132,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Identity Server 4
             services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
 
-            var pathBase = Environment.GetEnvironmentVariable("ASPNETCORE_PATHBASE");
             var authority = Configuration.GetValue<string>("oauth:authority");
-            var publicOrigin = !string.IsNullOrEmpty(pathBase)
-                ? new Uri(new Uri(authority), pathBase).ToString()
-                : authority;
 
             var signingCertFile = Configuration.GetValue<string>("oauth:signingCert:file");
             var signingCertPassPhrase = Configuration.GetValue<string>("oauth:signingCert:passPhrase");
@@ -155,7 +151,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     .AddIdentityServer(options =>
                     {
                         options.IssuerUri = authority;
-                        options.PublicOrigin = publicOrigin;
+                        options.PublicOrigin = authority;
                     })
                     .AddSigningCredential(cert)
                     .AddInMemoryClients(Clients.Get(Configuration))
@@ -169,7 +165,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     .AddIdentityServer(options =>
                     {
                         options.IssuerUri = authority;
-                        options.PublicOrigin = publicOrigin;
+                        options.PublicOrigin = authority;
                     })
                     .AddDeveloperSigningCredential(true, "config/tempkey.rsa")
                     .AddInMemoryClients(Clients.Get(Configuration))
