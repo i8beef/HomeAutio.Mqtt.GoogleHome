@@ -13,7 +13,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     /// <summary>
     /// Google home controller.
     /// </summary>
-    [Route("/google/home")]
+    [Route("/smarthome")]
     public class GoogleHomeController : Controller
     {
         private readonly ILogger<GoogleHomeController> _log;
