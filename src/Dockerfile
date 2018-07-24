@@ -17,7 +17,7 @@ WORKDIR /app/HomeAutio.Mqtt.GoogleHome
 RUN dotnet publish -o out
 
 # build runtime image
-FROM microsoft/dotnet:2.1-runtime-alpine AS runtime
+FROM microsoft/dotnet:2.1-aspnetcore-runtime-alpine AS runtime
 WORKDIR /app
 COPY --from=publish /app/HomeAutio.Mqtt.GoogleHome/out ./
 
