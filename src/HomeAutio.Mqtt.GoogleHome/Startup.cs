@@ -190,6 +190,12 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <param name="env">The hosting environment.</param>
         public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
+            var pathBase = Environment.GetEnvironmentVariable("ASPNETCORE_PATHBASE");
+            if (!string.IsNullOrEmpty(pathBase))
+            {
+                app.UsePathBase(pathBase);
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
