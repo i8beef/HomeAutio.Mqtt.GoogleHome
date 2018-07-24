@@ -59,6 +59,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             {
                 var deviceConfigurationString = File.ReadAllText(Configuration.GetValue<string>("deviceConfigFile"));
                 var deviceConfiguration = JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString);
+
                 return new DeviceConfiguration(deviceConfiguration);
             });
 
@@ -76,6 +77,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     .Union(stateValues.OfType<IDictionary<string, object>>()
                         .SelectMany(x => x.Values)
                         .OfType<string>());
+
                 return new StateCache(topics.ToDictionary(x => x, x => string.Empty));
             });
 

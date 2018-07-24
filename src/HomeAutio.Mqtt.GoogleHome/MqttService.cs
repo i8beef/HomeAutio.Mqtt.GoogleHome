@@ -86,6 +86,9 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <inheritdoc />
         protected override void Mqtt_MqttMsgPublishReceived(object sender, MqttApplicationMessageReceivedEventArgs e)
         {
+            var message = e.ApplicationMessage.ConvertPayloadToString();
+            _log.LogInformation("MQTT message received for topic " + e.ApplicationMessage.Topic + ": " + message);
+
             if (e.ApplicationMessage.Topic == TopicRoot + "REQUEST_SYNC")
             {
                 // Handle REQUEST_SYNC
@@ -94,7 +97,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             }
             else if (_stateCache.ContainsKey(e.ApplicationMessage.Topic))
             {
-                _stateCache[e.ApplicationMessage.Topic] = e.ApplicationMessage.ConvertPayloadToString();
+                _stateCache[e.ApplicationMessage.Topic] = message;
 
                 // Identify devices that handle reportState
                 var devices = _deviceConfig.Values
