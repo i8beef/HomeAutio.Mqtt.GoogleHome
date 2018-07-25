@@ -34,6 +34,9 @@ namespace HomeAutio.Mqtt.GoogleHome
                 .ReadFrom.Configuration(config)
                 .CreateLogger();
 
+            // Turn on or off PII data from Microsoft Identity stuff
+            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = config.GetValue<bool>("logPII", false);
+
             try
             {
                 CreateWebHostBuilder(args).Build().Run();
