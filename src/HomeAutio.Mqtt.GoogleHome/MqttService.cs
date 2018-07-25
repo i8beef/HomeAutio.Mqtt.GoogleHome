@@ -147,7 +147,19 @@ namespace HomeAutio.Mqtt.GoogleHome
                                 // Add each of the sub params as a flattened, prefixed parameter
                                 foreach (var subParam in paramValueAsDictionary)
                                 {
-                                    flattenedParams.Add(param.Key + '.' + subParam.Key, subParam.Value);
+                                    // Handle remapping of Modes and Toggles
+                                    if (param.Key == "updateModeSettings")
+                                    {
+                                        flattenedParams.Add("currentModeSettings." + subParam.Key, subParam.Value);
+                                    }
+                                    else if (param.Key == "updateToggleSettings")
+                                    {
+                                        flattenedParams.Add("currentToggleSettings." + subParam.Key, subParam.Value);
+                                    }
+                                    else
+                                    {
+                                        flattenedParams.Add(param.Key + '.' + subParam.Key, subParam.Value);
+                                    }
                                 }
                             }
                             else
