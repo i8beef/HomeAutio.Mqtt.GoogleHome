@@ -132,46 +132,36 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Identity Server 4
             services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
 
+            var publicOrigin = Configuration.GetValue<string>("oauth:publicOrigin");
             var authority = Configuration.GetValue<string>("oauth:authority");
+
+            var identityServerBuilder = services
+                .AddIdentityServer(options =>
+                {
+                    options.IssuerUri = authority;
+                    options.PublicOrigin = publicOrigin;
+                })
+                .AddInMemoryClients(Clients.Get(Configuration))
+                .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
+                .AddInMemoryApiResources(Resources.GetApiResources(Configuration))
+                .AddTestUsers(Users.Get(Configuration));
 
             var signingCertFile = Configuration.GetValue<string>("oauth:signingCert:file");
             var signingCertPassPhrase = Configuration.GetValue<string>("oauth:signingCert:passPhrase");
             if (!string.IsNullOrEmpty(signingCertFile))
             {
                 if (!File.Exists(signingCertFile))
-                {
                     throw new FileNotFoundException("Signing Certificate is missing!");
-                }
 
                 var cert = signingCertPassPhrase != null ?
                     new X509Certificate2(signingCertFile, signingCertPassPhrase) :
                     new X509Certificate2(signingCertFile);
 
-                services
-                    .AddIdentityServer(options =>
-                    {
-                        options.IssuerUri = authority;
-                        options.PublicOrigin = authority;
-                    })
-                    .AddSigningCredential(cert)
-                    .AddInMemoryClients(Clients.Get(Configuration))
-                    .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
-                    .AddInMemoryApiResources(Resources.GetApiResources(Configuration))
-                    .AddTestUsers(Users.Get(Configuration));
+                identityServerBuilder.AddSigningCredential(cert);
             }
             else
             {
-                services
-                    .AddIdentityServer(options =>
-                    {
-                        options.IssuerUri = authority;
-                        options.PublicOrigin = authority;
-                    })
-                    .AddDeveloperSigningCredential(true, "config/tempkey.rsa")
-                    .AddInMemoryClients(Clients.Get(Configuration))
-                    .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
-                    .AddInMemoryApiResources(Resources.GetApiResources(Configuration))
-                    .AddTestUsers(Users.Get(Configuration));
+                identityServerBuilder.AddDeveloperSigningCredential(true, "config/tempkey.rsa");
             }
 
             // Turn on authorization via Cookie (signin, default) and Bearer (API)
