@@ -127,7 +127,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                             {
                                 foreach (var state in trait.State)
                                 {
-                                    states.Add(state.Key, state.Value.MapValueToGoogle(state.Key, null));
+                                    states.Add(state.Key, state.Value.MapValueToGoogle(null));
                                 }
                             }
                         }

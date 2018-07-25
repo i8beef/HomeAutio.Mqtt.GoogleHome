@@ -135,7 +135,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     if (deviceSupportedCommands.ContainsKey(execution.Command))
                     {
                         // Find the specific commands supported parameters it can handle
-                        var deviceSupportedParams = deviceSupportedCommands[execution.Command];
+                        var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command];
 
                         // Flatten the parameters
                         var flattenedParams = new Dictionary<string, object>();
@@ -147,19 +147,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                                 // Add each of the sub params as a flattened, prefixed parameter
                                 foreach (var subParam in paramValueAsDictionary)
                                 {
-                                    // Handle remapping of Modes and Toggles
-                                    if (param.Key == "updateModeSettings")
-                                    {
-                                        flattenedParams.Add("currentModeSettings." + subParam.Key, subParam.Value);
-                                    }
-                                    else if (param.Key == "updateToggleSettings")
-                                    {
-                                        flattenedParams.Add("currentToggleSettings." + subParam.Key, subParam.Value);
-                                    }
-                                    else
-                                    {
-                                        flattenedParams.Add(param.Key + '.' + subParam.Key, subParam.Value);
-                                    }
+                                    flattenedParams.Add(param.Key + '.' + subParam.Key, subParam.Value);
                                 }
                             }
                             else
@@ -172,18 +160,30 @@ namespace HomeAutio.Mqtt.GoogleHome
                         foreach (var parameter in flattenedParams)
                         {
                             // Check if device supports the requested parameter
-                            if (deviceSupportedParams.ContainsKey(parameter.Key))
+                            if (deviceSupportedCommandParams.ContainsKey(parameter.Key))
                             {
+                                // Handle remapping of Modes and Toggles
+                                var stateKey = parameter.Key;
+                                if (parameter.Key.StartsWith("updateModeSettings."))
+                                {
+                                    stateKey = parameter.Key.Replace("updateModeSettings.", "currentModeSettings.");
+                                }
+                                else if (parameter.Key.StartsWith("updateToggleSettings."))
+                                {
+                                    stateKey = parameter.Key.Replace("updateToggleSettings.", "currentToggleSettings.");
+                                }
+
+                                // Find the DeviceState object that provides configuration for mapping state/command values
                                 var deviceState = _deviceConfig[device.Id].Traits
                                     .Where(x => x.Commands.ContainsKey(execution.Command))
                                     .SelectMany(x => x.State)
-                                    .Where(x => x.Key == parameter.Key)
+                                    .Where(x => x.Key == stateKey)
                                     .Select(x => x.Value)
                                     .FirstOrDefault();
 
                                 // Send the MQTT message
-                                var topic = deviceSupportedParams[parameter.Key];
-                                var payload = deviceState.MapValueToMqtt(parameter.Key, parameter.Value);
+                                var topic = deviceSupportedCommandParams[parameter.Key];
+                                var payload = deviceState.MapValueToMqtt(parameter.Value);
                                 await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
                                     .WithTopic(topic)
                                     .WithPayload(payload)

@@ -82,11 +82,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
 
                     // Add parameter
                     var complexValue = (IDictionary<string, object>)parameters[complexParameterParts[0]];
-                    complexValue.Add(complexParameterParts[1], stateParam.Value.MapValueToGoogle(stateParam.Key, value));
+                    complexValue.Add(complexParameterParts[1], stateParam.Value.MapValueToGoogle(value));
                 }
                 else
                 {
-                    parameters.Add(stateParam.Key, stateParam.Value.MapValueToGoogle(stateParam.Key, value));
+                    parameters.Add(stateParam.Key, stateParam.Value.MapValueToGoogle(value));
                 }
             }
 

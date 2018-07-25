@@ -29,10 +29,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <summary>
         /// Handles mapping some common state values to google acceptable state values.
         /// </summary>
-        /// <param name="paramKey">Param key.</param>
         /// <param name="stateValue">State value.</param>
         /// <returns>Remapped value.</returns>
-        public object MapValueToGoogle(string paramKey, string stateValue)
+        public object MapValueToGoogle(string stateValue)
         {
             // Default to to an attempted conversion to the Google type
             object mappedValue = null;
@@ -70,10 +69,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <summary>
         /// Handles mapping some common state values to google acceptable state values.
         /// </summary>
-        /// <param name="paramKey">Param key.</param>
         /// <param name="stateValue">State value.</param>
         /// <returns>Remapped value.</returns>
-        public string MapValueToMqtt(string paramKey, object stateValue)
+        public string MapValueToMqtt(object stateValue)
         {
             // Default to string version of passed parameter value
             var mappedValue = stateValue.ToString();
