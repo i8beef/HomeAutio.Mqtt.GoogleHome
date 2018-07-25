@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Identity;
+using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using IdentityServer4.AccessTokenValidation;
@@ -146,18 +147,41 @@ namespace HomeAutio.Mqtt.GoogleHome
                 .AddInMemoryApiResources(Resources.GetApiResources(Configuration))
                 .AddTestUsers(Users.Get(Configuration));
 
-            var signingCertFile = Configuration.GetValue<string>("oauth:signingCert:file");
-            var signingCertPassPhrase = Configuration.GetValue<string>("oauth:signingCert:passPhrase");
-            if (!string.IsNullOrEmpty(signingCertFile))
-            {
-                if (!File.Exists(signingCertFile))
-                    throw new FileNotFoundException("Signing Certificate is missing!");
+            // Get signing certificates
+            var signingCertsSection = Configuration.GetSection("oauth:signingCerts");
+            var signingCerts = signingCertsSection.GetChildren()
+                .Select(x => new SigningCertificate
+                {
+                    File = x.GetValue<string>("file"),
+                    PassPhrase = x.GetValue<string>("passPhrase")
+                }).ToList();
 
-                var cert = signingCertPassPhrase != null ?
-                    new X509Certificate2(signingCertFile, signingCertPassPhrase) :
-                    new X509Certificate2(signingCertFile);
+            if (signingCerts.Any())
+            {
+                // Add primary cert
+                var primarySigningCert = signingCerts.First();
+                if (!File.Exists(primarySigningCert.File))
+                    throw new FileNotFoundException($"Signing Certificate '{primarySigningCert.File}' is missing!");
+
+                var cert = !string.IsNullOrEmpty(primarySigningCert.PassPhrase) ?
+                    new X509Certificate2(primarySigningCert.File, primarySigningCert.PassPhrase) :
+                    new X509Certificate2(primarySigningCert.File);
 
                 identityServerBuilder.AddSigningCredential(cert);
+
+                // Add any verification certs
+                for (var i = 1; i < signingCerts.Count(); i++)
+                {
+                    var oldSigningCert = signingCerts[i];
+                    if (!File.Exists(oldSigningCert.File))
+                        throw new FileNotFoundException($"Signing Certificate '{oldSigningCert.File}' is missing!");
+
+                    var oldCert = !string.IsNullOrEmpty(oldSigningCert.PassPhrase) ?
+                        new X509Certificate2(oldSigningCert.File, oldSigningCert.PassPhrase) :
+                        new X509Certificate2(oldSigningCert.File);
+
+                    identityServerBuilder.AddValidationKey(oldCert);
+                }
             }
             else
             {
