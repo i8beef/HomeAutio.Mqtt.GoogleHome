@@ -44,7 +44,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             IMessageHub messageHub,
             GoogleHomeGraphClient googleHomeGraphClient,
             BrokerSettings brokerSettings)
-            : base(logger, brokerSettings, "google/home/")
+            : base(logger, brokerSettings, "google/home")
         {
             _log = logger;
             _deviceConfig = deviceConfiguration;
