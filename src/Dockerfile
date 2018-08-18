@@ -26,5 +26,5 @@ ENV ASPNETCORE_URLS http://+:5000
 
 EXPOSE 5000/tcp
 
-VOLUME ["/app/appsettings.Production.json", "/app/config", "/app/logs"]
+VOLUME ["/app/config", "/app/logs"]
 ENTRYPOINT ["dotnet", "HomeAutio.Mqtt.GoogleHome.dll"]
