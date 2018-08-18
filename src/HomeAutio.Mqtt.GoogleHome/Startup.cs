@@ -58,10 +58,16 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Device configuration from file
             services.AddSingleton<DeviceConfiguration>(serviceProvider =>
             {
-                var deviceConfigurationString = File.ReadAllText(Configuration.GetValue<string>("deviceConfigFile"));
-                var deviceConfiguration = JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString);
+                var deviceConfigFile = Configuration.GetValue<string>("deviceConfigFile");
+                if (File.Exists(deviceConfigFile))
+                {
+                    var deviceConfigurationString = File.ReadAllText(deviceConfigFile);
+                    var deviceConfiguration = JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString);
 
-                return new DeviceConfiguration(deviceConfiguration);
+                    return new DeviceConfiguration(deviceConfiguration);
+                }
+
+                return new DeviceConfiguration();
             });
 
             // Build state cache from configuration
