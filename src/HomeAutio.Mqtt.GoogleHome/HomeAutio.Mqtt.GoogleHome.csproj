@@ -30,7 +30,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Easy.MessageHub" Version="3.4.0" />
-    <PackageReference Include="HomeAutio.Mqtt.Core" Version="3.0.0.39" />
+    <PackageReference Include="HomeAutio.Mqtt.Core" Version="3.0.0.41" />
     <PackageReference Include="IdentityServer4" Version="2.2.0" />
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
