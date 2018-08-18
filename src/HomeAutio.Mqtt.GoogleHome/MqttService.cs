@@ -88,7 +88,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             var message = e.ApplicationMessage.ConvertPayloadToString();
             _log.LogInformation("MQTT message received for topic " + e.ApplicationMessage.Topic + ": " + message);
 
-            if (e.ApplicationMessage.Topic == TopicRoot + "REQUEST_SYNC")
+            if (e.ApplicationMessage.Topic == TopicRoot + "/REQUEST_SYNC")
             {
                 // Handle REQUEST_SYNC
                 _googleHomeGraphClient.RequestSyncAsync()
