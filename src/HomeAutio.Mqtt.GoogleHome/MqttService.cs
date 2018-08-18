@@ -7,7 +7,6 @@ using Easy.MessageHub;
 using HomeAutio.Mqtt.Core;
 using HomeAutio.Mqtt.GoogleHome.Models.Request;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
 
@@ -53,7 +52,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             _googleHomeGraphClient = googleHomeGraphClient;
 
             // Subscribe to google home based topics
-            SubscribedTopics.Add(TopicRoot + "#");
+            SubscribedTopics.Add(TopicRoot + "/#");
 
             // Subscribe to all monitored state topics
             foreach (var topic in _stateCache.Keys)
