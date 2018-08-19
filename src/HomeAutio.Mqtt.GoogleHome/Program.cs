@@ -27,7 +27,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 .SetBasePath(Environment.CurrentDirectory)
                 .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json", optional: false)
-                .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "config", $"appsettings.{environmentName}.json"), optional: true)
+                .AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "config", $"appsettings.{environmentName}.json"), optional: true)
                 .Build();
 
             // Setup logging
