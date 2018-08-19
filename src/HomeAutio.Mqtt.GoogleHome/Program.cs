@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -28,7 +27,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 .SetBasePath(Environment.CurrentDirectory)
                 .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json", optional: false)
-                .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "config", $"appsettings.{environmentName}.json"), optional: false)
+                .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "config", $"appsettings.{environmentName}.json"), optional: true)
                 .Build();
 
             // Setup logging
@@ -43,7 +42,7 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             try
             {
-                CreateWebHostBuilder(args).Build().Run();
+                CreateWebHostBuilder(config, args).Build().Run();
             }
             catch (Exception ex)
             {
@@ -59,10 +58,12 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <summary>
         /// Creates a <see cref="IWebHostBuilder"/>.
         /// </summary>
+        /// <param name="config">Configuration.</param>
         /// <param name="args">Arguments.</param>
         /// <returns>A configured <see cref="IWebHostBuilder"/>.</returns>
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        public static IWebHostBuilder CreateWebHostBuilder(IConfigurationRoot config, string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(configBuilder => configBuilder.AddConfiguration(config))
                 .UseStartup<Startup>()
                 .UseSerilog();
     }
