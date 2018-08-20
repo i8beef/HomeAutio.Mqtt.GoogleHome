@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
@@ -64,14 +65,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         public IActionResult Create(DeviceViewModel viewModel)
         {
             if (_deviceRepository.Contains(viewModel.Id))
-            {
                 ModelState.AddModelError("Id", "Device Id already exists");
-            }
 
             if (!ModelState.IsValid)
-            {
                 return RedirectToAction("Create");
-            }
 
             // Set new values
             var device = new Device
@@ -132,12 +129,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <param name="deviceId">Device id.</param>
         /// <returns>Response.</returns>
         [HttpPost]
-        public IActionResult Delete(string deviceId)
+        public IActionResult Delete([Required] string deviceId)
         {
-            if (deviceId == null || !_deviceRepository.Contains(deviceId))
-            {
+            if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
-            }
 
             _deviceRepository.Delete(deviceId);
 
@@ -153,12 +148,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <param name="deviceId">Device id.</param>
         /// <returns>Response.</returns>
         [ImportModelState]
-        public IActionResult Edit(string deviceId)
+        public IActionResult Edit([Required] string deviceId)
         {
-            if (deviceId == null || !_deviceRepository.Contains(deviceId))
-            {
+            if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
-            }
 
             var device = _deviceRepository.Get(deviceId);
             var model = new DeviceViewModel
@@ -196,17 +189,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>Response.</returns>
         [HttpPost]
         [ExportModelState]
-        public IActionResult Edit(string deviceId, DeviceViewModel viewModel)
+        public IActionResult Edit([Required] string deviceId, DeviceViewModel viewModel)
         {
             if (!ModelState.IsValid)
-            {
                 return RedirectToAction("Edit", new { deviceId });
-            }
 
-            if (deviceId == null || !_deviceRepository.Contains(deviceId))
-            {
+            if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
-            }
 
             // Set new values
             var device = _deviceRepository.Get(deviceId);

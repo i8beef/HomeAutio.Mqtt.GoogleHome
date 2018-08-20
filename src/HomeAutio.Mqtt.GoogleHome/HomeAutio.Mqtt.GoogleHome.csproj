@@ -51,6 +51,9 @@
     <Content Update="Views\Devices\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Traits\Create.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Traits\Edit.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

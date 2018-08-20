@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
@@ -35,24 +36,97 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// Edit device.
         /// </summary>
         /// <param name="deviceId">Device id.</param>
+        /// <returns>Response.</returns>
+        [ImportModelState]
+        public IActionResult Create([Required] string deviceId)
+        {
+            if (!_deviceRepository.Contains(deviceId))
+                return NotFound();
+
+            var model = new TraitViewModel();
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// Edit trait.
+        /// </summary>
+        /// <param name="deviceId">Device id.</param>
+        /// <param name="viewModel">View Model.</param>
+        /// <returns>Response.</returns>
+        [HttpPost]
+        [ExportModelState]
+        public IActionResult Create([Required] string deviceId, TraitViewModel viewModel)
+        {
+            if (!_deviceRepository.Contains(deviceId))
+                return NotFound();
+
+            var device = _deviceRepository.Get(deviceId);
+            if (device.Traits.Any(x => x.Trait == viewModel.Trait))
+                ModelState.AddModelError("Trait", "Device already contains trait");
+
+            if (!ModelState.IsValid)
+                return RedirectToAction("Create", new { deviceId });
+
+            // Set values
+            var trait = new DeviceTrait
+            {
+                Trait = viewModel.Trait
+            };
+
+            device.Traits.Add(trait);
+
+            // Save changes
+            _deviceRepository.Persist();
+
+            return RedirectToAction("Edit", "Devices", new { deviceId });
+        }
+
+        /// <summary>
+        /// Delete device.
+        /// </summary>
+        /// <param name="deviceId">Device id.</param>
+        /// <param name="traitId">Trait id.</param>
+        /// <returns>Response.</returns>
+        [HttpPost]
+        public IActionResult Delete([Required] string deviceId, [Required] string traitId)
+        {
+            if (!_deviceRepository.Contains(deviceId))
+                return NotFound();
+
+            var device = _deviceRepository.Get(deviceId);
+
+            var traitEnumId = traitId.ToEnum<TraitType>();
+            if (!device.Traits.Any(x => x.Trait == traitEnumId))
+                return NotFound();
+
+            device.Traits.Remove(device.Traits.First(x => x.Trait == traitEnumId));
+
+            // Save changes
+            _deviceRepository.Persist();
+
+            return RedirectToAction("Edit", "Devices", new { deviceId });
+        }
+
+        /// <summary>
+        /// Edit device.
+        /// </summary>
+        /// <param name="deviceId">Device id.</param>
         /// <param name="traitId">Trait id.</param>
         /// <returns>Response.</returns>
         [ImportModelState]
-        public IActionResult Edit(string deviceId, string traitId)
+        public IActionResult Edit([Required] string deviceId, [Required] string traitId)
         {
-            if (deviceId == null || !_deviceRepository.Contains(deviceId))
-            {
+            if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
-            }
-
-            var traitEnumId = traitId.ToEnum<TraitType>();
 
             var device = _deviceRepository.Get(deviceId);
-            if (traitId == null || !device.Traits.Any(x => x.Trait == traitEnumId))
-            {
-                return NotFound();
-            }
 
+            var traitEnumId = traitId.ToEnum<TraitType>();
+            if (!device.Traits.Any(x => x.Trait == traitEnumId))
+                return NotFound();
+
+            // Get trait
             var trait = device.Traits.First(x => x.Trait == traitEnumId);
             var model = new TraitViewModel
             {
@@ -71,30 +145,25 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>Response.</returns>
         [HttpPost]
         [ExportModelState]
-        public IActionResult Edit(string deviceId, string traitId, TraitViewModel viewModel)
+        public IActionResult Edit([Required] string deviceId, [Required] string traitId, TraitViewModel viewModel)
         {
             if (!ModelState.IsValid)
-            {
                 return RedirectToAction("Edit", new { deviceId, traitId });
-            }
 
-            if (deviceId == null || !_deviceRepository.Contains(deviceId))
-            {
+            if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
-            }
+
+            var device = _deviceRepository.Get(deviceId);
 
             var traitEnumId = traitId.ToEnum<TraitType>();
+            if (!device.Traits.Any(x => x.Trait == traitEnumId))
+                return NotFound();
+
+            // Lock the trait type just in case
+            viewModel.Trait = traitEnumId;
 
             // Set new values
-            var device = _deviceRepository.Get(deviceId);
             var trait = device.Traits.FirstOrDefault(x => x.Trait == traitEnumId);
-            if (trait == null)
-            {
-                trait = new DeviceTrait();
-                device.Traits.Add(trait);
-            }
-
-            trait.Trait = viewModel.Trait;
 
             // Save changes
             _deviceRepository.Persist();
