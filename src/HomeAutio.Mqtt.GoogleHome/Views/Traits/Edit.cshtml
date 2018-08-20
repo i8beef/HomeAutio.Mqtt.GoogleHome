@@ -1,0 +1,36 @@
+@model HomeAutio.Mqtt.GoogleHome.ViewModels.TraitViewModel
+
+<div class="device-page">
+    <div class="page-header">
+        <h1>Trait: @Model.Trait</h1>
+    </div>
+
+    @Html.Partial("_ValidationSummary")
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Edit Trait</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="post">
+                        <fieldset>
+                            <div class="form-group">
+                                <label asp-for="Trait">Trait</label>
+                                <select asp-for="Trait" asp-items="Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.TraitType>()">
+                                    <option selected="selected" value="">Please select</option>
+                                </select>
+                            </div>
+                        </fieldset>
+
+                        <div class="form-group">
+                            <button class="btn btn-primary" name="button" value="update">Update</button>
+                            <a asp-controller="Devices" asp-action="Edit" asp-route-deviceId="@(Context.Request.Query["deviceId"])" class="btn btn-default">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

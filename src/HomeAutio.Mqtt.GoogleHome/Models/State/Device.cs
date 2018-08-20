@@ -59,7 +59,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         {
             var parameters = new Dictionary<string, object>();
             foreach (var stateParam in Traits
-                .Where(trait => trait.Trait != "action.devices.traits.CameraStream")
+                .Where(trait => trait.Trait != TraitType.CameraStream)
                 .SelectMany(trait => trait.State)
                 .Where(state => state.Value.Topic != null))
             {

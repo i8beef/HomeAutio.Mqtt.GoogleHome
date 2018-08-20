@@ -20,7 +20,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
         private readonly IConfiguration _config;
         private readonly IMessageHub _messageHub;
-        private readonly DeviceConfiguration _deviceConfiguration;
+        private readonly GoogleDeviceRepository _deviceRepository;
         private readonly StateCache _stateCache;
 
         /// <summary>
@@ -29,19 +29,19 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <param name="logger">Logging instance.</param>
         /// <param name="configuration">Configuration.</param>
         /// <param name="messageHub">Message nhub.</param>
-        /// <param name="deviceConfiguration">Device configuration.</param>
+        /// <param name="deviceRepository">Device repository.</param>
         /// <param name="stateCache">State cache.</param>
         public GoogleHomeController(
             ILogger<GoogleHomeController> logger,
             IConfiguration configuration,
             IMessageHub messageHub,
-            DeviceConfiguration deviceConfiguration,
+            GoogleDeviceRepository deviceRepository,
             StateCache stateCache)
         {
             _log = logger;
             _config = configuration;
             _messageHub = messageHub;
-            _deviceConfiguration = deviceConfiguration;
+            _deviceRepository = deviceRepository;
             _stateCache = stateCache;
         }
 
@@ -122,7 +122,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                         if (command.Devices.Count() == 1)
                         {
                             // Get the first trait for the camera, as this should be the only trait available
-                            var trait = _deviceConfiguration[command.Devices[0].Id].Traits.FirstOrDefault();
+                            var trait = _deviceRepository.Get(command.Devices[0].Id).Traits.FirstOrDefault();
                             if (trait != null)
                             {
                                 foreach (var state in trait.State)
@@ -175,7 +175,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             {
                 Devices = intent.Payload.Devices.ToDictionary(
                     x => x.Id,
-                    x => _deviceConfiguration[x.Id].GetGoogleState(_stateCache))
+                    x => _deviceRepository.Get(x.Id).GetGoogleState(_stateCache))
             };
 
             return queryResponsePayload;
@@ -193,7 +193,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             var syncResponsePayload = new Models.Response.SyncResponsePayload
             {
                 AgentUserId = _config.GetValue<string>("googleHomeGraph:agentUserId"),
-                Devices = _deviceConfiguration.Values.Select(x => new Models.Response.Device
+                Devices = _deviceRepository.GetAll().Select(x => new Models.Response.Device
                 {
                     Id = x.Id,
                     Type = x.Type,

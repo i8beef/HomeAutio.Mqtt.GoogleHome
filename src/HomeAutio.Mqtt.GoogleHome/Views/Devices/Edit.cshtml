@@ -1,0 +1,108 @@
+@using HomeAutio.Mqtt.GoogleHome
+@model HomeAutio.Mqtt.GoogleHome.ViewModels.DeviceViewModel
+
+<div class="device-page">
+    <div class="page-header">
+        <h1>Device: @Model.Id</h1>
+    </div>
+
+    @Html.Partial("_ValidationSummary")
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Device</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="post">
+                        <fieldset>
+                            <div class="form-group">
+                                <label asp-for="Id">Device Id</label>
+                                <input class="form-control" placeholder="Device Id" asp-for="Id" autofocus>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Type">Device Type</label>
+                                <select asp-for="Type" asp-items="Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.DeviceType>()">
+                                    <option selected="selected" value="">Please select</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="WillReportState">
+                                    <input asp-for="WillReportState" type="checkbox" />
+                                    <strong>Will Report State</strong>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="RoomHint">Room Hint</label>
+                                <input class="form-control" placeholder="Room Hint" asp-for="RoomHint" autofocus>
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Name Information</legend>
+                            <div class="form-group">
+                                <label asp-for="DefaultNames">Default Names</label>
+                                <input class="form-control" placeholder="Default Names" asp-for="DefaultNames" autofocus disabled>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Name">Name</label>
+                                <input class="form-control" placeholder="Name" asp-for="Name" autofocus>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Nicknames">Nicknames</label>
+                                <input class="form-control" placeholder="Nicknames" asp-for="Nicknames" autofocus disabled>
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Manufacturer Information</legend>
+                            <div class="form-group">
+                                <label asp-for="Manufacturer">Manufacturer</label>
+                                <input class="form-control" placeholder="Manufacturer" asp-for="Manufacturer" autofocus>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Model">Model</label>
+                                <input class="form-control" placeholder="Model" asp-for="Model" autofocus>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="HwVersion">Hardware Version</label>
+                                <input class="form-control" placeholder="Hardware Version" asp-for="HwVersion" autofocus>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="SwVersion">Software Version</label>
+                                <input class="form-control" placeholder="Software Version" asp-for="SwVersion" autofocus>
+                            </div>
+                        </fieldset>
+
+                        <div class="form-group">
+                            <button class="btn btn-primary" name="button" value="update">Update</button>
+                            <a asp-controller="Devices" asp-action="Index" class="btn btn-default">Cancel</a>
+                        </div>
+                    </form>
+
+                    <form method="post" asp-action="Delete" asp-route-deviceId="@Model.Id">
+                        <button class="btn btn-danger" name="button" value="delete">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Traits</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="list-group">
+                        <a asp-controller="Traits" asp-action="Create" class="list-group-item list-group-item-action active">Add Trait</a>
+                        @foreach (var trait in Model.Traits)
+                        {
+                        <a asp-controller="Traits" asp-action="Edit" asp-route-deviceId="@Model.Id" asp-route-traitId="@trait.ToEnumString()" class="list-group-item list-group-item-action">@trait.ToEnumString()</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
