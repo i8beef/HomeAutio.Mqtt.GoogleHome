@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
 using HomeAutio.Mqtt.GoogleHome.Models;
@@ -7,6 +8,7 @@ using HomeAutio.Mqtt.GoogleHome.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Controllers
 {
@@ -71,7 +73,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             // Set values
             var trait = new DeviceTrait
             {
-                Trait = viewModel.Trait
+                Trait = viewModel.Trait,
+                Attributes = !string.IsNullOrEmpty(viewModel.Attributes) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(viewModel.Attributes, new ObjectDictionaryConverter()) : null,
+                Commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : null,
+                State = !string.IsNullOrEmpty(viewModel.State) ? JsonConvert.DeserializeObject<Dictionary<string, DeviceState>>(viewModel.State) : null
             };
 
             device.Traits.Add(trait);
@@ -130,7 +135,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             var trait = device.Traits.First(x => x.Trait == traitEnumId);
             var model = new TraitViewModel
             {
-                Trait = trait.Trait
+                Trait = trait.Trait,
+                Attributes = trait.Attributes != null ? JsonConvert.SerializeObject(trait.Attributes, Formatting.Indented) : null,
+                Commands = trait.Commands != null ? JsonConvert.SerializeObject(trait.Commands, Formatting.Indented) : null,
+                State = trait.State != null ? JsonConvert.SerializeObject(trait.State, Formatting.Indented) : null
             };
 
             return View(model);
@@ -164,6 +172,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             // Set new values
             var trait = device.Traits.FirstOrDefault(x => x.Trait == traitEnumId);
+
+            trait.Attributes = !string.IsNullOrEmpty(viewModel.Attributes) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(viewModel.Attributes, new ObjectDictionaryConverter()) : null;
+            trait.Commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : null;
+            trait.State = !string.IsNullOrEmpty(viewModel.State) ? JsonConvert.DeserializeObject<Dictionary<string, DeviceState>>(viewModel.State) : null;
 
             // Save changes
             _deviceRepository.Persist();
