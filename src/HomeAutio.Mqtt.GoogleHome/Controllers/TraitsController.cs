@@ -15,6 +15,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     /// <summary>
     /// Traits controller.
     /// </summary>
+    [Authorize]
     public class TraitsController : Controller
     {
         private readonly ILogger<TraitsController> _log;

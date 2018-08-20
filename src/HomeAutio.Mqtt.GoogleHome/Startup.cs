@@ -245,7 +245,12 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             app.UseStaticFiles();
             app.UseAuthentication();
-            app.UseMvcWithDefaultRoute();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Devices}/{action=Index}/{id?}");
+            });
             app.UseIdentityServer();
         }
     }

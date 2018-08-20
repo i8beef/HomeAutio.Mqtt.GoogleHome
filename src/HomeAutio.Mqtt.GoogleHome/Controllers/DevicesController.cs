@@ -13,6 +13,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     /// <summary>
     /// Devices controller.
     /// </summary>
+    [Authorize]
     public class DevicesController : Controller
     {
         private readonly ILogger<DevicesController> _log;
