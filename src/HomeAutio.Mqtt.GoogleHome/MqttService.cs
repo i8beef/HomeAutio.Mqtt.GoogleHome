@@ -19,7 +19,7 @@ namespace HomeAutio.Mqtt.GoogleHome
     {
         private readonly ILogger<MqttService> _log;
 
-        private readonly DeviceConfiguration _deviceConfig;
+        private readonly GoogleDeviceRepository _deviceRepository;
         private readonly StateCache _stateCache;
         private readonly IMessageHub _messageHub;
         private readonly IList<Guid> _messageHubSubscriptions = new List<Guid>();
@@ -31,14 +31,14 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// Initializes a new instance of the <see cref="MqttService"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
-        /// <param name="deviceConfiguration">Ddevice configuration.</param>
+        /// <param name="deviceRepository">Device repository.</param>
         /// <param name="stateCache">State cache,</param>
         /// <param name="messageHub">Message hub.</param>
         /// <param name="googleHomeGraphClient">Google Home Graph API client.</param>
         /// <param name="brokerSettings">MQTT broker settings.</param>
         public MqttService(
             ILogger<MqttService> logger,
-            DeviceConfiguration deviceConfiguration,
+            GoogleDeviceRepository deviceRepository,
             StateCache stateCache,
             IMessageHub messageHub,
             GoogleHomeGraphClient googleHomeGraphClient,
@@ -46,7 +46,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             : base(logger, brokerSettings, "google/home")
         {
             _log = logger;
-            _deviceConfig = deviceConfiguration;
+            _deviceRepository = deviceRepository;
             _stateCache = stateCache;
             _messageHub = messageHub;
             _googleHomeGraphClient = googleHomeGraphClient;
@@ -99,7 +99,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 _stateCache[e.ApplicationMessage.Topic] = message;
 
                 // Identify devices that handle reportState
-                var devices = _deviceConfig.Values
+                var devices = _deviceRepository.GetAll()
                     .Where(x => x.WillReportState)
                     .Where(x => x.Traits.Any(trait => trait.State.Values.Any(state => state.Topic == e.ApplicationMessage.Topic)))
                     .ToList();
@@ -124,7 +124,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             foreach (var device in command.Devices)
             {
                 // Find all supported commands for the device
-                var deviceSupportedCommands = _deviceConfig[device.Id].Traits
+                var deviceSupportedCommands = _deviceRepository.Get(device.Id).Traits
                     .SelectMany(x => x.Commands)
                     .ToDictionary(x => x.Key, x => x.Value);
 
@@ -173,7 +173,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                                 }
 
                                 // Find the DeviceState object that provides configuration for mapping state/command values
-                                var deviceState = _deviceConfig[device.Id].Traits
+                                var deviceState = _deviceRepository.Get(device.Id).Traits
                                     .Where(x => x.Commands.ContainsKey(execution.Command))
                                     .SelectMany(x => x.State)
                                     .Where(x => x.Key == stateKey)

@@ -1,0 +1,99 @@
+@using HomeAutio.Mqtt.GoogleHome
+@model HomeAutio.Mqtt.GoogleHome.ViewModels.TraitViewModel
+
+@section Scripts {
+    <script src="~/lib/codemirror/lib/codemirror.js"></script>
+    <script src="~/lib/codemirror/mode/javascript/javascript.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" />
+
+    <script src="//rawgithub.com/zaach/jsonlint/79b553fb65c192add9066da64043458981b3972b/lib/jsonlint.js"></script>
+    <script src="~/lib/codemirror/addon/lint/lint.js"></script>
+    <script src="~/lib/codemirror/addon/lint/json-lint.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror/addon/lint/lint.css" />
+
+    <script src="~/lib/codemirror/addon/fold/foldcode.js"></script>
+    <script src="~/lib/codemirror/addon/fold/brace-fold.js"></script>
+    <script src="~/lib/codemirror/addon/fold/foldgutter.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" />
+
+    <script src="~/lib/codemirror/addon/edit/closebrackets.js"></script>
+    <script src="~/lib/codemirror/addon/edit/matchbrackets.js"></script>
+
+    <script>
+        var codemirrorOptions = {
+            mode: "application/json",
+            lineNumbers: true,
+            foldGutter: true,
+            gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            lint: true,
+            matchBrackets: true,
+            autoCloseBrackets: true,
+        };
+
+        var attributesEditor = CodeMirror.fromTextArea(document.getElementById("Attributes"), codemirrorOptions);
+        var commandsEditor = CodeMirror.fromTextArea(document.getElementById("Commands"), codemirrorOptions);
+        var stateEditor = CodeMirror.fromTextArea(document.getElementById("State"), codemirrorOptions);
+    </script>
+
+    <style>
+        .CodeMirror {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+        }
+    </style>
+}
+
+<div class="device-page">
+    <div class="page-header">
+        <h1>Trait: @Model.Trait.ToEnumString()</h1>
+    </div>
+
+    @Html.Partial("_ValidationSummary")
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Edit Trait</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="post">
+                        <fieldset>
+                            <div class="form-group">
+                                <label asp-for="Trait">Trait</label>
+                                <select class="form-control" asp-for="Trait" asp-items="Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.TraitType>()" disabled>
+                                    <option selected="selected" value="">Please select</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Attributes">Attributes</label>
+                                <textarea class="form-control" asp-for="Attributes" rows="10"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Commands">Commands</label>
+                                <textarea class="form-control" asp-for="Commands" rows="10"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="State">State</label>
+                                <textarea class="form-control" asp-for="State" rows="10"></textarea>
+                            </div>
+                        </fieldset>
+
+                        <div class="form-group">
+                            <button class="btn btn-primary" name="button" value="update">Update</button>
+                            <a asp-controller="Devices" asp-action="Edit" asp-route-deviceId="@(Context.Request.Query["deviceId"])" class="btn btn-default">Cancel</a>
+                        </div>
+                    </form>
+
+                    <form method="post" asp-action="Delete" asp-route-deviceId="@(Context.Request.Query["deviceId"])" asp-route-traitId="@Model.Trait.ToEnumString()">
+                        <button class="btn btn-danger" name="button" value="delete">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -13,7 +13,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Response
         /// </summary>
         public Device()
         {
-            Traits = new List<string>();
+            Traits = new List<TraitType>();
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Response
         /// <summary>
         /// Supported traits.
         /// </summary>
-        public IList<string> Traits { get; set; }
+        public IList<TraitType> Traits { get; set; }
 
         /// <summary>
         /// Attributes.

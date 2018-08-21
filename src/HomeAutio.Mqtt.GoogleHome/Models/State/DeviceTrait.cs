@@ -20,7 +20,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <summary>
         /// Trait name.
         /// </summary>
-        public string Trait { get; set; }
+        public TraitType Trait { get; set; }
 
         /// <summary>
         /// Trait supporting attributes.

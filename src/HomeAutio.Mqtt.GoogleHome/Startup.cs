@@ -21,6 +21,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
@@ -49,6 +50,19 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            // Global JSON options
+            JsonConvert.DefaultSettings = () =>
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                };
+
+                settings.Converters.Add(new StringEnumConverter());
+
+                return settings;
+            };
+
             // Http client factory registration.
             services.AddHttpClient();
 
@@ -56,24 +70,18 @@ namespace HomeAutio.Mqtt.GoogleHome
             services.AddSingleton<IMessageHub>(serviceProvider => MessageHub.Instance);
 
             // Device configuration from file
-            services.AddSingleton<DeviceConfiguration>(serviceProvider =>
+            services.AddSingleton<GoogleDeviceRepository>(serviceProvider =>
             {
                 var deviceConfigFile = Configuration.GetValue<string>("deviceConfigFile");
-                if (File.Exists(deviceConfigFile))
-                {
-                    var deviceConfigurationString = File.ReadAllText(deviceConfigFile);
-                    var deviceConfiguration = JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString);
-
-                    return new DeviceConfiguration(deviceConfiguration);
-                }
-
-                return new DeviceConfiguration();
+                return new GoogleDeviceRepository(
+                    serviceProvider.GetRequiredService<ILogger<GoogleDeviceRepository>>(),
+                    deviceConfigFile);
             });
 
             // Build state cache from configuration
             services.AddSingleton<StateCache>(serviceProvider =>
             {
-                var stateValues = serviceProvider.GetService<DeviceConfiguration>().Values
+                var stateValues = serviceProvider.GetService<GoogleDeviceRepository>().GetAll()
                     .SelectMany(x => x.Traits)
                     .SelectMany(x => x.State.Values)
                     .Select(x => x.Topic)
@@ -120,7 +128,7 @@ namespace HomeAutio.Mqtt.GoogleHome
 
                 return new MqttService(
                     serviceProvider.GetRequiredService<ILogger<MqttService>>(),
-                    serviceProvider.GetRequiredService<DeviceConfiguration>(),
+                    serviceProvider.GetRequiredService<GoogleDeviceRepository>(),
                     serviceProvider.GetRequiredService<StateCache>(),
                     serviceProvider.GetRequiredService<IMessageHub>(),
                     serviceProvider.GetRequiredService<GoogleHomeGraphClient>(),
@@ -237,7 +245,12 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             app.UseStaticFiles();
             app.UseAuthentication();
-            app.UseMvcWithDefaultRoute();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Devices}/{action=Index}/{id?}");
+            });
             app.UseIdentityServer();
         }
     }
