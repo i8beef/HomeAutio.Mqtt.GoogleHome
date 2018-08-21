@@ -1,5 +1,48 @@
 @model HomeAutio.Mqtt.GoogleHome.ViewModels.TraitViewModel
 
+@section Scripts {
+    <script src="~/lib/codemirror/lib/codemirror.js"></script>
+    <script src="~/lib/codemirror/mode/javascript/javascript.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" />
+
+    <script src="//rawgithub.com/zaach/jsonlint/79b553fb65c192add9066da64043458981b3972b/lib/jsonlint.js"></script>
+    <script src="~/lib/codemirror/addon/lint/lint.js"></script>
+    <script src="~/lib/codemirror/addon/lint/json-lint.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror/addon/lint/lint.css" />
+
+    <script src="~/lib/codemirror/addon/fold/foldcode.js"></script>
+    <script src="~/lib/codemirror/addon/fold/brace-fold.js"></script>
+    <script src="~/lib/codemirror/addon/fold/foldgutter.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" />
+
+    <script src="~/lib/codemirror/addon/edit/closebrackets.js"></script>
+    <script src="~/lib/codemirror/addon/edit/matchbrackets.js"></script>
+
+    <script>
+        var codemirrorOptions = {
+            mode: "application/json",
+            lineNumbers: true,
+            foldGutter: true,
+            gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            lint: true,
+            matchBrackets: true,
+            autoCloseBrackets: true,
+        };
+
+        var attributesEditor = CodeMirror.fromTextArea(document.getElementById("Attributes"), codemirrorOptions);
+        var commandsEditor = CodeMirror.fromTextArea(document.getElementById("Commands"), codemirrorOptions);
+        var stateEditor = CodeMirror.fromTextArea(document.getElementById("State"), codemirrorOptions);
+    </script>
+
+    <style>
+        .CodeMirror {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+        }
+    </style>
+}
+
 <div class="device-page">
     <div class="page-header">
         <h1>Create Trait</h1>
