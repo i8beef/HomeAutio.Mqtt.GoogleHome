@@ -115,7 +115,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     Configuration.GetValue<string>("googleHomeGraph:apiKey"));
             });
 
-            // Setup client
+            // Setup MQTT hosted service
             services.AddSingleton<IHostedService, MqttService>(serviceProvider =>
             {
                 var brokerSettings = new Core.BrokerSettings
@@ -135,6 +135,10 @@ namespace HomeAutio.Mqtt.GoogleHome
                     brokerSettings);
             });
 
+            // Setup token cleanup hosted service
+            services.AddSingleton<IHostedService, TokenCleanupService>();
+            services.AddTransient<TokenCleanup>();
+
             // MVC
             services.AddMvc()
                 .AddJsonOptions(opt =>
@@ -145,7 +149,8 @@ namespace HomeAutio.Mqtt.GoogleHome
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Identity Server 4
-            services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
+            services.AddSingleton<IPersistedGrantStoreWithExpiration, PersistedGrantStore>();
+            services.AddSingleton<IPersistedGrantStore>(x => x.GetRequiredService<IPersistedGrantStoreWithExpiration>());
 
             var publicOrigin = Configuration.GetValue<string>("oauth:publicOrigin");
             var authority = Configuration.GetValue<string>("oauth:authority");
