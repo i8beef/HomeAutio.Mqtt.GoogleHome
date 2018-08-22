@@ -51,13 +51,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <inheritdoc />
         public Task<PersistedGrant> GetAsync(string key)
         {
-            PersistedGrant token;
-            if (_repository.TryGetValue(key, out token))
+            if (_repository.TryGetValue(key, out PersistedGrant token))
             {
                 return Task.FromResult(token);
             }
 
-            _log.LogWarning($"Failed to find token with key {key}");
+            _log.LogWarning("Failed to find token with key {key}", key);
             return Task.FromResult<PersistedGrant>(null);
         }
 
@@ -75,13 +74,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <inheritdoc />
         public Task RemoveAsync(string key)
         {
-            if (!_repository.TryRemove(key, out _))
+            if (_repository.TryRemove(key, out _))
             {
                 WriteToFile();
             }
             else
             {
-                _log.LogWarning($"Failed to remove token with key {key}");
+                _log.LogWarning("Failed to remove token with key {key}", key);
             }
 
             return Task.CompletedTask;
@@ -95,15 +94,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                 .Select(x => x.Key);
 
             var keys = query.ToArray();
+            var numKeysRemoved = 0;
             foreach (var key in keys)
             {
-                if (!_repository.TryRemove(key, out _))
-                {
-                    _log.LogWarning($"Failed to remove token with key {key}");
-                }
+                if (_repository.TryRemove(key, out _))
+                    numKeysRemoved++;
+                else
+                    _log.LogWarning("Failed to remove token with key {key}", key);
             }
 
-            WriteToFile();
+            if (numKeysRemoved > 0)
+                WriteToFile();
 
             return Task.CompletedTask;
         }
@@ -116,15 +117,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                 .Select(x => x.Key);
 
             var keys = query.ToArray();
+            var numKeysRemoved = 0;
             foreach (var key in keys)
             {
-                if (!_repository.TryRemove(key, out _))
-                {
-                    _log.LogWarning($"Failed to remove token with key {key}");
-                }
+                if (_repository.TryRemove(key, out _))
+                    numKeysRemoved++;
+                else
+                    _log.LogWarning("Failed to remove token with key {key}", key);
             }
 
-            WriteToFile();
+            if (numKeysRemoved > 0)
+                WriteToFile();
 
             return Task.CompletedTask;
         }
@@ -137,15 +140,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                 .Select(x => x.Key);
 
             var keys = query.ToArray();
+            var numKeysRemoved = 0;
             foreach (var key in keys)
             {
-                if (!_repository.TryRemove(key, out _))
-                {
-                    _log.LogWarning($"Failed to remove token with key {key}");
-                }
+                if (_repository.TryRemove(key, out _))
+                    numKeysRemoved++;
+                else
+                    _log.LogWarning("Failed to remove token with key {key}", key);
             }
 
-            WriteToFile();
+            if (numKeysRemoved > 0)
+                WriteToFile();
 
             return Task.CompletedTask;
         }
@@ -167,11 +172,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                     {
                         if (!_repository.TryAdd(record.Key, record.Value))
                         {
-                            _log.LogWarning($"Failed to restore token with key {record.Key}");
+                            _log.LogWarning("Failed to remove token with key {key}", record.Key);
                         }
                     }
 
-                    _log.LogInformation($"Restored tokens from {_file}");
+                    _log.LogInformation("Restored tokens from {file}", _file);
                 }
             }
         }
@@ -186,7 +191,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                 var contents = JsonConvert.SerializeObject(_repository, _jsonSerializerSettings);
                 File.WriteAllText(_file, contents);
 
-                _log.LogInformation($"Wrote tokens to {_file}");
+                _log.LogInformation("Wrote tokens to {file}", _file);
             }
         }
     }
