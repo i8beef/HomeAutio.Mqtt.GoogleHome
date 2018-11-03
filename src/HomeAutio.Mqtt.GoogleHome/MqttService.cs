@@ -161,7 +161,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                             // Check if device supports the requested parameter
                             if (deviceSupportedCommandParams.ContainsKey(parameter.Key))
                             {
-                                // Handle remapping of Modes and Toggles
+                                // Handle remapping of Modes, Toggles and FanSpeed
                                 var stateKey = parameter.Key;
                                 if (parameter.Key.StartsWith("updateModeSettings."))
                                 {
@@ -170,6 +170,10 @@ namespace HomeAutio.Mqtt.GoogleHome
                                 else if (parameter.Key.StartsWith("updateToggleSettings."))
                                 {
                                     stateKey = parameter.Key.Replace("updateToggleSettings.", "currentToggleSettings.");
+                                }
+                                else if (parameter.Key == "fanSpeed")
+                                {
+                                    stateKey = "currentFanSpeedSetting";
                                 }
 
                                 // Find the DeviceState object that provides configuration for mapping state/command values

@@ -137,21 +137,24 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                         // Copy the incoming state values, rather than getting current
                         foreach (var param in execution.Params)
                         {
-                            // Handle remapping of Modes and Toggles
                             if (param.Key == "updateModeSettings")
                             {
+                                // Modes
                                 states.Add("currentModeSettings", param.Value);
                             }
                             else if (param.Key == "updateToggleSettings")
                             {
+                                // Toggles
                                 states.Add("currentToggleSettings", param.Value);
                             }
                             else if (param.Key == "fanSpeed")
                             {
+                                // Fan speed
                                 states.Add("currentFanSpeedSetting", param.Value);
                             }
                             else
                             {
+                                // Sane types
                                 states.Add(param.Key, param.Value);
                             }
                         }
