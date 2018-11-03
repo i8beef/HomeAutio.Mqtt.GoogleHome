@@ -146,6 +146,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                             {
                                 states.Add("currentToggleSettings", param.Value);
                             }
+                            else if (param.Key == "fanSpeed")
+                            {
+                                states.Add("currentFanSpeedSetting", param.Value);
+                            }
                             else
                             {
                                 states.Add(param.Key, param.Value);
