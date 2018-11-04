@@ -33,6 +33,15 @@
         var attributesEditor = CodeMirror.fromTextArea(document.getElementById("Attributes"), codemirrorOptions);
         var commandsEditor = CodeMirror.fromTextArea(document.getElementById("Commands"), codemirrorOptions);
         var stateEditor = CodeMirror.fromTextArea(document.getElementById("State"), codemirrorOptions);
+
+        var openDocumentation = function () {
+            var traitDropDown = document.getElementById("Trait");
+            var traitName = traitDropDown.options[traitDropDown.selectedIndex].text;
+
+            if (traitName !== "Please select") {
+                window.open('https://developers.google.com/actions/smarthome/traits/' + traitName.toLowerCase());
+            }
+        }
     </script>
 
     <style>
@@ -68,6 +77,10 @@
                             </div>
 
                             <div class="form-group">
+                                <a onclick="openDocumentation()" class="btn btn-warning">Trait documentation</a>
+                            </div>
+
+                            <div class="form-group">
                                 <label asp-for="Attributes">Attributes</label>
                                 <textarea class="form-control" asp-for="Attributes" rows="10"></textarea>
                             </div>
@@ -90,7 +103,7 @@
                     </form>
 
                     <form method="post" asp-action="Delete" asp-route-deviceId="@(Context.Request.Query["deviceId"])" asp-route-traitId="@Model.Trait.ToEnumString()">
-                        <button class="btn btn-danger" name="button" value="delete">Delete</button>
+                        <button class="btn btn-danger" name="button" value="delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
                     </form>
                 </div>
             </div>

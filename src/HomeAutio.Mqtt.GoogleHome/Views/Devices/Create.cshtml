@@ -1,5 +1,18 @@
 @model HomeAutio.Mqtt.GoogleHome.ViewModels.DeviceViewModel
 
+@section Scripts {
+    <script>
+        var openDocumentation = function () {
+            var deviceTypeDropDown = document.getElementById("Type");
+            var deviceType = deviceTypeDropDown.options[deviceTypeDropDown.selectedIndex].text;
+
+            if (deviceType !== "Please select") {
+                window.open('https://developers.google.com/actions/smarthome/guides/' + deviceType.toLowerCase());
+            }
+        }
+    </script>
+}
+
 <div class="device-page">
     <div class="page-header">
         <h1>Create Device</h1>
@@ -25,6 +38,9 @@
                                 <select class="form-control" asp-for="Type" asp-items="Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.DeviceType>()">
                                     <option selected="selected" value="">Please select</option>
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <a onclick="openDocumentation()" class="btn btn-warning">Device documentation</a>
                             </div>
                             <div class="form-group">
                                 <label asp-for="WillReportState">

@@ -1,6 +1,8 @@
 @model HomeAutio.Mqtt.GoogleHome.ViewModels.TraitViewModel
 
 @section Scripts {
+    <script src="~/js/traitTemplates.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.8.8/beautify.js"></script>
     <script src="~/lib/codemirror/lib/codemirror.js"></script>
     <script src="~/lib/codemirror/mode/javascript/javascript.js"></script>
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" />
@@ -32,6 +34,32 @@
         var attributesEditor = CodeMirror.fromTextArea(document.getElementById("Attributes"), codemirrorOptions);
         var commandsEditor = CodeMirror.fromTextArea(document.getElementById("Commands"), codemirrorOptions);
         var stateEditor = CodeMirror.fromTextArea(document.getElementById("State"), codemirrorOptions);
+
+        // Templates
+        var loadTemplate = function () {
+            var traitDropDown = document.getElementById("Trait");
+            var traitName = traitDropDown.options[traitDropDown.selectedIndex].text;
+
+            if (traitName !== "Please select") {
+                var beautifySettings = {
+                    indent_size: 2,
+                    space_in_empty_paren: true
+                };
+
+                attributesEditor.setValue(js_beautify(JSON.stringify(traitTemplates[traitName].attributes), beautifySettings));
+                commandsEditor.setValue(js_beautify(JSON.stringify(traitTemplates[traitName].commands), beautifySettings));
+                stateEditor.setValue(js_beautify(JSON.stringify(traitTemplates[traitName].state), beautifySettings));
+            }
+        };
+
+        var openDocumentation = function () {
+            var traitDropDown = document.getElementById("Trait");
+            var traitName = traitDropDown.options[traitDropDown.selectedIndex].text;
+
+            if (traitName !== "Please select") {
+                window.open('https://developers.google.com/actions/smarthome/traits/' + traitName.toLowerCase());
+            }
+        }
     </script>
 
     <style>
@@ -64,6 +92,11 @@
                                 <select class="form-control" asp-for="Trait" asp-items="Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.TraitType>()">
                                     <option selected="selected" value="">Please select</option>
                                 </select>
+                            </div>
+
+                            <div class="form-group">
+                                <a onclick="loadTemplate()" class="btn btn-warning">Load Example Templates</a>
+                                <a onclick="openDocumentation()" class="btn btn-warning">Trait documentation</a>
                             </div>
 
                             <div class="form-group">

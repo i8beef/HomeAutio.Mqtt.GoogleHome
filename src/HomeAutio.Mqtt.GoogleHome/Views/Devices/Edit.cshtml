@@ -1,6 +1,19 @@
 @using HomeAutio.Mqtt.GoogleHome
 @model HomeAutio.Mqtt.GoogleHome.ViewModels.DeviceViewModel
 
+@section Scripts {
+    <script>
+        var openDocumentation = function () {
+            var deviceTypeDropDown = document.getElementById("Type");
+            var deviceType = deviceTypeDropDown.options[deviceTypeDropDown.selectedIndex].text;
+
+            if (deviceType !== "Please select") {
+                window.open('https://developers.google.com/actions/smarthome/guides/' + deviceType.toLowerCase());
+            }
+        }
+    </script>
+}
+
 <div class="device-page">
     <div class="page-header">
         <h1>Device: @Model.Id</h1>
@@ -26,6 +39,9 @@
                                 <select class="form-control" asp-for="Type" asp-items="Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.DeviceType>()">
                                     <option selected="selected" value="">Please select</option>
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <a onclick="openDocumentation()" class="btn btn-warning">Device documentation</a>
                             </div>
                             <div class="form-group">
                                 <label asp-for="WillReportState">
@@ -82,7 +98,7 @@
                     </form>
 
                     <form method="post" asp-action="Delete" asp-route-deviceId="@Model.Id">
-                        <button class="btn btn-danger" name="button" value="delete">Delete</button>
+                        <button class="btn btn-danger" name="button" value="delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
                     </form>
                 </div>
             </div>
@@ -98,7 +114,7 @@
                         <a asp-controller="Traits" asp-action="Create" asp-route-deviceId="@Model.Id" class="list-group-item list-group-item-action active">Add Trait</a>
                         @foreach (var trait in Model.Traits)
                         {
-                        <a asp-controller="Traits" asp-action="Edit" asp-route-deviceId="@Model.Id" asp-route-traitId="@trait.ToEnumString()" class="list-group-item list-group-item-action">@trait.ToEnumString()</a>
+                            <a asp-controller="Traits" asp-action="Edit" asp-route-deviceId="@Model.Id" asp-route-traitId="@trait.ToEnumString()" class="list-group-item list-group-item-action">@trait.ToEnumString()</a>
                         }
                     </div>
                 </div>
