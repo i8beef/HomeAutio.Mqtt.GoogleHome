@@ -27,7 +27,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                     ClientSecrets = new List<Secret> { new Secret(x.GetValue<string>("clientSecret").Sha256()) },
                     AllowedScopes = new List<string> { "api" },
                     RedirectUris = x.GetSection("allowedRedirectUris").GetChildren().Select(uri => uri.Value).ToList(),
-                    AllowOfflineAccess = true
+                    AllowOfflineAccess = true,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    SlidingRefreshTokenLifetime = x.GetValue<int>("refreshTokenLifetime", 30) * 86400,
+                    AbsoluteRefreshTokenLifetime = 0
                 });
 
             return clients;
