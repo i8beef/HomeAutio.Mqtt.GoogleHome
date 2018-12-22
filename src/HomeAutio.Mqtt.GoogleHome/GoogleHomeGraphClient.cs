@@ -5,13 +5,15 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.OpenSsl;
+using Org.BouncyCastle.Security;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
@@ -25,7 +27,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         private const string _homeGraphScope = "https://www.googleapis.com/auth/homegraph";
 
         private readonly ILogger<GoogleHomeGraphClient> _log;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly HttpClient _httpClient;
         private readonly string _agentUserId;
         private readonly ServiceAccount _serviceAccount;
 
@@ -36,17 +38,17 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// Initializes a new instance of the <see cref="GoogleHomeGraphClient"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
-        /// <param name="httpClientFactory">HttpClient factory.</param>
+        /// <param name="httpClient">HttpClient factory.</param>
         /// <param name="serviceAccount">Service account information.</param>
         /// <param name="agentUserId">Agent user id.</param>
         public GoogleHomeGraphClient(
             ILogger<GoogleHomeGraphClient> logger,
-            IHttpClientFactory httpClientFactory,
+            HttpClient httpClient,
             ServiceAccount serviceAccount,
             string agentUserId)
         {
             _log = logger;
-            _httpClientFactory = httpClientFactory;
+            _httpClient = httpClient;
             _agentUserId = agentUserId;
             _serviceAccount = serviceAccount;
         }
@@ -71,11 +73,12 @@ namespace HomeAutio.Mqtt.GoogleHome
                 Async = isAsync
             };
 
+            var serializedContent = JsonConvert.SerializeObject(request);
             var requestMessage = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(_googleHomeGraphApiRequestSyncUri),
-                Content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json")
+                Content = new StringContent(serializedContent, Encoding.UTF8, "application/json")
             };
 
             var response = await SendRequestAsync(requestMessage);
@@ -191,8 +194,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 Content = new FormUrlEncodedContent(paramaters)
             };
 
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.SendAsync(request);
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             var accessToken = await response.Content.ReadAsAsync<AccessTokenResponse>();
@@ -211,11 +213,12 @@ namespace HomeAutio.Mqtt.GoogleHome
             if (_serviceAccount == null)
                 throw new ArgumentException("Google Home Graph serviceAccountFile blank or missing");
 
-            byte[] certBuffer = Encoding.UTF8.GetBytes(_serviceAccount.PrivateKey);
-            using (var stream = new MemoryStream(certBuffer))
-            using (var reader = new PemUtils.PemReader(stream))
+            using (var stringReader = new StringReader(_serviceAccount.PrivateKey))
             {
-                var parameters = reader.ReadRsaKey();
+                var reader = new PemReader(stringReader);
+                var key = (RsaPrivateCrtKeyParameters)reader.ReadObject();
+                var parameters = DotNetUtilities.ToRSAParameters(key);
+
                 return new RsaSecurityKey(parameters);
             }
         }
@@ -244,9 +247,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Add access token
             requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken.AccessToken);
 
-            var client = _httpClientFactory.CreateClient();
-
-            return await client.SendAsync(requestMessage);
+            return await _httpClient.SendAsync(requestMessage);
         }
     }
 }

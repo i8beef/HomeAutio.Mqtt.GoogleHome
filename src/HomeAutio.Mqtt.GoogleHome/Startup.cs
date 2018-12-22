@@ -109,7 +109,7 @@ namespace HomeAutio.Mqtt.GoogleHome
 
                 return new GoogleHomeGraphClient(
                     serviceProvider.GetRequiredService<ILogger<GoogleHomeGraphClient>>(),
-                    serviceProvider.GetRequiredService<IHttpClientFactory>(),
+                    serviceProvider.GetRequiredService<HttpClient>(),
                     serviceAccount,
                     Configuration.GetValue<string>("googleHomeGraph:agentUserId"));
             });
