@@ -5,10 +5,12 @@ WORKDIR /app
 COPY nuget.config .
 COPY *.sln .
 COPY HomeAutio.Mqtt.GoogleHome/*.csproj ./HomeAutio.Mqtt.GoogleHome/
+COPY HomeAutio.Mqtt.GoogleHome.Tests/*.csproj ./HomeAutio.Mqtt.GoogleHome.Tests/
 RUN dotnet restore
 
 # copy and build everything else
 COPY HomeAutio.Mqtt.GoogleHome/. ./HomeAutio.Mqtt.GoogleHome/
+COPY HomeAutio.Mqtt.GoogleHome.Tests/. ./HomeAutio.Mqtt.GoogleHome.Tests/
 RUN dotnet build -c Release
 
 # publish
