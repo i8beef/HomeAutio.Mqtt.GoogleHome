@@ -180,9 +180,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             var queryResponsePayload = new Models.Response.QueryResponsePayload
             {
-                Devices = intent.Payload.Devices.ToDictionary(
-                    x => x.Id,
-                    x => _deviceRepository.Get(x.Id).GetGoogleState(_stateCache))
+                Devices = intent.Payload.Devices
+                    .GroupBy(d => d.Id)
+                    .Select(g => g.First())
+                    .ToDictionary(x => x.Id, x => _deviceRepository.Get(x.Id).GetGoogleState(_stateCache))
             };
 
             return queryResponsePayload;
