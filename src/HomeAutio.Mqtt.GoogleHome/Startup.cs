@@ -111,8 +111,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     serviceProvider.GetRequiredService<ILogger<GoogleHomeGraphClient>>(),
                     serviceProvider.GetRequiredService<IHttpClientFactory>(),
                     serviceAccount,
-                    Configuration.GetValue<string>("googleHomeGraph:agentUserId"),
-                    Configuration.GetValue<string>("googleHomeGraph:apiKey"));
+                    Configuration.GetValue<string>("googleHomeGraph:agentUserId"));
             });
 
             // Setup MQTT hosted service

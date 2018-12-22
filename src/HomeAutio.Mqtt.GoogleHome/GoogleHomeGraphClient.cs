@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph;
 using Microsoft.Extensions.Logging;
@@ -24,7 +25,6 @@ namespace HomeAutio.Mqtt.GoogleHome
         private readonly ILogger<GoogleHomeGraphClient> _log;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _agentUserId;
-        private readonly string _googleHomeGraphApiKey;
         private readonly ServiceAccount _serviceAccount;
 
         private AccessTokenResponse _accessToken;
@@ -37,50 +37,54 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <param name="httpClientFactory">HttpClient factory.</param>
         /// <param name="serviceAccount">Service account information.</param>
         /// <param name="agentUserId">Agent user id.</param>
-        /// <param name="googleHomeGraphApiKey">Google Home Graph API key.</param>
         public GoogleHomeGraphClient(
             ILogger<GoogleHomeGraphClient> logger,
             IHttpClientFactory httpClientFactory,
             ServiceAccount serviceAccount,
-            string agentUserId,
-            string googleHomeGraphApiKey)
+            string agentUserId)
         {
             _log = logger;
             _httpClientFactory = httpClientFactory;
             _agentUserId = agentUserId;
-            _googleHomeGraphApiKey = googleHomeGraphApiKey;
             _serviceAccount = serviceAccount;
         }
 
         /// <summary>
         /// Send Google Home Graph request sync.
         /// </summary>
+        /// <param name="isAsync">Indicates if the sync request should return immediately or wait for a response.</param>
         /// <returns>An awaitable <see cref="Task"/>.</returns>
-        public async Task RequestSyncAsync()
+        public async Task RequestSyncAsync(bool isAsync = true)
         {
-            // If no api key has been provided, don't attempt to call
-            if (string.IsNullOrEmpty(_googleHomeGraphApiKey))
+            // If no service account has been provided, don't attempt to call
+            if (_serviceAccount == null)
             {
-                _log.LogWarning("REQUEST_SYNC triggered but Google Home Graph API was blank");
+                _log.LogWarning("REQUEST_SYNC triggered but Google Home Graph serviceAccountFile setting was blank, or the file didn't exist");
                 return;
             }
 
-            var request = new Request
+            var request = new RequestSyncRequest
             {
-                AgentUserId = _agentUserId
+                AgentUserId = _agentUserId,
+                Async = isAsync
             };
 
             var requestMessage = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(_googleHomeGraphApiRequestSyncUri + "?key=" + _googleHomeGraphApiKey),
-                Content = new StringContent(JsonConvert.SerializeObject(request))
+                RequestUri = new Uri(_googleHomeGraphApiRequestSyncUri),
+                Content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json")
             };
 
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.SendAsync(requestMessage);
-
-            _log.LogInformation("Sent REQUEST_SYNC to Google Home Graph");
+            var response = await SendRequestAsync(requestMessage);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                _log.LogInformation("Google Home Graph REQUEST_SYNC sent");
+            }
+            else
+            {
+                _log.LogWarning("Google Home Graph REQUEST_SYNC failed");
+            }
         }
 
         /// <summary>
@@ -98,27 +102,19 @@ namespace HomeAutio.Mqtt.GoogleHome
                 return;
             }
 
-            // Ensure access token is available
-            if (_accessToken == null || _accessToken.ExpiresAt <= DateTime.Now.AddMinutes(-1))
-            {
-                lock (_tokenRefreshLock)
-                {
-                    _accessToken = GetAccessToken(ConstructJwt())
-                        .GetAwaiter().GetResult();
-                }
-            }
-
-            var request = new Request
+            var request = new ReportStateAndNotificationRequest
             {
                 RequestId = Guid.NewGuid().ToString(),
+                EventId = Guid.NewGuid().ToString(),
                 AgentUserId = _agentUserId,
-                Payload = new QueryResponsePayload
+                Payload = new StateAndNotificationPayload
                 {
-                    Devices = new Devices
+                    Devices = new ReportStateAndNotificationDevice
                     {
                         States = devices.ToDictionary(
                             device => device.Id,
-                            device => device.GetGoogleState(stateCache))
+                            device => device.GetGoogleState(stateCache)),
+                        Notifications = null
                     }
                 }
             };
@@ -127,47 +123,18 @@ namespace HomeAutio.Mqtt.GoogleHome
             {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(_googleHomeGraphApiReportStateUri),
-                Content = new StringContent(JsonConvert.SerializeObject(request))
+                Content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json")
             };
 
-            // Add access token
-            requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken.AccessToken);
-
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.SendAsync(requestMessage);
-
-            _log.LogInformation("Sent update to Google Home Graph for devices: " + string.Join(", ", devices.Select(x => x.Id)));
-        }
-
-        /// <summary>
-        /// Gets an access token using the passed JWT request.
-        /// </summary>
-        /// <param name="jwt">JWT request.</param>
-        /// <returns>An <see cref="AccessTokenResponse"/>.</returns>
-        private async Task<AccessTokenResponse> GetAccessToken(string jwt)
-        {
-            _log.LogDebug("Get/Refresh access token");
-
-            var paramaters = new Dictionary<string, string>();
-            paramaters.Add("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
-            paramaters.Add("assertion", ConstructJwt());
-
-            var request = new HttpRequestMessage
+            var response = await SendRequestAsync(requestMessage);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri(_serviceAccount.TokenUri),
-                Content = new FormUrlEncodedContent(paramaters)
-            };
-
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-
-            var accessToken = await response.Content.ReadAsAsync<AccessTokenResponse>();
-
-            _log.LogDebug("Received access token: " + accessToken);
-
-            return accessToken;
+                _log.LogInformation("Google Home Graph updated for devices: " + string.Join(", ", devices.Select(x => x.Id)));
+            }
+            else
+            {
+                _log.LogWarning("Google Home Graph update failed for devices: " + string.Join(", ", devices.Select(x => x.Id)));
+            }
         }
 
         /// <summary>
@@ -202,6 +169,39 @@ namespace HomeAutio.Mqtt.GoogleHome
         }
 
         /// <summary>
+        /// Gets an access token using the passed JWT request.
+        /// </summary>
+        /// <param name="jwt">JWT request.</param>
+        /// <returns>An <see cref="AccessTokenResponse"/>.</returns>
+        private async Task<AccessTokenResponse> GetAccessToken(string jwt)
+        {
+            _log.LogDebug("Get/Refresh access token");
+
+            var paramaters = new Dictionary<string, string>
+            {
+                { "grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer" },
+                { "assertion", ConstructJwt() }
+            };
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(_serviceAccount.TokenUri),
+                Content = new FormUrlEncodedContent(paramaters)
+            };
+
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            var accessToken = await response.Content.ReadAsAsync<AccessTokenResponse>();
+
+            _log.LogDebug("Received access token: " + accessToken);
+
+            return accessToken;
+        }
+
+        /// <summary>
         /// Extracts key parts from a PEM string.
         /// </summary>
         /// <param name="pemString">String to extract.</param>
@@ -223,6 +223,35 @@ namespace HomeAutio.Mqtt.GoogleHome
                 return null;
 
             return Convert.FromBase64String(pemString.Substring(start, end));
+        }
+
+        /// <summary>
+        /// Sends a HomeGraph API request.
+        /// </summary>
+        /// <param name="requestMessage">Request message.</param>
+        /// <returns>An <see cref="HttpResponseMessage"/>.</returns>
+        private async Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage requestMessage)
+        {
+            // Ensure access token is available
+            if (_accessToken == null || _accessToken.ExpiresAt <= DateTime.Now.AddMinutes(-1))
+            {
+                lock (_tokenRefreshLock)
+                {
+                    // Recheck in case another instance already updated
+                    if (_accessToken == null || _accessToken.ExpiresAt <= DateTime.Now.AddMinutes(-1))
+                    {
+                        _accessToken = GetAccessToken(ConstructJwt())
+                            .GetAwaiter().GetResult();
+                    }
+                }
+            }
+
+            // Add access token
+            requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken.AccessToken);
+
+            var client = _httpClientFactory.CreateClient();
+
+            return await client.SendAsync(requestMessage);
         }
     }
 }

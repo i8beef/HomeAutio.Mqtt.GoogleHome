@@ -1,13 +1,13 @@
 ﻿namespace HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph
 {
     /// <summary>
-    /// Query response payload request object.
+    /// State and notification payload request object.
     /// </summary>
-    public class QueryResponsePayload
+    public class StateAndNotificationPayload
     {
         /// <summary>
         /// Devices.
         /// </summary>
-        public Devices Devices { get; set; }
+        public ReportStateAndNotificationDevice Devices { get; set; }
     }
 }

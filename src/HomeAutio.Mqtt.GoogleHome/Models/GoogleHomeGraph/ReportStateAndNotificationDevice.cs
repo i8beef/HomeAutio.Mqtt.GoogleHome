@@ -6,12 +6,18 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph
     /// <summary>
     /// Devices request object.
     /// </summary>
-    public class Devices
+    public class ReportStateAndNotificationDevice
     {
         /// <summary>
-        /// States.
+        /// States of devices to update.
         /// </summary>
         [JsonProperty(ItemConverterType = typeof(ObjectDictionaryConverter))]
         public IDictionary<string, IDictionary<string, object>> States { get; set; }
+
+        /// <summary>
+        /// Notifications metadata for devices.
+        /// </summary>
+        [JsonProperty(ItemConverterType = typeof(ObjectDictionaryConverter))]
+        public IDictionary<string, IDictionary<string, object>> Notifications { get; set; }
     }
 }
