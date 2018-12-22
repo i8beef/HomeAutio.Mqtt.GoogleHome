@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph;
@@ -141,12 +143,11 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// Gets a JWT token.
         /// </summary>
         /// <returns>A JWT token.</returns>
-        private string ConstructJwt()
+        private string CreateJwt()
         {
             // Get signing key
-            byte[] certBuffer = GetBytesFromPEM(_serviceAccount.PrivateKey, "PRIVATE KEY");
-            var securityKey = new SymmetricSecurityKey(certBuffer);
-            var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256Signature);
+            var rsaSecurityKey = GetGoogleHomeGraphApiSigningKey();
+            var signingCredentials = new SigningCredentials(rsaSecurityKey, SecurityAlgorithms.RsaSha256);
 
             // Create auth token
             var claims = new List<Claim> { new Claim("scope", _homeGraphScope) };
@@ -180,7 +181,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             var paramaters = new Dictionary<string, string>
             {
                 { "grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer" },
-                { "assertion", ConstructJwt() }
+                { "assertion", CreateJwt() }
             };
 
             var request = new HttpRequestMessage
@@ -202,27 +203,21 @@ namespace HomeAutio.Mqtt.GoogleHome
         }
 
         /// <summary>
-        /// Extracts key parts from a PEM string.
+        /// Gets the Google Home Graph API signing key.
         /// </summary>
-        /// <param name="pemString">String to extract.</param>
-        /// <param name="section">Section of key to extract.</param>
-        /// <returns>The extracted portion as a byte array.</returns>
-        private byte[] GetBytesFromPEM(string pemString, string section)
+        /// <returns>A <see cref="RsaSecurityKey"/> for building an RSA key.</returns>
+        private RsaSecurityKey GetGoogleHomeGraphApiSigningKey()
         {
-            var header = string.Format("-----BEGIN {0}-----", section);
-            var footer = string.Format("-----END {0}-----", section);
+            if (_serviceAccount == null)
+                throw new ArgumentException("Google Home Graph serviceAccountFile blank or missing");
 
-            var start = pemString.IndexOf(header, StringComparison.Ordinal);
-            if (start < 0)
-                return null;
-
-            start += header.Length;
-            var end = pemString.IndexOf(footer, start, StringComparison.Ordinal) - start;
-
-            if (end < 0)
-                return null;
-
-            return Convert.FromBase64String(pemString.Substring(start, end));
+            byte[] certBuffer = Encoding.UTF8.GetBytes(_serviceAccount.PrivateKey);
+            using (var stream = new MemoryStream(certBuffer))
+            using (var reader = new PemUtils.PemReader(stream))
+            {
+                var parameters = reader.ReadRsaKey();
+                return new RsaSecurityKey(parameters);
+            }
         }
 
         /// <summary>
@@ -240,7 +235,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     // Recheck in case another instance already updated
                     if (_accessToken == null || _accessToken.ExpiresAt <= DateTime.Now.AddMinutes(-1))
                     {
-                        _accessToken = GetAccessToken(ConstructJwt())
+                        _accessToken = GetAccessToken(CreateJwt())
                             .GetAwaiter().GetResult();
                     }
                 }
