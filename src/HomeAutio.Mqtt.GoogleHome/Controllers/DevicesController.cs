@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
+using HomeAutio.Mqtt.GoogleHome.Validation;
 using HomeAutio.Mqtt.GoogleHome.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -68,9 +69,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (_deviceRepository.Contains(viewModel.Id))
                 ModelState.AddModelError("Id", "Device Id already exists");
 
-            if (!ModelState.IsValid)
-                return RedirectToAction("Create");
-
             // Set new values
             var device = new Device
             {
@@ -116,9 +114,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 device.DeviceInfo = null;
             }
 
-            _deviceRepository.Add(device);
+            // Final validation
+            foreach (var error in DeviceValidator.Validate(device))
+                ModelState.AddModelError(string.Empty, error);
+
+            if (!ModelState.IsValid)
+                return RedirectToAction("Create");
 
             // Save changes
+            _deviceRepository.Add(device);
             _deviceRepository.Persist();
 
             return RedirectToAction("Index");
@@ -192,9 +196,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         [ExportModelState]
         public IActionResult Edit([Required] string deviceId, DeviceViewModel viewModel)
         {
-            if (!ModelState.IsValid)
-                return RedirectToAction("Edit", new { deviceId });
-
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
 
@@ -236,6 +237,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             {
                 device.DeviceInfo = null;
             }
+
+            // Final validation
+            foreach (var error in DeviceValidator.Validate(device))
+                ModelState.AddModelError(string.Empty, error);
+
+            if (!ModelState.IsValid)
+                return RedirectToAction("Edit", new { deviceId });
 
             // Save changes
             _deviceRepository.Persist();

@@ -4,6 +4,7 @@ using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
+using HomeAutio.Mqtt.GoogleHome.Validation;
 using HomeAutio.Mqtt.GoogleHome.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -68,9 +69,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (device.Traits.Any(x => x.Trait == viewModel.Trait))
                 ModelState.AddModelError("Trait", "Device already contains trait");
 
-            if (!ModelState.IsValid)
-                return RedirectToAction("Create", new { deviceId });
-
             // Set values
             var trait = new DeviceTrait
             {
@@ -79,6 +77,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 Commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : null,
                 State = !string.IsNullOrEmpty(viewModel.State) ? JsonConvert.DeserializeObject<Dictionary<string, DeviceState>>(viewModel.State) : null
             };
+
+            // Final validation
+            foreach (var error in DeviceTraitValidator.Validate(trait))
+                ModelState.AddModelError(string.Empty, error);
+
+            if (!ModelState.IsValid)
+                return RedirectToAction("Create", new { deviceId });
 
             device.Traits.Add(trait);
 
@@ -156,9 +161,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         [ExportModelState]
         public IActionResult Edit([Required] string deviceId, [Required] string traitId, TraitViewModel viewModel)
         {
-            if (!ModelState.IsValid)
-                return RedirectToAction("Edit", new { deviceId, traitId });
-
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
 
@@ -177,6 +179,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             trait.Attributes = !string.IsNullOrEmpty(viewModel.Attributes) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(viewModel.Attributes, new ObjectDictionaryConverter()) : null;
             trait.Commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : null;
             trait.State = !string.IsNullOrEmpty(viewModel.State) ? JsonConvert.DeserializeObject<Dictionary<string, DeviceState>>(viewModel.State) : null;
+
+            // Final validation
+            foreach (var error in DeviceTraitValidator.Validate(trait))
+                ModelState.AddModelError(string.Empty, error);
+
+            if (!ModelState.IsValid)
+                return RedirectToAction("Edit", new { deviceId, traitId });
 
             // Save changes
             _deviceRepository.Persist();
