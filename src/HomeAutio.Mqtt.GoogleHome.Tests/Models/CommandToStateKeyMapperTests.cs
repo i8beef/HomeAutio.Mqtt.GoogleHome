@@ -8,8 +8,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Models
         [Theory]
         [InlineData("updateModeSettings.temperature", "currentModeSettings.temperature")]
         [InlineData("updateToggleSettings.sterilization", "currentToggleSettings.sterilization")]
-        [InlineData("fanSpeed", "currentFanSpeedSetting")]
         [InlineData("color.temperature", "color.temperatureK")]
+        [InlineData("color.spectrumRGB", "color.spectrumRgb")]
+        [InlineData("color.spectrumHSV.hue", "color.spectrumHsv.hue")]
+        [InlineData("color.spectrumHSV.saturation", "color.spectrumHsv.saturation")]
+        [InlineData("color.spectrumHSV.value", "color.spectrumHsv.value")]
+        [InlineData("fanSpeed", "currentFanSpeedSetting")]
         [InlineData("start", "isRunning")]
         [InlineData("pause", "isPaused")]
         public void CanMap(string input, string expectedOutput)

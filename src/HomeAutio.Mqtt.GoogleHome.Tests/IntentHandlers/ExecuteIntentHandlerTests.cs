@@ -87,7 +87,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
             Assert.True(colorState.ContainsKey("temperatureK"));
 
             // Tertiary level items
-            var spectrumHSVState = (IDictionary<string, object>)colorState["spectrumHSV"];
+            var spectrumHSVState = (IDictionary<string, object>)colorState["spectrumHsv"];
             Assert.Equal(123, spectrumHSVState["hue"]);
             Assert.Equal(456, spectrumHSVState["saturation"]);
             Assert.Equal(789, spectrumHSVState["value"]);

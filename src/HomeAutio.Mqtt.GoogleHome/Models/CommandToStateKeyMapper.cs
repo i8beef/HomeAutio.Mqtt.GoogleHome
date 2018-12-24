@@ -25,8 +25,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
                 { "color.spectrumHSV.hue", "color.spectrumHsv.hue" },
                 { "color.spectrumHSV.saturation", "color.spectrumHsv.saturation" },
                 { "color.spectrumHSV.value", "color.spectrumHsv.value" },
-                { "fanSpeed", "currentFanSpeedSetting" },
                 { "color.temperature", "color.temperatureK" },
+                { "fanSpeed", "currentFanSpeedSetting" },
                 { "start", "isRunning" },
                 { "pause", "isPaused" }
             };
