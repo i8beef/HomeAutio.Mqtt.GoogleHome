@@ -88,22 +88,22 @@
                 "googleType": "numeric",
                 "valueMap": null
             },
-            "color.spectrumRGB": {
+            "color.spectrumRgb": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
             },
-            "color.spectrumHSV.hue": {
+            "color.spectrumHsv.hue": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
             },
-            "color.spectrumHSV.saturation": {
+            "color.spectrumHsv.saturation": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
             },
-            "color.spectrumHSV.value": {
+            "color.spectrumHsv.value": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
@@ -126,7 +126,7 @@
                 "googleType": "string",
                 "valueMap": null
             },
-            "color.spectrumRGB": {
+            "color.spectrumRgb": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null

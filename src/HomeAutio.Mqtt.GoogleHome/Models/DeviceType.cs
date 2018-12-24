@@ -107,6 +107,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// action.devices.types.WASHER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.WASHER")]
-        Washer
+        Washer,
+
+        /// <summary>
+        /// Unknown device type.
+        /// </summary>
+        Unknown
     }
 }

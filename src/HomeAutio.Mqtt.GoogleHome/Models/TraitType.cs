@@ -104,6 +104,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// action.devices.traits.Toggles
         /// </summary>
         [EnumMember(Value = "action.devices.traits.Toggles")]
-        Toggles
+        Toggles,
+
+        /// <summary>
+        /// Unknown.
+        /// </summary>
+        Unknown
     }
 }

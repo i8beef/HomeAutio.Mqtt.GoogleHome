@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.Core;
+using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.Request;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Logging;
@@ -137,24 +138,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                         var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command];
 
                         // Flatten the parameters
-                        var flattenedParams = new Dictionary<string, object>();
-                        foreach (var param in execution.Params)
-                        {
-                            var paramValueAsDictionary = param.Value as IDictionary<string, object>;
-                            if (paramValueAsDictionary != null)
-                            {
-                                // Add each of the sub params as a flattened, prefixed parameter
-                                foreach (var subParam in paramValueAsDictionary)
-                                {
-                                    flattenedParams.Add(param.Key + '.' + subParam.Key, subParam.Value);
-                                }
-                            }
-                            else
-                            {
-                                // Pipe through original value
-                                flattenedParams.Add(param.Key, param.Value);
-                            }
-                        }
+                        var flattenedParams = execution.Params.ToFlatDictionary();
 
                         foreach (var parameter in flattenedParams)
                         {
@@ -162,19 +146,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                             if (deviceSupportedCommandParams.ContainsKey(parameter.Key))
                             {
                                 // Handle remapping of Modes, Toggles and FanSpeed
-                                var stateKey = parameter.Key;
-                                if (parameter.Key.StartsWith("updateModeSettings."))
-                                {
-                                    stateKey = parameter.Key.Replace("updateModeSettings.", "currentModeSettings.");
-                                }
-                                else if (parameter.Key.StartsWith("updateToggleSettings."))
-                                {
-                                    stateKey = parameter.Key.Replace("updateToggleSettings.", "currentToggleSettings.");
-                                }
-                                else if (parameter.Key == "fanSpeed")
-                                {
-                                    stateKey = "currentFanSpeedSetting";
-                                }
+                                var stateKey = CommandToStateKeyMapper.Map(parameter.Key);
 
                                 // Find the DeviceState object that provides configuration for mapping state/command values
                                 var deviceState = _deviceRepository.Get(device.Id).Traits
