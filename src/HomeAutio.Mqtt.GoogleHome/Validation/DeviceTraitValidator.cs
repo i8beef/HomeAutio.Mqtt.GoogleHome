@@ -196,7 +196,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             {
                 // HSV requirements
                 commandParams.AddRange(new List<string> { "color.spectrumHSV.hue", "color.spectrumHSV.saturation", "color.spectrumHSV.value" });
-                stateKeys.AddRange(new List<string> { "color.spectrumHSV.hue", "color.spectrumHSV.saturation", "color.spectrumHSV.value" });
+                stateKeys.AddRange(new List<string> { "color.spectrumHsv.hue", "color.spectrumHsv.saturation", "color.spectrumHsv.value" });
             }
             else
             {
