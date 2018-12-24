@@ -1,0 +1,105 @@
+﻿using System.Runtime.Serialization;
+
+namespace HomeAutio.Mqtt.GoogleHome.Models
+{
+    /// <summary>
+    /// Device command types.
+    /// </summary>
+    public enum CommandType
+    {
+        /// <summary>
+        /// action.devices.commands.ActivateScene
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.ActivateScene")]
+        ActivateScene,
+
+        /// <summary>
+        /// action.devices.commands.BrightnessAbsolute
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.BrightnessAbsolute")]
+        BrightnessAbsolute,
+
+        /// <summary>
+        /// action.devices.commands.GetCameraStream
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.GetCameraStream")]
+        CameraStream,
+
+        /// <summary>
+        /// action.devices.commands.ColorAbsolute
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.ColorAbsolute")]
+        ColorAbsolute,
+
+        /// <summary>
+        /// action.devices.commands.Dock
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.Dock")]
+        Dock,
+
+        /// <summary>
+        /// action.devices.commands.SetFanSpeed
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.SetFanSpeed")]
+        SetFanSpeed,
+
+        /// <summary>
+        /// action.devices.commands.Locate
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.Locate")]
+        Locate,
+
+        /// <summary>
+        /// action.devices.commands.OnOff
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.OnOff")]
+        OnOff,
+
+        /// <summary>
+        /// action.devices.commands.Reverse
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.Reverse")]
+        Reverse,
+
+        /// <summary>
+        /// action.devices.commands.SetModes
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.SetModes")]
+        SetModes,
+
+        /// <summary>
+        /// action.devices.commands.SetTemperature
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.SetTemperature")]
+        SetTemperature,
+
+        /// <summary>
+        /// action.devices.commands.SetToggles
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.SetToggles")]
+        SetToggles,
+
+        /// <summary>
+        /// action.devices.commands.ThermostatTemperatureSetpoint
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.ThermostatTemperatureSetpoint")]
+        ThermostatTemperatureSetpoint,
+
+        /// <summary>
+        /// action.devices.commands.ThermostatTemperatureSetRange
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.ThermostatTemperatureSetRange")]
+        ThermostatTemperatureSetRange,
+
+        /// <summary>
+        /// action.devices.commands.ThermostatSetMode
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.ThermostatSetMode")]
+        ThermostatSetMode,
+
+        /// <summary>
+        /// Unknown.
+        /// </summary>
+        Unknown
+    }
+}
