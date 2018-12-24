@@ -18,7 +18,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         {
             var validationErrors = new List<string>();
 
-            if (nameInfo.Name == null)
+            if (nameInfo == null)
+                validationErrors.Add("NameInfo is missing");
+
+            if (string.IsNullOrEmpty(nameInfo.Name))
                 validationErrors.Add("NameInfo Name is missing");
 
             if (nameInfo.DefaultNames != null)
