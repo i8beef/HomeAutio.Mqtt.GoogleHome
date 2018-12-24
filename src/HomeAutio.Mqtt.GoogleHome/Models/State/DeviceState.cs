@@ -42,7 +42,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
                         mappedValue = boolValue;
                     break;
                 case GoogleType.Numeric:
-                    if (decimal.TryParse(stateValue, out decimal decimalValue))
+                    if (int.TryParse(stateValue, out int intValue))
+                        mappedValue = intValue;
+                    else if (decimal.TryParse(stateValue, out decimal decimalValue))
                         mappedValue = decimalValue;
                     break;
                 case GoogleType.String:

@@ -78,27 +78,32 @@
             }
         },
         "state": {
+            "color.name": {
+                "topic": "MQTT_STATE_TOPIC",
+                "googleType": "string",
+                "valueMap": null
+            },
             "color.temperatureK": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
             },
-            "color.spectrumRgb": {
+            "color.spectrumRGB": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
             },
-            "color.spectrumHsv.hue": {
+            "color.spectrumHSV.hue": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
             },
-            "color.spectrumHsv.saturation": {
+            "color.spectrumHSV.saturation": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
             },
-            "color.spectrumHsv.value": {
+            "color.spectrumHSV.value": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
@@ -121,7 +126,7 @@
                 "googleType": "string",
                 "valueMap": null
             },
-            "color.spectrumRgb": {
+            "color.spectrumRGB": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null

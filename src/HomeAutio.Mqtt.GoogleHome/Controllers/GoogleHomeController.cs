@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Easy.MessageHub;
-using HomeAutio.Mqtt.GoogleHome.Models.State;
+﻿using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace HomeAutio.Mqtt.GoogleHome.Controllers
@@ -18,31 +14,28 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     {
         private readonly ILogger<GoogleHomeController> _log;
 
-        private readonly IConfiguration _config;
-        private readonly IMessageHub _messageHub;
-        private readonly GoogleDeviceRepository _deviceRepository;
-        private readonly StateCache _stateCache;
+        private readonly SyncIntentHandler _syncIntentHandler;
+        private readonly QueryIntentHandler _queryIntentHandler;
+        private readonly ExecuteIntentHandler _executeIntentHandler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleHomeController"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
-        /// <param name="configuration">Configuration.</param>
-        /// <param name="messageHub">Message nhub.</param>
-        /// <param name="deviceRepository">Device repository.</param>
-        /// <param name="stateCache">State cache.</param>
+        /// <param name="syncIntentHandler">Sync intent handler.</param>
+        /// <param name="queryIntentHandler">Query ntent handler.</param>
+        /// <param name="executeIntentHandler">Execute intent handler.</param>
         public GoogleHomeController(
             ILogger<GoogleHomeController> logger,
-            IConfiguration configuration,
-            IMessageHub messageHub,
-            GoogleDeviceRepository deviceRepository,
-            StateCache stateCache)
+            SyncIntentHandler syncIntentHandler,
+            QueryIntentHandler queryIntentHandler,
+            ExecuteIntentHandler executeIntentHandler)
         {
             _log = logger;
-            _config = configuration;
-            _messageHub = messageHub;
-            _deviceRepository = deviceRepository;
-            _stateCache = stateCache;
+
+            _syncIntentHandler = syncIntentHandler;
+            _queryIntentHandler = queryIntentHandler;
+            _executeIntentHandler = executeIntentHandler;
         }
 
         /// <summary>
@@ -68,13 +61,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             switch (input)
             {
                 case Models.Request.SyncIntent syncIntent:
-                    response.Payload = HandleSyncIntent(syncIntent);
+                    response.Payload = _syncIntentHandler.Handle(syncIntent);
                     return Ok(response);
                 case Models.Request.QueryIntent queryIntent:
-                    response.Payload = HandleQueryIntent(queryIntent);
+                    response.Payload = _queryIntentHandler.Handle(queryIntent);
                     return Ok(response);
                 case Models.Request.ExecuteIntent executeIntent:
-                    response.Payload = HandleExecuteIntent(executeIntent);
+                    response.Payload = _executeIntentHandler.Handle(executeIntent);
                     return Ok(response);
                 case Models.Request.DisconnectIntent disconnectIntent:
                     return Ok();
@@ -83,142 +76,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             // No valid intents found, return error
             response.Payload = new Models.Response.ErrorResponsePayload { ErrorCode = "protocolError" };
             return BadRequest(response);
-        }
-
-        /// <summary>
-        /// Handles a <see cref="Models.Request.ExecuteIntent"/>.
-        /// </summary>
-        /// <param name="intent">Intent to process.</param>
-        /// <returns>A <see cref="Models.Response.ExecutionResponsePayload"/>.</returns>
-        private Models.Response.ExecutionResponsePayload HandleExecuteIntent(Models.Request.ExecuteIntent intent)
-        {
-            _log.LogInformation(string.Format(
-                "Received EXECUTE intent for commands: {0}",
-                string.Join(",", intent.Payload.Commands
-                    .SelectMany(x => x.Execution)
-                    .Select(x => x.Command))));
-
-            var executionResponsePayload = new Models.Response.ExecutionResponsePayload();
-            foreach (var command in intent.Payload.Commands)
-            {
-                // Convert command to a event to publish
-                _messageHub.Publish(command);
-
-                // Build response payload
-                var commandResponse = new Models.Response.Command
-                {
-                    Status = Models.Response.CommandStatus.Success,
-                    Ids = command.Devices.Select(x => x.Id).ToList()
-                };
-
-                // Generate states
-                var states = new Dictionary<string, object>();
-                foreach (var execution in command.Execution)
-                {
-                    // Handle camera stream commands
-                    if (execution.Command == "action.devices.commands.GetCameraStream")
-                    {
-                        // Only allow a single cast command at once
-                        if (command.Devices.Count() == 1)
-                        {
-                            // Get the first trait for the camera, as this should be the only trait available
-                            var trait = _deviceRepository.Get(command.Devices[0].Id).Traits.FirstOrDefault();
-                            if (trait != null)
-                            {
-                                foreach (var state in trait.State)
-                                {
-                                    states.Add(state.Key, state.Value.MapValueToGoogle(null));
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Copy the incoming state values, rather than getting current
-                        foreach (var param in execution.Params)
-                        {
-                            if (param.Key == "updateModeSettings")
-                            {
-                                // Modes
-                                states.Add("currentModeSettings", param.Value);
-                            }
-                            else if (param.Key == "updateToggleSettings")
-                            {
-                                // Toggles
-                                states.Add("currentToggleSettings", param.Value);
-                            }
-                            else if (param.Key == "fanSpeed")
-                            {
-                                // Fan speed
-                                states.Add("currentFanSpeedSetting", param.Value);
-                            }
-                            else
-                            {
-                                // Sane types
-                                states.Add(param.Key, param.Value);
-                            }
-                        }
-                    }
-                }
-
-                commandResponse.States = states;
-
-                executionResponsePayload.Commands.Add(commandResponse);
-            }
-
-            return executionResponsePayload;
-        }
-
-        /// <summary>
-        /// Handles a <see cref="Models.Request.QueryIntent"/>.
-        /// </summary>
-        /// <param name="intent">Intent to process.</param>
-        /// <returns>A <see cref="Models.Response.QueryResponsePayload"/>.</returns>
-        private Models.Response.QueryResponsePayload HandleQueryIntent(Models.Request.QueryIntent intent)
-        {
-            _log.LogInformation("Received QUERY intent for devices: " + string.Join(", ", intent.Payload.Devices.Select(x => x.Id)));
-
-            var queryResponsePayload = new Models.Response.QueryResponsePayload
-            {
-                Devices = intent.Payload.Devices
-                    .GroupBy(d => d.Id)
-                    .Select(g => g.First())
-                    .ToDictionary(x => x.Id, x => _deviceRepository.Get(x.Id).GetGoogleState(_stateCache))
-            };
-
-            return queryResponsePayload;
-        }
-
-        /// <summary>
-        /// Handles a <see cref="Models.Request.SyncIntent"/>.
-        /// </summary>
-        /// <param name="intent">Intent to process.</param>
-        /// <returns>A <see cref="Models.Response.SyncResponsePayload"/>.</returns>
-        private Models.Response.SyncResponsePayload HandleSyncIntent(Models.Request.SyncIntent intent)
-        {
-            _log.LogInformation("Received SYNC intent");
-
-            var syncResponsePayload = new Models.Response.SyncResponsePayload
-            {
-                AgentUserId = _config.GetValue<string>("googleHomeGraph:agentUserId"),
-                Devices = _deviceRepository.GetAll().Select(x => new Models.Response.Device
-                {
-                    Id = x.Id,
-                    Type = x.Type,
-                    RoomHint = x.RoomHint,
-                    WillReportState = x.WillReportState,
-                    Traits = x.Traits.Select(trait => trait.Trait).ToList(),
-                    Attributes = x.Traits
-                        .Where(trait => trait.Attributes != null)
-                        .SelectMany(trait => trait.Attributes)
-                        .ToDictionary(kv => kv.Key, kv => kv.Value),
-                    Name = x.Name,
-                    DeviceInfo = x.DeviceInfo,
-                    CustomData = x.CustomData
-                }).ToList()
-            };
-
-            return syncResponsePayload;
         }
     }
 }

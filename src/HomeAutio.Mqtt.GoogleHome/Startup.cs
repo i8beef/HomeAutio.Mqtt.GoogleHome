@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Identity;
+using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
@@ -113,6 +114,11 @@ namespace HomeAutio.Mqtt.GoogleHome
                     serviceAccount,
                     Configuration.GetValue<string>("googleHomeGraph:agentUserId"));
             });
+
+            // Intent handlers
+            services.AddTransient<SyncIntentHandler>();
+            services.AddTransient<QueryIntentHandler>();
+            services.AddTransient<ExecuteIntentHandler>();
 
             // Setup MQTT hosted service
             services.AddSingleton<IHostedService, MqttService>(serviceProvider =>
