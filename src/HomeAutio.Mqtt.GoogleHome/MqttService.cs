@@ -184,9 +184,19 @@ namespace HomeAutio.Mqtt.GoogleHome
                                     .Select(x => x.Value)
                                     .FirstOrDefault();
 
-                                // Send the MQTT message
+                                // Build the MQTT message
                                 var topic = deviceSupportedCommandParams[parameter.Key];
-                                var payload = deviceState.MapValueToMqtt(parameter.Value);
+                                string payload = null;
+                                if (deviceState != null)
+                                {
+                                    payload = deviceState.MapValueToMqtt(parameter.Value);
+                                }
+                                else
+                                {
+                                    payload = parameter.Value.ToString();
+                                    _log.LogWarning("Received supported command '{Command}' but cannot find matched state config, sending command value '{Payload}' without ValueMap", execution.Command, payload);
+                                }
+
                                 await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
                                     .WithTopic(topic)
                                     .WithPayload(payload)
