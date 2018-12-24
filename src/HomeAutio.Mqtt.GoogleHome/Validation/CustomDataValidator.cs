@@ -11,8 +11,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         /// Validates a CustomData dictionary.
         /// </summary>
         /// <param name="customData">The CustomData to validate.</param>
-        public static void Validate(IDictionary<string, object> customData)
+        /// <returns>Validation errors.</returns>
+        public static IEnumerable<string> Validate(IDictionary<string, object> customData)
         {
+            return new List<string>();
         }
     }
 }

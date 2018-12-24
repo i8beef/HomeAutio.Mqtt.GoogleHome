@@ -10,6 +10,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Models
         [InlineData("updateToggleSettings.sterilization", "currentToggleSettings.sterilization")]
         [InlineData("fanSpeed", "currentFanSpeedSetting")]
         [InlineData("color.temperature", "color.temperatureK")]
+        [InlineData("start", "isRunning")]
+        [InlineData("pause", "isPaused")]
         public void CanMap(string input, string expectedOutput)
         {
             // Act

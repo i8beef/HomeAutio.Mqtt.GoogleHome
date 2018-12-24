@@ -38,12 +38,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Dock,
 
         /// <summary>
-        /// action.devices.commands.SetFanSpeed
-        /// </summary>
-        [EnumMember(Value = "action.devices.commands.SetFanSpeed")]
-        SetFanSpeed,
-
-        /// <summary>
         /// action.devices.commands.Locate
         /// </summary>
         [EnumMember(Value = "action.devices.commands.Locate")]
@@ -56,10 +50,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         OnOff,
 
         /// <summary>
+        /// action.devices.commands.PauseUnpause
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.PauseUnpause")]
+        PauseUnpause,
+
+        /// <summary>
         /// action.devices.commands.Reverse
         /// </summary>
         [EnumMember(Value = "action.devices.commands.Reverse")]
         Reverse,
+
+        /// <summary>
+        /// action.devices.commands.SetFanSpeed
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.SetFanSpeed")]
+        SetFanSpeed,
 
         /// <summary>
         /// action.devices.commands.SetModes
@@ -78,6 +84,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.commands.SetToggles")]
         SetToggles,
+
+        /// <summary>
+        /// action.devices.commands.StartStop
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.StartStop")]
+        StartStop,
 
         /// <summary>
         /// action.devices.commands.ThermostatTemperatureSetpoint

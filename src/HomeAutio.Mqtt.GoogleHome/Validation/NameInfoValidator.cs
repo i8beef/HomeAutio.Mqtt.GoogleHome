@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.Models;
 
@@ -13,22 +13,27 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         /// Validates a <see cref="NameInfo"/>.
         /// </summary>
         /// <param name="nameInfo">The <see cref="NameInfo"/> to validate.</param>
-        public static void Validate(NameInfo nameInfo)
+        /// <returns>Validation errors.</returns>
+        public static IEnumerable<string> Validate(NameInfo nameInfo)
         {
+            var validationErrors = new List<string>();
+
             if (nameInfo.Name == null)
-                throw new Exception("NameInfo Name is missing");
+                validationErrors.Add("NameInfo Name is missing");
 
             if (nameInfo.DefaultNames != null)
             {
                 if (nameInfo.DefaultNames.Any(x => string.IsNullOrEmpty(x)))
-                    throw new Exception("NameInfo DefaultNames cannot contain empty values");
+                    validationErrors.Add("NameInfo DefaultNames cannot contain empty values");
             }
 
             if (nameInfo.Nicknames != null)
             {
                 if (nameInfo.Nicknames.Any(x => string.IsNullOrEmpty(x)))
-                    throw new Exception("NameInfo Nicknames cannot contain empty values");
+                    validationErrors.Add("NameInfo Nicknames cannot contain empty values");
             }
+
+            return validationErrors;
         }
     }
 }

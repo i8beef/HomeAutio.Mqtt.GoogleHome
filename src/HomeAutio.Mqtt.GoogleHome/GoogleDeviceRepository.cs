@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
+using HomeAutio.Mqtt.GoogleHome.Validation;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -102,6 +103,17 @@ namespace HomeAutio.Mqtt.GoogleHome
             {
                 var deviceConfigurationString = File.ReadAllText(_deviceConfigFile);
                 _devices = new ConcurrentDictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString));
+
+                // Validate the config
+                foreach (var device in _devices)
+                {
+                    var errors = DeviceValidator.Validate(device.Value);
+                    if (errors.Count() > 0)
+                    {
+                        _logger.LogWarning("GoogleDevices.json issues detected for device {Device}: {DeviceConfigIssues}", device.Key, errors);
+                    }
+                }
+
                 _logger.LogInformation($"Loaded device configuration from {_deviceConfigFile}");
             }
             else

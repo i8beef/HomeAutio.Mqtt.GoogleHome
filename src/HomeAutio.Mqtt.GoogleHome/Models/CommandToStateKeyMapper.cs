@@ -22,7 +22,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
                 { "updateModeSettings", "currentModeSettings" },
                 { "updateToggleSettings", "currentToggleSettings" },
                 { "fanSpeed", "currentFanSpeedSetting" },
-                { "color.temperature", "color.temperatureK" }
+                { "color.temperature", "color.temperatureK" },
+                { "start", "isRunning" },
+                { "pause", "isPaused" }
             };
 
             foreach (var replacement in replacements)

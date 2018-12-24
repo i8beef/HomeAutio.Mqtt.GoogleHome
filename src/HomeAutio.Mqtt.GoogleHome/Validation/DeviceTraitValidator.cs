@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 
@@ -14,155 +14,171 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         /// Validates a <see cref="DeviceTrait"/>.
         /// </summary>
         /// <param name="deviceTrait">The <see cref="DeviceTrait"/> to validate.</param>
-        public static void Validate(DeviceTrait deviceTrait)
+        /// <returns>Validation errors.</returns>
+        public static IEnumerable<string> Validate(DeviceTrait deviceTrait)
         {
+            var validationErrors = new List<string>();
+
             if (deviceTrait.Trait == TraitType.Unknown)
-                throw new Exception("Trait is missing or not a valid type");
+                validationErrors.Add("Trait is missing or not a valid type");
 
             switch (deviceTrait.Trait)
             {
                 case TraitType.Brightness:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.BrightnessAbsolute,
                         new List<string> { "brightness" },
-                        new List<string> { "brightness" });
+                        new List<string> { "brightness" }));
                     break;
                 case TraitType.CameraStream:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.CameraStream,
                         null,
                         new List<string> { "cameraStreamAccessUrl" },
-                        new List<string> { "cameraStreamSupportedProtocols", "cameraStreamNeedAuthToken", "cameraStreamNeedDrmEncryption" });
+                        new List<string> { "cameraStreamSupportedProtocols", "cameraStreamNeedAuthToken", "cameraStreamNeedDrmEncryption" }));
                     break;
                 case TraitType.ColorSetting:
-                    ValidateColorAbsolute(deviceTrait);
+                    validationErrors.AddRange(ValidateColorAbsolute(deviceTrait));
                     break;
                 case TraitType.ColorSpectrum:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.ColorAbsolute,
                         new List<string> { "spectrumRGB" },
                         new List<string> { "spectrumRgb" },
-                        null);
+                        null));
                     break;
                 case TraitType.ColorTemperature:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.ColorAbsolute,
                         new List<string> { "temperature" },
                         new List<string> { "temperatureK" },
-                        new List<string> { "temperatureMinK", "temperatureMaxK" });
+                        new List<string> { "temperatureMinK", "temperatureMaxK" }));
                     break;
                 case TraitType.Dock:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.Dock,
                         null,
                         new List<string> { "isDocked" },
-                        null);
+                        null));
                     break;
                 case TraitType.FanSpeed:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.SetFanSpeed,
                         new List<string> { "fanSpeed" },
                         new List<string> { "currentFanSpeedSetting" },
-                        new List<string> { "availableFanSpeeds" });
-                    ValidateTrait(
+                        new List<string> { "availableFanSpeeds" }));
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.Reverse,
                         null,
                         null,
-                        new List<string> { "reversible" });
+                        new List<string> { "reversible" }));
                     break;
                 case TraitType.Locator:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.Locate,
                         new List<string> { "silent" },
                         new List<string> { "generatedAlert" },
-                        null);
+                        null));
                     break;
                 case TraitType.Modes:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.SetModes,
-                        new List<string> { "updateModeSettings" },
-                        new List<string> { "currentModeSettings" },
-                        new List<string> { "availableModes", "ordered" });
+                        new List<string> { "updateModeSettings.*" },
+                        new List<string> { "currentModeSettings.*" },
+                        new List<string> { "availableModes" }));
                     break;
                 case TraitType.OnOff:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.OnOff,
                         new List<string> { "on" },
-                        new List<string> { "on" });
+                        new List<string> { "on" }));
                     break;
                 case TraitType.RunCycle:
-                    ValidateRunCycle(deviceTrait);
+                    validationErrors.AddRange(ValidateRunCycle(deviceTrait));
                     break;
                 case TraitType.Scene:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.ActivateScene,
                         new List<string> { "deactivate" },
                         null,
-                        new List<string> { "sceneReversible" });
+                        new List<string> { "sceneReversible" }));
                     break;
                 case TraitType.StartStop:
-                    ValidateTrait(
+                    if (deviceTrait.Attributes.ContainsKey("pausable") && (bool)deviceTrait.Attributes["pausable"])
+                    {
+                        validationErrors.AddRange(ValidateTrait(
+                            deviceTrait,
+                            CommandType.PauseUnpause,
+                            new List<string> { "pause " },
+                            new List<string> { "isPaused" },
+                            new List<string> { "pausable" }));
+                    }
+
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
-                        CommandType.SetToggles,
-                        new List<string> { "updateToggleSettings" },
-                        new List<string> { "currentToggleSettings" },
-                        new List<string> { "availableToggles" });
+                        CommandType.StartStop,
+                        new List<string> { "start" },
+                        new List<string> { "isRunning" },
+                        null));
                     break;
                 case TraitType.TemperatureControl:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.SetTemperature,
                         new List<string> { "temperature" },
                         new List<string> { "temperatureSetpointCelsius", "temperatureAmbientCelsius" },
-                        new List<string> { "temperatureRange", "temperatureUnitForUX" });
+                        new List<string> { "temperatureRange", "temperatureUnitForUX" }));
                     break;
                 case TraitType.TemperatureSetting:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.ThermostatSetMode,
                         new List<string> { "thermostatMode" },
                         new List<string> { "thermostatMode" },
-                        new List<string> { "availableThermostatModes" });
-                    ValidateTrait(
+                        new List<string> { "availableThermostatModes" }));
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.ThermostatTemperatureSetpoint,
                         new List<string> { "thermostatTemperatureSetpointHigh", "thermostatTemperatureSetpointLow" },
                         new List<string> { "thermostatTemperatureSetpointHigh", "thermostatTemperatureSetpointLow" },
-                        new List<string> { "thermostatTemperatureUnit" });
-                    ValidateTrait(
+                        new List<string> { "thermostatTemperatureUnit" }));
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.ThermostatTemperatureSetRange,
                         new List<string> { "thermostatTemperatureSetpoint" },
                         new List<string> { "thermostatTemperatureSetpoint" },
-                        new List<string> { "thermostatTemperatureUnit" });
+                        new List<string> { "thermostatTemperatureUnit" }));
                     break;
                 case TraitType.Toggles:
-                    ValidateTrait(
+                    validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.SetToggles,
-                        new List<string> { "updateToggleSettings" },
-                        new List<string> { "currentToggleSettings" },
-                        new List<string> { "availableToggles" });
+                        new List<string> { "updateToggleSettings.*" },
+                        new List<string> { "currentToggleSettings.*" },
+                        new List<string> { "availableToggles" }));
                     break;
             }
+
+            return validationErrors;
         }
 
         /// <summary>
         /// Validates a ColorAbsolute trait.
         /// </summary>
         /// <param name="deviceTrait">Device trait to validate.</param>
-        private static void ValidateColorAbsolute(DeviceTrait deviceTrait)
+        /// <returns>Validation errors.</returns>
+        private static IEnumerable<string> ValidateColorAbsolute(DeviceTrait deviceTrait)
         {
             var command = CommandType.ColorAbsolute;
             var commandParams = new List<string>();
@@ -195,21 +211,26 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 stateKeys = null;
             }
 
-            ValidateTrait(deviceTrait, command, commandParams, stateKeys, attributeKeys);
+            return ValidateTrait(deviceTrait, command, commandParams, stateKeys, attributeKeys);
         }
 
         /// <summary>
         /// Validates a RunCycle trait.
         /// </summary>
         /// <param name="deviceTrait">Device trait to validate.</param>
-        private static void ValidateRunCycle(DeviceTrait deviceTrait)
+        /// <returns>Validation errors.</returns>
+        private static IEnumerable<string> ValidateRunCycle(DeviceTrait deviceTrait)
         {
+            var validationErrors = new List<string>();
+
             var stateKeys = new List<string> { "currentRunCycle", "currentTotalRemainingTime", "currentCycleRemainingTime" };
             foreach (var stateKey in stateKeys)
             {
                 if (!deviceTrait.State.ContainsKey(stateKey))
-                    throw new Exception($"Trait '{deviceTrait}' is missing state '{stateKey}'");
+                    validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing state '{stateKey}'");
             }
+
+            return validationErrors;
         }
 
         /// <summary>
@@ -220,23 +241,34 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         /// <param name="commandParams">Command params expected for command.</param>
         /// <param name="stateKeys">State keys expected for command.</param>
         /// <param name="attributeKeys">Attribute keys expected for command.</param>
-        private static void ValidateTrait(
+        /// <returns>Validation errors.</returns>
+        private static IEnumerable<string> ValidateTrait(
             DeviceTrait deviceTrait,
             CommandType command,
             IEnumerable<string> commandParams,
             IEnumerable<string> stateKeys,
             IEnumerable<string> attributeKeys = null)
         {
+            var validationErrors = new List<string>();
+
             var commandName = command.ToEnumString();
             if (!deviceTrait.Commands.ContainsKey(commandName))
-                throw new Exception($"Trait '{deviceTrait}' is missing required command '{commandName}'");
+                validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing required command '{commandName}'");
 
             if (commandParams != null)
             {
                 foreach (var commandParam in commandParams)
                 {
-                    if (!deviceTrait.Commands[commandName].ContainsKey(commandParam))
-                        throw new Exception($"Trait '{deviceTrait}' is missing command param '{commandParam}' for command '{commandName}'");
+                    if (commandParam.EndsWith(".*"))
+                    {
+                        if (!deviceTrait.Commands[commandName].Keys.Any(x => x.StartsWith(commandParam.Substring(0, commandParam.Length - 2))))
+                            validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing command param '{commandParam}' for command '{commandName}'");
+                    }
+                    else
+                    {
+                        if (!deviceTrait.Commands[commandName].ContainsKey(commandParam))
+                            validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing command param '{commandParam}' for command '{commandName}'");
+                    }
                 }
             }
 
@@ -244,8 +276,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             {
                 foreach (var stateKey in stateKeys)
                 {
-                    if (!deviceTrait.State.ContainsKey(stateKey))
-                        throw new Exception($"Trait '{deviceTrait}' is missing state '{stateKey}' for command '{commandName}'");
+                    if (stateKey.EndsWith(".*"))
+                    {
+                        if (!deviceTrait.State.Keys.Any(x => x.StartsWith(stateKey.Substring(0, stateKey.Length - 2))))
+                            validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing state '{stateKey}' for command '{commandName}'");
+                    }
+                    else
+                    {
+                        if (!deviceTrait.State.ContainsKey(stateKey))
+                            validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing state '{stateKey}' for command '{commandName}'");
+                    }
                 }
             }
 
@@ -254,9 +294,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 foreach (var attributeKey in attributeKeys)
                 {
                     if (!deviceTrait.Attributes.ContainsKey(attributeKey))
-                        throw new Exception($"Trait '{deviceTrait}' is missing attribute '{attributeKey}' for command '{commandName}'");
+                        validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing attribute '{attributeKey}' for command '{commandName}'");
                 }
             }
+
+            return validationErrors;
         }
     }
 }

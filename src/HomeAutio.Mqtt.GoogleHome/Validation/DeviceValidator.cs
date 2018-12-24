@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 
 namespace HomeAutio.Mqtt.GoogleHome.Validation
@@ -12,22 +12,27 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         /// Validates a <see cref="Device"/>.
         /// </summary>
         /// <param name="device">Device to validate.</param>
-        public static void Validate(Device device)
+        /// <returns>Validation errors.</returns>
+        public static IEnumerable<string> Validate(Device device)
         {
+            var validationErrors = new List<string>();
+
             if (string.IsNullOrEmpty(device.Id))
-                throw new Exception("Device Id is missing");
+                validationErrors.Add("Device Id is missing");
 
             if (device.Type == Models.DeviceType.Unknown)
-                throw new Exception("Device Type is missing or not a valid type");
+                validationErrors.Add("Device Type is missing or not a valid type");
 
-            DeviceInfoValidator.Validate(device.DeviceInfo);
-            NameInfoValidator.Validate(device.Name);
-            CustomDataValidator.Validate(device.CustomData);
+            validationErrors.AddRange(DeviceInfoValidator.Validate(device.DeviceInfo));
+            validationErrors.AddRange(NameInfoValidator.Validate(device.Name));
+            validationErrors.AddRange(CustomDataValidator.Validate(device.CustomData));
 
             foreach (var trait in device.Traits)
             {
-                DeviceTraitValidator.Validate(trait);
+                validationErrors.AddRange(DeviceTraitValidator.Validate(trait));
             }
+
+            return validationErrors;
         }
     }
 }

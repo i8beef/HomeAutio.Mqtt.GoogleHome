@@ -1,4 +1,5 @@
-﻿using HomeAutio.Mqtt.GoogleHome.Models;
+﻿using System.Collections.Generic;
+using HomeAutio.Mqtt.GoogleHome.Models;
 
 namespace HomeAutio.Mqtt.GoogleHome.Validation
 {
@@ -11,8 +12,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         /// Validates a <see cref="DeviceInfo"/>.
         /// </summary>
         /// <param name="deviceInfo">The <see cref="DeviceInfo"/> to validate.</param>
-        public static void Validate(DeviceInfo deviceInfo)
+        /// <returns>Validation errors.</returns>
+        public static IEnumerable<string> Validate(DeviceInfo deviceInfo)
         {
+            return new List<string>();
         }
     }
 }
