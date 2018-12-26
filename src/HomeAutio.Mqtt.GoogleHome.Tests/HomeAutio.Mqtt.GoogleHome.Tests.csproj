@@ -19,4 +19,13 @@
     <ProjectReference Include="..\HomeAutio.Mqtt.GoogleHome\HomeAutio.Mqtt.GoogleHome.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\serviceAccount.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

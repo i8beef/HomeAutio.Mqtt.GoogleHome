@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using Easy.MessageHub;
+using HomeAutio.Mqtt.GoogleHome.App_Start;
 using HomeAutio.Mqtt.GoogleHome.Identity;
 using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using HomeAutio.Mqtt.GoogleHome.Models;
@@ -22,7 +23,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
@@ -52,17 +52,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         public void ConfigureServices(IServiceCollection services)
         {
             // Global JSON options
-            JsonConvert.DefaultSettings = () =>
-            {
-                var settings = new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                };
-
-                settings.Converters.Add(new StringEnumConverter());
-
-                return settings;
-            };
+            JsonSerializerConfig.Configure();
 
             // Http client factory registration.
             services.AddHttpClient();

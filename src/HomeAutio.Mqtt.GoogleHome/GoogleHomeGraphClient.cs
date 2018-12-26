@@ -107,6 +107,14 @@ namespace HomeAutio.Mqtt.GoogleHome
                 return;
             }
 
+            // Ensure Google is given a complete state representation
+            var unintializedDevices = devices.Where(x => x.IsStateFullyInitialized(stateCache) == false);
+            if (unintializedDevices.Any())
+            {
+                _log.LogWarning("WillReportState triggered but state cache not fully initialized: {Devices}", unintializedDevices.Select(x => x.Id));
+                return;
+            }
+
             var request = new ReportStateAndNotificationRequest
             {
                 RequestId = Guid.NewGuid().ToString(),
