@@ -1,11 +1,11 @@
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using HomeAutio.Mqtt.GoogleHome.App_Start;
 using HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 using Xunit;
 
 namespace HomeAutio.Mqtt.GoogleHome.Tests
@@ -15,52 +15,39 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
         private readonly HttpClient _httpClient;
         private readonly Mock<ILogger<GoogleHomeGraphClient>> _loggerMock;
 
+        private readonly string _agentUserId;
+        private readonly ServiceAccount _serviceAccount;
+
         public GoogleHomeGraphClientTests()
         {
-            JsonConvert.DefaultSettings = () =>
-            {
-                var settings = new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                };
-
-                settings.Converters.Add(new StringEnumConverter());
-
-                return settings;
-            };
-
+            // Mocks
             _loggerMock = new Mock<ILogger<GoogleHomeGraphClient>>();
             _httpClient = new HttpClient();
+
+            // Global JSON options
+            JsonSerializerConfig.Configure();
+
+            // Service account setup
+            _agentUserId = TestHelper.Configuration["agentUserId"];
+            _serviceAccount = JsonConvert.DeserializeObject<ServiceAccount>(File.ReadAllText(@"TestData/serviceAccount.json"));
         }
 
         [Fact]
         [Trait("Category", "Integration")]
         public async Task CanCallRequestSync()
         {
-            // Arrange
-            var serviceAccountString = @"{
-  ""type"": ""service_account"",
-  ""project_id"": ""PROJECT ID"",
-  ""private_key_id"": ""PRIVATE KEY ID"",
-  ""private_key"": ""PRIVATE KEY"",
-  ""client_email"": ""SERVICE ACCOUNT EMAIL"",
-  ""client_id"": ""CLIENT ID"",
-  ""auth_uri"": ""https://accounts.google.com/o/oauth2/auth"",
-  ""token_uri"": ""https://accounts.google.com/o/oauth2/token"",
-  ""auth_provider_x509_cert_url"": ""https://www.googleapis.com/oauth2/v1/certs"",
-  ""client_x509_cert_url"": ""CLIENT CERT URL""
-}";
+            // Only run if integration test requirements are present
+            if (_agentUserId != "AGENT USER ID" && _serviceAccount.ProjectId != "PROJECT ID")
+            {
+                // Arrange
+                var client = new GoogleHomeGraphClient(_loggerMock.Object, _httpClient, _serviceAccount, _agentUserId);
 
-            var serviceAccount = JsonConvert.DeserializeObject<ServiceAccount>(serviceAccountString);
-            var agentUserId = "AGENT USER ID";
+                // Act
+                await client.RequestSyncAsync();
 
-            var client = new GoogleHomeGraphClient(_loggerMock.Object, _httpClient, serviceAccount, agentUserId);
-
-            // Act
-            await client.RequestSyncAsync();
-
-            // Assert
-            _loggerMock.Verify(x => x.LogWarning(It.IsAny<string>()), Times.Never);
+                // Assert
+                _loggerMock.Verify(x => x.LogWarning(It.IsAny<string>()), Times.Never);
+            }
         }
     }
 }

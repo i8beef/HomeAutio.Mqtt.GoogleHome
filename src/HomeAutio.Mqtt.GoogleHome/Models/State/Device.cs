@@ -69,5 +69,21 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
 
             return stateConfigs;
         }
+
+        /// <summary>
+        /// Checks if the state cache for the device has been fully initialized.
+        /// </summary>
+        /// <param name="stateCache">Current state cache.</param>
+        /// <returns><c>true</c> if fully initialized, else <c>false</c>.</returns>
+        public bool IsStateFullyInitialized(IDictionary<string, string> stateCache)
+        {
+            return !Traits
+                .Where(trait => trait.Trait != TraitType.CameraStream)
+                .SelectMany(trait => trait.State)
+                .Where(state => state.Value.Topic != null)
+                .Where(state => stateCache.ContainsKey(state.Value.Topic))
+                .Where(state => stateCache[state.Value.Topic] == null)
+                .Any();
+        }
     }
 }
