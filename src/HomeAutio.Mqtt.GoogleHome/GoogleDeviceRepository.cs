@@ -85,6 +85,27 @@ namespace HomeAutio.Mqtt.GoogleHome
         }
 
         /// <summary>
+        /// Changes the device ID for a device.
+        /// </summary>
+        /// <param name="originalId">Original ID.</param>
+        /// <param name="newId">New ID.</param>
+        public void ChangeDeviceId(string originalId, string newId)
+        {
+            var device = Get(originalId);
+            if (device != null)
+            {
+                // Ensure internal ID changed and matches.
+                if (device.Id != newId)
+                {
+                    device.Id = newId;
+                }
+
+                Add(device);
+                Delete(originalId);
+            }
+        }
+
+        /// <summary>
         /// Persists current device confiuguration.
         /// </summary>
         public void Persist()

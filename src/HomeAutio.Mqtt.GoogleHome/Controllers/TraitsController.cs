@@ -174,7 +174,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             viewModel.Trait = traitEnumId;
 
             // Set new values
-            var trait = device.Traits.FirstOrDefault(x => x.Trait == traitEnumId);
+            var currentTrait = device.Traits.FirstOrDefault(x => x.Trait == traitEnumId);
+
+            // Poor mans deep clone for validation check
+            var trait = JsonConvert.DeserializeObject<DeviceTrait>(JsonConvert.SerializeObject(currentTrait));
 
             trait.Attributes = !string.IsNullOrEmpty(viewModel.Attributes) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(viewModel.Attributes, new ObjectDictionaryConverter()) : null;
             trait.Commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : null;
@@ -186,6 +189,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             if (!ModelState.IsValid)
                 return RedirectToAction("Edit", new { deviceId, traitId });
+
+            // Set values on current trait
+            currentTrait.Attributes = trait.Attributes;
+            currentTrait.Commands = trait.Commands;
+            currentTrait.State = trait.State;
 
             // Save changes
             _deviceRepository.Persist();
