@@ -8,6 +8,7 @@ using HomeAutio.Mqtt.GoogleHome.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Controllers
 {
@@ -199,8 +200,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
 
+            var currentDevice = _deviceRepository.Get(deviceId);
+
+            // Poor mans deep clone for validation check
+            var device = JsonConvert.DeserializeObject<Device>(JsonConvert.SerializeObject(currentDevice));
+
             // Set new values
-            var device = _deviceRepository.Get(deviceId);
             device.Id = viewModel.Id;
             device.RoomHint = viewModel.RoomHint;
             device.Type = viewModel.Type;
@@ -244,6 +249,20 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             if (!ModelState.IsValid)
                 return RedirectToAction("Edit", new { deviceId });
+
+            // Set values on current device
+            currentDevice.Id = device.Id;
+            currentDevice.RoomHint = device.RoomHint;
+            currentDevice.Type = device.Type;
+            currentDevice.WillReportState = device.WillReportState;
+            currentDevice.Name = device.Name;
+            currentDevice.DeviceInfo = device.DeviceInfo;
+
+            // Handle device id change
+            if (deviceId != currentDevice.Id)
+            {
+                _deviceRepository.ChangeDeviceId(deviceId, currentDevice.Id);
+            }
 
             // Save changes
             _deviceRepository.Persist();
