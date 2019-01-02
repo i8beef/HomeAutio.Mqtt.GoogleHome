@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.Core;
 using HomeAutio.Mqtt.GoogleHome.Models;
+using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.Request;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Logging;
@@ -67,6 +68,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         {
             // Subscribe to event aggregator
             _messageHubSubscriptions.Add(_messageHub.Subscribe<Command>((e) => HandleGoogleHomeCommand(e)));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<ConfigSubscriptionChangeEvent>((e) => HandleConfigSubscriptionChange(e)));
 
             return Task.CompletedTask;
         }
@@ -115,6 +117,28 @@ namespace HomeAutio.Mqtt.GoogleHome
         }
 
         #region Google Home Handlers
+
+        /// <summary>
+        /// Handler for device config change events.
+        /// </summary>
+        /// <param name="changeEvent">The change event to handle.</param>
+        private async void HandleConfigSubscriptionChange(ConfigSubscriptionChangeEvent changeEvent)
+        {
+            // Stop listening to removed topics
+            await MqttClient.UnsubscribeAsync(changeEvent.DeletedSubscriptions);
+            foreach (var topic in changeEvent.DeletedSubscriptions)
+                SubscribedTopics.Remove(topic);
+
+            // Begin listening to added topics
+            await MqttClient.SubscribeAsync(changeEvent
+                .AddedSubscriptions
+                .Select(topic => new TopicFilterBuilder()
+                    .WithTopic(topic)
+                    .WithAtLeastOnceQoS()
+                    .Build()));
+            foreach (var topic in changeEvent.AddedSubscriptions)
+                SubscribedTopics.Add(topic);
+        }
 
         /// <summary>
         /// Hanlder for Google Home commands.

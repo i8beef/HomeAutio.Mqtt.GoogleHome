@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
+using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using HomeAutio.Mqtt.GoogleHome.Validation;
 using HomeAutio.Mqtt.GoogleHome.ViewModels;
@@ -20,18 +22,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     {
         private readonly ILogger<DevicesController> _log;
 
+        private readonly IMessageHub _messageHub;
         private readonly GoogleDeviceRepository _deviceRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DevicesController"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
+        /// <param name="messageHub">Message nhub.</param>
         /// <param name="deviceRepository">Device repository.</param>
         public DevicesController(
             ILogger<DevicesController> logger,
+            IMessageHub messageHub,
             GoogleDeviceRepository deviceRepository)
         {
             _log = logger;
+            _messageHub = messageHub;
             _deviceRepository = deviceRepository;
         }
 
@@ -140,10 +146,18 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
 
-            _deviceRepository.Delete(deviceId);
+            // Determine subscription changes
+            var deletedTopics = _deviceRepository.Get(deviceId).Traits
+                .SelectMany(trait => trait.State)
+                .Where(state => !string.IsNullOrEmpty(state.Value.Topic))
+                .Select(state => state.Value.Topic);
 
             // Save changes
+            _deviceRepository.Delete(deviceId);
             _deviceRepository.Persist();
+
+            // Publish event for subscription changes
+            _messageHub.Publish(new ConfigSubscriptionChangeEvent { DeletedSubscriptions = deletedTopics });
 
             return RedirectToAction("Index");
         }

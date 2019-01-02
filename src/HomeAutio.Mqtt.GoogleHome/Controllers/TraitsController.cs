@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
 using HomeAutio.Mqtt.GoogleHome.Models;
+using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using HomeAutio.Mqtt.GoogleHome.Validation;
 using HomeAutio.Mqtt.GoogleHome.ViewModels;
@@ -21,18 +23,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     {
         private readonly ILogger<TraitsController> _log;
 
+        private readonly IMessageHub _messageHub;
         private readonly GoogleDeviceRepository _deviceRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TraitsController"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
+        /// <param name="messageHub">Message nhub.</param>
         /// <param name="deviceRepository">Device repository.</param>
         public TraitsController(
             ILogger<TraitsController> logger,
+            IMessageHub messageHub,
             GoogleDeviceRepository deviceRepository)
         {
             _log = logger;
+            _messageHub = messageHub;
             _deviceRepository = deviceRepository;
         }
 
@@ -90,6 +96,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             // Save changes
             _deviceRepository.Persist();
 
+            // Determine subscription changes
+            var addedTopics = trait.State
+                .Where(state => !string.IsNullOrEmpty(state.Value.Topic))
+                .Select(state => state.Value.Topic);
+
+            // Publish event for subscription changes
+            _messageHub.Publish(new ConfigSubscriptionChangeEvent { AddedSubscriptions = addedTopics });
+
             return RedirectToAction("Edit", "Devices", new { deviceId });
         }
 
@@ -111,10 +125,20 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!device.Traits.Any(x => x.Trait == traitEnumId))
                 return NotFound();
 
+            // Determine subscription changes
+            var deletedTopics = device.Traits
+                .First(x => x.Trait == traitEnumId)
+                .State
+                .Where(state => !string.IsNullOrEmpty(state.Value.Topic))
+                .Select(state => state.Value.Topic);
+
             device.Traits.Remove(device.Traits.First(x => x.Trait == traitEnumId));
 
             // Save changes
             _deviceRepository.Persist();
+
+            // Publish event for subscription changes
+            _messageHub.Publish(new ConfigSubscriptionChangeEvent { DeletedSubscriptions = deletedTopics });
 
             return RedirectToAction("Edit", "Devices", new { deviceId });
         }
@@ -190,6 +214,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!ModelState.IsValid)
                 return RedirectToAction("Edit", new { deviceId, traitId });
 
+            // Determine subscription changes
+            var existingTopics = currentTrait
+                .State
+                .Where(state => !string.IsNullOrEmpty(state.Value.Topic))
+                .Select(state => state.Value.Topic);
+            var newTopics = trait.State
+                .Where(state => !string.IsNullOrEmpty(state.Value.Topic))
+                .Select(state => state.Value.Topic);
+            var addedTopics = newTopics.Where(topic => !existingTopics.Contains(topic));
+            var deletedTopics = existingTopics.Where(topic => !newTopics.Contains(topic));
+
             // Set values on current trait
             currentTrait.Attributes = trait.Attributes;
             currentTrait.Commands = trait.Commands;
@@ -197,6 +232,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             // Save changes
             _deviceRepository.Persist();
+
+            // Publish event for subscription changes
+            _messageHub.Publish(new ConfigSubscriptionChangeEvent { AddedSubscriptions = addedTopics, DeletedSubscriptions = deletedTopics });
 
             return RedirectToAction("Edit", "Devices", new { deviceId });
         }
