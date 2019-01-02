@@ -96,13 +96,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             // Save changes
             _deviceRepository.Persist();
 
-            // Determine subscription changes
-            var addedTopics = trait.State
-                .Where(state => !string.IsNullOrEmpty(state.Value.Topic))
-                .Select(state => state.Value.Topic);
+            if (!device.Disabled)
+            {
+                // Determine subscription changes
+                var addedTopics = trait.State
+                    .Where(state => !string.IsNullOrEmpty(state.Value.Topic))
+                    .Select(state => state.Value.Topic);
 
-            // Publish event for subscription changes
-            _messageHub.Publish(new ConfigSubscriptionChangeEvent { AddedSubscriptions = addedTopics });
+                // Publish event for subscription changes
+                _messageHub.Publish(new ConfigSubscriptionChangeEvent { AddedSubscriptions = addedTopics });
+            }
 
             return RedirectToAction("Edit", "Devices", new { deviceId });
         }
@@ -137,8 +140,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             // Save changes
             _deviceRepository.Persist();
 
-            // Publish event for subscription changes
-            _messageHub.Publish(new ConfigSubscriptionChangeEvent { DeletedSubscriptions = deletedTopics });
+            if (!device.Disabled)
+            {
+                // Publish event for subscription changes
+                _messageHub.Publish(new ConfigSubscriptionChangeEvent { DeletedSubscriptions = deletedTopics });
+            }
 
             return RedirectToAction("Edit", "Devices", new { deviceId });
         }
@@ -214,7 +220,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!ModelState.IsValid)
                 return RedirectToAction("Edit", new { deviceId, traitId });
 
-            // Determine subscription changes
+            // Grab current and new subscriptions
             var existingTopics = currentTrait
                 .State
                 .Where(state => !string.IsNullOrEmpty(state.Value.Topic))
@@ -222,8 +228,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             var newTopics = trait.State
                 .Where(state => !string.IsNullOrEmpty(state.Value.Topic))
                 .Select(state => state.Value.Topic);
-            var addedTopics = newTopics.Where(topic => !existingTopics.Contains(topic));
-            var deletedTopics = existingTopics.Where(topic => !newTopics.Contains(topic));
 
             // Set values on current trait
             currentTrait.Attributes = trait.Attributes;
@@ -233,8 +237,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             // Save changes
             _deviceRepository.Persist();
 
-            // Publish event for subscription changes
-            _messageHub.Publish(new ConfigSubscriptionChangeEvent { AddedSubscriptions = addedTopics, DeletedSubscriptions = deletedTopics });
+            if (!device.Disabled)
+            {
+                // Determine subscription changes
+                var addedTopics = newTopics.Where(topic => !existingTopics.Contains(topic));
+                var deletedTopics = existingTopics.Where(topic => !newTopics.Contains(topic));
+
+                // Publish event for subscription changes
+                _messageHub.Publish(new ConfigSubscriptionChangeEvent { AddedSubscriptions = addedTopics, DeletedSubscriptions = deletedTopics });
+            }
 
             return RedirectToAction("Edit", "Devices", new { deviceId });
         }

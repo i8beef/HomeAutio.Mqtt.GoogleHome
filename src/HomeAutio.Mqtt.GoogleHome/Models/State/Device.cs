@@ -20,6 +20,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         public DeviceType Type { get; set; }
 
         /// <summary>
+        /// Indicates if device is disabled or not.
+        /// </summary>
+        public bool Disabled { get; set; }
+
+        /// <summary>
         /// Indicates if the device will report state.
         /// </summary>
         public bool WillReportState { get; set; }
