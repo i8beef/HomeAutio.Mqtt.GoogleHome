@@ -1,16 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
-using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using HomeAutio.Mqtt.GoogleHome.Validation;
 using HomeAutio.Mqtt.GoogleHome.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Controllers
 {
@@ -22,22 +19,18 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     {
         private readonly ILogger<DevicesController> _log;
 
-        private readonly IMessageHub _messageHub;
         private readonly GoogleDeviceRepository _deviceRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DevicesController"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
-        /// <param name="messageHub">Message nhub.</param>
         /// <param name="deviceRepository">Device repository.</param>
         public DevicesController(
             ILogger<DevicesController> logger,
-            IMessageHub messageHub,
             GoogleDeviceRepository deviceRepository)
         {
             _log = logger;
-            _messageHub = messageHub;
             _deviceRepository = deviceRepository;
         }
 
@@ -87,8 +80,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 Name = new Models.NameInfo
                 {
                     Name = viewModel.Name
-                },
-                Traits = new List<DeviceTrait>()
+                }
             };
 
             // Default names
@@ -131,7 +123,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             // Save changes
             _deviceRepository.Add(device);
-            _deviceRepository.Persist();
 
             return RedirectToAction("Index");
         }
@@ -147,22 +138,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
 
-            // Determine subscription changes
-            var device = _deviceRepository.Get(deviceId);
-            var deletedTopics = device.Traits
-                .SelectMany(trait => trait.State)
-                .Where(state => !string.IsNullOrEmpty(state.Value.Topic))
-                .Select(state => state.Value.Topic);
-
             // Save changes
             _deviceRepository.Delete(deviceId);
-            _deviceRepository.Persist();
-
-            if (!device.Disabled)
-            {
-                // Publish event for subscription changes
-                _messageHub.Publish(new ConfigSubscriptionChangeEvent { DeletedSubscriptions = deletedTopics });
-            }
 
             return RedirectToAction("Index");
         }
@@ -219,12 +196,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
 
-            var currentDevice = _deviceRepository.Get(deviceId);
-
-            // Poor mans deep clone for validation check
-            var device = JsonConvert.DeserializeObject<Device>(JsonConvert.SerializeObject(currentDevice));
-
             // Set new values
+            var device = _deviceRepository.GetDetached(deviceId);
             device.Id = viewModel.Id;
             device.Type = viewModel.Type;
             device.Disabled = viewModel.Disabled;
@@ -270,45 +243,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!ModelState.IsValid)
                 return RedirectToAction("Edit", new { deviceId });
 
-            // Determine if subscription changes need to be published
-            var disabledStateChanged = currentDevice.Disabled != device.Disabled;
-
-            // Set values on current device
-            currentDevice.Id = device.Id;
-            currentDevice.Type = device.Type;
-            currentDevice.Disabled = device.Disabled;
-            currentDevice.WillReportState = device.WillReportState;
-            currentDevice.RoomHint = device.RoomHint;
-            currentDevice.Name = device.Name;
-            currentDevice.DeviceInfo = device.DeviceInfo;
-
-            // Handle device id change
-            if (deviceId != currentDevice.Id)
-            {
-                _deviceRepository.ChangeDeviceId(deviceId, currentDevice.Id);
-            }
-
             // Save changes
-            _deviceRepository.Persist();
-
-            if (disabledStateChanged)
-            {
-                // Publish necessary subscription changes
-                var deviceTopics = currentDevice.Traits
-                    .SelectMany(trait => trait.State)
-                    .Where(state => !string.IsNullOrEmpty(state.Value.Topic))
-                    .Select(state => state.Value.Topic);
-                if (device.Disabled)
-                {
-                    // Publish event for subscription changes
-                    _messageHub.Publish(new ConfigSubscriptionChangeEvent { DeletedSubscriptions = deviceTopics });
-                }
-                else
-                {
-                    // Publish event for subscription changes
-                    _messageHub.Publish(new ConfigSubscriptionChangeEvent { AddedSubscriptions = deviceTopics });
-                }
-            }
+            _deviceRepository.Update(deviceId, device);
 
             return RedirectToAction("Index");
         }

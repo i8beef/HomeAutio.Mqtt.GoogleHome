@@ -66,6 +66,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 var deviceConfigFile = Configuration.GetValue<string>("deviceConfigFile");
                 return new GoogleDeviceRepository(
                     serviceProvider.GetRequiredService<ILogger<GoogleDeviceRepository>>(),
+                    serviceProvider.GetRequiredService<IMessageHub>(),
                     deviceConfigFile);
             });
 

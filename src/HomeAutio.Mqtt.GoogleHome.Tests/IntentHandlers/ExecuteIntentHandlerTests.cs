@@ -21,7 +21,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
             _messageHubMock = new Mock<IMessageHub>();
 
             var googleDeviceLogger = new Mock<ILogger<GoogleDeviceRepository>>();
-            _deviceRepositoryMock = new Mock<GoogleDeviceRepository>(googleDeviceLogger.Object, "");
+            _deviceRepositoryMock = new Mock<GoogleDeviceRepository>(googleDeviceLogger.Object, _messageHubMock.Object, "");
         }
 
         [Fact]
