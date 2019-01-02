@@ -42,21 +42,23 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
             var syncResponsePayload = new Models.Response.SyncResponsePayload
             {
                 AgentUserId = _config.GetValue<string>("googleHomeGraph:agentUserId"),
-                Devices = _deviceRepository.GetAll().Select(x => new Models.Response.Device
-                {
-                    Id = x.Id,
-                    Type = x.Type,
-                    RoomHint = x.RoomHint,
-                    WillReportState = x.WillReportState,
-                    Traits = x.Traits.Select(trait => trait.Trait).ToList(),
-                    Attributes = x.Traits
-                        .Where(trait => trait.Attributes != null)
-                        .SelectMany(trait => trait.Attributes)
-                        .ToDictionary(kv => kv.Key, kv => kv.Value),
-                    Name = x.Name,
-                    DeviceInfo = x.DeviceInfo,
-                    CustomData = x.CustomData
-                }).ToList()
+                Devices = _deviceRepository.GetAll()
+                    .Where(device => !device.Disabled)
+                    .Select(x => new Models.Response.Device
+                    {
+                        Id = x.Id,
+                        Type = x.Type,
+                        RoomHint = x.RoomHint,
+                        WillReportState = x.WillReportState,
+                        Traits = x.Traits.Select(trait => trait.Trait).ToList(),
+                        Attributes = x.Traits
+                            .Where(trait => trait.Attributes != null)
+                            .SelectMany(trait => trait.Attributes)
+                            .ToDictionary(kv => kv.Key, kv => kv.Value),
+                        Name = x.Name,
+                        DeviceInfo = x.DeviceInfo,
+                        CustomData = x.CustomData
+                    }).ToList()
             };
 
             return syncResponsePayload;
