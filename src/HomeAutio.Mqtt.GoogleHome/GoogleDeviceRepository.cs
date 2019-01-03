@@ -165,7 +165,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                         .Select(state => state.Value.Topic);
 
                     // Save changes
-                    if (_devices.TryUpdate(device.Id, currentDevice, device))
+                    if (_devices.TryUpdate(device.Id, device, currentDevice))
                     {
                         Persist();
 
