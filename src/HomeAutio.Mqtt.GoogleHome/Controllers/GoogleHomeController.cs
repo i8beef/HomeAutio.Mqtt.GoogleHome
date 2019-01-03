@@ -17,6 +17,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         private readonly SyncIntentHandler _syncIntentHandler;
         private readonly QueryIntentHandler _queryIntentHandler;
         private readonly ExecuteIntentHandler _executeIntentHandler;
+        private readonly DisconnectIntentHandler _disconnectIntentHandler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleHomeController"/> class.
@@ -25,14 +26,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <param name="syncIntentHandler">Sync intent handler.</param>
         /// <param name="queryIntentHandler">Query ntent handler.</param>
         /// <param name="executeIntentHandler">Execute intent handler.</param>
+        /// <param name="disconnectIntentHandler">Disconnect intent handler.</param>
         public GoogleHomeController(
             ILogger<GoogleHomeController> logger,
             SyncIntentHandler syncIntentHandler,
             QueryIntentHandler queryIntentHandler,
-            ExecuteIntentHandler executeIntentHandler)
+            ExecuteIntentHandler executeIntentHandler,
+            DisconnectIntentHandler disconnectIntentHandler)
         {
             _log = logger;
 
+            _disconnectIntentHandler = disconnectIntentHandler;
             _syncIntentHandler = syncIntentHandler;
             _queryIntentHandler = queryIntentHandler;
             _executeIntentHandler = executeIntentHandler;
@@ -70,6 +74,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                     response.Payload = _executeIntentHandler.Handle(executeIntent);
                     return Ok(response);
                 case Models.Request.DisconnectIntent disconnectIntent:
+                    _disconnectIntentHandler.Handle(disconnectIntent);
                     return Ok();
             }
 
