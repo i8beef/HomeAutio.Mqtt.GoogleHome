@@ -40,7 +40,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>Response.</returns>
         public IActionResult Index()
         {
-            var model = _deviceRepository.GetAll();
+            var model = _deviceRepository.GetAll().OrderBy(device => device.Id);
 
             return View(model);
         }
@@ -177,7 +177,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             if (device.Traits != null)
             {
-                model.Traits = device.Traits.Select(x => x.Trait);
+                model.Traits = device.Traits.Select(x => x.Trait).OrderBy(trait => trait);
             }
 
             return View(model);
