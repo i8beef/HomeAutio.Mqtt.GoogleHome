@@ -83,30 +83,30 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
             device.Traits.Add(new DeviceTrait {
                 Trait = GoogleHome.Models.TraitType.Brightness,
                 Commands = new Dictionary<string, IDictionary<string, string>>
+                {
                     {
+                        "action.devices.commands.BrightnessAbsolute",
+                        new Dictionary<string, string>
                         {
-                            "action.devices.commands.BrightnessAbsolute",
-                            new Dictionary<string, string>
                             {
-                                {
-                                    "brightness",
-                                    "test/device/brightness/set"
-                                }
-                            }
-                        }
-                    },
-                State = new Dictionary<string, DeviceState>
-                    {
-                        {
-                            "brightness",
-                            new DeviceState
-                            {
-                                Topic = "/test/device/brightness",
-                                GoogleType = GoogleType.Numeric,
-                                ValueMap = null
+                                "brightness",
+                                "test/device/brightness/set"
                             }
                         }
                     }
+                },
+                State = new Dictionary<string, DeviceState>
+                {
+                    {
+                        "brightness",
+                        new DeviceState
+                        {
+                            Topic = "/test/device/brightness",
+                            GoogleType = GoogleType.Numeric,
+                            ValueMap = null
+                        }
+                    }
+                }
             });
 
             var expectedAddedTopics = device.Traits

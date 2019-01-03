@@ -267,6 +267,9 @@ namespace HomeAutio.Mqtt.GoogleHome
                 File.WriteAllText(_deviceConfigFile, deviceString);
                 _logger.LogInformation($"Persisting device configuration changes to {_deviceConfigFile}");
             }
+
+            // Publish an event to trigger REQUEST_SYNC
+            _messageHub.Publish(new RequestSyncEvent());
         }
     }
 }

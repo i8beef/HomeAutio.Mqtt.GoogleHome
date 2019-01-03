@@ -73,17 +73,12 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Build state cache from configuration
             services.AddSingleton<StateCache>(serviceProvider =>
             {
-                var stateValues = serviceProvider.GetService<GoogleDeviceRepository>().GetAll()
-                    .SelectMany(x => x.Traits)
-                    .SelectMany(x => x.State.Values)
-                    .Select(x => x.Topic)
-                    .Where(x => x != null);
-
-                // Flatten state to get real topicss
-                var topics = stateValues.OfType<string>()
-                    .Union(stateValues.OfType<IDictionary<string, object>>()
-                        .SelectMany(x => x.Values)
-                        .OfType<string>());
+                var topics = serviceProvider.GetService<GoogleDeviceRepository>().GetAll()
+                    .Where(device => !device.Disabled)
+                    .SelectMany(device => device.Traits)
+                    .SelectMany(trait => trait.State.Values)
+                    .Select(state => state.Topic)
+                    .Where(topic => topic != null);
 
                 return new StateCache(topics.ToDictionary(x => x, x => string.Empty));
             });

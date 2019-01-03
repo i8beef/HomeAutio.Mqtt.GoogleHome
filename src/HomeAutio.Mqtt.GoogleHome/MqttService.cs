@@ -67,6 +67,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         protected override Task StartServiceAsync(CancellationToken cancellationToken)
         {
             // Subscribe to event aggregator
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<RequestSyncEvent>((e) => HandleGoogleRequestSync(e)));
             _messageHubSubscriptions.Add(_messageHub.Subscribe<Command>((e) => HandleGoogleHomeCommand(e)));
             _messageHubSubscriptions.Add(_messageHub.Subscribe<ConfigSubscriptionChangeEvent>((e) => HandleConfigSubscriptionChange(e)));
 
@@ -93,9 +94,7 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             if (e.ApplicationMessage.Topic == TopicRoot + "/REQUEST_SYNC")
             {
-                // Handle REQUEST_SYNC
-                _googleHomeGraphClient.RequestSyncAsync()
-                    .GetAwaiter().GetResult();
+                _messageHub.Publish(new RequestSyncEvent());
             }
             else if (_stateCache.ContainsKey(e.ApplicationMessage.Topic))
             {
@@ -103,8 +102,9 @@ namespace HomeAutio.Mqtt.GoogleHome
 
                 // Identify devices that handle reportState
                 var devices = _deviceRepository.GetAll()
-                    .Where(x => x.WillReportState)
-                    .Where(x => x.Traits.Any(trait => trait.State.Values.Any(state => state.Topic == e.ApplicationMessage.Topic)))
+                    .Where(device => !device.Disabled)
+                    .Where(device => device.WillReportState)
+                    .Where(device => device.Traits.Any(trait => trait.State.Values.Any(state => state.Topic == e.ApplicationMessage.Topic)))
                     .ToList();
 
                 // Send updated to Google Home Graph
@@ -146,10 +146,14 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <param name="command">The command to handle.</param>
         private async void HandleGoogleHomeCommand(Command command)
         {
-            foreach (var device in command.Devices)
+            foreach (var commandDevice in command.Devices)
             {
+                var device = _deviceRepository.Get(commandDevice.Id);
+                if (device.Disabled)
+                    continue;
+
                 // Find all supported commands for the device
-                var deviceSupportedCommands = _deviceRepository.Get(device.Id).Traits
+                var deviceSupportedCommands = device.Traits
                     .SelectMany(x => x.Commands)
                     .ToDictionary(x => x.Key, x => x.Value);
 
@@ -173,7 +177,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                                 var stateKey = CommandToStateKeyMapper.Map(parameter.Key);
 
                                 // Find the DeviceState object that provides configuration for mapping state/command values
-                                var deviceState = _deviceRepository.Get(device.Id).Traits
+                                var deviceState = device.Traits
                                     .Where(x => x.Commands.ContainsKey(execution.Command))
                                     .SelectMany(x => x.State)
                                     .Where(x => x.Key == stateKey)
@@ -204,6 +208,15 @@ namespace HomeAutio.Mqtt.GoogleHome
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// REQUEST_SYNC event handler.
+        /// </summary>
+        /// <param name="requestSyncEvent">Request sync event trigger.</param>
+        private async void HandleGoogleRequestSync(RequestSyncEvent requestSyncEvent)
+        {
+            await _googleHomeGraphClient.RequestSyncAsync();
         }
 
         #endregion
