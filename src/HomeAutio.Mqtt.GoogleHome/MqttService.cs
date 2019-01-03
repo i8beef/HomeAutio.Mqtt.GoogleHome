@@ -125,19 +125,35 @@ namespace HomeAutio.Mqtt.GoogleHome
         private async void HandleConfigSubscriptionChange(ConfigSubscriptionChangeEvent changeEvent)
         {
             // Stop listening to removed topics
-            await MqttClient.UnsubscribeAsync(changeEvent.DeletedSubscriptions);
             foreach (var topic in changeEvent.DeletedSubscriptions)
+            {
+                // Remove MQTT subscription
+                _log.LogInformation("MQTT unsubscribing to the following topics: " + string.Join(", ", changeEvent.DeletedSubscriptions));
+                await MqttClient.UnsubscribeAsync(new List<string> { topic });
                 SubscribedTopics.Remove(topic);
 
+                // Remove state cache for item
+                _stateCache.TryRemove(topic, out string _);
+            }
+
             // Begin listening to added topics
-            await MqttClient.SubscribeAsync(changeEvent
-                .AddedSubscriptions
-                .Select(topic => new TopicFilterBuilder()
-                    .WithTopic(topic)
-                    .WithAtLeastOnceQoS()
-                    .Build()));
             foreach (var topic in changeEvent.AddedSubscriptions)
-                SubscribedTopics.Add(topic);
+            {
+                // Add state cache for item
+                if (_stateCache.TryAdd(topic, string.Empty))
+                {
+                    _log.LogInformation("MQTT subscribing to the following topics: " + string.Join(", ", changeEvent.AddedSubscriptions));
+                    await MqttClient.SubscribeAsync(
+                        new List<TopicFilter>
+                        {
+                            new TopicFilterBuilder()
+                                .WithTopic(topic)
+                                .WithAtLeastOnceQoS()
+                                .Build()
+                        });
+                    SubscribedTopics.Add(topic);
+                }
+            }
         }
 
         /// <summary>
