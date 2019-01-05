@@ -26,8 +26,8 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Device</h3>
                 </div>
-                <div class="panel-body">
-                    <form method="post">
+                <form method="post">
+                    <div class="panel-body">
                         <fieldset>
                             <div class="form-group">
                                 <label asp-for="Id">Device Id</label>
@@ -40,13 +40,13 @@
                                 </select>
                             </div>
                             <div class="form-group">
+                                <a onclick="openDocumentation()" class="btn btn-warning">Device documentation</a>
+                            </div>
+                            <div class="form-group">
                                 <label asp-for="Disabled">
                                     <input asp-for="Disabled" type="checkbox" />
                                     <strong>Disabled</strong>
                                 </label>
-                            </div>
-                            <div class="form-group">
-                                <a onclick="openDocumentation()" class="btn btn-warning">Device documentation</a>
                             </div>
                             <div class="form-group">
                                 <label asp-for="WillReportState">
@@ -60,48 +60,53 @@
                             </div>
                         </fieldset>
 
-                        <fieldset>
-                            <legend>Name Information</legend>
-                            <div class="form-group">
-                                <label asp-for="DefaultNames">Default Names</label>
-                                <input class="form-control" placeholder="Default Names" asp-for="DefaultNames" autofocus disabled>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading" data-toggle="collapse" data-target="#NameInfo">Name Information</div>
+                            <div id="NameInfo" class="panel-body collapse in">
+                                <div class="form-group">
+                                    <label asp-for="DefaultNames">Default Names</label>
+                                    <input class="form-control" placeholder="Default Names" asp-for="DefaultNames" autofocus disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Name">Name</label>
+                                    <input class="form-control" placeholder="Name" asp-for="Name" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Nicknames">Nicknames</label>
+                                    <input class="form-control" placeholder="Nicknames" asp-for="Nicknames" autofocus disabled>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label asp-for="Name">Name</label>
-                                <input class="form-control" placeholder="Name" asp-for="Name" autofocus>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Nicknames">Nicknames</label>
-                                <input class="form-control" placeholder="Nicknames" asp-for="Nicknames" autofocus disabled>
-                            </div>
-                        </fieldset>
+                        </div>
 
-                        <fieldset>
-                            <legend>Manufacturer Information</legend>
-                            <div class="form-group">
-                                <label asp-for="Manufacturer">Manufacturer</label>
-                                <input class="form-control" placeholder="Manufacturer" asp-for="Manufacturer" autofocus>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading" data-toggle="collapse" data-target="#ManufacturerInfo">Manufacturer Information</div>
+                            <div id="ManufacturerInfo" class="panel-body collapse">
+                                <div class="form-group">
+                                    <label asp-for="Manufacturer">Manufacturer</label>
+                                    <input class="form-control" placeholder="Manufacturer" asp-for="Manufacturer" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Model">Model</label>
+                                    <input class="form-control" placeholder="Model" asp-for="Model" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="HwVersion">Hardware Version</label>
+                                    <input class="form-control" placeholder="Hardware Version" asp-for="HwVersion" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="SwVersion">Software Version</label>
+                                    <input class="form-control" placeholder="Software Version" asp-for="SwVersion" autofocus>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label asp-for="Model">Model</label>
-                                <input class="form-control" placeholder="Model" asp-for="Model" autofocus>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="HwVersion">Hardware Version</label>
-                                <input class="form-control" placeholder="Hardware Version" asp-for="HwVersion" autofocus>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="SwVersion">Software Version</label>
-                                <input class="form-control" placeholder="Software Version" asp-for="SwVersion" autofocus>
-                            </div>
-                        </fieldset>
-
+                        </div>
+                    </div>
+                    <div class="panel-footer">
                         <div class="form-group">
                             <button class="btn btn-primary" name="button" value="create">Create</button>
                             <a asp-controller="Devices" asp-action="Index" class="btn btn-default">Cancel</a>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

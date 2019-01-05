@@ -125,24 +125,42 @@ namespace HomeAutio.Mqtt.GoogleHome
         private async void HandleConfigSubscriptionChange(ConfigSubscriptionChangeEvent changeEvent)
         {
             // Stop listening to removed topics
-            foreach (var topic in changeEvent.DeletedSubscriptions)
+            foreach (var topic in changeEvent.DeletedSubscriptions.Distinct())
             {
-                // Remove MQTT subscription
-                _log.LogInformation("MQTT unsubscribing to the following topics: " + string.Join(", ", changeEvent.DeletedSubscriptions));
-                await MqttClient.UnsubscribeAsync(new List<string> { topic });
-                SubscribedTopics.Remove(topic);
+                // Check if actually subscribed and remove MQTT subscription
+                if (SubscribedTopics.Contains(topic))
+                {
+                    _log.LogInformation("MQTT unsubscribing to the following topic: {Topic}", topic);
+                    await MqttClient.UnsubscribeAsync(new List<string> { topic });
+                    SubscribedTopics.Remove(topic);
+                }
 
-                // Remove state cache for item
-                _stateCache.TryRemove(topic, out string _);
+                // Check that state cache actually contains topic
+                if (_stateCache.ContainsKey(topic))
+                {
+                    if (_stateCache.TryRemove(topic, out string _))
+                        _log.LogInformation("Successfully removed topic {Topic} from internal state cache", topic);
+                    else
+                        _log.LogWarning("Failed to remove topic {Topic} from internal state cache", topic);
+                }
             }
 
             // Begin listening to added topics
-            foreach (var topic in changeEvent.AddedSubscriptions)
+            foreach (var topic in changeEvent.AddedSubscriptions.Distinct())
             {
-                // Add state cache for item
-                if (_stateCache.TryAdd(topic, string.Empty))
+                // Ensure the that state cache doesn't contain topic and add
+                if (!_stateCache.ContainsKey(topic))
                 {
-                    _log.LogInformation("MQTT subscribing to the following topics: " + string.Join(", ", changeEvent.AddedSubscriptions));
+                    if (_stateCache.TryAdd(topic, string.Empty))
+                        _log.LogInformation("Successfully added topic {Topic} to internal state cache", topic);
+                    else
+                        _log.LogWarning("Failed to add topic {Topic} to internal state cache", topic);
+                }
+
+                // Check if already subscribed and subscribe to MQTT topic
+                if (!SubscribedTopics.Contains(topic))
+                {
+                    _log.LogInformation("MQTT subscribing to the following topic: {Topic}", topic);
                     await MqttClient.SubscribeAsync(
                         new List<TopicFilter>
                         {

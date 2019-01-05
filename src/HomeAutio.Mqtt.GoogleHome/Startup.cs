@@ -78,6 +78,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     .SelectMany(device => device.Traits)
                     .SelectMany(trait => trait.State.Values)
                     .Select(state => state.Topic)
+                    .Distinct()
                     .Where(topic => topic != null);
 
                 return new StateCache(topics.ToDictionary(x => x, x => string.Empty));

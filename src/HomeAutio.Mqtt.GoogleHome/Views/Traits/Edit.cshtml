@@ -66,8 +66,8 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Edit Trait</h3>
                 </div>
-                <div class="panel-body">
-                    <form method="post">
+                <form method="post">
+                    <div class="panel-body">
                         <fieldset>
                             <div class="form-group">
                                 <label asp-for="Trait">Trait</label>
@@ -95,17 +95,17 @@
                                 <textarea class="form-control" asp-for="State" rows="10"></textarea>
                             </div>
                         </fieldset>
-
+                    </div>
+                    <div class="panel-footer">
                         <div class="form-group">
                             <button class="btn btn-primary" name="button" value="update">Update</button>
-                            <a asp-controller="Devices" asp-action="Edit" asp-route-deviceId="@(Context.Request.Query["deviceId"])" class="btn btn-default">Cancel</a>
+                            <a asp-controller="Devices" asp-action="Edit" asp-route-deviceId="@(Context.Request.Query[" deviceId"])" class="btn btn-default">Cancel</a>
                         </div>
-                    </form>
-
-                    <form method="post" asp-action="Delete" asp-route-deviceId="@(Context.Request.Query["deviceId"])" asp-route-traitId="@Model.Trait.ToEnumString()">
-                        <button class="btn btn-danger" name="button" value="delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
-                    </form>
-                </div>
+                    </div>
+                </form>
+                <form method="post" asp-action="Delete" asp-route-deviceId="@(Context.Request.Query["deviceId"])" asp-route-traitId="@Model.Trait.ToEnumString()">
+                    <button class="btn btn-danger pull-right" style="position: relative;top: -60px;right:10px" name="button" value="delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                </form>
             </div>
         </div>
     </div>

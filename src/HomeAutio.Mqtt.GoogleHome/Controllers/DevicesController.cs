@@ -40,7 +40,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>Response.</returns>
         public IActionResult Index()
         {
-            var model = _deviceRepository.GetAll().OrderBy(device => device.Id);
+            var model = _deviceRepository.GetAll()
+                .OrderBy(device => device.Id)
+                .ToList();
 
             return View(model);
         }
@@ -159,9 +161,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             var model = new DeviceViewModel
             {
                 Id = device.Id,
-                RoomHint = device.RoomHint,
                 Type = device.Type,
+                Disabled = device.Disabled,
                 WillReportState = device.WillReportState,
+                RoomHint = device.RoomHint,
                 Name = device.Name.Name,
                 DefaultNames = string.Join(',', device.Name.DefaultNames),
                 Nicknames = string.Join(',', device.Name.Nicknames),
