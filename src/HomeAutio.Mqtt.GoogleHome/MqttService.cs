@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.Core;
 using HomeAutio.Mqtt.GoogleHome.Models;
+using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.Request;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Logging;
@@ -66,7 +67,9 @@ namespace HomeAutio.Mqtt.GoogleHome
         protected override Task StartServiceAsync(CancellationToken cancellationToken)
         {
             // Subscribe to event aggregator
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<RequestSyncEvent>((e) => HandleGoogleRequestSync(e)));
             _messageHubSubscriptions.Add(_messageHub.Subscribe<Command>((e) => HandleGoogleHomeCommand(e)));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<ConfigSubscriptionChangeEvent>((e) => HandleConfigSubscriptionChange(e)));
 
             return Task.CompletedTask;
         }
@@ -91,9 +94,7 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             if (e.ApplicationMessage.Topic == TopicRoot + "/REQUEST_SYNC")
             {
-                // Handle REQUEST_SYNC
-                _googleHomeGraphClient.RequestSyncAsync()
-                    .GetAwaiter().GetResult();
+                _messageHub.Publish(new RequestSyncEvent());
             }
             else if (_stateCache.ContainsKey(e.ApplicationMessage.Topic))
             {
@@ -101,8 +102,9 @@ namespace HomeAutio.Mqtt.GoogleHome
 
                 // Identify devices that handle reportState
                 var devices = _deviceRepository.GetAll()
-                    .Where(x => x.WillReportState)
-                    .Where(x => x.Traits.Any(trait => trait.State.Values.Any(state => state.Topic == e.ApplicationMessage.Topic)))
+                    .Where(device => !device.Disabled)
+                    .Where(device => device.WillReportState)
+                    .Where(device => device.Traits.Any(trait => trait.State.Values.Any(state => state.Topic == e.ApplicationMessage.Topic)))
                     .ToList();
 
                 // Send updated to Google Home Graph
@@ -117,15 +119,75 @@ namespace HomeAutio.Mqtt.GoogleHome
         #region Google Home Handlers
 
         /// <summary>
+        /// Handler for device config change events.
+        /// </summary>
+        /// <param name="changeEvent">The change event to handle.</param>
+        private async void HandleConfigSubscriptionChange(ConfigSubscriptionChangeEvent changeEvent)
+        {
+            // Stop listening to removed topics
+            foreach (var topic in changeEvent.DeletedSubscriptions.Distinct())
+            {
+                // Check if actually subscribed and remove MQTT subscription
+                if (SubscribedTopics.Contains(topic))
+                {
+                    _log.LogInformation("MQTT unsubscribing to the following topic: {Topic}", topic);
+                    await MqttClient.UnsubscribeAsync(new List<string> { topic });
+                    SubscribedTopics.Remove(topic);
+                }
+
+                // Check that state cache actually contains topic
+                if (_stateCache.ContainsKey(topic))
+                {
+                    if (_stateCache.TryRemove(topic, out string _))
+                        _log.LogInformation("Successfully removed topic {Topic} from internal state cache", topic);
+                    else
+                        _log.LogWarning("Failed to remove topic {Topic} from internal state cache", topic);
+                }
+            }
+
+            // Begin listening to added topics
+            foreach (var topic in changeEvent.AddedSubscriptions.Distinct())
+            {
+                // Ensure the that state cache doesn't contain topic and add
+                if (!_stateCache.ContainsKey(topic))
+                {
+                    if (_stateCache.TryAdd(topic, string.Empty))
+                        _log.LogInformation("Successfully added topic {Topic} to internal state cache", topic);
+                    else
+                        _log.LogWarning("Failed to add topic {Topic} to internal state cache", topic);
+                }
+
+                // Check if already subscribed and subscribe to MQTT topic
+                if (!SubscribedTopics.Contains(topic))
+                {
+                    _log.LogInformation("MQTT subscribing to the following topic: {Topic}", topic);
+                    await MqttClient.SubscribeAsync(
+                        new List<TopicFilter>
+                        {
+                            new TopicFilterBuilder()
+                                .WithTopic(topic)
+                                .WithAtLeastOnceQoS()
+                                .Build()
+                        });
+                    SubscribedTopics.Add(topic);
+                }
+            }
+        }
+
+        /// <summary>
         /// Hanlder for Google Home commands.
         /// </summary>
         /// <param name="command">The command to handle.</param>
         private async void HandleGoogleHomeCommand(Command command)
         {
-            foreach (var device in command.Devices)
+            foreach (var commandDevice in command.Devices)
             {
+                var device = _deviceRepository.Get(commandDevice.Id);
+                if (device.Disabled)
+                    continue;
+
                 // Find all supported commands for the device
-                var deviceSupportedCommands = _deviceRepository.Get(device.Id).Traits
+                var deviceSupportedCommands = device.Traits
                     .SelectMany(x => x.Commands)
                     .ToDictionary(x => x.Key, x => x.Value);
 
@@ -149,7 +211,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                                 var stateKey = CommandToStateKeyMapper.Map(parameter.Key);
 
                                 // Find the DeviceState object that provides configuration for mapping state/command values
-                                var deviceState = _deviceRepository.Get(device.Id).Traits
+                                var deviceState = device.Traits
                                     .Where(x => x.Commands.ContainsKey(execution.Command))
                                     .SelectMany(x => x.State)
                                     .Where(x => x.Key == stateKey)
@@ -180,6 +242,15 @@ namespace HomeAutio.Mqtt.GoogleHome
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// REQUEST_SYNC event handler.
+        /// </summary>
+        /// <param name="requestSyncEvent">Request sync event trigger.</param>
+        private async void HandleGoogleRequestSync(RequestSyncEvent requestSyncEvent)
+        {
+            await _googleHomeGraphClient.RequestSyncAsync();
         }
 
         #endregion

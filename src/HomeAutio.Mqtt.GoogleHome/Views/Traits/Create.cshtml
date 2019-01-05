@@ -84,8 +84,8 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Create Trait</h3>
                 </div>
-                <div class="panel-body">
-                    <form method="post">
+                <form method="post">
+                    <div class="panel-body">
                         <fieldset>
                             <div class="form-group">
                                 <label asp-for="Trait">Trait</label>
@@ -114,13 +114,14 @@
                                 <textarea class="form-control" asp-for="State"></textarea>
                             </div>
                         </fieldset>
-
+                    </div>
+                    <div class="panel-footer">
                         <div class="form-group">
                             <button class="btn btn-primary" name="button" value="update">Create</button>
                             <a asp-controller="Devices" asp-action="Edit" asp-route-deviceId="@(Context.Request.Query["deviceId"])" class="btn btn-default">Cancel</a>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

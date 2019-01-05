@@ -27,9 +27,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             validationErrors.AddRange(NameInfoValidator.Validate(device.Name));
             validationErrors.AddRange(CustomDataValidator.Validate(device.CustomData));
 
-            foreach (var trait in device.Traits)
+            if (device.Traits != null)
             {
-                validationErrors.AddRange(DeviceTraitValidator.Validate(trait));
+                foreach (var trait in device.Traits)
+                {
+                    validationErrors.AddRange(DeviceTraitValidator.Validate(trait));
+                }
             }
 
             return validationErrors;

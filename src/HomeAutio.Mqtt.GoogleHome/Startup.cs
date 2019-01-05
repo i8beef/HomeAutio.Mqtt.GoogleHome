@@ -61,34 +61,31 @@ namespace HomeAutio.Mqtt.GoogleHome
             services.AddSingleton<IMessageHub>(serviceProvider => MessageHub.Instance);
 
             // Device configuration from file
-            services.AddSingleton<GoogleDeviceRepository>(serviceProvider =>
+            services.AddSingleton(serviceProvider =>
             {
                 var deviceConfigFile = Configuration.GetValue<string>("deviceConfigFile");
                 return new GoogleDeviceRepository(
                     serviceProvider.GetRequiredService<ILogger<GoogleDeviceRepository>>(),
+                    serviceProvider.GetRequiredService<IMessageHub>(),
                     deviceConfigFile);
             });
 
             // Build state cache from configuration
-            services.AddSingleton<StateCache>(serviceProvider =>
+            services.AddSingleton(serviceProvider =>
             {
-                var stateValues = serviceProvider.GetService<GoogleDeviceRepository>().GetAll()
-                    .SelectMany(x => x.Traits)
-                    .SelectMany(x => x.State.Values)
-                    .Select(x => x.Topic)
-                    .Where(x => x != null);
-
-                // Flatten state to get real topicss
-                var topics = stateValues.OfType<string>()
-                    .Union(stateValues.OfType<IDictionary<string, object>>()
-                        .SelectMany(x => x.Values)
-                        .OfType<string>());
+                var topics = serviceProvider.GetService<GoogleDeviceRepository>().GetAll()
+                    .Where(device => !device.Disabled)
+                    .SelectMany(device => device.Traits)
+                    .SelectMany(trait => trait.State.Values)
+                    .Select(state => state.Topic)
+                    .Distinct()
+                    .Where(topic => topic != null);
 
                 return new StateCache(topics.ToDictionary(x => x, x => string.Empty));
             });
 
             // Google Home Graph client
-            services.AddSingleton<GoogleHomeGraphClient>(serviceProvider =>
+            services.AddSingleton(serviceProvider =>
             {
                 ServiceAccount serviceAccount = null;
                 var googleHomeServiceAccountFile = Configuration.GetValue<string>("googleHomeGraph:serviceAccountFile");
@@ -109,6 +106,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             services.AddTransient<SyncIntentHandler>();
             services.AddTransient<QueryIntentHandler>();
             services.AddTransient<ExecuteIntentHandler>();
+            services.AddTransient<DisconnectIntentHandler>();
 
             // Setup MQTT hosted service
             services.AddSingleton<IHostedService, MqttService>(serviceProvider =>

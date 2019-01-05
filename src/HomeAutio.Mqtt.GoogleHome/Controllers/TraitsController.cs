@@ -65,7 +65,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
 
-            var device = _deviceRepository.Get(deviceId);
+            var device = _deviceRepository.GetDetached(deviceId);
             if (device.Traits.Any(x => x.Trait == viewModel.Trait))
                 ModelState.AddModelError("Trait", "Device already contains trait");
 
@@ -85,10 +85,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!ModelState.IsValid)
                 return RedirectToAction("Create", new { deviceId });
 
-            device.Traits.Add(trait);
-
             // Save changes
-            _deviceRepository.Persist();
+            device.Traits.Add(trait);
+            _deviceRepository.Update(deviceId, device);
 
             return RedirectToAction("Edit", "Devices", new { deviceId });
         }
@@ -105,16 +104,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
 
-            var device = _deviceRepository.Get(deviceId);
+            var device = _deviceRepository.GetDetached(deviceId);
 
             var traitEnumId = traitId.ToEnum<TraitType>();
             if (!device.Traits.Any(x => x.Trait == traitEnumId))
                 return NotFound();
 
-            device.Traits.Remove(device.Traits.First(x => x.Trait == traitEnumId));
-
             // Save changes
-            _deviceRepository.Persist();
+            device.Traits.Remove(device.Traits.First(x => x.Trait == traitEnumId));
+            _deviceRepository.Update(deviceId, device);
 
             return RedirectToAction("Edit", "Devices", new { deviceId });
         }
@@ -164,7 +162,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
 
-            var device = _deviceRepository.Get(deviceId);
+            var device = _deviceRepository.GetDetached(deviceId);
 
             var traitEnumId = traitId.ToEnum<TraitType>();
             if (!device.Traits.Any(x => x.Trait == traitEnumId))
@@ -174,11 +172,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             viewModel.Trait = traitEnumId;
 
             // Set new values
-            var currentTrait = device.Traits.FirstOrDefault(x => x.Trait == traitEnumId);
-
-            // Poor mans deep clone for validation check
-            var trait = JsonConvert.DeserializeObject<DeviceTrait>(JsonConvert.SerializeObject(currentTrait));
-
+            var trait = device.Traits.FirstOrDefault(x => x.Trait == traitEnumId);
             trait.Attributes = !string.IsNullOrEmpty(viewModel.Attributes) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(viewModel.Attributes, new ObjectDictionaryConverter()) : null;
             trait.Commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : null;
             trait.State = !string.IsNullOrEmpty(viewModel.State) ? JsonConvert.DeserializeObject<Dictionary<string, DeviceState>>(viewModel.State) : null;
@@ -190,13 +184,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!ModelState.IsValid)
                 return RedirectToAction("Edit", new { deviceId, traitId });
 
-            // Set values on current trait
-            currentTrait.Attributes = trait.Attributes;
-            currentTrait.Commands = trait.Commands;
-            currentTrait.State = trait.State;
-
             // Save changes
-            _deviceRepository.Persist();
+            _deviceRepository.Update(deviceId, device);
 
             return RedirectToAction("Edit", "Devices", new { deviceId });
         }

@@ -8,7 +8,6 @@ using HomeAutio.Mqtt.GoogleHome.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Controllers
 {
@@ -41,7 +40,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>Response.</returns>
         public IActionResult Index()
         {
-            var model = _deviceRepository.GetAll();
+            var model = _deviceRepository.GetAll()
+                .OrderBy(device => device.Id)
+                .ToList();
 
             return View(model);
         }
@@ -74,14 +75,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             var device = new Device
             {
                 Id = viewModel.Id,
-                RoomHint = viewModel.RoomHint,
                 Type = viewModel.Type,
+                Disabled = viewModel.Disabled,
                 WillReportState = viewModel.WillReportState,
+                RoomHint = viewModel.RoomHint,
                 Name = new Models.NameInfo
                 {
                     Name = viewModel.Name
-                },
-                Traits = new List<DeviceTrait>()
+                }
             };
 
             // Default names
@@ -124,7 +125,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             // Save changes
             _deviceRepository.Add(device);
-            _deviceRepository.Persist();
 
             return RedirectToAction("Index");
         }
@@ -140,10 +140,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
 
-            _deviceRepository.Delete(deviceId);
-
             // Save changes
-            _deviceRepository.Persist();
+            _deviceRepository.Delete(deviceId);
 
             return RedirectToAction("Index");
         }
@@ -163,9 +161,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             var model = new DeviceViewModel
             {
                 Id = device.Id,
-                RoomHint = device.RoomHint,
                 Type = device.Type,
+                Disabled = device.Disabled,
                 WillReportState = device.WillReportState,
+                RoomHint = device.RoomHint,
                 Name = device.Name.Name,
                 DefaultNames = string.Join(',', device.Name.DefaultNames),
                 Nicknames = string.Join(',', device.Name.Nicknames),
@@ -181,7 +180,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             if (device.Traits != null)
             {
-                model.Traits = device.Traits.Select(x => x.Trait);
+                model.Traits = device.Traits.Select(x => x.Trait).OrderBy(trait => trait);
             }
 
             return View(model);
@@ -200,16 +199,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
 
-            var currentDevice = _deviceRepository.Get(deviceId);
-
-            // Poor mans deep clone for validation check
-            var device = JsonConvert.DeserializeObject<Device>(JsonConvert.SerializeObject(currentDevice));
-
             // Set new values
+            var device = _deviceRepository.GetDetached(deviceId);
             device.Id = viewModel.Id;
-            device.RoomHint = viewModel.RoomHint;
             device.Type = viewModel.Type;
+            device.Disabled = viewModel.Disabled;
             device.WillReportState = viewModel.WillReportState;
+            device.RoomHint = viewModel.RoomHint;
             device.Name.Name = viewModel.Name;
 
             // Default names
@@ -250,22 +246,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!ModelState.IsValid)
                 return RedirectToAction("Edit", new { deviceId });
 
-            // Set values on current device
-            currentDevice.Id = device.Id;
-            currentDevice.RoomHint = device.RoomHint;
-            currentDevice.Type = device.Type;
-            currentDevice.WillReportState = device.WillReportState;
-            currentDevice.Name = device.Name;
-            currentDevice.DeviceInfo = device.DeviceInfo;
-
-            // Handle device id change
-            if (deviceId != currentDevice.Id)
-            {
-                _deviceRepository.ChangeDeviceId(deviceId, currentDevice.Id);
-            }
-
             // Save changes
-            _deviceRepository.Persist();
+            _deviceRepository.Update(deviceId, device);
 
             return RedirectToAction("Index");
         }

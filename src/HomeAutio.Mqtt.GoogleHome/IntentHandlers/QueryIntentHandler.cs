@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Logging;
 
@@ -39,12 +40,27 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         {
             _log.LogInformation("Received QUERY intent for devices: " + string.Join(", ", intent.Payload.Devices.Select(x => x.Id)));
 
+            // Payload for disabled a or missing device
+            var offlineDeviceState = new Dictionary<string, object>
+            {
+                { "errorCode", "deviceNotFound" },
+                { "online", false }
+            };
+
             var queryResponsePayload = new Models.Response.QueryResponsePayload
             {
                 Devices = intent.Payload.Devices
-                    .GroupBy(d => d.Id)
-                    .Select(g => g.First())
-                    .ToDictionary(x => x.Id, x => _deviceRepository.Get(x.Id).GetGoogleState(_stateCache))
+                    .GroupBy(device => device.Id)
+                    .Select(group => group.First())
+                    .ToDictionary(
+                        singleDevice => singleDevice.Id,
+                        singleDevice =>
+                        {
+                            var device = _deviceRepository.Get(singleDevice.Id);
+                            return device != null && !device.Disabled
+                                ? device.GetGoogleState(_stateCache)
+                                : offlineDeviceState;
+                        })
             };
 
             return queryResponsePayload;
