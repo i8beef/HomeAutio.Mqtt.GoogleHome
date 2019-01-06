@@ -85,6 +85,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             });
 
             // Google Home Graph client
+            services.AddSingleton<IHostedService, GoogleHomeGraphService>();
             services.AddSingleton(serviceProvider =>
             {
                 ServiceAccount serviceAccount = null;
@@ -121,11 +122,10 @@ namespace HomeAutio.Mqtt.GoogleHome
 
                 return new MqttService(
                     serviceProvider.GetRequiredService<ILogger<MqttService>>(),
-                    serviceProvider.GetRequiredService<GoogleDeviceRepository>(),
-                    serviceProvider.GetRequiredService<StateCache>(),
                     serviceProvider.GetRequiredService<IMessageHub>(),
-                    serviceProvider.GetRequiredService<GoogleHomeGraphClient>(),
-                    brokerSettings);
+                    brokerSettings,
+                    serviceProvider.GetRequiredService<GoogleDeviceRepository>(),
+                    serviceProvider.GetRequiredService<StateCache>());
             });
 
             // Setup token cleanup hosted service
