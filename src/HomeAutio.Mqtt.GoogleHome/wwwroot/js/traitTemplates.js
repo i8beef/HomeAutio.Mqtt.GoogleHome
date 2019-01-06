@@ -126,7 +126,7 @@
                 "googleType": "string",
                 "valueMap": null
             },
-            "color.spectrumRgb": {
+            "color.spectrumRGB": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null

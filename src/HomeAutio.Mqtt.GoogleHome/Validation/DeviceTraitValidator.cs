@@ -47,7 +47,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         deviceTrait,
                         CommandType.ColorAbsolute,
                         new List<string> { "spectrumRGB" },
-                        new List<string> { "spectrumRgb" },
+                        new List<string> { "spectrumRGB" },
                         null));
                     break;
                 case TraitType.ColorTemperature:
@@ -55,7 +55,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         deviceTrait,
                         CommandType.ColorAbsolute,
                         new List<string> { "temperature" },
-                        new List<string> { "temperatureK" },
+                        new List<string> { "temperature" },
                         new List<string> { "temperatureMinK", "temperatureMaxK" }));
                     break;
                 case TraitType.Dock:
@@ -187,7 +187,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             if (deviceTrait.Attributes.ContainsKey("colorTemperatureRange"))
             {
                 // Temperature range
-                commandParams.AddRange(new List<string> { "color.temperature " });
+                commandParams.AddRange(new List<string> { "color.temperature" });
                 stateKeys.AddRange(new List<string> { "color.temperatureK" });
             }
 
@@ -197,16 +197,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 commandParams.AddRange(new List<string> { "color.spectrumHSV.hue", "color.spectrumHSV.saturation", "color.spectrumHSV.value" });
                 stateKeys.AddRange(new List<string> { "color.spectrumHsv.hue", "color.spectrumHsv.saturation", "color.spectrumHsv.value" });
             }
-            else
+            else if (deviceTrait.Attributes.ContainsKey("colorModel") && (string)deviceTrait.Attributes["colorModel"] == "rgb")
             {
-                // RGB is default
+                // RGB requirements
                 commandParams.AddRange(new List<string> { "color.spectrumRGB" });
                 stateKeys.AddRange(new List<string> { "color.spectrumRgb" });
             }
 
             if (deviceTrait.Attributes.ContainsKey("commandOnlyColorSetting") && (bool)deviceTrait.Attributes["commandOnlyColorSetting"] == true)
             {
-                // Command checks only
+                // Command checks only, wipe expeced states
                 stateKeys = null;
             }
 
