@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
+using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using HomeAutio.Mqtt.GoogleHome.Validation;
 using HomeAutio.Mqtt.GoogleHome.ViewModels;
@@ -79,10 +80,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 Disabled = viewModel.Disabled,
                 WillReportState = viewModel.WillReportState,
                 RoomHint = viewModel.RoomHint,
-                Name = new Models.NameInfo
+                Name = new NameInfo
                 {
                     Name = viewModel.Name
-                }
+                },
+                Traits = new List<DeviceTrait>()
             };
 
             // Default names
@@ -104,7 +106,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 !string.IsNullOrEmpty(viewModel.SwVersion))
             {
                 if (device.DeviceInfo == null)
-                    device.DeviceInfo = new Models.DeviceInfo();
+                    device.DeviceInfo = new DeviceInfo();
 
                 device.DeviceInfo.Manufacturer = !string.IsNullOrEmpty(viewModel.Manufacturer) ? viewModel.Manufacturer : null;
                 device.DeviceInfo.Model = !string.IsNullOrEmpty(viewModel.Model) ? viewModel.Model : null;
@@ -182,6 +184,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             {
                 model.Traits = device.Traits.Select(x => x.Trait).OrderBy(trait => trait);
             }
+            else
+            {
+                model.Traits = new List<TraitType>();
+            }
 
             return View(model);
         }
@@ -227,7 +233,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 !string.IsNullOrEmpty(viewModel.SwVersion))
             {
                 if (device.DeviceInfo == null)
-                    device.DeviceInfo = new Models.DeviceInfo();
+                    device.DeviceInfo = new DeviceInfo();
 
                 device.DeviceInfo.Manufacturer = !string.IsNullOrEmpty(viewModel.Manufacturer) ? viewModel.Manufacturer : null;
                 device.DeviceInfo.Model = !string.IsNullOrEmpty(viewModel.Model) ? viewModel.Model : null;
