@@ -183,7 +183,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             var command = CommandType.ColorAbsolute;
             var commandParams = new List<string>();
             var stateKeys = new List<string>();
-            var attributeKeys = new List<string> { "colorModel", "colorTemperatureRange" };
 
             if (deviceTrait.Attributes.ContainsKey("colorTemperatureRange"))
             {
@@ -211,7 +210,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 stateKeys = null;
             }
 
-            return ValidateTrait(deviceTrait, command, commandParams, stateKeys, attributeKeys);
+            return ValidateTrait(deviceTrait, command, commandParams, stateKeys);
         }
 
         /// <summary>
