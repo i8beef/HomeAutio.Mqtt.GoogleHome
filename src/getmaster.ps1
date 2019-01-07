@@ -4,9 +4,9 @@ Invoke-WebRequest $source -OutFile ui.zip
 
 Expand-Archive ui.zip
 
-if (!(Test-Path -Path Quickstart))  { mkdir HomeAutio.Mqtt.GoogleHome\Quickstart }
-if (!(Test-Path -Path Views))       { mkdir HomeAutio.Mqtt.GoogleHome\Views }
-if (!(Test-Path -Path wwwroot))     { mkdir HomeAutio.Mqtt.GoogleHome\wwwroot }
+if (!(Test-Path -Path HomeAutio.Mqtt.GoogleHome\Quickstart))  { mkdir HomeAutio.Mqtt.GoogleHome\Quickstart }
+if (!(Test-Path -Path HomeAutio.Mqtt.GoogleHome\Views))       { mkdir HomeAutio.Mqtt.GoogleHome\Views }
+if (!(Test-Path -Path HomeAutio.Mqtt.GoogleHome\wwwroot))     { mkdir HomeAutio.Mqtt.GoogleHome\wwwroot }
 
 copy .\ui\IdentityServer4.Quickstart.UI-master\Quickstart\* HomeAutio.Mqtt.GoogleHome\Quickstart -recurse -force
 copy .\ui\IdentityServer4.Quickstart.UI-master\Views\* HomeAutio.Mqtt.GoogleHome\Views -recurse -force
