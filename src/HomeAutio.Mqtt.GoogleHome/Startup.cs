@@ -247,7 +247,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Devices}/{action=Index}/{id?}");
+                    template: "{controller=GoogleDevice}/{action=Index}/{id?}");
             });
             app.UseIdentityServer();
         }
