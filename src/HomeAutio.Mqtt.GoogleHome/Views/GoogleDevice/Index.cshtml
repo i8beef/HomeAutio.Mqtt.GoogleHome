@@ -17,10 +17,10 @@
                     </div>
                     <div class="panel-body">
                         <div class="list-group">
-                            <a asp-controller="Devices" asp-action="Create" class="list-group-item list-group-item-action active">Add Device</a>
+                            <a asp-controller="GoogleDevice" asp-action="Create" class="list-group-item list-group-item-action active">Add Device</a>
                             @foreach (var device in Model)
                             {
-                                <a asp-controller="Devices" asp-action="Edit" asp-route-deviceId="@device.Id" class="list-group-item  @(device.Disabled ? "list-group-item-danger" : "list-group-item-action")">@device.Id</a>
+                                <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@device.Id" class="list-group-item  @(device.Disabled ? "list-group-item-danger" : "list-group-item-action")">@device.Id</a>
                             }
                         </div>
                     </div>

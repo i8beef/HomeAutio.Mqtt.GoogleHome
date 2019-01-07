@@ -104,7 +104,7 @@
                     <div class="panel-footer">
                         <div class="form-group">
                             <button class="btn btn-primary" name="button" value="update">Update</button>
-                            <a asp-controller="Devices" asp-action="Index" class="btn btn-default">Cancel</a>
+                            <a asp-controller="GoogleDevice" asp-action="Index" class="btn btn-default">Cancel</a>
                         </div>
                     </div>
                 </form>
@@ -121,10 +121,10 @@
                 </div>
                 <div class="panel-body">
                     <div class="list-group">
-                        <a asp-controller="Traits" asp-action="Create" asp-route-deviceId="@Model.Id" class="list-group-item list-group-item-action active">Add Trait</a>
+                        <a asp-controller="GoogleTrait" asp-action="Create" asp-route-deviceId="@Model.Id" class="list-group-item list-group-item-action active">Add Trait</a>
                         @foreach (var trait in Model.Traits)
                         {
-                            <a asp-controller="Traits" asp-action="Edit" asp-route-deviceId="@Model.Id" asp-route-traitId="@trait.ToEnumString()" class="list-group-item list-group-item-action">@trait.ToEnumString()</a>
+                            <a asp-controller="GoogleTrait" asp-action="Edit" asp-route-deviceId="@Model.Id" asp-route-traitId="@trait.ToEnumString()" class="list-group-item list-group-item-action">@trait.ToEnumString()</a>
                         }
                     </div>
                 </div>
