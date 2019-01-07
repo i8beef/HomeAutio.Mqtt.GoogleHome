@@ -26,8 +26,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         {
             if (interval < 1) throw new ArgumentException("Token cleanup interval must be at least 1 second");
 
-            _log = logger;
-            _grantStore = grantStore;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
+            _grantStore = grantStore ?? throw new ArgumentException(nameof(grantStore));
             _cleanupInterval = TimeSpan.FromSeconds(interval);
         }
 

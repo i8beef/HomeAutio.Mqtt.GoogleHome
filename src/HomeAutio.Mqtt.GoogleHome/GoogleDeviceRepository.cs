@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,8 +35,8 @@ namespace HomeAutio.Mqtt.GoogleHome
             IMessageHub messageHub,
             string path)
         {
-            _logger = logger;
-            _messageHub = messageHub;
+            _logger = logger ?? throw new ArgumentException(nameof(logger));
+            _messageHub = messageHub ?? throw new ArgumentException(nameof(messageHub));
             _deviceConfigFile = path;
 
             Refresh();

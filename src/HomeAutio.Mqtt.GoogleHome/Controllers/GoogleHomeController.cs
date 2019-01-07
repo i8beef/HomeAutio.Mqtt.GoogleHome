@@ -1,4 +1,5 @@
-﻿using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
+﻿using System;
+using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,12 +35,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             ExecuteIntentHandler executeIntentHandler,
             DisconnectIntentHandler disconnectIntentHandler)
         {
-            _log = logger;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
 
-            _disconnectIntentHandler = disconnectIntentHandler;
-            _syncIntentHandler = syncIntentHandler;
-            _queryIntentHandler = queryIntentHandler;
-            _executeIntentHandler = executeIntentHandler;
+            _disconnectIntentHandler = disconnectIntentHandler ?? throw new ArgumentException(nameof(disconnectIntentHandler));
+            _syncIntentHandler = syncIntentHandler ?? throw new ArgumentException(nameof(syncIntentHandler));
+            _queryIntentHandler = queryIntentHandler ?? throw new ArgumentException(nameof(queryIntentHandler));
+            _executeIntentHandler = executeIntentHandler ?? throw new ArgumentException(nameof(executeIntentHandler));
         }
 
         /// <summary>

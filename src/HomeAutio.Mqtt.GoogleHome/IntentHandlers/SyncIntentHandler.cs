@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -25,9 +26,9 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
             IConfiguration configuration,
             GoogleDeviceRepository deviceRepository)
         {
-            _log = logger;
-            _config = configuration;
-            _deviceRepository = deviceRepository;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
+            _config = configuration ?? throw new ArgumentException(nameof(configuration));
+            _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
         }
 
         /// <summary>

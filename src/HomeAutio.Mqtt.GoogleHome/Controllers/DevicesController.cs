@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
@@ -31,8 +32,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             ILogger<DevicesController> logger,
             GoogleDeviceRepository deviceRepository)
         {
-            _log = logger;
-            _deviceRepository = deviceRepository;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
+            _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
         }
 
         /// <summary>

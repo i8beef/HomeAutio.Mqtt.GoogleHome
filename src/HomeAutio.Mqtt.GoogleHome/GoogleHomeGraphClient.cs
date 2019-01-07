@@ -46,8 +46,9 @@ namespace HomeAutio.Mqtt.GoogleHome
             ServiceAccount serviceAccount,
             string agentUserId)
         {
-            _log = logger;
-            _httpClient = httpClient;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
+            _httpClient = httpClient ?? throw new ArgumentException(nameof(httpClient));
+
             _agentUserId = agentUserId;
             _serviceAccount = serviceAccount;
         }

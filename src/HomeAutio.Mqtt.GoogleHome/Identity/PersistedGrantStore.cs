@@ -33,7 +33,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <param name="configuration">Conffguration.</param>
         public PersistedGrantStore(ILogger<PersistedGrantStore> logger, IConfiguration configuration)
         {
-            _log = logger;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
+            if (configuration == null)
+                throw new ArgumentException(nameof(configuration));
+
             _file = configuration.GetValue<string>("oauth:tokenStoreFile");
             RestoreFromFile();
         }
