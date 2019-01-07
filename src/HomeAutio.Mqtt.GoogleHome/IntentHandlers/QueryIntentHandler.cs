@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Easy.MessageHub;
+using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Logging;
 
@@ -12,6 +15,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
     {
         private readonly ILogger<QueryIntentHandler> _log;
 
+        private readonly IMessageHub _messageHub;
         private readonly GoogleDeviceRepository _deviceRepository;
         private readonly StateCache _stateCache;
 
@@ -19,16 +23,19 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         /// Initializes a new instance of the <see cref="QueryIntentHandler"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
+        /// <param name="messageHub">Message hub.</param>
         /// <param name="deviceRepository">Device repository.</param>
         /// <param name="stateCache">State cache.</param>
         public QueryIntentHandler(
             ILogger<QueryIntentHandler> logger,
+            IMessageHub messageHub,
             GoogleDeviceRepository deviceRepository,
             StateCache stateCache)
         {
-            _log = logger;
-            _deviceRepository = deviceRepository;
-            _stateCache = stateCache;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
+            _messageHub = messageHub ?? throw new ArgumentException(nameof(messageHub));
+            _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
+            _stateCache = stateCache ?? throw new ArgumentException(nameof(stateCache));
         }
 
         /// <summary>
@@ -47,21 +54,34 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                 { "online", false }
             };
 
-            var queryResponsePayload = new Models.Response.QueryResponsePayload
-            {
-                Devices = intent.Payload.Devices
+            // Get distinct devices
+            var distinctRequestDeviceIds = intent.Payload.Devices
                     .GroupBy(device => device.Id)
                     .Select(group => group.First())
+                    .Select(device => device.Id);
+
+            var devices = _deviceRepository.GetAll()
+                .Where(device => !device.Disabled)
+                .Where(device => distinctRequestDeviceIds.Contains(device.Id))
+                .ToList();
+
+            // Build reponse payload
+            var queryResponsePayload = new Models.Response.QueryResponsePayload
+            {
+                Devices = distinctRequestDeviceIds
                     .ToDictionary(
-                        singleDevice => singleDevice.Id,
-                        singleDevice =>
+                        queryDeviceId => queryDeviceId,
+                        queryDeviceId =>
                         {
-                            var device = _deviceRepository.Get(singleDevice.Id);
-                            return device != null && !device.Disabled
-                                ? device.GetGoogleState(_stateCache)
-                                : offlineDeviceState;
+                            var device = devices.FirstOrDefault(x => x.Id == queryDeviceId);
+                            return device != null ? device.GetGoogleState(_stateCache) : offlineDeviceState;
                         })
             };
+
+            // Trigger reportState before returning
+            var reportStateDevices = devices.Where(device => device.WillReportState).ToList();
+            if (reportStateDevices.Any())
+                _messageHub.Publish(new ReportStateEvent { Devices = reportStateDevices });
 
             return queryResponsePayload;
         }
