@@ -9,8 +9,8 @@ if (!(Test-Path -Path Views))       { mkdir Views }
 if (!(Test-Path -Path wwwroot))     { mkdir wwwroot }
 
 copy .\ui\IdentityServer4.Quickstart.UI-master\Quickstart\* HomeAutio.Mqtt.GoogleHome\Quickstart -recurse -force
-copy .\ui\IdentityServer4.Quickstart.UI-master\Views\* HomeAutio.Mqtt.GoogleHome\QuickstartViews -recurse -force
-copy .\ui\IdentityServer4.Quickstart.UI-master\wwwroot\* HomeAutio.Mqtt.GoogleHome\Quickstartwwwroot -recurse -force
+copy .\ui\IdentityServer4.Quickstart.UI-master\Views\* HomeAutio.Mqtt.GoogleHome\Views -recurse -force
+copy .\ui\IdentityServer4.Quickstart.UI-master\wwwroot\* HomeAutio.Mqtt.GoogleHome\wwwroot -recurse -force
 
 del ui.zip
 del ui -recurse
