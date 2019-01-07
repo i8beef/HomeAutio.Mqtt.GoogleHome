@@ -343,6 +343,32 @@
             }
         }
     },
+    "OpenClose": {
+        "attributes": null,
+        "commands": {
+            "action.devices.commands.OpenClose": {
+                "openPercent": "MQTT_COMMAND_TOPIC"
+            }
+        },
+        "state": {
+            "openPercent": {
+                "topic": "MQTT_STATE_TOPIC",
+                "googleType": "numeric",
+                "valueMap": [
+                    {
+                        "mqtt": "open",
+                        "type": "value",
+                        "google": 100
+                    },
+                    {
+                        "mqtt": "close",
+                        "type": "value",
+                        "google": 0
+                    }
+                ]
+            }
+        }
+    },
     "RunCycle": {
         "attributes": null,
         "commands": {},

@@ -71,6 +71,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         OnOff,
 
         /// <summary>
+        /// action.devices.traits.OpenClose
+        /// </summary>
+        [EnumMember(Value = "action.devices.traits.OpenClose")]
+        OpenClose,
+
+        /// <summary>
         /// action.devices.traits.RunCycle
         /// </summary>
         [EnumMember(Value = "action.devices.traits.RunCycle")]

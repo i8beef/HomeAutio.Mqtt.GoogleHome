@@ -103,6 +103,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         new List<string> { "on" },
                         new List<string> { "on" }));
                     break;
+                case TraitType.OpenClose:
+                    validationErrors.AddRange(ValidateTrait(
+                        deviceTrait,
+                        CommandType.OpenClose,
+                        new List<string> { "openPercent" },
+                        new List<string> { "openPercent" }));
+                    break;
                 case TraitType.RunCycle:
                     validationErrors.AddRange(ValidateRunCycle(deviceTrait));
                     break;

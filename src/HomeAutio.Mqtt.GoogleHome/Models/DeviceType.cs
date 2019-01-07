@@ -38,6 +38,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Diswasher,
 
         /// <summary>
+        /// action.devices.types.DOOR.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.DOOR")]
+        Door,
+
+        /// <summary>
         /// action.devices.types.FAN".
         /// </summary>
         [EnumMember(Value = "action.devices.types.FAN")]
