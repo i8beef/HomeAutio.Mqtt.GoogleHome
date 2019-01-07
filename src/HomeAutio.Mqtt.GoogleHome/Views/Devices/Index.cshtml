@@ -5,34 +5,34 @@
         <h1>Devices</h1>
     </div>
 
-    @Html.Partial("_ValidationSummary")
+    <partial name="_ValidationSummary" />
 
     <div class="row">
         @if (Model.Any())
         {
-        <div class="col-sm-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Edit Devices</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="list-group">
-                        <a asp-controller="Devices" asp-action="Create" class="list-group-item list-group-item-action active">Add Device</a>
-                        @foreach (var device in Model)
-                        {
-                            <a asp-controller="Devices" asp-action="Edit" asp-route-deviceId="@device.Id" class="list-group-item  @(device.Disabled ? "list-group-item-danger" : "list-group-item-action")">@device.Id</a>
-                        }
+            <div class="col-sm-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Edit Devices</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="list-group">
+                            <a asp-controller="Devices" asp-action="Create" class="list-group-item list-group-item-action active">Add Device</a>
+                            @foreach (var device in Model)
+                            {
+                                <a asp-controller="Devices" asp-action="Edit" asp-route-deviceId="@device.Id" class="list-group-item  @(device.Disabled ? "list-group-item-danger" : "list-group-item-action")">@device.Id</a>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         }
         else
         {
-        <div class="alert alert-warning">
-            <strong>No Devices</strong>
-            There are no devices configured.
-        </div>
+            <div class="alert alert-warning">
+                <strong>No Devices</strong>
+                There are no devices configured.
+            </div>
         }
     </div>
 </div>
