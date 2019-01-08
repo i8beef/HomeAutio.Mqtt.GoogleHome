@@ -90,7 +90,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             device.Traits.Add(trait);
             _deviceRepository.Update(deviceId, device);
 
-            return RedirectToAction("Edit", "Devices", new { deviceId });
+            return RedirectToAction("Edit", "GoogleDevice", new { deviceId });
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             device.Traits.Remove(device.Traits.First(x => x.Trait == traitEnumId));
             _deviceRepository.Update(deviceId, device);
 
-            return RedirectToAction("Edit", "Devices", new { deviceId });
+            return RedirectToAction("Edit", "GoogleDevice", new { deviceId });
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             // Save changes
             _deviceRepository.Update(deviceId, device);
 
-            return RedirectToAction("Edit", "Devices", new { deviceId });
+            return RedirectToAction("Edit", "GoogleDevice", new { deviceId });
         }
     }
 }
