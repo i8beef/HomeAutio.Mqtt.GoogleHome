@@ -141,14 +141,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.ThermostatTemperatureSetpoint,
-                        new List<string> { "thermostatTemperatureSetpointHigh", "thermostatTemperatureSetpointLow" },
-                        new List<string> { "thermostatTemperatureSetpointHigh", "thermostatTemperatureSetpointLow" },
+                        new List<string> { "thermostatTemperatureSetpoint" },
+                        new List<string> { "thermostatTemperatureSetpoint" },
                         new List<string> { "thermostatTemperatureUnit" }));
                     validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.ThermostatTemperatureSetRange,
-                        new List<string> { "thermostatTemperatureSetpoint" },
-                        new List<string> { "thermostatTemperatureSetpoint" },
+                        new List<string> { "thermostatTemperatureSetpointHigh", "thermostatTemperatureSetpointLow" },
+                        new List<string> { "thermostatTemperatureSetpointHigh", "thermostatTemperatureSetpointLow" },
                         new List<string> { "thermostatTemperatureUnit" }));
                     break;
                 case TraitType.Toggles:
