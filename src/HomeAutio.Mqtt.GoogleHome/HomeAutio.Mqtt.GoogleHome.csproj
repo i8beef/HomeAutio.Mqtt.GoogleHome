@@ -44,19 +44,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Views\Devices\Create.cshtml">
+    <Content Update="Views\GoogleDevice\Create.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Devices\Edit.cshtml">
+    <Content Update="Views\GoogleDevice\Edit.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Devices\Index.cshtml">
+    <Content Update="Views\GoogleDevice\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Traits\Create.cshtml">
+    <Content Update="Views\GoogleTrait\Create.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Traits\Edit.cshtml">
+    <Content Update="Views\GoogleTrait\Edit.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>

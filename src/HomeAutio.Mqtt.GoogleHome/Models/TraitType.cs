@@ -27,20 +27,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         ColorSetting,
 
         /// <summary>
-        /// action.devices.traits.ColorSpectrum
-        /// </summary>
-        [EnumMember(Value = "action.devices.traits.ColorSpectrum")]
-        [Obsolete("Use ColorSetting instead")]
-        ColorSpectrum,
-
-        /// <summary>
-        /// action.devices.traits.ColorTemperature
-        /// </summary>
-        [EnumMember(Value = "action.devices.traits.ColorTemperature")]
-        [Obsolete("Use ColorSetting instead")]
-        ColorTemperature,
-
-        /// <summary>
         /// action.devices.traits.Dock
         /// </summary>
         [EnumMember(Value = "action.devices.traits.Dock")]
@@ -69,6 +55,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.traits.OnOff")]
         OnOff,
+
+        /// <summary>
+        /// action.devices.traits.OpenClose
+        /// </summary>
+        [EnumMember(Value = "action.devices.traits.OpenClose")]
+        OpenClose,
 
         /// <summary>
         /// action.devices.traits.RunCycle

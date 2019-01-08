@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Models;
@@ -27,9 +28,9 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
             IMessageHub messageHub,
             GoogleDeviceRepository deviceRepository)
         {
-            _log = logger;
-            _messageHub = messageHub;
-            _deviceRepository = deviceRepository;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
+            _messageHub = messageHub ?? throw new ArgumentException(nameof(messageHub));
+            _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
         }
 
         /// <summary>

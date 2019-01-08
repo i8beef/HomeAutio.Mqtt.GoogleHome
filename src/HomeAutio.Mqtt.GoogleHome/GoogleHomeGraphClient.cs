@@ -22,8 +22,7 @@ namespace HomeAutio.Mqtt.GoogleHome
     /// </summary>
     public class GoogleHomeGraphClient
     {
-        private const string _googleHomeGraphApiReportStateUri = "https://homegraph.googleapis.com/v1/devices:reportStateAndNotification";
-        private const string _googleHomeGraphApiRequestSyncUri = "https://homegraph.googleapis.com/v1/devices:requestSync";
+        private const string _googleHomeGraphApiUri = "https://homegraph.googleapis.com/v1";
         private const string _homeGraphScope = "https://www.googleapis.com/auth/homegraph";
 
         private readonly ILogger<GoogleHomeGraphClient> _log;
@@ -47,8 +46,9 @@ namespace HomeAutio.Mqtt.GoogleHome
             ServiceAccount serviceAccount,
             string agentUserId)
         {
-            _log = logger;
-            _httpClient = httpClient;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
+            _httpClient = httpClient ?? throw new ArgumentException(nameof(httpClient));
+
             _agentUserId = agentUserId;
             _serviceAccount = serviceAccount;
         }
@@ -77,7 +77,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             var requestMessage = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(_googleHomeGraphApiRequestSyncUri),
+                RequestUri = new Uri(_googleHomeGraphApiUri + "/devices:requestSync"),
                 Content = new StringContent(serializedContent, Encoding.UTF8, "application/json")
             };
 
@@ -135,7 +135,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             var requestMessage = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(_googleHomeGraphApiReportStateUri),
+                RequestUri = new Uri(_googleHomeGraphApiUri + "/devices:reportStateAndNotification"),
                 Content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json")
             };
 

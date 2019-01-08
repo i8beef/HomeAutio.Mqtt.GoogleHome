@@ -5,7 +5,13 @@ VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeAutio.Mqtt.GoogleHome", "HomeAutio.Mqtt.GoogleHome\HomeAutio.Mqtt.GoogleHome.csproj", "{46942B48-EBD7-4097-8748-88BF227663B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeAutio.Mqtt.GoogleHome.Tests", "HomeAutio.Mqtt.GoogleHome.Tests\HomeAutio.Mqtt.GoogleHome.Tests.csproj", "{B22843FC-5CD2-4ADB-99D4-7D5B08185B5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeAutio.Mqtt.GoogleHome.Tests", "HomeAutio.Mqtt.GoogleHome.Tests\HomeAutio.Mqtt.GoogleHome.Tests.csproj", "{B22843FC-5CD2-4ADB-99D4-7D5B08185B5C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{939A4CF5-459B-413D-9787-C9EF41499941}"
+	ProjectSection(SolutionItems) = preProject
+		getmaster.ps1 = getmaster.ps1
+		getmaster.sh = getmaster.sh
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -21,11 +21,11 @@ namespace HomeAutio.Mqtt.GoogleHome
     {
         private readonly ILogger<MqttService> _log;
 
+        private readonly IMessageHub _messageHub;
         private readonly GoogleDeviceRepository _deviceRepository;
         private readonly StateCache _stateCache;
-        private readonly IMessageHub _messageHub;
+
         private readonly IList<Guid> _messageHubSubscriptions = new List<Guid>();
-        private readonly GoogleHomeGraphClient _googleHomeGraphClient;
 
         private bool _disposed = false;
 
@@ -33,25 +33,22 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// Initializes a new instance of the <see cref="MqttService"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
+        /// <param name="messageHub">Message hub.</param>
+        /// <param name="brokerSettings">MQTT broker settings.</param>
         /// <param name="deviceRepository">Device repository.</param>
         /// <param name="stateCache">State cache,</param>
-        /// <param name="messageHub">Message hub.</param>
-        /// <param name="googleHomeGraphClient">Google Home Graph API client.</param>
-        /// <param name="brokerSettings">MQTT broker settings.</param>
         public MqttService(
             ILogger<MqttService> logger,
-            GoogleDeviceRepository deviceRepository,
-            StateCache stateCache,
             IMessageHub messageHub,
-            GoogleHomeGraphClient googleHomeGraphClient,
-            BrokerSettings brokerSettings)
+            BrokerSettings brokerSettings,
+            GoogleDeviceRepository deviceRepository,
+            StateCache stateCache)
             : base(logger, brokerSettings, "google/home")
         {
-            _log = logger;
-            _deviceRepository = deviceRepository;
-            _stateCache = stateCache;
-            _messageHub = messageHub;
-            _googleHomeGraphClient = googleHomeGraphClient;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
+            _messageHub = messageHub ?? throw new ArgumentException(nameof(messageHub));
+            _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
+            _stateCache = stateCache ?? throw new ArgumentException(nameof(stateCache));
 
             // Subscribe to google home based topics
             SubscribedTopics.Add(TopicRoot + "/#");
@@ -67,7 +64,6 @@ namespace HomeAutio.Mqtt.GoogleHome
         protected override Task StartServiceAsync(CancellationToken cancellationToken)
         {
             // Subscribe to event aggregator
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<RequestSyncEvent>((e) => HandleGoogleRequestSync(e)));
             _messageHubSubscriptions.Add(_messageHub.Subscribe<Command>((e) => HandleGoogleHomeCommand(e)));
             _messageHubSubscriptions.Add(_messageHub.Subscribe<ConfigSubscriptionChangeEvent>((e) => HandleConfigSubscriptionChange(e)));
 
@@ -89,29 +85,27 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <inheritdoc />
         protected override void Mqtt_MqttMsgPublishReceived(object sender, MqttApplicationMessageReceivedEventArgs e)
         {
+            var topic = e.ApplicationMessage.Topic;
             var message = e.ApplicationMessage.ConvertPayloadToString();
-            _log.LogInformation("MQTT message received for topic " + e.ApplicationMessage.Topic + ": " + message);
+            _log.LogInformation("MQTT message received for topic {Topic}: {Message}", topic, message);
 
-            if (e.ApplicationMessage.Topic == TopicRoot + "/REQUEST_SYNC")
+            if (topic == TopicRoot + "/REQUEST_SYNC")
             {
                 _messageHub.Publish(new RequestSyncEvent());
             }
-            else if (_stateCache.ContainsKey(e.ApplicationMessage.Topic))
+            else if (_stateCache.TryGetValue(topic, out string currentState))
             {
-                _stateCache[e.ApplicationMessage.Topic] = message;
-
-                // Identify devices that handle reportState
-                var devices = _deviceRepository.GetAll()
-                    .Where(device => !device.Disabled)
-                    .Where(device => device.WillReportState)
-                    .Where(device => device.Traits.Any(trait => trait.State.Values.Any(state => state.Topic == e.ApplicationMessage.Topic)))
-                    .ToList();
-
-                // Send updated to Google Home Graph
-                if (devices.Count() > 0)
+                if (_stateCache.TryUpdate(topic, message, currentState))
                 {
-                    _googleHomeGraphClient.SendUpdatesAsync(devices, _stateCache)
-                        .GetAwaiter().GetResult();
+                    // Identify updated devices that handle reportState
+                    var devices = _deviceRepository.GetAll()
+                        .Where(device => !device.Disabled)
+                        .Where(device => device.WillReportState)
+                        .Where(device => device.Traits.Any(trait => trait.State.Values.Any(state => state.Topic == topic)))
+                        .ToList();
+
+                    // Trigger reportState
+                    _messageHub.Publish(new ReportStateEvent { Devices = devices });
                 }
             }
         }
@@ -242,15 +236,6 @@ namespace HomeAutio.Mqtt.GoogleHome
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// REQUEST_SYNC event handler.
-        /// </summary>
-        /// <param name="requestSyncEvent">Request sync event trigger.</param>
-        private async void HandleGoogleRequestSync(RequestSyncEvent requestSyncEvent)
-        {
-            await _googleHomeGraphClient.RequestSyncAsync();
         }
 
         #endregion

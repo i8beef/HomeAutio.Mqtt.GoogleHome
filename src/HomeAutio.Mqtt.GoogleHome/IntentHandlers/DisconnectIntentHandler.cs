@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
 {
@@ -15,7 +16,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         /// <param name="logger">Logging instance.</param>
         public DisconnectIntentHandler(ILogger<DisconnectIntentHandler> logger)
         {
-            _log = logger;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
         }
 
         /// <summary>

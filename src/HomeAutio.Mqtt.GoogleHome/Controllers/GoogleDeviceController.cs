@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
@@ -16,23 +17,23 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     /// Devices controller.
     /// </summary>
     [Authorize]
-    public class DevicesController : Controller
+    public class GoogleDeviceController : Controller
     {
-        private readonly ILogger<DevicesController> _log;
+        private readonly ILogger<GoogleDeviceController> _log;
 
         private readonly GoogleDeviceRepository _deviceRepository;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DevicesController"/> class.
+        /// Initializes a new instance of the <see cref="GoogleDeviceController"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="deviceRepository">Device repository.</param>
-        public DevicesController(
-            ILogger<DevicesController> logger,
+        public GoogleDeviceController(
+            ILogger<GoogleDeviceController> logger,
             GoogleDeviceRepository deviceRepository)
         {
-            _log = logger;
-            _deviceRepository = deviceRepository;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
+            _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
         }
 
         /// <summary>

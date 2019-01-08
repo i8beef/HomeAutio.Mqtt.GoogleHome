@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
@@ -17,23 +18,23 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     /// Traits controller.
     /// </summary>
     [Authorize]
-    public class TraitsController : Controller
+    public class GoogleTraitController : Controller
     {
-        private readonly ILogger<TraitsController> _log;
+        private readonly ILogger<GoogleTraitController> _log;
 
         private readonly GoogleDeviceRepository _deviceRepository;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TraitsController"/> class.
+        /// Initializes a new instance of the <see cref="GoogleTraitController"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="deviceRepository">Device repository.</param>
-        public TraitsController(
-            ILogger<TraitsController> logger,
+        public GoogleTraitController(
+            ILogger<GoogleTraitController> logger,
             GoogleDeviceRepository deviceRepository)
         {
-            _log = logger;
-            _deviceRepository = deviceRepository;
+            _log = logger ?? throw new ArgumentException(nameof(logger));
+            _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
         }
 
         /// <summary>
