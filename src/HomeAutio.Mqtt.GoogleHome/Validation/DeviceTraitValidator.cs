@@ -40,23 +40,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         new List<string> { "cameraStreamSupportedProtocols", "cameraStreamNeedAuthToken", "cameraStreamNeedDrmEncryption" }));
                     break;
                 case TraitType.ColorSetting:
-                    validationErrors.AddRange(ValidateColorAbsolute(deviceTrait));
-                    break;
-                case TraitType.ColorSpectrum:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.ColorAbsolute,
-                        new List<string> { "spectrumRGB" },
-                        new List<string> { "spectrumRGB" },
-                        null));
-                    break;
-                case TraitType.ColorTemperature:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.ColorAbsolute,
-                        new List<string> { "temperature" },
-                        new List<string> { "temperature" },
-                        new List<string> { "temperatureMinK", "temperatureMaxK" }));
+                    validationErrors.AddRange(ValidateColorSetting(deviceTrait));
                     break;
                 case TraitType.Dock:
                     validationErrors.AddRange(ValidateTrait(
@@ -185,15 +169,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         /// </summary>
         /// <param name="deviceTrait">Device trait to validate.</param>
         /// <returns>Validation errors.</returns>
-        private static IEnumerable<string> ValidateColorAbsolute(DeviceTrait deviceTrait)
+        private static IEnumerable<string> ValidateColorSetting(DeviceTrait deviceTrait)
         {
             var command = CommandType.ColorAbsolute;
             var commandParams = new List<string>();
             var stateKeys = new List<string>();
+            var attributeKeys = new List<string>();
 
             if (deviceTrait.Attributes.ContainsKey("colorTemperatureRange"))
             {
                 // Temperature range
+                attributeKeys.AddRange(new List<string> { "colorTemperatureRange.temperatureMinK", "colorTemperatureRange.temperatureMaxK" });
                 commandParams.AddRange(new List<string> { "color.temperature" });
                 stateKeys.AddRange(new List<string> { "color.temperatureK" });
             }
@@ -217,7 +203,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 stateKeys = null;
             }
 
-            return ValidateTrait(deviceTrait, command, commandParams, stateKeys);
+            return ValidateTrait(deviceTrait, command, commandParams, stateKeys, attributeKeys);
         }
 
         /// <summary>
@@ -297,9 +283,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
 
             if (attributeKeys != null)
             {
+                var flattenedAttributes = deviceTrait.Attributes.ToFlatDictionary();
                 foreach (var attributeKey in attributeKeys)
                 {
-                    if (!deviceTrait.Attributes.ContainsKey(attributeKey))
+                    if (!flattenedAttributes.ContainsKey(attributeKey))
                         validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing attribute '{attributeKey}' for command '{commandName}'");
                 }
             }

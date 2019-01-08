@@ -110,53 +110,6 @@
             }
         }
     },
-    "ColorSpectrum": {
-        "attributes": {
-            "colorModel": "rgb"
-        },
-        "commands": {
-            "action.devices.commands.ColorAbsolute": {
-                "color.name": "MQTT_COMMAND_TOPIC",
-                "color.spectrumRGB": "MQTT_COMMAND_TOPIC"
-            }
-        },
-        "state": {
-            "color.name": {
-                "topic": "MQTT_STATE_TOPIC",
-                "googleType": "string",
-                "valueMap": null
-            },
-            "color.spectrumRGB": {
-                "topic": "MQTT_STATE_TOPIC",
-                "googleType": "numeric",
-                "valueMap": null
-            }
-        }
-    },
-    "ColorTemperature": {
-        "attributes": {
-            "temperatureMinK": 2000,
-            "temperatureMaxK": 6500
-        },
-        "commands": {
-            "action.devices.commands.ColorAbsolute": {
-                "color.name": "MQTT_COMMAND_TOPIC",
-                "color.temperature": "MQTT_COMMAND_TOPIC"
-            }
-        },
-        "state": {
-            "color.name": {
-                "topic": "MQTT_STATE_TOPIC",
-                "googleType": "string",
-                "valueMap": null
-            },
-            "color.temperature": {
-                "topic": "MQTT_STATE_TOPIC",
-                "googleType": "numeric",
-                "valueMap": null
-            }
-        }
-    },
     "Dock": {
         "attributes": null,
         "commands": {
