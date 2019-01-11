@@ -61,7 +61,7 @@
     "Channel": {
         "attributes": null,
         "commands": {
-            "action.devices.commands.SelectChannel": {
+            "action.devices.commands.selectChannel": {
                 "channelNumber": "MQTT_COMMAND_TOPIC"
             }
         },
@@ -517,7 +517,7 @@
     "Volume": {
         "attributes": null,
         "commands": {
-            "action.devices.commands.SetVolume": {
+            "action.devices.commands.setVolume": {
                 "volumeLevel": "MQTT_COMMAND_TOPIC",
             }
         },

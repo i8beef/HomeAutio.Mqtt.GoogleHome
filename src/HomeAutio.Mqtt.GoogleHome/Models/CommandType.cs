@@ -62,9 +62,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         PauseUnpause,
 
         /// <summary>
-        /// action.devices.commands.RelativeChannel
+        /// action.devices.commands.relativeChannel
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.RelativeChannel")]
+        [EnumMember(Value = "action.devices.commands.relativeChannel")]
         RelativeChannel,
 
         /// <summary>
@@ -74,9 +74,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Reverse,
 
         /// <summary>
-        /// action.devices.commands.SelectChannel
+        /// action.devices.commands.selectChannel
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.SelectChannel")]
+        [EnumMember(Value = "action.devices.commands.selectChannel")]
         SelectChannel,
 
         /// <summary>
@@ -104,9 +104,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         SetToggles,
 
         /// <summary>
-        /// action.devices.commands.SetVolume
+        /// action.devices.commands.setVolume
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.SetVolume")]
+        [EnumMember(Value = "action.devices.commands.setVolume")]
         SetVolume,
 
         /// <summary>
@@ -134,9 +134,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         ThermostatSetMode,
 
         /// <summary>
-        /// action.devices.commands.VolumeRelative
+        /// action.devices.commands.volumeRelative
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.VolumeRelative")]
+        [EnumMember(Value = "action.devices.commands.volumeRelative")]
         VolumeRelative,
 
         /// <summary>
