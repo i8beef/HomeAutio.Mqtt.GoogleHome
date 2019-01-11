@@ -159,6 +159,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         new List<string> { "currentToggleSettings.*" },
                         new List<string> { "availableToggles" }));
                     break;
+                case TraitType.Volume:
+                    validationErrors.AddRange(ValidateTrait(
+                        deviceTrait,
+                        CommandType.SetVolume,
+                        new List<string> { "volumeLevel" },
+                        new List<string> { "currentVolume", "isMuted" },
+                        null));
+                    break;
             }
 
             return validationErrors;

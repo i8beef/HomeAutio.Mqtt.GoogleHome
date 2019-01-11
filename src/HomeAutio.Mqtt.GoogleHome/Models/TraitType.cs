@@ -99,6 +99,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Toggles,
 
         /// <summary>
+        /// action.devices.traits.Volume
+        /// </summary>
+        [EnumMember(Value = "action.devices.traits.Volume")]
+        Volume,
+
+        /// <summary>
         /// Unknown.
         /// </summary>
         Unknown

@@ -92,6 +92,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         SetToggles,
 
         /// <summary>
+        /// action.devices.commands.SetVolume
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.SetVolume")]
+        SetVolume,
+
+        /// <summary>
         /// action.devices.commands.StartStop
         /// </summary>
         [EnumMember(Value = "action.devices.commands.StartStop")]
@@ -114,6 +120,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.commands.ThermostatSetMode")]
         ThermostatSetMode,
+
+        /// <summary>
+        /// action.devices.commands.VolumeRelative
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.VolumeRelative")]
+        VolumeRelative,
 
         /// <summary>
         /// Unknown.

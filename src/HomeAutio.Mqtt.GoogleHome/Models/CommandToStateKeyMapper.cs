@@ -19,16 +19,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
 
             var replacements = new Dictionary<string, string>
             {
-                { "updateModeSettings", "currentModeSettings" },
-                { "updateToggleSettings", "currentToggleSettings" },
                 { "color.spectrumRGB", "color.spectrumRgb" },
                 { "color.spectrumHSV.hue", "color.spectrumHsv.hue" },
                 { "color.spectrumHSV.saturation", "color.spectrumHsv.saturation" },
                 { "color.spectrumHSV.value", "color.spectrumHsv.value" },
                 { "color.temperature", "color.temperatureK" },
                 { "fanSpeed", "currentFanSpeedSetting" },
+                { "pause", "isPaused" },
                 { "start", "isRunning" },
-                { "pause", "isPaused" }
+                { "updateModeSettings", "currentModeSettings" },
+                { "updateToggleSettings", "currentToggleSettings" },
+                { "volumeLevel", "currentVolume" }
             };
 
             foreach (var replacement in replacements)

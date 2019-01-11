@@ -498,5 +498,25 @@
                 "valueMap": null
             }
         }
+    },
+    "Volume": {
+        "attributes": null,
+        "commands": {
+            "action.devices.commands.SetVolume": {
+                "volumeLevel": "MQTT_COMMAND_TOPIC",
+            }
+        },
+        "state": {
+            "currentVolume": {
+                "topic": "MQTT_STATE_TOPIC",
+                "googleType": "numeric",
+                "valueMap": null
+            },
+            "isMuted": {
+                "topic": "MQTT_STATE_TOPIC",
+                "googleType": "bool",
+                "valueMap": null
+            }
+        }
     }
 }

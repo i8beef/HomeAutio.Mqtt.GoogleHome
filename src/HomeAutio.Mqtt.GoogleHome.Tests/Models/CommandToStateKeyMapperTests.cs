@@ -16,6 +16,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Models
         [InlineData("fanSpeed", "currentFanSpeedSetting")]
         [InlineData("start", "isRunning")]
         [InlineData("pause", "isPaused")]
+        [InlineData("volumeLevel", "currentVolume")]
         public void CanMap(string input, string expectedOutput)
         {
             // Act

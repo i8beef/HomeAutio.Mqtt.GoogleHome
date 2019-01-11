@@ -86,6 +86,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Scene,
 
         /// <summary>
+        /// action.devices.types.SPEAKER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.SPEAKER")]
+        Speaker,
+
+        /// <summary>
         /// action.devices.types.SPRINKLER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SPRINKLER")]
