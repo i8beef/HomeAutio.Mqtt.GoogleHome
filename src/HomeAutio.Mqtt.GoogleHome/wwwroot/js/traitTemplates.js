@@ -58,6 +58,21 @@
             }
         }
     },
+    "Channel": {
+        "attributes": null,
+        "commands": {
+            "action.devices.commands.SelectChannel": {
+                "channelNumber": "MQTT_COMMAND_TOPIC"
+            }
+        },
+        "state": {
+            "channelNumber": {
+                "topic": "MQTT_STATE_TOPIC",
+                "googleType": "numeric",
+                "valueMap": null
+            }
+        }
+    },
     "ColorSetting": {
         "attributes": {
             "colorModel": "rgb",

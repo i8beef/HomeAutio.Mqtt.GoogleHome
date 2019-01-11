@@ -110,6 +110,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Thermostat,
 
         /// <summary>
+        /// action.devices.types.TV.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.TV")]
+        TV,
+
+        /// <summary>
         /// action.devices.types.VACUUM.
         /// </summary>
         [EnumMember(Value = "action.devices.types.VACUUM")]

@@ -62,10 +62,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         PauseUnpause,
 
         /// <summary>
+        /// action.devices.commands.RelativeChannel
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.RelativeChannel")]
+        RelativeChannel,
+
+        /// <summary>
         /// action.devices.commands.Reverse
         /// </summary>
         [EnumMember(Value = "action.devices.commands.Reverse")]
         Reverse,
+
+        /// <summary>
+        /// action.devices.commands.SelectChannel
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.SelectChannel")]
+        SelectChannel,
 
         /// <summary>
         /// action.devices.commands.SetFanSpeed

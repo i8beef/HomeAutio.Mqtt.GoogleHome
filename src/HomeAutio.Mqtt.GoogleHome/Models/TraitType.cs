@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models
 {
@@ -19,6 +18,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.traits.CameraStream")]
         CameraStream,
+
+        /// <summary>
+        /// action.devices.traits.Channel
+        /// </summary>
+        [EnumMember(Value = "action.devices.traits.Channel")]
+        Channel,
 
         /// <summary>
         /// action.devices.traits.ColorSetting

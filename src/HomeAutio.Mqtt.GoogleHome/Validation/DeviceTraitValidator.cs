@@ -39,6 +39,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         new List<string> { "cameraStreamAccessUrl" },
                         new List<string> { "cameraStreamSupportedProtocols", "cameraStreamNeedAuthToken", "cameraStreamNeedDrmEncryption" }));
                     break;
+                case TraitType.Channel:
+                    validationErrors.AddRange(ValidateTrait(
+                        deviceTrait,
+                        CommandType.SelectChannel,
+                        new List<string> { "channelNumber" },
+                        new List<string> { "channelNumber" },
+                        null));
+                    break;
                 case TraitType.ColorSetting:
                     validationErrors.AddRange(ValidateColorSetting(deviceTrait));
                     break;
