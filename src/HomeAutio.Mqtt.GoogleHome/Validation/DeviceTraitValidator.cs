@@ -283,7 +283,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
 
             if (attributeKeys != null)
             {
-                var flattenedAttributes = deviceTrait.Attributes.ToFlatDictionary();
+                var flattenedAttributes = deviceTrait.Attributes != null
+                    ? deviceTrait.Attributes.ToFlatDictionary()
+                    : new Dictionary<string, object>();
                 foreach (var attributeKey in attributeKeys)
                 {
                     if (!flattenedAttributes.ContainsKey(attributeKey))

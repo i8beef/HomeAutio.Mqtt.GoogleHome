@@ -152,7 +152,7 @@
                 ],
                 "ordered": true
             },
-            "reversable": false
+            "reversible": false
         },
         "commands": {
             "action.devices.commands.SetFanSpeed": {
