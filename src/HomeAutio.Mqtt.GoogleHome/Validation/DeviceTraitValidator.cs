@@ -56,7 +56,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         CommandType.SetFanSpeed,
                         new List<string> { "fanSpeed" },
                         new List<string> { "currentFanSpeedSetting" },
-                        new List<string> { "availableFanSpeeds" }));
+                        new List<string> { "availableFanSpeeds", "reversible" }));
                     validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.Reverse,
