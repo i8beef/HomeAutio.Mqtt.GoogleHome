@@ -62,17 +62,41 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <returns>A Google device state object.</returns>
         public IDictionary<string, object> GetGoogleState(IDictionary<string, string> stateCache)
         {
-            var stateConfigs = Traits
-                .Where(trait => trait.Trait != TraitType.CameraStream)
-                .SelectMany(trait => trait.State)
-                .Where(state => state.Value.Topic != null)
-                .Where(state => stateCache.ContainsKey(state.Value.Topic))
-                .ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => kvp.Value.MapValueToGoogle(stateCache[kvp.Value.Topic]))
-                .ToNestedDictionary();
+            return GetGoogleStateFlattened(stateCache).ToNestedDictionary();
+        }
 
-            return stateConfigs;
+        /// <summary>
+        /// Gets device state as a Google device state object for use in QUERY responses.
+        /// </summary>
+        /// <param name="stateCache">Current state cache.</param>
+        /// <returns>A Google device state object for use in QUERY responses.</returns>
+        public IDictionary<string, object> GetGoogleQueryState(IDictionary<string, string> stateCache)
+        {
+            var stateConfigs = GetGoogleStateFlattened(stateCache);
+            var filteredStateConfigs = new Dictionary<string, object>();
+            foreach (var key in stateConfigs.Keys)
+            {
+                switch (key)
+                {
+                    case "color.spectrumRGB":
+                        filteredStateConfigs.Add("color.spectrumRgb", stateConfigs[key]);
+                        break;
+                    case "color.spectrumHSV.hue":
+                        filteredStateConfigs.Add("color.spectrumHsv.hue", stateConfigs[key]);
+                        break;
+                    case "color.spectrumHSV.saturation":
+                        filteredStateConfigs.Add("color.spectrumHsv.saturation", stateConfigs[key]);
+                        break;
+                    case "color.spectrumHSV.value":
+                        filteredStateConfigs.Add("color.spectrumHsv.value", stateConfigs[key]);
+                        break;
+                    default:
+                        filteredStateConfigs.Add(key, stateConfigs[key]);
+                        break;
+                }
+            }
+
+            return filteredStateConfigs.ToNestedDictionary();
         }
 
         /// <summary>
@@ -89,6 +113,23 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
                 .Where(state => stateCache.ContainsKey(state.Value.Topic))
                 .Where(state => stateCache[state.Value.Topic] == null)
                 .Any();
+        }
+
+        /// <summary>
+        /// Gets device state as a Google device state object in a flattened state.
+        /// </summary>
+        /// <param name="stateCache">Current state cache.</param>
+        /// <returns>A Google device state object in a flattened state.</returns>
+        private IDictionary<string, object> GetGoogleStateFlattened(IDictionary<string, string> stateCache)
+        {
+            return Traits
+                .Where(trait => trait.Trait != TraitType.CameraStream)
+                .SelectMany(trait => trait.State)
+                .Where(state => state.Value.Topic != null)
+                .Where(state => stateCache.ContainsKey(state.Value.Topic))
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value.MapValueToGoogle(stateCache[kvp.Value.Topic]));
         }
     }
 }

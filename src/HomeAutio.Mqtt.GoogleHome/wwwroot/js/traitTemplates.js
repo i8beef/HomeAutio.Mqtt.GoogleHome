@@ -103,22 +103,22 @@
                 "googleType": "numeric",
                 "valueMap": null
             },
-            "color.spectrumRgb": {
+            "color.spectrumRGB": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
             },
-            "color.spectrumHsv.hue": {
+            "color.spectrumHSV.hue": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
             },
-            "color.spectrumHsv.saturation": {
+            "color.spectrumHSV.saturation": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
             },
-            "color.spectrumHsv.value": {
+            "color.spectrumHSV.value": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "numeric",
                 "valueMap": null
