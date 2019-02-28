@@ -59,18 +59,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         null));
                     break;
                 case TraitType.FanSpeed:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.SetFanSpeed,
-                        new List<string> { "fanSpeed" },
-                        new List<string> { "currentFanSpeedSetting" },
-                        new List<string> { "availableFanSpeeds", "reversible" }));
-                    validationErrors.AddRange(ValidateTrait(
+                    if (deviceTrait.Attributes.ContainsKey("reversible") && (bool)deviceTrait.Attributes["reversible"])
+                    {
+                        validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.Reverse,
                         null,
                         null,
                         new List<string> { "reversible" }));
+                    }
+
+                    validationErrors.AddRange(ValidateTrait(
+                        deviceTrait,
+                        CommandType.SetFanSpeed,
+                        new List<string> { "fanSpeed" },
+                        new List<string> { "currentFanSpeedSetting" },
+                        new List<string> { "availableFanSpeeds.*", "reversible" }));
                     break;
                 case TraitType.Locator:
                     validationErrors.AddRange(ValidateTrait(
@@ -137,27 +141,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         CommandType.SetTemperature,
                         new List<string> { "temperature" },
                         new List<string> { "temperatureSetpointCelsius", "temperatureAmbientCelsius" },
-                        new List<string> { "temperatureRange", "temperatureUnitForUX" }));
+                        new List<string> { "temperatureRange.*", "temperatureUnitForUX" }));
                     break;
                 case TraitType.TemperatureSetting:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.ThermostatSetMode,
-                        new List<string> { "thermostatMode" },
-                        new List<string> { "thermostatMode" },
-                        new List<string> { "availableThermostatModes" }));
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.ThermostatTemperatureSetpoint,
-                        new List<string> { "thermostatTemperatureSetpoint" },
-                        new List<string> { "thermostatTemperatureSetpoint" },
-                        new List<string> { "thermostatTemperatureUnit" }));
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.ThermostatTemperatureSetRange,
-                        new List<string> { "thermostatTemperatureSetpointHigh", "thermostatTemperatureSetpointLow" },
-                        new List<string> { "thermostatTemperatureSetpointHigh", "thermostatTemperatureSetpointLow" },
-                        new List<string> { "thermostatTemperatureUnit" }));
+                    validationErrors.AddRange(ValidateTemperatureSetting(deviceTrait));
                     break;
                 case TraitType.Toggles:
                     validationErrors.AddRange(ValidateTrait(
@@ -242,6 +229,103 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         }
 
         /// <summary>
+        /// Validates a RunCycle trait.
+        /// </summary>
+        /// <param name="deviceTrait">Device trait to validate.</param>
+        /// <returns>Validation errors.</returns>
+        private static IEnumerable<string> ValidateTemperatureSetting(DeviceTrait deviceTrait)
+        {
+            var validationErrors = new List<string>();
+
+            // Command only mode
+            var commandOnlyTemperatureSetting = deviceTrait.Attributes.ContainsKey("commandOnlyTemperatureSetting")
+                ? (bool)deviceTrait.Attributes["commandOnlyTemperatureSetting"]
+                : false;
+
+            // Query only mode
+            var queryOnlyTemperatureSetting = deviceTrait.Attributes.ContainsKey("queryOnlyTemperatureSetting")
+                ? (bool)deviceTrait.Attributes["queryOnlyTemperatureSetting"]
+                : false;
+
+            // ThermostatSetMode
+            if (deviceTrait.Commands.ContainsKey(CommandType.ThermostatSetMode.ToEnumString()))
+            {
+                var command = queryOnlyTemperatureSetting ? CommandType.Unknown : CommandType.ThermostatSetMode;
+                var commandParams = queryOnlyTemperatureSetting ? null : new List<string> { "thermostatMode" };
+                var stateKeys = commandOnlyTemperatureSetting ? null : new List<string> { "thermostatMode" };
+                validationErrors.AddRange(ValidateTrait(
+                    deviceTrait,
+                    command,
+                    commandParams,
+                    stateKeys,
+                    new List<string> { "availableThermostatModes" }));
+            }
+
+            // ThermostatTemperatureSetpoint
+            if (deviceTrait.Commands.ContainsKey(CommandType.ThermostatTemperatureSetpoint.ToEnumString()))
+            {
+                var command = queryOnlyTemperatureSetting ? CommandType.Unknown : CommandType.ThermostatTemperatureSetpoint;
+                var commandParams = queryOnlyTemperatureSetting ? null : new List<string> { "thermostatTemperatureSetpoint" };
+                var stateKeys = commandOnlyTemperatureSetting ? null : new List<string> { "thermostatTemperatureSetpoint" };
+                validationErrors.AddRange(ValidateTrait(
+                    deviceTrait,
+                    command,
+                    commandParams,
+                    stateKeys,
+                    new List<string> { "thermostatTemperatureUnit" }));
+            }
+
+            // ThermostatTemperatureSetRange
+            if (deviceTrait.Commands.ContainsKey(CommandType.ThermostatTemperatureSetRange.ToEnumString()))
+            {
+                // Only supported if heatcool mode is supported
+                var availableThermostatModes = ((string)deviceTrait.Attributes["availableThermostatModes"]).Split(',').ToList();
+                if (availableThermostatModes.Contains("heatcool"))
+                {
+                    var command = queryOnlyTemperatureSetting ? CommandType.Unknown : CommandType.ThermostatTemperatureSetRange;
+                    var commandParams = queryOnlyTemperatureSetting ? null : new List<string> { "thermostatTemperatureSetpointHigh", "thermostatTemperatureSetpointLow" };
+                    var stateKeys = commandOnlyTemperatureSetting ? null : new List<string> { "thermostatTemperatureSetpointHigh", "thermostatTemperatureSetpointLow" };
+                    validationErrors.AddRange(ValidateTrait(
+                        deviceTrait,
+                        command,
+                        commandParams,
+                        stateKeys,
+                        new List<string> { "thermostatTemperatureUnit" }));
+                }
+            }
+
+            // TemperatureRelative
+            var temperatureRelativeCommandName = CommandType.TemperatureRelative.ToEnumString();
+            if (commandOnlyTemperatureSetting && deviceTrait.Commands.ContainsKey(temperatureRelativeCommandName))
+            {
+                // This command is only available if the commandOnlyTemperatureSetting attribute of the device is set to true. Only one of the following parameters will be set:
+                var command = queryOnlyTemperatureSetting ? CommandType.Unknown : CommandType.TemperatureRelative;
+                if (!deviceTrait.Commands[temperatureRelativeCommandName].ContainsKey("thermostatTemperatureRelativeDegree"))
+                {
+                    var commandParams = queryOnlyTemperatureSetting ? null : new List<string> { "thermostatTemperatureRelativeDegree" };
+                    validationErrors.AddRange(ValidateTrait(
+                        deviceTrait,
+                        command,
+                        commandParams,
+                        null,
+                        new List<string> { "commandOnlyTemperatureSetting" }));
+                }
+                else
+                {
+                    var commandParams = queryOnlyTemperatureSetting ? null : new List<string> { "thermostatTemperatureRelativeWeight" };
+                    validationErrors.AddRange(ValidateTrait(
+                        deviceTrait,
+                        command,
+                        commandParams,
+                        null,
+                        new List<string> { "commandOnlyTemperatureSetting" }));
+                }
+            }
+
+            return validationErrors;
+        }
+
+        /// <summary>
         /// Validates a brightness trait.
         /// </summary>
         /// <param name="deviceTrait">Device trait to validate.</param>
@@ -260,7 +344,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             var validationErrors = new List<string>();
 
             var commandName = command.ToEnumString();
-            if (!deviceTrait.Commands.ContainsKey(commandName))
+            if (command != CommandType.Unknown && !deviceTrait.Commands.ContainsKey(commandName))
                 validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing required command '{commandName}'");
 
             if (commandParams != null)

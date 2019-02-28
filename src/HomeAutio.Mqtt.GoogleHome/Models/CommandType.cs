@@ -116,6 +116,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         StartStop,
 
         /// <summary>
+        /// action.devices.commands.TemperatureRelative
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.TemperatureRelative")]
+        TemperatureRelative,
+
+        /// <summary>
         /// action.devices.commands.ThermostatTemperatureSetpoint
         /// </summary>
         [EnumMember(Value = "action.devices.commands.ThermostatTemperatureSetpoint")]
