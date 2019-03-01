@@ -388,8 +388,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     : new Dictionary<string, object>();
                 foreach (var attributeKey in attributeKeys)
                 {
-                    if (!flattenedAttributes.ContainsKey(attributeKey))
-                        validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing attribute '{attributeKey}' for command '{commandName}'");
+                    if (attributeKey.EndsWith(".*"))
+                    {
+                        if (!flattenedAttributes.Keys.Any(x => x.StartsWith(attributeKey.Substring(0, attributeKey.Length - 2))))
+                            validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing attribute '{attributeKey}' for command '{commandName}'");
+                    }
+                    else
+                    {
+                        if (!flattenedAttributes.ContainsKey(attributeKey))
+                            validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing attribute '{attributeKey}' for command '{commandName}'");
+                    }
                 }
             }
 
