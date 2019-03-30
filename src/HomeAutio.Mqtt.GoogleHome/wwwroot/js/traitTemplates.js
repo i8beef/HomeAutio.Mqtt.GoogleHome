@@ -312,7 +312,17 @@
         }
     },
     "OpenClose": {
-        "attributes": null,
+        "attributes": {
+            "openDirection": [
+                "UP",
+                "DOWN",
+                "LEFT",
+                "RIGHT",
+                "IN",
+                "OUT"
+            ],
+            "queryOnlyOpenClose": false
+        },
         "commands": {
             "action.devices.commands.OpenClose": {
                 "openPercent": "MQTT_COMMAND_TOPIC"

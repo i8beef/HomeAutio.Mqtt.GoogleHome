@@ -14,10 +14,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         AirConditioningUnit,
 
         /// <summary>
+        /// action.devices.types.AIRFRESHENER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.AIRFRESHENER")]
+        AirFreshener,
+
+        /// <summary>
         /// action.devices.types.AIRPURIFIER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.AIRPURIFIER")]
         AirPurifier,
+
+        /// <summary>
+        /// action.devices.types.BLINDS.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.BLINDS")]
+        Blinds,
 
         /// <summary>
         /// action.devices.types.CAMERA.
@@ -35,7 +47,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// action.devices.types.DISHWASHER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.DISHWASHER")]
-        Diswasher,
+        Dishwasher,
 
         /// <summary>
         /// action.devices.types.DOOR.
@@ -44,10 +56,28 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Door,
 
         /// <summary>
+        /// action.devices.types.DRYER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.DRYER")]
+        Dryer,
+
+        /// <summary>
         /// action.devices.types.FAN".
         /// </summary>
         [EnumMember(Value = "action.devices.types.FAN")]
         Fan,
+
+        /// <summary>
+        /// action.devices.types.FIREPLACE".
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.FIREPLACE")]
+        Fireplace,
+
+        /// <summary>
+        /// action.devices.types.HEATER".
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.HEATER")]
+        Heater,
 
         /// <summary>
         /// action.devices.types.KETTLE.
