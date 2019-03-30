@@ -117,7 +117,8 @@ namespace HomeAutio.Mqtt.GoogleHome
                     BrokerIp = Configuration.GetValue<string>("mqtt:brokerIp"),
                     BrokerPort = Configuration.GetValue<int>("mqtt:brokerPort"),
                     BrokerUsername = Configuration.GetValue<string>("mqtt:brokerUsername"),
-                    BrokerPassword = Configuration.GetValue<string>("mqtt:brokerPassword")
+                    BrokerPassword = Configuration.GetValue<string>("mqtt:brokerPassword"),
+                    BrokerUseTls = Configuration.GetValue<bool>("mqtt:brokerUseTls", false)
                 };
 
                 return new MqttService(
