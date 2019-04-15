@@ -121,6 +121,46 @@ namespace HomeAutio.Mqtt.GoogleHome
                     BrokerUseTls = Configuration.GetValue<bool>("mqtt:brokerUseTls", false)
                 };
 
+                // TLS settings
+                if (brokerSettings.BrokerUseTls)
+                {
+                    var brokerTlsSettings = new Core.BrokerTlsSettings
+                    {
+                        AllowUntrustedCertificates = Configuration.GetValue<bool>("mqtt:brokerTlsSettings:allowUntrustedCertificates", false),
+                        IgnoreCertificateChainErrors = Configuration.GetValue<bool>("mqtt:brokerTlsSettings:ignoreCertificateChainErrors", false),
+                        IgnoreCertificateRevocationErrors = Configuration.GetValue<bool>("mqtt:brokerTlsSettings:ignoreCertificateRevocationErrors", false)
+                    };
+
+                    switch (Configuration.GetValue<string>("mqtt:brokerTlsSettings:protocol", "1.2"))
+                    {
+                        case "1.0":
+                            brokerTlsSettings.SslProtocol = System.Security.Authentication.SslProtocols.Tls;
+                            break;
+                        case "1.1":
+                            brokerTlsSettings.SslProtocol = System.Security.Authentication.SslProtocols.Tls11;
+                            break;
+                        case "1.2":
+                        default:
+                            brokerTlsSettings.SslProtocol = System.Security.Authentication.SslProtocols.Tls12;
+                            break;
+                    }
+
+                    var brokerTlsCertificatesSection = Configuration.GetSection("mqtt:brokerTlsSettings:certificates");
+                    brokerTlsSettings.Certificates = brokerTlsCertificatesSection.GetChildren()
+                        .Select(x =>
+                        {
+                            var file = x.GetValue<string>("file");
+                            var passPhrase = x.GetValue<string>("passPhrase");
+
+                            if (!File.Exists(file))
+                                throw new FileNotFoundException($"Broker Certificate '{file}' is missing!");
+
+                            return !string.IsNullOrEmpty(passPhrase) ?
+                                new X509Certificate2(file, passPhrase) :
+                                new X509Certificate2(file);
+                        }).ToList();
+                }
+
                 return new MqttService(
                     serviceProvider.GetRequiredService<ILogger<MqttService>>(),
                     serviceProvider.GetRequiredService<IMessageHub>(),
