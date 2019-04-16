@@ -159,6 +159,8 @@ namespace HomeAutio.Mqtt.GoogleHome
                                 new X509Certificate2(file, passPhrase) :
                                 new X509Certificate2(file);
                         }).ToList();
+
+                    brokerSettings.BrokerTlsSettings = brokerTlsSettings;
                 }
 
                 return new MqttService(
