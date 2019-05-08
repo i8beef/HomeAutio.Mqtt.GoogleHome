@@ -1,4 +1,46 @@
 ﻿var traitTemplates = {
+    "ArmDisarm": {
+        "attributes": {
+            "availableArmLevels": {
+                "levels": [
+                    {
+                        "level_name": "L1",
+                        "level_values": [
+                            {
+                                "level_synonym": ["low security", "home and guarding", "level 1", "SL1"],
+                                "lang": "en"
+                            }
+                        ]
+                    }
+                ],
+                "ordered": false
+            }
+        },
+        "commands": {
+            "action.devices.commands.ArmDisarm": {
+                "arm": "MQTT_COMMAND_TOPIC",
+                "cancel": "MQTT_COMMAND_TOPIC",
+                "armLevel": "MQTT_COMMAND_TOPIC"
+            }
+        },
+        "state": {
+            "isArmed": {
+                "topic": "MQTT_STATE_TOPIC",
+                "googleType": "bool",
+                "valueMap": null
+            },
+            "currentArmLevel": {
+                "topic": "MQTT_STATE_TOPIC",
+                "googleType": "string",
+                "valueMap": null
+            },
+            "exitAllowance": {
+                "topic": "MQTT_STATE_TOPIC",
+                "googleType": "numeric",
+                "valueMap": null
+            }
+        }
+    },
     "Brightness": {
         "attributes": null,
         "commands": {
@@ -203,6 +245,26 @@
         },
         "state": {
             "generatedAlert": {
+                "topic": "MQTT_STATE_TOPIC",
+                "googleType": "bool",
+                "valueMap": null
+            }
+        }
+    },
+    "LockUnlock": {
+        "attributes": null,
+        "commands": {
+            "action.devices.commands.LockUnlock": {
+                "lock ": "MQTT_COMMAND_TOPIC"
+            }
+        },
+        "state": {
+            "isLocked": {
+                "topic": "MQTT_STATE_TOPIC",
+                "googleType": "bool",
+                "valueMap": null
+            },
+            "isJammed": {
                 "topic": "MQTT_STATE_TOPIC",
                 "googleType": "bool",
                 "valueMap": null
@@ -488,6 +550,35 @@
             }
         }
     },
+    "Timer": {
+        "attributes": {
+            "maxTimerLimitSec": 60,
+            "commandOnlyTimer": false
+        },
+        "commands": {
+            "action.devices.commands.TimerStart": {
+                "timerTimeSec": "MQTT_COMMAND_TOPIC"
+            },
+            "action.devices.commands.TimerAdjust": {
+                "timerTimeSec": "MQTT_COMMAND_TOPIC"
+            },
+            "action.devices.commands.TimerPause": {},
+            "action.devices.commands.TimerResume": {},
+            "action.devices.commands.TimerCancel": {}
+        },
+        "state": {
+            "timerRemainingSec": {
+                "topic": "MQTT_STATE_TOPIC",
+                "googleType": "numeric",
+                "valueMap": null
+            },
+            "timerPaused": {
+                "topic": "MQTT_STATE_TOPIC",
+                "googleType": "bool",
+                "valueMap": null
+            }
+        }
+    },
     "Toggles": {
         "attributes": {
             "availableToggles": [{
@@ -528,7 +619,7 @@
         "attributes": null,
         "commands": {
             "action.devices.commands.setVolume": {
-                "volumeLevel": "MQTT_COMMAND_TOPIC",
+                "volumeLevel": "MQTT_COMMAND_TOPIC"
             }
         },
         "state": {

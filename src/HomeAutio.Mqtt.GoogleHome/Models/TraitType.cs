@@ -8,6 +8,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
     public enum TraitType
     {
         /// <summary>
+        /// action.devices.traits.ArmDisarm
+        /// </summary>
+        [EnumMember(Value = "action.devices.traits.ArmDisarm")]
+        ArmDisarm,
+
+        /// <summary>
         /// action.devices.traits.Brightness
         /// </summary>
         [EnumMember(Value = "action.devices.traits.Brightness")]
@@ -48,6 +54,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.traits.Locator")]
         Locator,
+
+        /// <summary>
+        /// action.devices.traits.LockUnlock
+        /// </summary>
+        [EnumMember(Value = "action.devices.traits.LockUnlock")]
+        LockUnlock,
 
         /// <summary>
         /// action.devices.traits.Modes
@@ -96,6 +108,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.traits.TemperatureSetting")]
         TemperatureSetting,
+
+        /// <summary>
+        /// action.devices.traits.Timer
+        /// </summary>
+        [EnumMember(Value = "action.devices.traits.Timer")]
+        Timer,
 
         /// <summary>
         /// action.devices.traits.Toggles

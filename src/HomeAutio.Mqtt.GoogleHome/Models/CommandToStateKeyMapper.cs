@@ -19,14 +19,18 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
 
             var replacements = new Dictionary<string, string>
             {
+                { "arm", "isArmed" },
+                { "armLevel", "currentArmLevel" },
                 { "color.spectrumRGB", "color.spectrumRgb" },
                 { "color.spectrumHSV.hue", "color.spectrumHsv.hue" },
                 { "color.spectrumHSV.saturation", "color.spectrumHsv.saturation" },
                 { "color.spectrumHSV.value", "color.spectrumHsv.value" },
                 { "color.temperature", "color.temperatureK" },
                 { "fanSpeed", "currentFanSpeedSetting" },
+                { "lock", "isLocked" },
                 { "pause", "isPaused" },
                 { "start", "isRunning" },
+                { "timerTimeSec", "timerRemainingSec" },
                 { "updateModeSettings", "currentModeSettings" },
                 { "updateToggleSettings", "currentToggleSettings" },
                 { "volumeLevel", "currentVolume" }
