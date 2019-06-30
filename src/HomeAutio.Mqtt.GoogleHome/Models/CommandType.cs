@@ -148,6 +148,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// <summary>
         /// Unknown.
         /// </summary>
+        [EnumMember(Value = "Unknown")]
         Unknown
     }
 }
