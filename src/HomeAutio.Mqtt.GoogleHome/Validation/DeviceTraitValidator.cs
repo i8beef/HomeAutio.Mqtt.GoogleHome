@@ -62,11 +62,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     if (deviceTrait.Attributes.ContainsKey("reversible") && (bool)deviceTrait.Attributes["reversible"])
                     {
                         validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.Reverse,
-                        null,
-                        null,
-                        new List<string> { "reversible" }));
+                            deviceTrait,
+                            CommandType.Reverse,
+                            null,
+                            null,
+                            new List<string> { "reversible" }));
                     }
 
                     validationErrors.AddRange(ValidateTrait(
@@ -100,11 +100,24 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         new List<string> { "on" }));
                     break;
                 case TraitType.OpenClose:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.OpenClose,
-                        new List<string> { "openPercent" },
-                        new List<string> { "openPercent" }));
+                    if (deviceTrait.Attributes.ContainsKey("queryOnlyOpenClose") && (bool)deviceTrait.Attributes["queryOnlyOpenClose"])
+                    {
+                        validationErrors.AddRange(ValidateTrait(
+                            deviceTrait,
+                            CommandType.Unknown,
+                            null,
+                            new List<string> { "openPercent" },
+                            new List<string> { "queryOnlyOpenClose" }));
+                    }
+                    else
+                    {
+                        validationErrors.AddRange(ValidateTrait(
+                            deviceTrait,
+                            CommandType.OpenClose,
+                            new List<string> { "openPercent" },
+                            new List<string> { "openPercent" }));
+                    }
+
                     break;
                 case TraitType.RunCycle:
                     validationErrors.AddRange(ValidateRunCycle(deviceTrait));
