@@ -239,7 +239,7 @@
         "attributes": null,
         "commands": {
             "action.devices.commands.Locate": {
-                "silent": "MQTT_COMMAND_TOPIC",
+                "silence": "MQTT_COMMAND_TOPIC",
                 "lang": "MQTT_COMMAND_TOPIC"
             }
         },

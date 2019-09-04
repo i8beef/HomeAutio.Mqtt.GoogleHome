@@ -80,8 +80,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
                         CommandType.Locate,
-                        new List<string> { "silent" },
-                        new List<string> { "generatedAlert" },
+                        null,
+                        null,
                         null));
                     break;
                 case TraitType.Modes:
@@ -136,7 +136,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         validationErrors.AddRange(ValidateTrait(
                             deviceTrait,
                             CommandType.PauseUnpause,
-                            new List<string> { "pause " },
+                            new List<string> { "pause" },
                             new List<string> { "isPaused" },
                             new List<string> { "pausable" }));
                     }
