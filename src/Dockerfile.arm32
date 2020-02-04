@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.2-sdk-alpine AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
 WORKDIR /app
 
 # copy csproj and restore as distinct layers
@@ -19,7 +19,7 @@ WORKDIR /app/HomeAutio.Mqtt.GoogleHome
 RUN dotnet publish -o out
 
 # build runtime image
-FROM microsoft/dotnet:2.2-aspnetcore-runtime-stretch-slim-arm32v7 AS runtime
+FROM mcr.microsoft.com/dotnet/core/runtime:3.1-buster-slim-arm32v7 AS runtime
 WORKDIR /app
 COPY --from=publish /app/HomeAutio.Mqtt.GoogleHome/out ./
 

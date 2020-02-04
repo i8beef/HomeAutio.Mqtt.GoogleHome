@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.Json.Serialization;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.App_Start;
 using HomeAutio.Mqtt.GoogleHome.Identity;
@@ -58,7 +58,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             services.AddHttpClient();
 
             // Add message hub instance
-            services.AddSingleton<IMessageHub>(serviceProvider => MessageHub.Instance);
+            services.AddSingleton<IMessageHub, MessageHub>();
 
             // Device configuration from file
             services.AddSingleton(serviceProvider =>
@@ -176,13 +176,13 @@ namespace HomeAutio.Mqtt.GoogleHome
             services.AddTransient<TokenCleanup>();
 
             // MVC
-            services.AddMvc()
-                .AddJsonOptions(opt =>
+            services
+                .AddControllersWithViews()
+                .AddNewtonsoftJson(opt =>
                 {
                     opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                     opt.SerializerSettings.Converters.Add(new StringEnumConverter());
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                });
 
             // Identity Server 4
             services.AddSingleton<IPersistedGrantStoreWithExpiration, PersistedGrantStore>();
@@ -271,7 +271,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// </summary>
         /// <param name="app">The app builder.</param>
         /// <param name="env">The hosting environment.</param>
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             var pathBase = Environment.GetEnvironmentVariable("ASPNETCORE_PATHBASE");
             if (!string.IsNullOrEmpty(pathBase))
@@ -285,13 +285,14 @@ namespace HomeAutio.Mqtt.GoogleHome
             }
 
             app.UseStaticFiles();
+            app.UseRouting();
             app.UseAuthentication();
-            app.UseMvc(routes =>
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=GoogleDevice}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute("default", "{controller=GoogleDevice}/{action=Index}/{id?}");
             });
+
             app.UseIdentityServer();
         }
     }

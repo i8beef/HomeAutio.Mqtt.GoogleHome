@@ -11,6 +11,7 @@ using HomeAutio.Mqtt.GoogleHome.Models.Request;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
+using MQTTnet.Extensions.ManagedClient;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
@@ -83,7 +84,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         }
 
         /// <inheritdoc />
-        protected override void Mqtt_MqttMsgPublishReceived(object sender, MqttApplicationMessageReceivedEventArgs e)
+        protected override void Mqtt_MqttMsgPublishReceived(MqttApplicationMessageReceivedEventArgs e)
         {
             var topic = e.ApplicationMessage.Topic;
             var message = e.ApplicationMessage.ConvertPayloadToString();

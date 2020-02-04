@@ -28,7 +28,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
         public void ReturnsTransformedStateOnSuccess()
         {
             // Arrange
-
             var commandParams = new Dictionary<string, object>
             {
                 {

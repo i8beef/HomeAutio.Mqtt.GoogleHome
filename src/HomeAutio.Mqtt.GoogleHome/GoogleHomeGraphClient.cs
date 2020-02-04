@@ -183,9 +183,8 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <summary>
         /// Gets an access token using the passed JWT request.
         /// </summary>
-        /// <param name="jwt">JWT request.</param>
         /// <returns>An <see cref="AccessTokenResponse"/>.</returns>
-        private async Task<AccessTokenResponse> GetAccessToken(string jwt)
+        private async Task<AccessTokenResponse> GetAccessToken()
         {
             _log.LogDebug("Get/Refresh access token");
 
@@ -205,7 +204,8 @@ namespace HomeAutio.Mqtt.GoogleHome
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
-            var accessToken = await response.Content.ReadAsAsync<AccessTokenResponse>();
+            var content = await response.Content.ReadAsStringAsync();
+            var accessToken = JsonConvert.DeserializeObject<AccessTokenResponse>(content);
 
             _log.LogDebug("Received access token: " + accessToken);
 
@@ -246,7 +246,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     // Recheck in case another instance already updated
                     if (_accessToken == null || _accessToken.ExpiresAt <= DateTime.Now.AddMinutes(-1))
                     {
-                        _accessToken = GetAccessToken(CreateJwt())
+                        _accessToken = GetAccessToken()
                             .GetAwaiter().GetResult();
                     }
                 }
