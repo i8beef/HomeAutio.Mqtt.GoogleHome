@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
+using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using HomeAutio.Mqtt.GoogleHome.Validation;
@@ -23,17 +24,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
         private readonly GoogleDeviceRepository _deviceRepository;
 
+        private readonly SyncIntentHandler _syncIntentHandler;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleDeviceController"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="deviceRepository">Device repository.</param>
+        /// <param name="syncIntentHandler">Sync intent handler.</param>
         public GoogleDeviceController(
             ILogger<GoogleDeviceController> logger,
-            GoogleDeviceRepository deviceRepository)
+            GoogleDeviceRepository deviceRepository,
+            SyncIntentHandler syncIntentHandler)
         {
             _log = logger ?? throw new ArgumentException(nameof(logger));
             _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
+            _syncIntentHandler = syncIntentHandler ?? throw new ArgumentException(nameof(syncIntentHandler));
         }
 
         /// <summary>
@@ -47,6 +53,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 .ToList();
 
             return View(model);
+        }
+
+        /// <summary>
+        /// Gets a SYNC intent response for external validation.
+        /// </summary>
+        /// <returns>Response.</returns>
+        public IActionResult SyncValidate()
+        {
+            var syncResponsePayload = _syncIntentHandler.Handle(new Models.Request.SyncIntent());
+
+            return Json(syncResponsePayload);
         }
 
         /// <summary>
