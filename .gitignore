@@ -328,6 +328,3 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
-
-# Avoid sensitive files
-src/HomeAutio.Mqtt.GoogleHome/config/googleHomeGraphApi.json
