@@ -168,6 +168,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                 lock (_lock)
                 {
                     var fileContents = File.ReadAllText(_file);
+                    if (string.IsNullOrEmpty(fileContents))
+                    {
+                        _log.LogWarning("Token file {file} already exists but is empty", _file);
+                        return;
+                    }
+
                     var deserializedFileContents = JsonConvert.DeserializeObject<Dictionary<string, PersistedGrant>>(fileContents, _jsonSerializerSettings);
 
                     _repository.Clear();
@@ -175,7 +181,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                     {
                         if (!_repository.TryAdd(record.Key, record.Value))
                         {
-                            _log.LogWarning("Failed to remove token with key {key}", record.Key);
+                            _log.LogWarning("Failed to restore token with key {key}", record.Key);
                         }
                     }
 
