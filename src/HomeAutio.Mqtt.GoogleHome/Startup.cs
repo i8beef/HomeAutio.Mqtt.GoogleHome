@@ -21,6 +21,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
@@ -181,6 +182,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                     opt.SerializerSettings.Converters.Add(new StringEnumConverter());
                     opt.SerializerSettings.FloatParseHandling = FloatParseHandling.Decimal;
+                    opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver { NamingStrategy = new CamelCaseNamingStrategy { ProcessDictionaryKeys = false } };
                 });
 
             // Identity Server 4
