@@ -23,7 +23,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         private readonly ILogger<MqttService> _log;
 
         private readonly IMessageHub _messageHub;
-        private readonly GoogleDeviceRepository _deviceRepository;
+        private readonly IGoogleDeviceRepository _deviceRepository;
         private readonly StateCache _stateCache;
 
         private readonly IList<Guid> _messageHubSubscriptions = new List<Guid>();
@@ -42,7 +42,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             ILogger<MqttService> logger,
             IMessageHub messageHub,
             BrokerSettings brokerSettings,
-            GoogleDeviceRepository deviceRepository,
+            IGoogleDeviceRepository deviceRepository,
             StateCache stateCache)
             : base(logger, brokerSettings, "google/home")
         {

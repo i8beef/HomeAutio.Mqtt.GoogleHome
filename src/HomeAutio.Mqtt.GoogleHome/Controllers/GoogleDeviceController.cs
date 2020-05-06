@@ -22,7 +22,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     {
         private readonly ILogger<GoogleDeviceController> _log;
 
-        private readonly GoogleDeviceRepository _deviceRepository;
+        private readonly IGoogleDeviceRepository _deviceRepository;
 
         private readonly SyncIntentHandler _syncIntentHandler;
 
@@ -34,7 +34,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <param name="syncIntentHandler">Sync intent handler.</param>
         public GoogleDeviceController(
             ILogger<GoogleDeviceController> logger,
-            GoogleDeviceRepository deviceRepository,
+            IGoogleDeviceRepository deviceRepository,
             SyncIntentHandler syncIntentHandler)
         {
             _log = logger ?? throw new ArgumentException(nameof(logger));

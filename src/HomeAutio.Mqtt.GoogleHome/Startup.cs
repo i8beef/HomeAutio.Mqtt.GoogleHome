@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
-using System.Text.Json.Serialization;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.App_Start;
 using HomeAutio.Mqtt.GoogleHome.Identity;
@@ -16,7 +15,6 @@ using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -61,7 +59,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             services.AddSingleton<IMessageHub, MessageHub>();
 
             // Device configuration from file
-            services.AddSingleton(serviceProvider =>
+            services.AddSingleton<IGoogleDeviceRepository>(serviceProvider =>
             {
                 var deviceConfigFile = Configuration.GetValue<string>("deviceConfigFile");
                 return new GoogleDeviceRepository(
@@ -73,7 +71,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Build state cache from configuration
             services.AddSingleton(serviceProvider =>
             {
-                var topics = serviceProvider.GetService<GoogleDeviceRepository>().GetAll()
+                var topics = serviceProvider.GetService<IGoogleDeviceRepository>().GetAll()
                     .Where(device => !device.Disabled)
                     .SelectMany(device => device.Traits)
                     .SelectMany(trait => trait.State.Values)
@@ -167,7 +165,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     serviceProvider.GetRequiredService<ILogger<MqttService>>(),
                     serviceProvider.GetRequiredService<IMessageHub>(),
                     brokerSettings,
-                    serviceProvider.GetRequiredService<GoogleDeviceRepository>(),
+                    serviceProvider.GetRequiredService<IGoogleDeviceRepository>(),
                     serviceProvider.GetRequiredService<StateCache>());
             });
 
@@ -182,6 +180,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 {
                     opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                     opt.SerializerSettings.Converters.Add(new StringEnumConverter());
+                    opt.SerializerSettings.FloatParseHandling = FloatParseHandling.Decimal;
                 });
 
             // Identity Server 4

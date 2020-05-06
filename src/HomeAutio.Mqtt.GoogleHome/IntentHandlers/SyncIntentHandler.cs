@@ -13,7 +13,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         private readonly ILogger<SyncIntentHandler> _log;
 
         private readonly IConfiguration _config;
-        private readonly GoogleDeviceRepository _deviceRepository;
+        private readonly IGoogleDeviceRepository _deviceRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SyncIntentHandler"/> class.
@@ -24,7 +24,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         public SyncIntentHandler(
             ILogger<SyncIntentHandler> logger,
             IConfiguration configuration,
-            GoogleDeviceRepository deviceRepository)
+            IGoogleDeviceRepository deviceRepository)
         {
             _log = logger ?? throw new ArgumentException(nameof(logger));
             _config = configuration ?? throw new ArgumentException(nameof(configuration));

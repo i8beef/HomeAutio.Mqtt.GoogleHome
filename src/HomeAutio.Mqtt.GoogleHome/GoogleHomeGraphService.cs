@@ -19,7 +19,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         private readonly ILogger<GoogleHomeGraphService> _log;
 
         private readonly IMessageHub _messageHub;
-        private readonly GoogleDeviceRepository _deviceRepository;
+        private readonly IGoogleDeviceRepository _deviceRepository;
         private readonly StateCache _stateCache;
         private readonly GoogleHomeGraphClient _googleHomeGraphClient;
 
@@ -37,7 +37,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             ILogger<GoogleHomeGraphService> logger,
             IMessageHub messageHub,
             GoogleHomeGraphClient googleHomeGraphClient,
-            GoogleDeviceRepository deviceRepository,
+            IGoogleDeviceRepository deviceRepository,
             StateCache stateCache)
         {
             _log = logger ?? throw new ArgumentException(nameof(logger));

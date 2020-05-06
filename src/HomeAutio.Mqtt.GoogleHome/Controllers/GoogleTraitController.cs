@@ -9,7 +9,6 @@ using HomeAutio.Mqtt.GoogleHome.Validation;
 using HomeAutio.Mqtt.GoogleHome.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Controllers
@@ -20,9 +19,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     [Authorize]
     public class GoogleTraitController : Controller
     {
-        private readonly ILogger<GoogleTraitController> _log;
-
-        private readonly GoogleDeviceRepository _deviceRepository;
+        private readonly IGoogleDeviceRepository _deviceRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleTraitController"/> class.
@@ -30,10 +27,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <param name="logger">Logging instance.</param>
         /// <param name="deviceRepository">Device repository.</param>
         public GoogleTraitController(
-            ILogger<GoogleTraitController> logger,
-            GoogleDeviceRepository deviceRepository)
+            IGoogleDeviceRepository deviceRepository)
         {
-            _log = logger ?? throw new ArgumentException(nameof(logger));
             _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
         }
 

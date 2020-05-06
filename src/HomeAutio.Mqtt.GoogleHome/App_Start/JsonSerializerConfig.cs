@@ -18,7 +18,8 @@ namespace HomeAutio.Mqtt.GoogleHome.App_Start
             {
                 var settings = new JsonSerializerSettings
                 {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    FloatParseHandling = FloatParseHandling.Decimal
                 };
 
                 settings.Converters.Add(new StringEnumConverter());

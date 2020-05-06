@@ -15,7 +15,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         private readonly ILogger<ExecuteIntentHandler> _log;
 
         private readonly IMessageHub _messageHub;
-        private readonly GoogleDeviceRepository _deviceRepository;
+        private readonly IGoogleDeviceRepository _deviceRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExecuteIntentHandler"/> class.
@@ -26,7 +26,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         public ExecuteIntentHandler(
             ILogger<ExecuteIntentHandler> logger,
             IMessageHub messageHub,
-            GoogleDeviceRepository deviceRepository)
+            IGoogleDeviceRepository deviceRepository)
         {
             _log = logger ?? throw new ArgumentException(nameof(logger));
             _messageHub = messageHub ?? throw new ArgumentException(nameof(messageHub));

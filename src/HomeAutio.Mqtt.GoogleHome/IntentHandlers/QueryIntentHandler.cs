@@ -16,7 +16,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         private readonly ILogger<QueryIntentHandler> _log;
 
         private readonly IMessageHub _messageHub;
-        private readonly GoogleDeviceRepository _deviceRepository;
+        private readonly IGoogleDeviceRepository _deviceRepository;
         private readonly StateCache _stateCache;
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         public QueryIntentHandler(
             ILogger<QueryIntentHandler> logger,
             IMessageHub messageHub,
-            GoogleDeviceRepository deviceRepository,
+            IGoogleDeviceRepository deviceRepository,
             StateCache stateCache)
         {
             _log = logger ?? throw new ArgumentException(nameof(logger));

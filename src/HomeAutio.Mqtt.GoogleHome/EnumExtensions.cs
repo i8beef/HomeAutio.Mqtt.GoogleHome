@@ -40,7 +40,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 if (enumMemberAttribute.Value == str) return (T)Enum.Parse(enumType, name);
             }
 
-            return default(T);
+            return default;
         }
     }
 }

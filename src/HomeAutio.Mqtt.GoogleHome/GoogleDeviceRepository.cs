@@ -15,7 +15,7 @@ namespace HomeAutio.Mqtt.GoogleHome
     /// <summary>
     /// Google device repository.
     /// </summary>
-    public class GoogleDeviceRepository
+    public class GoogleDeviceRepository : IGoogleDeviceRepository
     {
         private readonly ILogger<GoogleDeviceRepository> _logger;
         private readonly string _deviceConfigFile;
@@ -42,10 +42,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             Refresh();
         }
 
-        /// <summary>
-        /// Adds a device.
-        /// </summary>
-        /// <param name="device">Device to add.</param>
+        /// <inheritdoc />
         public void Add(Device device)
         {
             if (_devices.TryAdd(device.Id, device))
@@ -68,20 +65,13 @@ namespace HomeAutio.Mqtt.GoogleHome
             }
         }
 
-        /// <summary>
-        /// Determines if the device is contained in the repository.
-        /// </summary>
-        /// <param name="deviceId">Device id.</param>
-        /// <returns><c>true</c> if present, else <c>false</c>.</returns>
+        /// <inheritdoc />
         public bool Contains(string deviceId)
         {
             return _devices.ContainsKey(deviceId);
         }
 
-        /// <summary>
-        /// Deletes a device.
-        /// </summary>
-        /// <param name="deviceId">Device Id to delete.</param>
+        /// <inheritdoc />
         public void Delete(string deviceId)
         {
             if (_devices.TryRemove(deviceId, out Device device))
@@ -102,11 +92,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             }
         }
 
-        /// <summary>
-        /// Gets a device.
-        /// </summary>
-        /// <param name="deviceId">Device Id to get.</param>
-        /// <returns>The <see cref="Device"/>.</returns>
+        /// <inheritdoc />
         public Device Get(string deviceId)
         {
             if (_devices.TryGetValue(deviceId, out Device value))
@@ -117,30 +103,49 @@ namespace HomeAutio.Mqtt.GoogleHome
             return null;
         }
 
-        /// <summary>
-        /// Gets a device detached from the repository.
-        /// </summary>
-        /// <param name="deviceId">Device Id to get.</param>
-        /// <returns>The detached <see cref="Device"/>.</returns>
-        public Device GetDetached(string deviceId)
-        {
-            return JsonConvert.DeserializeObject<Device>(JsonConvert.SerializeObject(Get(deviceId)));
-        }
-
-        /// <summary>
-        /// Gets all devices.
-        /// </summary>
-        /// <returns>A list of <see cref="Device"/>.</returns>
+        /// <inheritdoc />
         public IList<Device> GetAll()
         {
             return _devices.Values.ToList();
         }
 
-        /// <summary>
-        /// Updates a device.
-        /// </summary>
-        /// <param name="deviceId">Device ID to update.</param>
-        /// <param name="device">Device to update.</param>
+        /// <inheritdoc />
+        public Device GetDetached(string deviceId)
+        {
+            return JsonConvert.DeserializeObject<Device>(JsonConvert.SerializeObject(Get(deviceId)));
+        }
+
+        /// <inheritdoc />
+        public void Refresh()
+        {
+            lock (_writeLock)
+            {
+                if (File.Exists(_deviceConfigFile))
+                {
+                    var deviceConfigurationString = File.ReadAllText(_deviceConfigFile);
+                    _devices = new ConcurrentDictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString));
+
+                    // Validate the config
+                    foreach (var device in _devices)
+                    {
+                        var errors = DeviceValidator.Validate(device.Value);
+                        if (errors.Count() > 0)
+                        {
+                            _logger.LogWarning("GoogleDevices.json issues detected for device {Device}: {DeviceConfigIssues}", device.Key, errors);
+                        }
+                    }
+
+                    _logger.LogInformation($"Loaded device configuration from {_deviceConfigFile}");
+                }
+                else
+                {
+                    _devices = new ConcurrentDictionary<string, Device>();
+                    _logger.LogInformation($"Device configuration file {_deviceConfigFile} not found, starting with empty set");
+                }
+            }
+        }
+
+        /// <inheritdoc />
         public void Update(string deviceId, Device device)
         {
             if (Contains(deviceId))
@@ -195,38 +200,6 @@ namespace HomeAutio.Mqtt.GoogleHome
                             }
                         }
                     }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Refreshes deice configuration from file.
-        /// </summary>
-        public void Refresh()
-        {
-            lock (_writeLock)
-            {
-                if (File.Exists(_deviceConfigFile))
-                {
-                    var deviceConfigurationString = File.ReadAllText(_deviceConfigFile);
-                    _devices = new ConcurrentDictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString));
-
-                    // Validate the config
-                    foreach (var device in _devices)
-                    {
-                        var errors = DeviceValidator.Validate(device.Value);
-                        if (errors.Count() > 0)
-                        {
-                            _logger.LogWarning("GoogleDevices.json issues detected for device {Device}: {DeviceConfigIssues}", device.Key, errors);
-                        }
-                    }
-
-                    _logger.LogInformation($"Loaded device configuration from {_deviceConfigFile}");
-                }
-                else
-                {
-                    _devices = new ConcurrentDictionary<string, Device>();
-                    _logger.LogInformation($"Device configuration file {_deviceConfigFile} not found, starting with empty set");
                 }
             }
         }
