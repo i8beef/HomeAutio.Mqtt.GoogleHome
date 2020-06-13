@@ -616,7 +616,10 @@
         }
     },
     "Volume": {
-        "attributes": null,
+        "attributes": {
+            "volumeMaxLevel": 60,
+            "volumeCanMuteAndUnmute": true
+        },
         "commands": {
             "action.devices.commands.setVolume": {
                 "volumeLevel": "MQTT_COMMAND_TOPIC"

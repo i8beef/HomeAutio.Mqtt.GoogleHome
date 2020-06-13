@@ -36,7 +36,7 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="Type">Device Type</label>
-                                <select class="form-control" asp-for="Type" asp-items="Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.DeviceType>()">
+                                <select class="form-control" asp-for="Type" asp-items="@ViewBag.SupportedTraits">
                                     <option selected="selected" value="">Please select</option>
                                 </select>
                             </div>

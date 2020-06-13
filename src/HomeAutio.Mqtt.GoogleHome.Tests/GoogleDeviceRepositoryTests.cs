@@ -22,7 +22,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
 
         public GoogleDeviceRepositoryTests()
         {
-            // mocks
+            // Mocks
             _logMock = new Mock<ILogger<GoogleDeviceRepository>>();
             _messageHubMock = new Mock<IMessageHub>();
 

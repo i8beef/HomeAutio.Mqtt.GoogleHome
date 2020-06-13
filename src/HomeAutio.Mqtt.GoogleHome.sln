@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2042
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeAutio.Mqtt.GoogleHome", "HomeAutio.Mqtt.GoogleHome\HomeAutio.Mqtt.GoogleHome.csproj", "{46942B48-EBD7-4097-8748-88BF227663B9}"
 EndProject
@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeAutio.Mqtt.GoogleHome.T
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{939A4CF5-459B-413D-9787-C9EF41499941}"
 	ProjectSection(SolutionItems) = preProject
+		generateDeviceClasses.ps1 = generateDeviceClasses.ps1
+		generateTraitClasses.ps1 = generateTraitClasses.ps1
 		getmaster.ps1 = getmaster.ps1
 		getmaster.sh = getmaster.sh
 	EndProjectSection

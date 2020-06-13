@@ -9,6 +9,7 @@ using HomeAutio.Mqtt.GoogleHome.Validation;
 using HomeAutio.Mqtt.GoogleHome.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Controllers
@@ -24,10 +25,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleTraitController"/> class.
         /// </summary>
-        /// <param name="logger">Logging instance.</param>
         /// <param name="deviceRepository">Device repository.</param>
-        public GoogleTraitController(
-            IGoogleDeviceRepository deviceRepository)
+        public GoogleTraitController(IGoogleDeviceRepository deviceRepository)
         {
             _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
         }
@@ -42,6 +41,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         {
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
+
+            var device = _deviceRepository.Get(deviceId);
+            ViewBag.SupportedTraits = DeviceMetadata.SupportedTraits.TryGetValue(device.Type, out IList<TraitType> supportedDevices)
+                ? supportedDevices.Select(x => new SelectListItem { Text = x.ToString(), Value = x.ToEnumString() })
+                : Enumerable.Empty<SelectListItem>();
 
             var model = new TraitViewModel();
 
@@ -64,6 +68,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             var device = _deviceRepository.GetDetached(deviceId);
             if (device.Traits.Any(x => x.Trait == viewModel.Trait))
                 ModelState.AddModelError("Trait", "Device already contains trait");
+
+            if (DeviceMetadata.SupportedTraits.TryGetValue(device.Type, out IList<TraitType> supportedTraits) && !supportedTraits.Contains(viewModel.Trait))
+                ModelState.AddModelError("Trait", "Device does not support trait type");
 
             // Set values
             var trait = new DeviceTrait
@@ -131,6 +138,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!device.Traits.Any(x => x.Trait == traitEnumId))
                 return NotFound();
 
+            ViewBag.SupportedTraits = DeviceMetadata.SupportedTraits.TryGetValue(device.Type, out IList<TraitType> supportedDevices)
+                ? supportedDevices.Select(x => new SelectListItem { Text = x.ToString(), Value = x.ToEnumString() })
+                : Enumerable.Empty<SelectListItem>();
+
             // Get trait
             var trait = device.Traits.First(x => x.Trait == traitEnumId);
             var model = new TraitViewModel
@@ -166,6 +177,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             // Lock the trait type just in case
             viewModel.Trait = traitEnumId;
+
+            if (DeviceMetadata.SupportedTraits.TryGetValue(device.Type, out IList<TraitType> supportedTraits) && !supportedTraits.Contains(viewModel.Trait))
+                ModelState.AddModelError("Trait", "Device does not support trait type");
 
             // Set new values
             var trait = device.Traits.FirstOrDefault(x => x.Trait == traitEnumId);

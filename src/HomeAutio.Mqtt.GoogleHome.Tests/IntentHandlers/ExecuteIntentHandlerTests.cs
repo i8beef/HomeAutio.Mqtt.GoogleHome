@@ -13,7 +13,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
     {
         private readonly Mock<ILogger<ExecuteIntentHandler>> _logMock;
         private readonly Mock<IMessageHub> _messageHubMock;
-        private readonly Mock<IGoogleDeviceRepository> _deviceRepositoryMock;
+        private readonly Mock<GoogleDeviceRepository> _deviceRepositoryMock;
 
         public ExecuteIntentHandlerTests()
         {
@@ -21,7 +21,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
             _messageHubMock = new Mock<IMessageHub>();
 
             var googleDeviceLogger = new Mock<ILogger<GoogleDeviceRepository>>();
-            _deviceRepositoryMock = new Mock<IGoogleDeviceRepository>(googleDeviceLogger.Object, _messageHubMock.Object, "");
+            _deviceRepositoryMock = new Mock<GoogleDeviceRepository>(googleDeviceLogger.Object, _messageHubMock.Object, "");
         }
 
         [Fact]

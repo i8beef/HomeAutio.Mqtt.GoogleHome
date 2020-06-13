@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models
 {
@@ -12,6 +12,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.types.AC_UNIT")]
         AirConditioningUnit,
+
+        /// <summary>
+        /// action.devices.types.AIRCOOLER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.AIRCOOLER")]
+        AirCooler,
 
         /// <summary>
         /// action.devices.types.AIRFRESHENER.
@@ -32,6 +38,24 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Awning,
 
         /// <summary>
+        /// action.devices.types.BATHTUB.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.BATHTUB")]
+        Bathtub,
+
+        /// <summary>
+        /// action.devices.types.BED.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.BED")]
+        Bed,
+
+        /// <summary>
+        /// action.devices.types.BLENDER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.BLENDER")]
+        Blender,
+
+        /// <summary>
         /// action.devices.types.BLINDS.
         /// </summary>
         [EnumMember(Value = "action.devices.types.BLINDS")]
@@ -50,16 +74,52 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Camera,
 
         /// <summary>
+        /// action.devices.types.CARBON_MONOXIDE_DETECTOR.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.CARBON_MONOXIDE_DETECTOR")]
+        CarbonMonoxideDetector,
+
+        /// <summary>
+        /// action.devices.types.CHARGER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.CHARGER")]
+        Charger,
+
+        /// <summary>
+        /// action.devices.types.CLOSET.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.CLOSET")]
+        Closet,
+
+        /// <summary>
         /// action.devices.types.COFFEE_MAKER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.COFFEE_MAKER")]
         CoffeeMaker,
 
         /// <summary>
+        /// action.devices.types.COOKTOP.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.COOKTOP")]
+        Cooktop,
+
+        /// <summary>
         /// action.devices.types.CURTAIN.
         /// </summary>
         [EnumMember(Value = "action.devices.types.CURTAIN")]
         Curtain,
+
+        /// <summary>
+        /// action.devices.types.DEHUMIDIFIER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.DEHUMIDIFIER")]
+        Dehumidifier,
+
+        /// <summary>
+        /// action.devices.types.DEHYDRATOR.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.DEHYDRATOR")]
+        Dehydrator,
 
         /// <summary>
         /// action.devices.types.DISHWASHER.
@@ -74,6 +134,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Door,
 
         /// <summary>
+        /// action.devices.types.DRAWER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.DRAWER")]
+        Drawer,
+
+        /// <summary>
         /// action.devices.types.DRYER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.DRYER")]
@@ -86,10 +152,28 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Fan,
 
         /// <summary>
+        /// action.devices.types.FAUCET.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.FAUCET")]
+        Faucet,
+
+        /// <summary>
         /// action.devices.types.FIREPLACE.
         /// </summary>
         [EnumMember(Value = "action.devices.types.FIREPLACE")]
         Fireplace,
+
+        /// <summary>
+        /// action.devices.types.FREEZER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.FREEZER")]
+        Freezer,
+
+        /// <summary>
+        /// action.devices.types.FRYER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.FRYER")]
+        Fryer,
 
         /// <summary>
         /// action.devices.types.GARAGE.
@@ -104,6 +188,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Gate,
 
         /// <summary>
+        /// action.devices.types.GRILL.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.GRILL")]
+        Grill,
+
+        /// <summary>
         /// action.devices.types.HEATER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.HEATER")]
@@ -114,6 +204,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.types.HOOD")]
         Hood,
+
+        /// <summary>
+        /// action.devices.types.HUMIDIFIER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.HUMIDIFIER")]
+        Humidifier,
 
         /// <summary>
         /// action.devices.types.KETTLE.
@@ -134,10 +230,40 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Lock,
 
         /// <summary>
+        /// action.devices.types.REMOTECONTROL.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.REMOTECONTROL")]
+        MediaRemote,
+
+        /// <summary>
+        /// action.devices.types.MOP.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.MOP")]
+        Mop,
+
+        /// <summary>
+        /// action.devices.types.MOWER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.MOWER")]
+        Mower,
+
+        /// <summary>
         /// action.devices.types.MICROWAVE.
         /// </summary>
         [EnumMember(Value = "action.devices.types.MICROWAVE")]
         Microwave,
+
+        /// <summary>
+        /// action.devices.types.MULTICOOKER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.MULTICOOKER")]
+        Multicooker,
+
+        /// <summary>
+        /// action.devices.types.NETWORK.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.NETWORK")]
+        Network,
 
         /// <summary>
         /// action.devices.types.OUTLET.
@@ -158,10 +284,34 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Pergola,
 
         /// <summary>
+        /// action.devices.types.PETFEEDER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.PETFEEDER")]
+        PetFeeder,
+
+        /// <summary>
+        /// action.devices.types.PRESSURECOOKER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.PRESSURECOOKER")]
+        PressureCooker,
+
+        /// <summary>
+        /// action.devices.types.RADIATOR.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.RADIATOR")]
+        Radiator,
+
+        /// <summary>
         /// action.devices.types.REFRIGERATOR.
         /// </summary>
         [EnumMember(Value = "action.devices.types.REFRIGERATOR")]
         Refrigerator,
+
+        /// <summary>
+        /// action.devices.types.ROUTER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.ROUTER")]
+        Router,
 
         /// <summary>
         /// action.devices.types.SCENE.
@@ -170,16 +320,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Scene,
 
         /// <summary>
+        /// action.devices.types.SENSOR.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.SENSOR")]
+        Sensor,
+
+        /// <summary>
         /// action.devices.types.SECURITYSYSTEM.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SECURITYSYSTEM")]
         SecuritySystem,
 
         /// <summary>
-        /// action.devices.types.SHOWER.
+        /// action.devices.types.SETTOP.
         /// </summary>
-        [EnumMember(Value = "action.devices.types.SHOWER")]
-        Shower,
+        [EnumMember(Value = "action.devices.types.SETTOP")]
+        SetTopBox,
 
         /// <summary>
         /// action.devices.types.SHUTTER.
@@ -188,10 +344,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Shutter,
 
         /// <summary>
-        /// action.devices.types.SPEAKER.
+        /// action.devices.types.SHOWER.
         /// </summary>
-        [EnumMember(Value = "action.devices.types.SPEAKER")]
-        Speaker,
+        [EnumMember(Value = "action.devices.types.SHOWER")]
+        Shower,
+
+        /// <summary>
+        /// action.devices.types.SMOKE_DETECTOR.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.SMOKE_DETECTOR")]
+        SmokeDetector,
+
+        /// <summary>
+        /// action.devices.types.SOUSVIDE.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.SOUSVIDE")]
+        SousVide,
 
         /// <summary>
         /// action.devices.types.SPRINKLER.
@@ -200,10 +368,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Sprinkler,
 
         /// <summary>
+        /// action.devices.types.STANDMIXER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.STANDMIXER")]
+        StandMixer,
+
+        /// <summary>
         /// action.devices.types.SWITCH.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SWITCH")]
         Switch,
+
+        /// <summary>
+        /// action.devices.types.TV.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.TV")]
+        Television,
 
         /// <summary>
         /// action.devices.types.THERMOSTAT.
@@ -212,16 +392,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Thermostat,
 
         /// <summary>
-        /// action.devices.types.TV.
-        /// </summary>
-        [EnumMember(Value = "action.devices.types.TV")]
-        TV,
-
-        /// <summary>
         /// action.devices.types.VACUUM.
         /// </summary>
         [EnumMember(Value = "action.devices.types.VACUUM")]
         Vacuum,
+
+        /// <summary>
+        /// action.devices.types.VALVE.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.VALVE")]
+        Valve,
 
         /// <summary>
         /// action.devices.types.WASHER.
@@ -236,10 +416,28 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         WaterHeater,
 
         /// <summary>
+        /// action.devices.types.WATERPURIFIER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.WATERPURIFIER")]
+        WaterPurifier,
+
+        /// <summary>
+        /// action.devices.types.WATERSOFTENER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.WATERSOFTENER")]
+        WaterSoftener,
+
+        /// <summary>
         /// action.devices.types.WINDOW.
         /// </summary>
         [EnumMember(Value = "action.devices.types.WINDOW")]
         Window,
+
+        /// <summary>
+        /// action.devices.types.YOGURTMAKER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.YOGURTMAKER")]
+        YogurtMaker,
 
         /// <summary>
         /// Unknown device type.
@@ -247,3 +445,4 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Unknown
     }
 }
+

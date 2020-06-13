@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 
 namespace HomeAutio.Mqtt.GoogleHome.Validation
@@ -18,10 +20,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             var validationErrors = new List<string>();
 
             if (string.IsNullOrEmpty(device.Id))
-                validationErrors.Add("Device Id is missing");
+            {
+                validationErrors.Add($"Device Id is missing for Device of type {device.Type}");
+                return validationErrors;
+            }
 
-            if (device.Type == Models.DeviceType.Unknown)
-                validationErrors.Add("Device Type is missing or not a valid type");
+            if (device.Type == DeviceType.Unknown)
+            {
+                validationErrors.Add($"Device Type is missing or not a valid type on Device id {device.Id}");
+                return validationErrors;
+            }
 
             validationErrors.AddRange(DeviceInfoValidator.Validate(device.DeviceInfo));
             validationErrors.AddRange(NameInfoValidator.Validate(device.Name));
@@ -31,7 +39,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             {
                 foreach (var trait in device.Traits)
                 {
-                    validationErrors.AddRange(DeviceTraitValidator.Validate(trait));
+                    if (DeviceMetadata.SupportedTraits.TryGetValue(device.Type, out IList<TraitType> supportedTraits))
+                    {
+                        if (supportedTraits.Contains(trait.Trait))
+                        {
+                            validationErrors.AddRange(DeviceTraitValidator.Validate(trait).Select(x => $"{x} on Device id {device.Id}"));
+                        }
+                        else
+                        {
+                            validationErrors.Add($"Trait {trait.Trait} not supported for Device type {device.Type} on Device id {device.Id}");
+                        }
+                    }
                 }
             }
 

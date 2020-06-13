@@ -11,7 +11,6 @@ using HomeAutio.Mqtt.GoogleHome.Validation;
 using HomeAutio.Mqtt.GoogleHome.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace HomeAutio.Mqtt.GoogleHome.Controllers
 {
@@ -21,8 +20,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     [Authorize]
     public class GoogleDeviceController : Controller
     {
-        private readonly ILogger<GoogleDeviceController> _log;
-
         private readonly IGoogleDeviceRepository _deviceRepository;
 
         private readonly SyncIntentHandler _syncIntentHandler;
@@ -30,15 +27,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleDeviceController"/> class.
         /// </summary>
-        /// <param name="logger">Logging instance.</param>
         /// <param name="deviceRepository">Device repository.</param>
         /// <param name="syncIntentHandler">Sync intent handler.</param>
         public GoogleDeviceController(
-            ILogger<GoogleDeviceController> logger,
             IGoogleDeviceRepository deviceRepository,
             SyncIntentHandler syncIntentHandler)
         {
-            _log = logger ?? throw new ArgumentException(nameof(logger));
             _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
             _syncIntentHandler = syncIntentHandler ?? throw new ArgumentException(nameof(syncIntentHandler));
         }
