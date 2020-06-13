@@ -96,7 +96,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 ModelState.AddModelError("Id", "Device Id already exists");
 
             // Set new values
-            var device = new Device
+            var device = new Models.State.Device
             {
                 Id = viewModel.Id,
                 Type = viewModel.Type,
