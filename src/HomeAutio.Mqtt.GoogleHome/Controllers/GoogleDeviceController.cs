@@ -5,6 +5,7 @@ using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
 using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using HomeAutio.Mqtt.GoogleHome.Models;
+using HomeAutio.Mqtt.GoogleHome.Models.Response;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using HomeAutio.Mqtt.GoogleHome.Validation;
 using HomeAutio.Mqtt.GoogleHome.ViewModels;
@@ -61,9 +62,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>Response.</returns>
         public IActionResult SyncValidate()
         {
-            var syncResponsePayload = _syncIntentHandler.Handle(new Models.Request.SyncIntent());
+            var response = new Response
+            {
+                RequestId = Guid.NewGuid().ToString(),
+                Payload = _syncIntentHandler.Handle(new Models.Request.SyncIntent())
+            };
 
-            return Json(syncResponsePayload);
+            return Json(response);
         }
 
         /// <summary>
