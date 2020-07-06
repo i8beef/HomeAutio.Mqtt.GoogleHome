@@ -157,9 +157,9 @@ namespace HomeAutio.Mqtt.GoogleHome
                 {
                     _log.LogInformation("MQTT subscribing to the following topic: {Topic}", topic);
                     await MqttClient.SubscribeAsync(
-                        new List<TopicFilter>
+                        new List<MqttTopicFilter>
                         {
-                            new TopicFilterBuilder()
+                            new MqttTopicFilterBuilder()
                                 .WithTopic(topic)
                                 .WithAtLeastOnceQoS()
                                 .Build()

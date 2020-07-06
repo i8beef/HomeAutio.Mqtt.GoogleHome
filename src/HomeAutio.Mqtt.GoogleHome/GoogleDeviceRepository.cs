@@ -20,9 +20,9 @@ namespace HomeAutio.Mqtt.GoogleHome
         private readonly ILogger<GoogleDeviceRepository> _logger;
         private readonly string _deviceConfigFile;
         private readonly IMessageHub _messageHub;
+        private readonly object _writeLock = new object();
 
         private ConcurrentDictionary<string, Device> _devices;
-        private object _writeLock = new object();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleDeviceRepository"/> class.
