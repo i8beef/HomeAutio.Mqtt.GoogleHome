@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models
 {
@@ -14,16 +14,40 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         ActivateScene,
 
         /// <summary>
+        /// action.devices.commands.appInstall
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.appInstall")]
+        AppInstall,
+
+        /// <summary>
+        /// action.devices.commands.appSearch
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.appSearch")]
+        AppSearch,
+
+        /// <summary>
+        /// action.devices.commands.appSelect
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.appSelect")]
+        AppSelect,
+
+        /// <summary>
+        /// action.devices.commands.ArmDisarm
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.ArmDisarm")]
+        ArmDisarm,
+
+        /// <summary>
         /// action.devices.commands.BrightnessAbsolute
         /// </summary>
         [EnumMember(Value = "action.devices.commands.BrightnessAbsolute")]
         BrightnessAbsolute,
 
         /// <summary>
-        /// action.devices.commands.GetCameraStream
+        /// action.devices.commands.Charge
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.GetCameraStream")]
-        CameraStream,
+        [EnumMember(Value = "action.devices.commands.Charge")]
+        Charge,
 
         /// <summary>
         /// action.devices.commands.ColorAbsolute
@@ -32,16 +56,148 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         ColorAbsolute,
 
         /// <summary>
+        /// action.devices.commands.ColorLoop
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.ColorLoop")]
+        ColorLoop,
+
+        /// <summary>
+        /// action.devices.commands.Cook
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.Cook")]
+        Cook,
+
+        /// <summary>
+        /// action.devices.commands.Dispense
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.Dispense")]
+        Dispense,
+
+        /// <summary>
         /// action.devices.commands.Dock
         /// </summary>
         [EnumMember(Value = "action.devices.commands.Dock")]
         Dock,
 
         /// <summary>
+        /// action.devices.commands.EnableDisableGuestNetwork
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.EnableDisableGuestNetwork")]
+        EnableDisableGuestNetwork,
+
+        /// <summary>
+        /// action.devices.commands.EnableDisableNetworkProfile
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.EnableDisableNetworkProfile")]
+        EnableDisableNetworkProfile,
+
+        /// <summary>
+        /// action.devices.commands.Fill
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.Fill")]
+        Fill,
+
+        /// <summary>
+        /// action.devices.commands.GetCameraStream
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.GetCameraStream")]
+        GetCameraStream,
+
+        /// <summary>
+        /// action.devices.commands.GetGuestNetworkPassword
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.GetGuestNetworkPassword")]
+        GetGuestNetworkPassword,
+
+        /// <summary>
+        /// action.devices.commands.HumidityRelative
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.HumidityRelative")]
+        HumidityRelative,
+
+        /// <summary>
         /// action.devices.commands.Locate
         /// </summary>
         [EnumMember(Value = "action.devices.commands.Locate")]
         Locate,
+
+        /// <summary>
+        /// action.devices.commands.LockUnlock
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.LockUnlock")]
+        LockUnlock,
+
+        /// <summary>
+        /// action.devices.commands.mediaClosedCaptioningOff
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.mediaClosedCaptioningOff")]
+        MediaClosedCaptioningOff,
+
+        /// <summary>
+        /// action.devices.commands.mediaClosedCaptioningOn
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.mediaClosedCaptioningOn")]
+        MediaClosedCaptioningOn,
+
+        /// <summary>
+        /// action.devices.commands.mediaNext
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.mediaNext")]
+        MediaNext,
+
+        /// <summary>
+        /// action.devices.commands.mediaPause
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.mediaPause")]
+        MediaPause,
+
+        /// <summary>
+        /// action.devices.commands.mediaPrevious
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.mediaPrevious")]
+        MediaPrevious,
+
+        /// <summary>
+        /// action.devices.commands.mediaRepeatMode
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.mediaRepeatMode")]
+        MediaRepeatMode,
+
+        /// <summary>
+        /// action.devices.commands.mediaResume
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.mediaResume")]
+        MediaResume,
+
+        /// <summary>
+        /// action.devices.commands.mediaSeekRelative
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.mediaSeekRelative")]
+        MediaSeekRelative,
+
+        /// <summary>
+        /// action.devices.commands.mediaSeekToPosition
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.mediaSeekToPosition")]
+        MediaSeekToPosition,
+
+        /// <summary>
+        /// action.devices.commands.mediaShuffle
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.mediaShuffle")]
+        MediaShuffle,
+
+        /// <summary>
+        /// action.devices.commands.mediaStop
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.mediaStop")]
+        MediaStop,
+
+        /// <summary>
+        /// action.devices.commands.mute
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.mute")]
+        Mute,
 
         /// <summary>
         /// action.devices.commands.OnOff
@@ -62,10 +218,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         PauseUnpause,
 
         /// <summary>
-        /// action.devices.commands.relativeChannel
+        /// action.devices.commands.Reboot
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.relativeChannel")]
+        [EnumMember(Value = "action.devices.commands.Reboot")]
+        Reboot,
+
+        /// <summary>
+        /// action.devices.commands.RelativeChannel
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.RelativeChannel")]
         RelativeChannel,
+
+        /// <summary>
+        /// action.devices.commands.ReturnChannel
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.ReturnChannel")]
+        ReturnChannel,
 
         /// <summary>
         /// action.devices.commands.Reverse
@@ -74,9 +242,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Reverse,
 
         /// <summary>
-        /// action.devices.commands.selectChannel
+        /// action.devices.commands.RotateAbsolute
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.selectChannel")]
+        [EnumMember(Value = "action.devices.commands.RotateAbsolute")]
+        RotateAbsolute,
+
+        /// <summary>
+        /// action.devices.commands.SelectChannel
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.SelectChannel")]
         SelectChannel,
 
         /// <summary>
@@ -84,6 +258,24 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.commands.SetFanSpeed")]
         SetFanSpeed,
+
+        /// <summary>
+        /// action.devices.commands.SetFanSpeedRelativeSpeed
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.SetFanSpeedRelativeSpeed")]
+        SetFanSpeedRelativeSpeed,
+
+        /// <summary>
+        /// action.devices.commands.SetHumidity
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.SetHumidity")]
+        SetHumidity,
+
+        /// <summary>
+        /// action.devices.commands.SetInput
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.SetInput")]
+        SetInput,
 
         /// <summary>
         /// action.devices.commands.SetModes
@@ -110,16 +302,46 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         SetVolume,
 
         /// <summary>
+        /// action.devices.commands.Sleep
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.Sleep")]
+        Sleep,
+
+        /// <summary>
+        /// action.devices.commands.SoftwareUpdate
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.SoftwareUpdate")]
+        SoftwareUpdate,
+
+        /// <summary>
         /// action.devices.commands.StartStop
         /// </summary>
         [EnumMember(Value = "action.devices.commands.StartStop")]
         StartStop,
 
         /// <summary>
+        /// action.devices.commands.StopEffect
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.StopEffect")]
+        StopEffect,
+
+        /// <summary>
         /// action.devices.commands.TemperatureRelative
         /// </summary>
         [EnumMember(Value = "action.devices.commands.TemperatureRelative")]
         TemperatureRelative,
+
+        /// <summary>
+        /// action.devices.commands.TestNetworkSpeed
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.TestNetworkSpeed")]
+        TestNetworkSpeed,
+
+        /// <summary>
+        /// action.devices.commands.ThermostatSetMode
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.ThermostatSetMode")]
+        ThermostatSetMode,
 
         /// <summary>
         /// action.devices.commands.ThermostatTemperatureSetpoint
@@ -134,10 +356,34 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         ThermostatTemperatureSetRange,
 
         /// <summary>
-        /// action.devices.commands.ThermostatSetMode
+        /// action.devices.commands.TimerAdjust
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.ThermostatSetMode")]
-        ThermostatSetMode,
+        [EnumMember(Value = "action.devices.commands.TimerAdjust")]
+        TimerAdjust,
+
+        /// <summary>
+        /// action.devices.commands.TimerCancel
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.TimerCancel")]
+        TimerCancel,
+
+        /// <summary>
+        /// action.devices.commands.TimerPause
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.TimerPause")]
+        TimerPause,
+
+        /// <summary>
+        /// action.devices.commands.TimerResume
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.TimerResume")]
+        TimerResume,
+
+        /// <summary>
+        /// action.devices.commands.TimerStart
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.TimerStart")]
+        TimerStart,
 
         /// <summary>
         /// action.devices.commands.volumeRelative
@@ -146,7 +392,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         VolumeRelative,
 
         /// <summary>
-        /// Unknown.
+        /// action.devices.commands.Wake
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.Wake")]
+        Wake,
+
+        /// <summary>
+        /// Unknown command type.
         /// </summary>
         [EnumMember(Value = "Unknown")]
         Unknown

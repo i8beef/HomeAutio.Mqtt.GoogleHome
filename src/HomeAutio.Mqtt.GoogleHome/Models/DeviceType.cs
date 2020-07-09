@@ -32,6 +32,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         AirPurifier,
 
         /// <summary>
+        /// action.devices.types.AUDIO_VIDEO_RECEIVER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.AUDIO_VIDEO_RECEIVER")]
+        AudioVideoReceiver,
+
+        /// <summary>
         /// action.devices.types.AWNING.
         /// </summary>
         [EnumMember(Value = "action.devices.types.AWNING")]
@@ -360,6 +366,36 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.types.SOUSVIDE")]
         SousVide,
+
+        /// <summary>
+        /// action.devices.types.SPEAKER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.SPEAKER")]
+        Speaker,
+
+        /// <summary>
+        /// action.devices.types.STREAMING_BOX.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.STREAMING_BOX")]
+        StreamingBox,
+
+        /// <summary>
+        /// action.devices.types.STREAMING_STICK.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.STREAMING_STICK")]
+        StreamingStick,
+
+        /// <summary>
+        /// action.devices.types.STREAMING_SOUNDBAR.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.STREAMING_SOUNDBAR")]
+        StreamingSoundbar,
+
+        /// <summary>
+        /// action.devices.types.SOUNDBAR.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.SOUNDBAR")]
+        Soundbar,
 
         /// <summary>
         /// action.devices.types.SPRINKLER.

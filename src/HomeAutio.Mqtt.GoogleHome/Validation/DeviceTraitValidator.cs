@@ -34,7 +34,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 case TraitType.CameraStream:
                     validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
-                        CommandType.CameraStream,
+                        CommandType.GetCameraStream,
                         null,
                         new List<string> { "cameraStreamAccessUrl" },
                         new List<string> { "cameraStreamSupportedProtocols", "cameraStreamNeedAuthToken", "cameraStreamNeedDrmEncryption" }));
@@ -44,8 +44,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         deviceTrait,
                         CommandType.SelectChannel,
                         new List<string> { "channelNumber" },
-                        new List<string> { "channelNumber" },
-                        null));
+                        null,
+                        new List<string> { "availableChannels" }));
                     break;
                 case TraitType.ColorSetting:
                     validationErrors.AddRange(ValidateColorSetting(deviceTrait));
@@ -339,7 +339,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         }
 
         /// <summary>
-        /// Validates a brightness trait.
+        /// Validates a trait.
         /// </summary>
         /// <param name="deviceTrait">Device trait to validate.</param>
         /// <param name="command">Command to verify.</param>
