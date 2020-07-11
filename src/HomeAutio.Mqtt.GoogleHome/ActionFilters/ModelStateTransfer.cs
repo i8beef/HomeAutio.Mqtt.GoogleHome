@@ -47,7 +47,10 @@ namespace HomeAutio.Mqtt.GoogleHome.ActionFilters
 
             foreach (var item in errorList)
             {
-                modelState.SetModelValue(item.Key, item.RawValue, item.AttemptedValue);
+                var array = item.RawValue as Newtonsoft.Json.Linq.JArray;
+                var value = array?.ToObject<string[]>() ?? item.RawValue;
+
+                modelState.SetModelValue(item.Key, value, item.AttemptedValue);
                 foreach (var error in item.ErrorMessages)
                 {
                     modelState.AddModelError(item.Key, error);
