@@ -210,47 +210,50 @@ namespace HomeAutio.Mqtt.GoogleHome
                                 .ConfigureAwait(false);
                         }
 
-                        // Flatten the parameters
-                        var flattenedParams = execution.Params
-                            .Where(x => x.Key != "_")
-                            .ToDictionary(x => x.Key, x => x.Value)
-                            .ToFlatDictionary();
-
-                        foreach (var parameter in flattenedParams)
+                        if (execution.Params != null)
                         {
-                            // Check if device supports the requested parameter
-                            if (deviceSupportedCommandParams.ContainsKey(parameter.Key))
+                            // Flatten the parameters
+                            var flattenedParams = execution.Params
+                                .Where(x => x.Key != "_")
+                                .ToDictionary(x => x.Key, x => x.Value)
+                                .ToFlatDictionary();
+
+                            foreach (var parameter in flattenedParams)
                             {
-                                // Handle remapping of Modes, Toggles and FanSpeed
-                                var stateKey = CommandToStateKeyMapper.Map(parameter.Key);
-
-                                // Find the DeviceState object that provides configuration for mapping state/command values
-                                var deviceState = device.Traits
-                                    .Where(x => x.Commands.ContainsKey(execution.Command))
-                                    .SelectMany(x => x.State)
-                                    .Where(x => x.Key == stateKey)
-                                    .Select(x => x.Value)
-                                    .FirstOrDefault();
-
-                                // Build the MQTT message
-                                var topic = deviceSupportedCommandParams[parameter.Key];
-                                string payload = null;
-                                if (deviceState != null)
+                                // Check if device supports the requested parameter
+                                if (deviceSupportedCommandParams.ContainsKey(parameter.Key))
                                 {
-                                    payload = deviceState.MapValueToMqtt(parameter.Value);
-                                }
-                                else
-                                {
-                                    payload = parameter.Value.ToString();
-                                    _log.LogWarning("Received supported command '{Command}' but cannot find matched state config, sending command value '{Payload}' without ValueMap", execution.Command, payload);
-                                }
+                                    // Handle remapping of Modes, Toggles and FanSpeed
+                                    var stateKey = CommandToStateKeyMapper.Map(parameter.Key);
 
-                                await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-                                    .WithTopic(topic)
-                                    .WithPayload(payload)
-                                    .WithAtLeastOnceQoS()
-                                    .Build())
-                                    .ConfigureAwait(false);
+                                    // Find the DeviceState object that provides configuration for mapping state/command values
+                                    var deviceState = device.Traits
+                                        .Where(x => x.Commands.ContainsKey(execution.Command))
+                                        .SelectMany(x => x.State)
+                                        .Where(x => x.Key == stateKey)
+                                        .Select(x => x.Value)
+                                        .FirstOrDefault();
+
+                                    // Build the MQTT message
+                                    var topic = deviceSupportedCommandParams[parameter.Key];
+                                    string payload = null;
+                                    if (deviceState != null)
+                                    {
+                                        payload = deviceState.MapValueToMqtt(parameter.Value);
+                                    }
+                                    else
+                                    {
+                                        payload = parameter.Value.ToString();
+                                        _log.LogWarning("Received supported command '{Command}' but cannot find matched state config, sending command value '{Payload}' without ValueMap", execution.Command, payload);
+                                    }
+
+                                    await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                                        .WithTopic(topic)
+                                        .WithPayload(payload)
+                                        .WithAtLeastOnceQoS()
+                                        .Build())
+                                        .ConfigureAwait(false);
+                                }
                             }
                         }
                     }
