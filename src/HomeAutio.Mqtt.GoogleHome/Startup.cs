@@ -15,6 +15,7 @@ using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -185,6 +186,12 @@ namespace HomeAutio.Mqtt.GoogleHome
                     opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver { NamingStrategy = new CamelCaseNamingStrategy { ProcessDictionaryKeys = false } };
                 });
 
+            // Proxy header forwarding
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+
             // Identity Server 4
             services.AddSingleton<IPersistedGrantStoreWithExpiration, PersistedGrantStore>();
             services.AddSingleton<IPersistedGrantStore>(x => x.GetRequiredService<IPersistedGrantStoreWithExpiration>());
@@ -274,18 +281,26 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <param name="env">The hosting environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Set the app base path when behind a proxy that changes it
             var pathBase = Environment.GetEnvironmentVariable("ASPNETCORE_PATHBASE");
             if (!string.IsNullOrEmpty(pathBase))
             {
                 app.UsePathBase(pathBase);
             }
 
+            // Show error page in development mode
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
+            // Accept forward headers from proxies
+            app.UseForwardedHeaders();
+
+            // Expose static file hosting
             app.UseStaticFiles();
+
+            // MVC/API config
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -294,6 +309,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 endpoints.MapControllerRoute("default", "{controller=GoogleDevice}/{action=Index}/{id?}");
             });
 
+            // Add identity server implementations
             app.UseIdentityServer();
         }
     }
