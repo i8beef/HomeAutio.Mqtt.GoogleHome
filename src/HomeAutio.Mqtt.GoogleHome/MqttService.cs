@@ -12,6 +12,7 @@ using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Extensions.ManagedClient;
+using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
@@ -194,8 +195,26 @@ namespace HomeAutio.Mqtt.GoogleHome
                         // Find the specific commands supported parameters it can handle
                         var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command];
 
+                        // Handle command delegation
+                        if (deviceSupportedCommandParams.ContainsKey("_"))
+                        {
+                            // Build the MQTT message
+                            var topic = deviceSupportedCommandParams["_"];
+                            var payload = execution.Params != null ? JsonConvert.SerializeObject(execution.Params) : string.Empty;
+
+                            await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                                .WithTopic(topic)
+                                .WithPayload(payload)
+                                .WithAtLeastOnceQoS()
+                                .Build())
+                                .ConfigureAwait(false);
+                        }
+
                         // Flatten the parameters
-                        var flattenedParams = execution.Params.ToFlatDictionary();
+                        var flattenedParams = execution.Params
+                            .Where(x => x.Key != "_")
+                            .ToDictionary(x => x.Key, x => x.Value)
+                            .ToFlatDictionary();
 
                         foreach (var parameter in flattenedParams)
                         {

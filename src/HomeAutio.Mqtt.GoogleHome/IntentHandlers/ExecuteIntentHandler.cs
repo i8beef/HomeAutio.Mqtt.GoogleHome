@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Models;
+using HomeAutio.Mqtt.GoogleHome.Models.Request;
 using Microsoft.Extensions.Logging;
 
 namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
@@ -63,6 +64,12 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                 var states = new Dictionary<string, object>();
                 foreach (var execution in command.Execution)
                 {
+                    // Dont bother with states for command delegation
+                    if (IsDelegatedCommand(command, execution))
+                    {
+                        break;
+                    }
+
                     // Handle camera stream commands
                     if (execution.Command == "action.devices.commands.GetCameraStream")
                     {
@@ -101,6 +108,43 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
             }
 
             return executionResponsePayload;
+        }
+
+        /// <summary>
+        /// Checks if the command is a delegated command for the given device.
+        /// </summary>
+        /// <param name="command">Command to check.</param>
+        /// <param name="execution">Command execution to check.</param>
+        /// <returns><c>true</c> if command is handled as a delegated command, otherwise <c>false</c>.</returns>
+        private bool IsDelegatedCommand(Command command, Execution execution)
+        {
+            var isDelegatedCommand = false;
+            foreach (var commandDevice in command.Devices)
+            {
+                var device = _deviceRepository.Get(commandDevice.Id);
+                if (device.Disabled)
+                    continue;
+
+                // Find all supported commands for the device
+                var deviceSupportedCommands = device.Traits
+                    .SelectMany(x => x.Commands)
+                    .ToDictionary(x => x.Key, x => x.Value);
+
+                // Check if device supports the requested command class
+                if (deviceSupportedCommands.ContainsKey(execution.Command))
+                {
+                    // Find the specific commands supported parameters it can handle
+                    var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command];
+
+                    // Handle command delegation
+                    if (deviceSupportedCommandParams.ContainsKey("_"))
+                    {
+                        isDelegatedCommand = true;
+                    }
+                }
+            }
+
+            return isDelegatedCommand;
         }
     }
 }
