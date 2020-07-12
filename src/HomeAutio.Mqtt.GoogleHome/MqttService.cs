@@ -210,6 +210,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                                 .ConfigureAwait(false);
                         }
 
+                        // Handle remaining command state param negotiation
                         if (execution.Params != null)
                         {
                             // Flatten the parameters

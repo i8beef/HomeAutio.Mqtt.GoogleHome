@@ -140,6 +140,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                     if (deviceSupportedCommandParams.ContainsKey("_"))
                     {
                         isDelegatedCommand = true;
+                        break;
                     }
                 }
             }
