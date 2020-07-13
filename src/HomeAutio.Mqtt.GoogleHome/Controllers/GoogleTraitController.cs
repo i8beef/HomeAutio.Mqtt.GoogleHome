@@ -44,7 +44,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             var device = _deviceRepository.Get(deviceId);
             ViewBag.SupportedTraits = DeviceMetadata.SupportedTraits.TryGetValue(device.Type, out IList<TraitType> supportedDevices)
-                ? supportedDevices.Select(x => new SelectListItem { Text = x.ToString(), Value = x.ToEnumString() })
+                ? supportedDevices.Select(x => new SelectListItem { Text = x.ToEnumString(), Value = ((int)x).ToString() })
                 : Enumerable.Empty<SelectListItem>();
 
             var model = new TraitViewModel();
@@ -139,7 +139,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 return NotFound();
 
             ViewBag.SupportedTraits = DeviceMetadata.SupportedTraits.TryGetValue(device.Type, out IList<TraitType> supportedDevices)
-                ? supportedDevices.Select(x => new SelectListItem { Text = x.ToString(), Value = x.ToEnumString() })
+                ? supportedDevices.Select(x => new SelectListItem { Text = x.ToEnumString(), Value = ((int)x).ToString(), Selected = traitEnumId == x })
                 : Enumerable.Empty<SelectListItem>();
 
             // Get trait

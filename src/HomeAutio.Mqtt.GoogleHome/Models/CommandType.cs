@@ -248,9 +248,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         RotateAbsolute,
 
         /// <summary>
-        /// action.devices.commands.SelectChannel
+        /// action.devices.commands.selectChannel
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.SelectChannel")]
+        [EnumMember(Value = "action.devices.commands.selectChannel")]
         SelectChannel,
 
         /// <summary>
