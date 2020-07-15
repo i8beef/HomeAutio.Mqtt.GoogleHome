@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
@@ -44,7 +46,6 @@ namespace HomeAutio.Mqtt.GoogleHome
         public static IDictionary<string, object> ToNestedDictionary(this IDictionary<string, object> source, string delimiter = ".")
         {
             var result = new Dictionary<string, object>();
-
             foreach (var kvp in source)
             {
                 if (kvp.Value is IDictionary<string, object>)
@@ -81,6 +82,48 @@ namespace HomeAutio.Mqtt.GoogleHome
                 else
                 {
                     // Add current level directly
+                    result.Add(kvp.Key, kvp.Value);
+                }
+            }
+
+            // Convert  arrays
+            return result.ConvertArrayKeys();
+        }
+
+        /// <summary>
+        /// Recusively converts array structures in a Dictionary heirarchy.
+        /// </summary>
+        /// <param name="source">Source dictionary.</param>
+        /// <returns>A flattened Dictionary.</returns>
+        public static IDictionary<string, object> ConvertArrayKeys(this IDictionary<string, object> source)
+        {
+            var result = new Dictionary<string, object>();
+
+            foreach (var kvp in source)
+            {
+                var valueAsDictionary = kvp.Value as Dictionary<string, object>;
+                if (valueAsDictionary != null)
+                {
+                    if (valueAsDictionary.Keys.All(x => Regex.IsMatch(x, @"^\[\d+\]$")))
+                    {
+                        // Convert to list
+                        var list = new List<Dictionary<string, object>>();
+                        foreach (var i in valueAsDictionary.Keys)
+                        {
+                            list.Add((Dictionary<string, object>)valueAsDictionary[i]);
+                        }
+
+                        result.Add(kvp.Key, list);
+                    }
+                    else
+                    {
+                        // Recursive convert
+                        result.Add(kvp.Key, valueAsDictionary.ConvertArrayKeys());
+                    }
+                }
+                else
+                {
+                    // Add leaf as is
                     result.Add(kvp.Key, kvp.Value);
                 }
             }
