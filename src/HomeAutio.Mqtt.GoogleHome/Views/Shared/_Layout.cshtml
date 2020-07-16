@@ -15,7 +15,8 @@
     <title>HomeAutio.Mqtt.GoogleHome</title>
     <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
-    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" title="light" href="~/lib/bootstrap/css/bootstrap.css" />
+    <link rel="alternate stylesheet" title="dark" href="~/lib/bootstrap/css/bootstrap-dark.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
@@ -34,6 +35,7 @@
                         HomeAutio.Mqtt.GoogleHome
                     </span>
                 </a>
+
             </div>
 
             @if (!string.IsNullOrWhiteSpace(name))
@@ -47,6 +49,13 @@
                     </li>
                 </ul>
             }
+
+            <p class="navbar-text navbar-right">
+                <div class="btn-group navbar-right" role="group" aria-label="Theme">
+                    <button type="button" class="btn btn-default navbar-btn" data-theme="light">Light</button>
+                    <button type="button" class="btn btn-default navbar-btn" data-theme="dark">Dark</button>
+                </div>
+            </p>
         </div>
     </div>
 
@@ -55,6 +64,7 @@
     </div>
 
     <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/styleswitcher/styleswitcher.js"></script>
     <script src="~/lib/bootstrap/js/bootstrap.js"></script>
     @RenderSection("scripts", required: false)
 </body>
