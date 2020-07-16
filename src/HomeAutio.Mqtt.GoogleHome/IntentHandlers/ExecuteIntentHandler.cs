@@ -122,25 +122,28 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
             foreach (var commandDevice in command.Devices)
             {
                 var device = _deviceRepository.Get(commandDevice.Id);
-                if (device.Disabled)
-                    continue;
-
-                // Find all supported commands for the device
-                var deviceSupportedCommands = device.Traits
-                    .SelectMany(x => x.Commands)
-                    .ToDictionary(x => x.Key, x => x.Value);
-
-                // Check if device supports the requested command class
-                if (deviceSupportedCommands.ContainsKey(execution.Command))
+                if (device != null)
                 {
-                    // Find the specific commands supported parameters it can handle
-                    var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command];
+                    if (device.Disabled)
+                        continue;
 
-                    // Handle command delegation
-                    if (deviceSupportedCommandParams.ContainsKey("_"))
+                    // Find all supported commands for the device
+                    var deviceSupportedCommands = device.Traits
+                        .SelectMany(x => x.Commands)
+                        .ToDictionary(x => x.Key, x => x.Value);
+
+                    // Check if device supports the requested command class
+                    if (deviceSupportedCommands.ContainsKey(execution.Command))
                     {
-                        isDelegatedCommand = true;
-                        break;
+                        // Find the specific commands supported parameters it can handle
+                        var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command];
+
+                        // Handle command delegation
+                        if (deviceSupportedCommandParams.ContainsKey("_"))
+                        {
+                            isDelegatedCommand = true;
+                            break;
+                        }
                     }
                 }
             }

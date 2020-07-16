@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.State
@@ -122,14 +123,24 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <returns>A Google device state object in a flattened state.</returns>
         private IDictionary<string, object> GetGoogleStateFlattened(IDictionary<string, string> stateCache)
         {
-            return Traits
+            var stateConfigs = Traits
                 .Where(trait => trait.Trait != TraitType.CameraStream)
-                .SelectMany(trait => trait.State)
-                .Where(state => state.Value.Topic != null)
-                .Where(state => stateCache.ContainsKey(state.Value.Topic))
-                .ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => kvp.Value.MapValueToGoogle(stateCache[kvp.Value.Topic]));
+                .SelectMany(trait => trait.State);
+
+            var result = new Dictionary<string, object>();
+            foreach (var state in stateConfigs)
+            {
+                if (state.Value.Topic != null && stateCache.ContainsKey(state.Value.Topic))
+                {
+                    result.Add(state.Key, state.Value.MapValueToGoogle(stateCache[state.Value.Topic]));
+                }
+                else if (state.Value.Topic == null && state.Value.ValueMap.Any(x => x is StaticMap))
+                {
+                    result.Add(state.Key, state.Value.MapValueToGoogle(null));
+                }
+            }
+
+            return result;
         }
     }
 }
