@@ -33,25 +33,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <returns>Remapped value.</returns>
         public object MapValueToGoogle(string stateValue)
         {
-            // Default to to an attempted conversion to the Google type
-            object mappedValue = null;
-            switch (GoogleType)
-            {
-                case GoogleType.Bool:
-                    if (bool.TryParse(stateValue, out bool boolValue))
-                        mappedValue = boolValue;
-                    break;
-                case GoogleType.Numeric:
-                    if (int.TryParse(stateValue, out int intValue))
-                        mappedValue = intValue;
-                    else if (decimal.TryParse(stateValue, out decimal decimalValue))
-                        mappedValue = decimalValue;
-                    break;
-                case GoogleType.String:
-                    mappedValue = stateValue;
-                    break;
-            }
-
+            // Run any transforms first
             if (ValueMap != null && ValueMap.Count > 0)
             {
                 foreach (var valueMap in ValueMap)
@@ -59,13 +41,32 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
                     if (valueMap.MatchesMqtt(stateValue))
                     {
                         // Do value comparison, break on first match
-                        mappedValue = valueMap.ConvertToGoogle(stateValue);
+                        stateValue = valueMap.ConvertToGoogle(stateValue);
                         break;
                     }
                 }
             }
 
-            return mappedValue;
+            // Convert to Google type
+            switch (GoogleType)
+            {
+                case GoogleType.Bool:
+                    if (bool.TryParse(stateValue, out bool boolValue))
+                        return boolValue;
+                    else
+                        return default(bool);
+                case GoogleType.Numeric:
+                    if (int.TryParse(stateValue, out int intValue))
+                        return intValue;
+                    else if (decimal.TryParse(stateValue, out decimal decimalValue))
+                        return decimalValue;
+                    else
+                        return default(int);
+                case GoogleType.String:
+                    return stateValue;
+            }
+
+            return null;
         }
 
         /// <summary>

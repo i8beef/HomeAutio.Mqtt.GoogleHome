@@ -18,12 +18,16 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
             // based on the intent, instantiate and return a new object
             switch (typeName)
             {
+                case "celcius":
+                    return new TemperatureMap();
                 case "range":
                     return new RangeMap();
-                case "value":
-                    return new ValueMap();
+                case "regex":
+                    return new RegexMap();
                 case "static":
                     return new StaticMap();
+                case "value":
+                    return new ValueMap();
                 default:
                     return null;
             }

@@ -1,27 +1,23 @@
 ﻿namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
 {
     /// <summary>
-    /// Static based value map.
+    /// Celcius to fahrenheit value mapper.
     /// </summary>
-    public class StaticMap : MapBase
+    public class TemperatureMap : MapBase
     {
-        /// <summary>
-        /// Google value.
-        /// </summary>
-        public string Google { get; set; }
-
         /// <inheritdoc />
         public override bool MatchesGoogle(object value)
         {
-            return value != null
-                ? value.ToString() == Google
-                : true;
+            return true;
         }
 
         /// <inheritdoc />
         public override string ConvertToGoogle(string value)
         {
-            return Google;
+            var degrees = decimal.Parse(value);
+            var result = (degrees - 32) * (5 / 9);
+
+            return result.ToString();
         }
 
         /// <inheritdoc />
@@ -33,7 +29,10 @@
         /// <inheritdoc />
         public override string ConvertToMqtt(object value)
         {
-            return null;
+            var degrees = decimal.Parse(value.ToString());
+            var result = (degrees * (9 / 5)) + 32;
+
+            return result.ToString();
         }
     }
 }

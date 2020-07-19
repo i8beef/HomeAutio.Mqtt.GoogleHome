@@ -11,11 +11,6 @@
         public MapType Type { get; set; }
 
         /// <summary>
-        /// Google value.
-        /// </summary>
-        public object Google { get; set; }
-
-        /// <summary>
         /// Indicates if map should be applied to the passed MQTT value.
         /// </summary>
         /// <param name="value">MQTT value.</param>
@@ -27,10 +22,7 @@
         /// </summary>
         /// <param name="value">Google value.</param>
         /// <returns><c>true</c> if it should be applied, else <c>false</c>.</returns>
-        public bool MatchesGoogle(object value)
-        {
-            return value.Equals(Google);
-        }
+        public abstract bool MatchesGoogle(object value);
 
         /// <summary>
         /// Converts the passed value to a valid MQTT value.
@@ -44,9 +36,6 @@
         /// </summary>
         /// <param name="value">The MQTT value to convert.</param>
         /// <returns>The transformed Google value.</returns>
-        public object ConvertToGoogle(string value)
-        {
-            return Google;
-        }
+        public abstract string ConvertToGoogle(string value);
     }
 }

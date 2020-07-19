@@ -6,6 +6,11 @@
     public class RangeMap : MapBase
     {
         /// <summary>
+        /// Google value.
+        /// </summary>
+        public string Google { get; set; }
+
+        /// <summary>
         /// MQTT min value.
         /// </summary>
         public decimal MqttMin { get; set; }
@@ -14,6 +19,18 @@
         /// MQTT max value.
         /// </summary>
         public decimal MqttMax { get; set; }
+
+        /// <inheritdoc />
+        public override bool MatchesGoogle(object value)
+        {
+            return value.ToString() == Google;
+        }
+
+        /// <inheritdoc />
+        public override string ConvertToGoogle(string value)
+        {
+            return Google;
+        }
 
         /// <inheritdoc />
         public override bool MatchesMqtt(string value)

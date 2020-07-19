@@ -27,23 +27,23 @@
               {
                 "mqtt": "on",
                 "type": "value",
-                "google": true
+                "google": "true"
               },
               {
                 "mqtt": "off",
                 "type": "value",
-                "google": false
+                "google": "false"
               },
               {
                 "mqtt": "0",
                 "type": "value",
-                "google": false
+                "google": "false"
               },
               {
                 "mqttMin": 1.0,
                 "mqttMax": 100.0,
                 "type": "range",
-                "google": true
+                "google": "true"
               }
             ]
           }
@@ -60,12 +60,12 @@
               {
                 "mqtt": "on",
                 "type": "value",
-                "google": 100
+                "google": "100"
               },
               {
                 "mqtt": "off",
                 "type": "value",
-                "google": 0
+                "google": "0"
               }
             ]
           }
@@ -101,12 +101,12 @@
               {
                 "mqtt": "on",
                 "type": "value",
-                "google": true
+                "google": "true"
               },
               {
                 "mqtt": "off",
                 "type": "value",
-                "google": false
+                "google": "false"
               }
             ]
           }

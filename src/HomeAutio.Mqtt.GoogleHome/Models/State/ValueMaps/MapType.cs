@@ -23,6 +23,18 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         /// Static map.
         /// </summary>
         [EnumMember(Value = "static")]
-        Static
+        Static,
+
+        /// <summary>
+        /// Regex map.
+        /// </summary>
+        [EnumMember(Value = "regex")]
+        Regex,
+
+        /// <summary>
+        /// Celcius map.
+        /// </summary>
+        [EnumMember(Value = "celcius")]
+        Celcius
     }
 }

@@ -362,12 +362,12 @@
                     {
                         "mqtt": "on",
                         "type": "value",
-                        "google": true
+                        "google": "true"
                     },
                     {
                         "mqtt": "off",
                         "type": "value",
-                        "google": false
+                        "google": "false"
                     }
                 ]
             }
@@ -398,12 +398,12 @@
                     {
                         "mqtt": "open",
                         "type": "value",
-                        "google": 100
+                        "google": "100"
                     },
                     {
                         "mqtt": "close",
                         "type": "value",
-                        "google": 0
+                        "google": "0"
                     }
                 ]
             }
