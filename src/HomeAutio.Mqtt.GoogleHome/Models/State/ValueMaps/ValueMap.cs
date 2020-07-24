@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
+﻿namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
 {
     /// <summary>
     /// Value based value map.
@@ -21,7 +18,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         /// <inheritdoc />
         public override bool MatchesGoogle(object value)
         {
-            return value.ToString() == Google;
+            return string.Equals(value.ToString(), Google, System.StringComparison.InvariantCultureIgnoreCase);
         }
 
         /// <inheritdoc />
@@ -33,7 +30,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         /// <inheritdoc />
         public override bool MatchesMqtt(string value)
         {
-            return value == Mqtt;
+            return string.Equals(Mqtt, value, System.StringComparison.InvariantCultureIgnoreCase);
         }
 
         /// <inheritdoc />

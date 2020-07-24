@@ -14,7 +14,7 @@
         public override bool MatchesGoogle(object value)
         {
             return value != null
-                ? value.ToString() == Google
+                ? string.Equals(value.ToString(), Google, System.StringComparison.InvariantCultureIgnoreCase)
                 : true;
         }
 
