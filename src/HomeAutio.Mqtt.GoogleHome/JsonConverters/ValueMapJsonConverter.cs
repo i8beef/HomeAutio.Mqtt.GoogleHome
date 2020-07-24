@@ -18,7 +18,7 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
             // based on the intent, instantiate and return a new object
             switch (typeName)
             {
-                case "celcius":
+                case "celsius":
                     return new TemperatureMap();
                 case "range":
                     return new RangeMap();

@@ -32,9 +32,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         Regex,
 
         /// <summary>
-        /// Celcius map.
+        /// Celsius map.
         /// </summary>
-        [EnumMember(Value = "celcius")]
-        Celcius
+        [EnumMember(Value = "celsius")]
+        Celsius
     }
 }

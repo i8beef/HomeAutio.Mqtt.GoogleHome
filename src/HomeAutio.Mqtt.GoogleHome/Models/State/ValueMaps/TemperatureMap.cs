@@ -1,7 +1,7 @@
 ﻿namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
 {
     /// <summary>
-    /// Celcius to fahrenheit value mapper.
+    /// Celsius to fahrenheit value mapper.
     /// </summary>
     public class TemperatureMap : MapBase
     {
