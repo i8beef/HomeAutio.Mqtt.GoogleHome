@@ -30,24 +30,39 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         /// <inheritdoc />
         public override bool MatchesGoogle(object value)
         {
+            if (GoogleSearch == null)
+                return false;
+
             return Regex.IsMatch(value.ToString(), GoogleSearch);
         }
 
         /// <inheritdoc />
         public override string ConvertToGoogle(string value)
         {
+            if (MqttSearch == null || GoogleReplace == null)
+                return value;
+
             return Regex.Replace(value, MqttSearch, GoogleReplace);
         }
 
         /// <inheritdoc />
         public override bool MatchesMqtt(string value)
         {
+            if (MqttSearch == null)
+                return false;
+
             return Regex.IsMatch(value, MqttSearch);
         }
 
         /// <inheritdoc />
         public override string ConvertToMqtt(object value)
         {
+            if (value == null)
+                return null;
+
+            if (GoogleSearch == null || MqttReplace == null)
+                return value.ToString();
+
             return Regex.Replace(value.ToString(), GoogleSearch, MqttReplace);
         }
     }

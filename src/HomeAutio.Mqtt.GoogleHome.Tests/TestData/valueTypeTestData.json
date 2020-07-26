@@ -1,0 +1,63 @@
+﻿{
+  "testy": {
+    "id": "esplight",
+    "type": "action.devices.types.OVEN",
+    "disabled": false,
+    "willReportState": false,
+    "roomHint": "Office",
+    "name": {
+      "defaultNames": [],
+      "name": "esplight",
+      "nicknames": []
+    },
+    "deviceInfo": null,
+    "traits": [
+      {
+        "trait": "action.devices.traits.TemperatureControl",
+        "attributes": {
+          "queryOnlyTemperatureControl": true,
+          "temperatureUnitForUX": "C"
+        },
+        "commands": {
+          "action.devices.commands.SetTemperature": {
+            "temperature": "MQTT_COMMAND_TOPIC"
+          }
+        },
+        "state": {
+          "temperatureAmbientCelsius": {
+            "topic": "tele/esplight/SENSOR",
+            "googleType": "numeric",
+            "valueMap": [
+              {
+                "type": "static",
+                "google": "test"
+              },
+              {
+                "type": "value",
+                "mqtt": "on",
+                "google": "100"
+              },
+              {
+                "mqttMin": 1.0,
+                "mqttMax": 100.0,
+                "type": "range",
+                "google": "true"
+              },
+              {
+                "type": "regex",
+                "googleSearch": "^googleValueToReplace$",
+                "googleReplace": "RegExReplaceStringToConvertMqttValueTo",
+                "mqttSearch": "^mqttValueToReplace$",
+                "mqttReplace": "RegExReplaceStringToConvertGoogleValueTo"
+              },
+              {
+                "type": "celsius"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "customData": null
+  }
+}

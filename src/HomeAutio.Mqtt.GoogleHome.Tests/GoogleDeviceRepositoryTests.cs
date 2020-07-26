@@ -34,6 +34,19 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
         }
 
         [Fact]
+        public void CanDeserializeValueMaps()
+        {
+            // Arrange
+            var testString = File.ReadAllText("TestData/valueTypeTestData.json");
+
+            // Act
+            var result = new Dictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(testString));
+
+            // Assert
+            Assert.NotNull(result);
+        }
+
+        [Fact]
         [Trait("Category", "Integration")]
         [TestPriority(0)]
         public void CanAddItem()
