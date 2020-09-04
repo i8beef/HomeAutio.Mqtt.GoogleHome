@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
 using Microsoft.Extensions.Configuration;
@@ -17,14 +18,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
     /// </summary>
     public class PersistedGrantStore : IPersistedGrantStoreWithExpiration
     {
+        private static object _readLock = new object();
+        private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
         private readonly ILogger<PersistedGrantStore> _log;
         private readonly ConcurrentDictionary<string, PersistedGrant> _repository = new ConcurrentDictionary<string, PersistedGrant>();
         private readonly string _file;
 
         // Explicitly use the default contract resolver to force exact property serialization Base64 keys as they are case sensitive
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() };
-
-        private object _lock = new object();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PersistedGrantStore"/> class.
@@ -42,13 +44,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         }
 
         /// <inheritdoc />
-        public Task StoreAsync(PersistedGrant grant)
+        public async Task StoreAsync(PersistedGrant grant)
         {
             _repository[grant.Key] = grant;
 
-            WriteToFile();
-
-            return Task.CompletedTask;
+            await WriteToFileAsync();
         }
 
         /// <inheritdoc />
@@ -75,22 +75,20 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         }
 
         /// <inheritdoc />
-        public Task RemoveAsync(string key)
+        public async Task RemoveAsync(string key)
         {
             if (_repository.TryRemove(key, out _))
             {
-                WriteToFile();
+                await WriteToFileAsync();
             }
             else
             {
                 _log.LogWarning("Failed to remove token with key {key}", key);
             }
-
-            return Task.CompletedTask;
         }
 
         /// <inheritdoc />
-        public Task RemoveAllAsync(string subjectId, string clientId)
+        public async Task RemoveAllAsync(string subjectId, string clientId)
         {
             var query = _repository
                 .Where(x => x.Value.ClientId == clientId && x.Value.SubjectId == subjectId)
@@ -107,13 +105,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
             }
 
             if (numKeysRemoved > 0)
-                WriteToFile();
-
-            return Task.CompletedTask;
+                await WriteToFileAsync();
         }
 
         /// <inheritdoc />
-        public Task RemoveAllAsync(string subjectId, string clientId, string type)
+        public async Task RemoveAllAsync(string subjectId, string clientId, string type)
         {
             var query = _repository
                 .Where(x => x.Value.SubjectId == subjectId && x.Value.ClientId == clientId && x.Value.Type == type)
@@ -130,13 +126,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
             }
 
             if (numKeysRemoved > 0)
-                WriteToFile();
-
-            return Task.CompletedTask;
+                await WriteToFileAsync();
         }
 
         /// <inheritdoc />
-        public Task RemoveAllExpiredAsync()
+        public async Task RemoveAllExpiredAsync()
         {
             var query = _repository
                 .Where(x => x.Value.Expiration < DateTime.UtcNow)
@@ -153,9 +147,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
             }
 
             if (numKeysRemoved > 0)
-                WriteToFile();
-
-            return Task.CompletedTask;
+                await WriteToFileAsync();
         }
 
         /// <summary>
@@ -165,7 +157,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         {
             if (File.Exists(_file))
             {
-                lock (_lock)
+                lock (_readLock)
                 {
                     var fileContents = File.ReadAllText(_file);
                     if (string.IsNullOrEmpty(fileContents))
@@ -193,14 +185,23 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <summary>
         /// Write the current state to file.
         /// </summary>
-        private void WriteToFile()
+        /// <returns>An awaitable <see cref="Task"/>.</returns>
+        private async Task WriteToFileAsync()
         {
-            lock (_lock)
+            _log.LogInformation("Writing tokens to {file}", _file);
+
+            await _semaphoreSlim.WaitAsync();
+
+            try
             {
                 var contents = JsonConvert.SerializeObject(_repository, _jsonSerializerSettings);
-                File.WriteAllText(_file, contents);
+                await File.WriteAllTextAsync(_file, contents);
 
                 _log.LogInformation("Wrote tokens to {file}", _file);
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
             }
         }
     }
