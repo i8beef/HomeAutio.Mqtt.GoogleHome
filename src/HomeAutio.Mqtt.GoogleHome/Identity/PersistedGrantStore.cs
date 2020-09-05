@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
+using IdentityServer4.Stores;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -18,8 +19,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
     /// </summary>
     public class PersistedGrantStore : IPersistedGrantStoreWithExpiration
     {
-        private static object _readLock = new object();
-        private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+        private static readonly object _readLock = new object();
+        private static readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
 
         private readonly ILogger<PersistedGrantStore> _log;
         private readonly ConcurrentDictionary<string, PersistedGrant> _repository = new ConcurrentDictionary<string, PersistedGrant>();
@@ -64,13 +65,20 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         }
 
         /// <inheritdoc />
-        public Task<IEnumerable<PersistedGrant>> GetAllAsync(string subjectId)
+        public Task<IEnumerable<PersistedGrant>> GetAllAsync(PersistedGrantFilter filter)
         {
-            var query = _repository
-                .Where(x => x.Value.SubjectId == subjectId)
-                .Select(x => x.Value);
+            var query = _repository.AsEnumerable();
 
-            var items = query.ToArray().AsEnumerable();
+            if (!string.IsNullOrEmpty(filter.ClientId))
+                query = query.Where(x => x.Value.ClientId == filter.ClientId);
+
+            if (!string.IsNullOrEmpty(filter.SubjectId))
+                query = query.Where(x => x.Value.SubjectId == filter.SubjectId);
+
+            if (!string.IsNullOrEmpty(filter.SessionId))
+                query = query.Where(x => x.Value.SessionId == filter.SessionId);
+
+            var items = query.Select(x => x.Value).AsEnumerable();
             return Task.FromResult(items);
         }
 
@@ -88,34 +96,20 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         }
 
         /// <inheritdoc />
-        public async Task RemoveAllAsync(string subjectId, string clientId)
+        public async Task RemoveAllAsync(PersistedGrantFilter filter)
         {
-            var query = _repository
-                .Where(x => x.Value.ClientId == clientId && x.Value.SubjectId == subjectId)
-                .Select(x => x.Key);
+            var query = _repository.AsEnumerable();
 
-            var keys = query.ToArray();
-            var numKeysRemoved = 0;
-            foreach (var key in keys)
-            {
-                if (_repository.TryRemove(key, out _))
-                    numKeysRemoved++;
-                else
-                    _log.LogWarning("Failed to remove token with key {key}", key);
-            }
+            if (!string.IsNullOrEmpty(filter.ClientId))
+                query = query.Where(x => x.Value.ClientId == filter.ClientId);
 
-            if (numKeysRemoved > 0)
-                await WriteToFileAsync();
-        }
+            if (!string.IsNullOrEmpty(filter.SubjectId))
+                query = query.Where(x => x.Value.SubjectId == filter.SubjectId);
 
-        /// <inheritdoc />
-        public async Task RemoveAllAsync(string subjectId, string clientId, string type)
-        {
-            var query = _repository
-                .Where(x => x.Value.SubjectId == subjectId && x.Value.ClientId == clientId && x.Value.Type == type)
-                .Select(x => x.Key);
+            if (!string.IsNullOrEmpty(filter.SessionId))
+                query = query.Where(x => x.Value.SessionId == filter.SessionId);
 
-            var keys = query.ToArray();
+            var keys = query.Select(x => x.Key);
             var numKeysRemoved = 0;
             foreach (var key in keys)
             {
@@ -132,8 +126,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <inheritdoc />
         public async Task RemoveAllExpiredAsync()
         {
+            var refreshTokenCutoff = DateTime.Now.AddSeconds(-30);
             var query = _repository
-                .Where(x => x.Value.Expiration < DateTime.UtcNow)
+                .Where(x => x.Value.Expiration < DateTime.UtcNow || (x.Value.ConsumedTime != null && x.Value.ConsumedTime.Value < refreshTokenCutoff))
                 .Select(x => x.Key);
 
             var keys = query.ToArray();

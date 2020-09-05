@@ -13,9 +13,7 @@
         /// <inheritdoc />
         public override bool MatchesGoogle(object value)
         {
-            return value != null
-                ? string.Equals(value.ToString(), Google, System.StringComparison.InvariantCultureIgnoreCase)
-                : true;
+            return value == null || string.Equals(value.ToString(), Google, System.StringComparison.InvariantCultureIgnoreCase);
         }
 
         /// <inheritdoc />

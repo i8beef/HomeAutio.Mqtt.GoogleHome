@@ -42,7 +42,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                     Description = x.GetValue<string>("resourceName"),
                     UserClaims = new List<string>(),
                     ApiSecrets = new List<Secret>(),
-                    Scopes = new List<Scope> { new Scope("api") }
+                    Scopes = new List<string> { "api" }
                 });
         }
     }

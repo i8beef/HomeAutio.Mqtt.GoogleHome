@@ -11,6 +11,7 @@ using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using IdentityServer4.AccessTokenValidation;
+using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -197,15 +198,14 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Identity Server 4
             services.AddSingleton<IPersistedGrantStoreWithExpiration, PersistedGrantStore>();
             services.AddSingleton<IPersistedGrantStore>(x => x.GetRequiredService<IPersistedGrantStoreWithExpiration>());
+            services.AddTransient<IRefreshTokenService, GracefulRefreshTokenService>();
 
-            var publicOrigin = Configuration.GetValue<string>("oauth:publicOrigin");
             var authority = Configuration.GetValue<string>("oauth:authority");
 
             var identityServerBuilder = services
                 .AddIdentityServer(options =>
                 {
                     options.IssuerUri = authority;
-                    options.PublicOrigin = publicOrigin;
                 })
                 .AddInMemoryClients(Clients.Get(Configuration))
                 .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))

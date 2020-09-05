@@ -29,9 +29,9 @@ namespace HomeAutio.Mqtt.GoogleHome
         private readonly HttpClient _httpClient;
         private readonly string _agentUserId;
         private readonly ServiceAccount _serviceAccount;
+        private readonly object _tokenRefreshLock = new object();
 
         private AccessTokenResponse _accessToken;
-        private object _tokenRefreshLock = new object();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleHomeGraphClient"/> class.
