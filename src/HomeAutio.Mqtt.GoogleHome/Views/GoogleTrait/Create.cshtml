@@ -72,20 +72,20 @@
 }
 
 <div class="device-page">
-    <div class="page-header">
+    <div class="lead">
         <h1>Create Trait</h1>
     </div>
 
     <partial name="_ValidationSummary" />
 
     <div class="row">
-        <div class="col-sm-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Create Trait</h3>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Trait Information</h2>
                 </div>
                 <form method="post">
-                    <div class="panel-body">
+                    <div class="card-body">
                         <fieldset>
                             <div class="form-group">
                                 <label asp-for="Trait">Trait</label>
@@ -115,7 +115,7 @@
                             </div>
                         </fieldset>
                     </div>
-                    <div class="panel-footer">
+                    <div class="card-footer">
                         <div class="form-group">
                             <button class="btn btn-primary" name="button" value="update">Create</button>
                             <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@(Context.Request.Query["deviceId"])" class="btn btn-default">Cancel</a>

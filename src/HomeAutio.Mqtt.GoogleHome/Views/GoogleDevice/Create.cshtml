@@ -14,7 +14,7 @@
 }
 
 <div class="device-page">
-    <div class="page-header">
+    <div class="lead">
         <h1>Create Device</h1>
     </div>
 
@@ -22,12 +22,12 @@
 
     <div class="row">
         <div class="col-sm-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Device</h3>
+            <div class="card">
+                <div class="card-header">
+                    <h2>Device Information</h2>
                 </div>
                 <form method="post">
-                    <div class="panel-body">
+                    <div class="card-body">
                         <fieldset>
                             <div class="form-group">
                                 <label asp-for="Id">Device Id</label>
@@ -60,9 +60,9 @@
                             </div>
                         </fieldset>
 
-                        <div class="panel panel-primary">
-                            <div class="panel-heading" data-toggle="collapse" data-target="#NameInfo">Name Information</div>
-                            <div id="NameInfo" class="panel-body collapse in">
+                        <div class="card">
+                            <div class="card-header" data-toggle="collapse" data-target="#NameInfo">Name Information</div>
+                            <div id="NameInfo" class="card-body collapse show">
                                 <div class="form-group">
                                     <label asp-for="DefaultNames">Default Names</label>
                                     <input class="form-control" placeholder="Default Names" asp-for="DefaultNames" autofocus disabled>
@@ -78,9 +78,9 @@
                             </div>
                         </div>
 
-                        <div class="panel panel-primary">
-                            <div class="panel-heading" data-toggle="collapse" data-target="#ManufacturerInfo">Manufacturer Information</div>
-                            <div id="ManufacturerInfo" class="panel-body collapse">
+                        <div class="card">
+                            <div class="card-header" data-toggle="collapse" data-target="#ManufacturerInfo">Manufacturer Information</div>
+                            <div id="ManufacturerInfo" class="card-body collapse">
                                 <div class="form-group">
                                     <label asp-for="Manufacturer">Manufacturer</label>
                                     <input class="form-control" placeholder="Manufacturer" asp-for="Manufacturer" autofocus>
@@ -100,7 +100,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel-footer">
+                    <div class="card-footer">
                         <div class="form-group">
                             <button class="btn btn-primary" name="button" value="create">Create</button>
                             <a asp-controller="GoogleDevice" asp-action="Index" class="btn btn-default">Cancel</a>
