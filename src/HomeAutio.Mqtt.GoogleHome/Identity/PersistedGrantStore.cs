@@ -61,6 +61,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
             }
 
             _log.LogWarning("Failed to find token with key {key}", key);
+
             return Task.FromResult<PersistedGrant>(null);
         }
 
@@ -109,7 +110,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
             if (!string.IsNullOrEmpty(filter.SessionId))
                 query = query.Where(x => x.Value.SessionId == filter.SessionId);
 
-            var keys = query.Select(x => x.Key);
+            var keys = query.Select(x => x.Key).ToArray();
             var numKeysRemoved = 0;
             foreach (var key in keys)
             {
@@ -126,12 +127,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <inheritdoc />
         public async Task RemoveAllExpiredAsync()
         {
-            var refreshTokenCutoff = DateTime.Now.AddSeconds(-30);
+            var refreshTokenCutoff = DateTime.UtcNow.AddSeconds(-30);
             var query = _repository
-                .Where(x => x.Value.Expiration < DateTime.UtcNow || (x.Value.ConsumedTime != null && x.Value.ConsumedTime.Value < refreshTokenCutoff))
-                .Select(x => x.Key);
+                .Where(x => x.Value.Expiration < DateTime.UtcNow || (x.Value.ConsumedTime != null && x.Value.ConsumedTime.Value < refreshTokenCutoff));
 
-            var keys = query.ToArray();
+            var keys = query.Select(x => x.Key).ToArray();
             var numKeysRemoved = 0;
             foreach (var key in keys)
             {

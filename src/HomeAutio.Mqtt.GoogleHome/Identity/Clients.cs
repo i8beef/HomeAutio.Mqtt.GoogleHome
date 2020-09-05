@@ -28,7 +28,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                     AllowedScopes = new List<string> { "api" },
                     RedirectUris = x.GetSection("allowedRedirectUris").GetChildren().Select(uri => uri.Value).ToList(),
                     AllowOfflineAccess = true,
-                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    RefreshTokenUsage = x.GetValue("refreshTokenReuse", false)
+                        ? TokenUsage.ReUse
+                        : TokenUsage.OneTimeOnly,
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     SlidingRefreshTokenLifetime = x.GetValue<int>("refreshTokenLifetime", 30) * 86400,
                     AbsoluteRefreshTokenLifetime = 0
