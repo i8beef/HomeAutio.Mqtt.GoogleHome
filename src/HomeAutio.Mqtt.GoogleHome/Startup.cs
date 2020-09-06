@@ -250,7 +250,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             }
             else
             {
-                identityServerBuilder.AddDeveloperSigningCredential(true, "config/tempkey.rsa");
+                identityServerBuilder.AddDeveloperSigningCredential(true, "config/tempkey.jwk");
             }
 
             // Turn on authorization via Cookie (signin, default) and Bearer (API)
