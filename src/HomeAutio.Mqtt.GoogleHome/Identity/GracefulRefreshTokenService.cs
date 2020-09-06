@@ -12,6 +12,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
     /// </summary>
     public class GracefulRefreshTokenService : DefaultRefreshTokenService
     {
+        private readonly int _refreshTokenGracePeriod;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GracefulRefreshTokenService" /> class.
         /// </summary>
@@ -19,18 +21,30 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <param name="profile">The profile.</param>
         /// <param name="clock">The clock.</param>
         /// <param name="logger">The logger.</param>
+        /// <param name="refreshTokenGracePeriod">RefreshToken grace period.</param>
         public GracefulRefreshTokenService(
             IRefreshTokenStore refreshTokenStore,
             IProfileService profile,
             ISystemClock clock,
-            ILogger<DefaultRefreshTokenService> logger)
+            ILogger<GracefulRefreshTokenService> logger,
+            int refreshTokenGracePeriod)
             : base(refreshTokenStore, profile, clock, logger)
-        { }
+        {
+            _refreshTokenGracePeriod = refreshTokenGracePeriod;
+        }
 
         /// <inheritdoc />
         protected override Task<bool> AcceptConsumedTokenAsync(RefreshToken refreshToken)
         {
-            return Task.FromResult(true);
+            if (refreshToken.ConsumedTime.HasValue)
+            {
+                if (refreshToken.ConsumedTime.Value < Clock.UtcNow.AddSeconds(_refreshTokenGracePeriod * -1))
+                {
+                    return Task.FromResult(true);
+                }
+            }
+
+            return base.AcceptConsumedTokenAsync(refreshToken);
         }
     }
 }

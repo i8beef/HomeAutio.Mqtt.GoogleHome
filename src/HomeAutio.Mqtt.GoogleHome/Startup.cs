@@ -13,6 +13,7 @@ using HomeAutio.Mqtt.GoogleHome.Models.State;
 using IdentityServer4.AccessTokenValidation;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -197,11 +198,15 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             // Identity Server 4
             services.AddSingleton<IPersistedGrantStoreWithExpiration, PersistedGrantStore>();
-            services.AddSingleton<IPersistedGrantStore>(x => x.GetRequiredService<IPersistedGrantStoreWithExpiration>());
-            services.AddTransient<IRefreshTokenService, GracefulRefreshTokenService>();
+            services.AddSingleton<IPersistedGrantStore>(serviceProvider => serviceProvider.GetRequiredService<IPersistedGrantStoreWithExpiration>());
+            services.AddTransient<IRefreshTokenService>(serviceProvider => new GracefulRefreshTokenService(
+                serviceProvider.GetRequiredService<IRefreshTokenStore>(),
+                serviceProvider.GetRequiredService<IProfileService>(),
+                serviceProvider.GetRequiredService<ISystemClock>(),
+                serviceProvider.GetRequiredService<ILogger<GracefulRefreshTokenService>>(),
+                Configuration.GetValue("oauth:refreshTokenGracePeriod", 0)));
 
             var authority = Configuration.GetValue<string>("oauth:authority");
-
             var identityServerBuilder = services
                 .AddIdentityServer(options =>
                 {

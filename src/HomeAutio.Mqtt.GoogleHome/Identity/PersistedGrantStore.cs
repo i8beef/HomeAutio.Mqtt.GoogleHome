@@ -25,6 +25,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         private readonly ILogger<PersistedGrantStore> _log;
         private readonly ConcurrentDictionary<string, PersistedGrant> _repository = new ConcurrentDictionary<string, PersistedGrant>();
         private readonly string _file;
+        private readonly int _refreshTokenGracePeriod;
 
         // Explicitly use the default contract resolver to force exact property serialization Base64 keys as they are case sensitive
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() };
@@ -41,6 +42,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                 throw new ArgumentException(nameof(configuration));
 
             _file = configuration.GetValue<string>("oauth:tokenStoreFile");
+            _refreshTokenGracePeriod = configuration.GetValue("oauth:refreshTokenGracePeriod", 0);
             RestoreFromFile();
         }
 
@@ -127,7 +129,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <inheritdoc />
         public async Task RemoveAllExpiredAsync()
         {
-            var refreshTokenCutoff = DateTime.UtcNow.AddSeconds(-30);
+            var refreshTokenCutoff = DateTime.UtcNow.AddSeconds(_refreshTokenGracePeriod * -1);
             var query = _repository
                 .Where(x => x.Value.Expiration < DateTime.UtcNow || (x.Value.ConsumedTime != null && x.Value.ConsumedTime.Value < refreshTokenCutoff));
 
