@@ -1,4 +1,4 @@
-config/tempkey.rsa
+config/tempkey.jwk
 config/tokens.json
 config/googleDevices.json
 config/googleHomeGraphApi.json
