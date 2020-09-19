@@ -52,7 +52,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <returns>A list of <see cref="ApiScope"/>.</returns>
         public static IEnumerable<ApiScope> GetApiScopes()
         {
-            return new[]
+            return new List<ApiScope>
             {
                 new ApiScope(name: "api", displayName: "API")
             };
