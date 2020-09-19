@@ -23,9 +23,6 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-alpine AS runtime
 WORKDIR /app
 COPY --from=publish /app/HomeAutio.Mqtt.GoogleHome/out ./
 
-# Add timezone data
-RUN apk add --no-cache tzdata
-
 ENV ASPNETCORE_ENVIRONMENT Production
 ENV ASPNETCORE_URLS http://+:5000
 
