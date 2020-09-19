@@ -50,9 +50,6 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
             var executionResponsePayload = new Models.Response.ExecutionResponsePayload();
             foreach (var command in intent.Payload.Commands)
             {
-                // Convert command to a event to publish
-                _messageHub.Publish(command);
-
                 // Build response payload
                 var commandResponse = new Models.Response.Command
                 {
@@ -64,6 +61,34 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                 var states = new Dictionary<string, object>();
                 foreach (var execution in command.Execution)
                 {
+                    // Validate challenges
+                    var challengeResult = ValidateChallenges(command, execution);
+                    if (challengeResult != null)
+                    {
+                        commandResponse.Status = Models.Response.CommandStatus.Error;
+
+                        if (execution.Challenge != null)
+                        {
+                            // Challenge failed
+                            commandResponse.ErrorCode = challengeResult;
+                            commandResponse.ChallengeNeeded = new Models.Response.ChallengeResponse
+                            {
+                                Type = challengeResult
+                            };
+                        }
+                        else
+                        {
+                            // Challenge required
+                            commandResponse.ErrorCode = "challengeNeeded";
+                            commandResponse.ChallengeNeeded = new Models.Response.ChallengeResponse
+                            {
+                                Type = challengeResult
+                            };
+                        }
+
+                        break;
+                    }
+
                     // Dont bother with states for command delegation
                     if (IsDelegatedCommand(command, execution))
                     {
@@ -102,12 +127,64 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                     }
                 }
 
-                commandResponse.States = states;
+                if (commandResponse.Status == Models.Response.CommandStatus.Success)
+                {
+                    // Only add any processed states if there were no challenge or validation errors
+                    commandResponse.States = states;
+
+                    // Convert command to a event to publish now that its passed all verifications
+                    _messageHub.Publish(command);
+                }
 
                 executionResponsePayload.Commands.Add(commandResponse);
             }
 
             return executionResponsePayload;
+        }
+
+        /// <summary>
+        /// Checks if the command is a delegated command for the given device.
+        /// </summary>
+        /// <param name="command">Command to check.</param>
+        /// <param name="execution">Command execution to check.</param>
+        /// <returns><c>true</c> if command is handled as a delegated command, otherwise <c>false</c>.</returns>
+        private string ValidateChallenges(Command command, Execution execution)
+        {
+            // If any active devices require a challenge for this command execution, evaluate if its fulfilled by the request
+            foreach (var commandDevice in command.Devices)
+            {
+                var device = _deviceRepository.Get(commandDevice.Id);
+                if (device != null)
+                {
+                    if (device.Disabled)
+                        continue;
+
+                    // Get any challenges
+                    var challenges = device.Traits
+                        .Where(x => x.Commands.ContainsKey(execution.Command) && x.Challenge != null)
+                        .Select(x => x.Challenge);
+
+                    // Evaluate all challenges
+                    foreach (var challenge in challenges)
+                    {
+                        // Missing challenge answer
+                        if (execution.Challenge == null)
+                        {
+                            return challenge.ChallengeNeededPhrase;
+                        }
+
+                        // Validate challenge answer
+                        if (!challenge.Validate(execution.Challenge))
+                        {
+                            // Challenge rejected
+                            return challenge.ChallengeRejectedPhrase;
+                        }
+                    }
+                }
+            }
+
+            // All challenges passed
+            return null;
         }
 
         /// <summary>

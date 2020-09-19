@@ -60,6 +60,19 @@
                 window.open('https://developers.google.com/actions/smarthome/traits/' + traitName.toLowerCase());
             }
         }
+        
+        var challengePinHideShow = function () {
+            if ($("#ChallengeType").val() == '2') {
+                $('#challengePin-form-group').show();
+            } else {
+                $('#challengePin-form-group').hide();
+            }
+        };
+
+        $(function () {
+            challengePinHideShow();
+            $('#ChallengeType').change(challengePinHideShow);
+        });
     </script>
 
     <style>
@@ -112,6 +125,16 @@
                             <div class="form-group">
                                 <label asp-for="State">State</label>
                                 <textarea class="form-control" asp-for="State"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="ChallengeType">Challenge Type</label>
+                                <select class="form-control" asp-for="ChallengeType" asp-items="@Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.State.Challenges.ChallengeType>()"></select>
+                            </div>
+
+                            <div class="form-group" id="challengePin-form-group">
+                                <label asp-for="ChallengePin">Challenge Pin</label>
+                                <input class="form-control" placeholder="Challenge Pin" asp-for="ChallengePin">
                             </div>
                         </fieldset>
                     </div>

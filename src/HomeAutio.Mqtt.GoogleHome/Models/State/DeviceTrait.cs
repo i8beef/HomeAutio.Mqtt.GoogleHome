@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using HomeAutio.Mqtt.GoogleHome.JsonConverters;
+using HomeAutio.Mqtt.GoogleHome.Models.State.Challenges;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.State
@@ -37,5 +39,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// Trait state configuration.
         /// </summary>
         public IDictionary<string, DeviceState> State { get; set; }
+
+        /// <summary>
+        /// Challenges for executing trait commands.
+        /// </summary>
+        [JsonConverter(typeof(ChallengeJsonConverter))]
+        public ChallengeBase Challenge { get; set; }
     }
 }

@@ -30,11 +30,21 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
         /// <inheritdoc />
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
+            switch (reader.TokenType)
+            {
+                case JsonToken.Undefined:
+                case JsonToken.Null:
+                    return null;
+            }
+
             // Load the json string
             var jsonObject = JObject.Load(reader);
 
             // Instantiate the appropriate object based on the json string
             var target = Create(objectType, jsonObject);
+
+            if (target == null)
+                return null;
 
             // Populate the properties of the object
             serializer.Populate(jsonObject.CreateReader(), target);

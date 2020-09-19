@@ -2,6 +2,7 @@
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
+using HomeAutio.Mqtt.GoogleHome.Models.State.Challenges;
 
 namespace HomeAutio.Mqtt.GoogleHome.Validation
 {
@@ -21,6 +22,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
 
             if (deviceTrait.Trait == TraitType.Unknown)
                 validationErrors.Add("Trait is missing or not a valid type");
+
+            if (deviceTrait.Challenge != null)
+            {
+                var pinChallenge = deviceTrait.Challenge as PinChallenge;
+                if (pinChallenge != null && string.IsNullOrWhiteSpace(pinChallenge.Pin))
+                    validationErrors.Add("Trait pin challenge is missing pin");
+            }
 
             switch (deviceTrait.Trait)
             {

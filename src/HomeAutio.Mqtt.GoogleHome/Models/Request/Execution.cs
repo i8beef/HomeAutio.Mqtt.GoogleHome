@@ -18,5 +18,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Request
         /// </summary>
         [JsonConverter(typeof(ObjectDictionaryConverter))]
         public IDictionary<string, object> Params { get; set; }
+
+        /// <summary>
+        /// Challenge details.
+        /// </summary>
+        public Challenge Challenge { get; set; }
     }
 }

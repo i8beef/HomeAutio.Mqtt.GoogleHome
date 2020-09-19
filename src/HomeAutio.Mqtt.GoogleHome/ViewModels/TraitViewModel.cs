@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using HomeAutio.Mqtt.GoogleHome.Models;
+using HomeAutio.Mqtt.GoogleHome.Models.State.Challenges;
 
 namespace HomeAutio.Mqtt.GoogleHome.ViewModels
 {
@@ -28,5 +29,15 @@ namespace HomeAutio.Mqtt.GoogleHome.ViewModels
         /// State.
         /// </summary>
         public string State { get; set; }
+
+        /// <summary>
+        /// Challenge type.
+        /// </summary>
+        public ChallengeType ChallengeType { get; set; }
+
+        /// <summary>
+        /// Challenge pin, if applicable.
+        /// </summary>
+        public string ChallengePin { get; set; }
     }
 }

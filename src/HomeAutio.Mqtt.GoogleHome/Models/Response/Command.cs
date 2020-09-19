@@ -41,5 +41,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Response
         /// Error code.
         /// </summary>
         public string ErrorCode { get; set; }
+
+        /// <summary>
+        /// Challenges needed to complete original command.
+        /// </summary>
+        public ChallengeResponse ChallengeNeeded { get; set; }
     }
 }
