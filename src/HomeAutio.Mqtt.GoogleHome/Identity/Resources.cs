@@ -26,27 +26,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         }
 
         /// <summary>
-        /// Gets static list of api resources based on configuration.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        /// <returns>A list of <see cref="ApiResource"/>.</returns>
-        public static IEnumerable<ApiResource> GetApiResources(IConfiguration configuration)
-        {
-            var clientsSection = configuration.GetSection("oauth:resources");
-
-            return clientsSection.GetChildren()
-                .Select(x => new ApiResource
-                {
-                    Name = x.GetValue<string>("resourceName"),
-                    DisplayName = x.GetValue<string>("resourceName"),
-                    Description = x.GetValue<string>("resourceName"),
-                    UserClaims = new List<string>(),
-                    ApiSecrets = new List<Secret>(),
-                    Scopes = new List<string> { "api" }
-                });
-        }
-
-        /// <summary>
         /// Gets static list of api scopes.
         /// </summary>
         /// <returns>A list of <see cref="ApiScope"/>.</returns>

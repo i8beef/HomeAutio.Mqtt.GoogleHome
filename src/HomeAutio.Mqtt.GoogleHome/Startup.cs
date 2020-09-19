@@ -214,7 +214,6 @@ namespace HomeAutio.Mqtt.GoogleHome
                 })
                 .AddInMemoryClients(Clients.Get(Configuration))
                 .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
-                .AddInMemoryApiResources(Resources.GetApiResources(Configuration))
                 .AddInMemoryApiScopes(Resources.GetApiScopes())
                 .AddTestUsers(Users.Get(Configuration));
 
