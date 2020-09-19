@@ -24,6 +24,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                     ClientId = x.GetValue<string>("clientId"),
                     ClientName = x.GetValue<string>("clientName"),
                     AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                    RequirePkce = false,
                     ClientSecrets = new List<Secret> { new Secret(x.GetValue<string>("clientSecret").Sha256()) },
                     AllowedScopes = new List<string> { "api" },
                     RedirectUris = x.GetSection("allowedRedirectUris").GetChildren().Select(uri => uri.Value).ToList(),
