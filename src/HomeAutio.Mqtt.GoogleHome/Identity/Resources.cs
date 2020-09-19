@@ -45,5 +45,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                     Scopes = new List<string> { "api" }
                 });
         }
+
+        /// <summary>
+        /// Gets static list of api scopes.
+        /// </summary>
+        /// <returns>A list of <see cref="ApiScope"/>.</returns>
+        public static IEnumerable<ApiScope> GetApiScopes()
+        {
+            return new[]
+            {
+                new ApiScope(name: "api", displayName: "API")
+            };
+        }
     }
 }
