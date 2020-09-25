@@ -213,7 +213,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     options.IssuerUri = authority;
                 })
                 .AddInMemoryClients(Clients.Get(Configuration))
-                .AddInMemoryIdentityResources(Resources.GetIdentityResources(Configuration))
+                .AddInMemoryIdentityResources(Resources.GetIdentityResources())
                 .AddInMemoryApiScopes(Resources.GetApiScopes())
                 .AddTestUsers(Users.Get(Configuration));
 
@@ -276,7 +276,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority = authority;
-                    options.ApiName = Configuration.GetValue<string>("oauth:resources:0:resourceName");
+                    options.ApiName = "api";
                     options.RequireHttpsMetadata = Configuration.GetValue<bool>("oauth:requireSSL");
                 });
         }

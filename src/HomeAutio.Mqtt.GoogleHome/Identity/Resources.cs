@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using IdentityServer4.Models;
-using Microsoft.Extensions.Configuration;
 
 namespace HomeAutio.Mqtt.GoogleHome.Identity
 {
@@ -13,9 +11,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <summary>
         /// Gets static list of identity resources based on configuration.
         /// </summary>
-        /// <param name="configuration">The configuration.</param>
         /// <returns>A list of <see cref="IdentityResource"/>.</returns>
-        public static IEnumerable<IdentityResource> GetIdentityResources(IConfiguration configuration)
+        public static IEnumerable<IdentityResource> GetIdentityResources()
         {
             return new List<IdentityResource>
             {
