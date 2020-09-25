@@ -215,6 +215,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 .AddInMemoryClients(Clients.Get(Configuration))
                 .AddInMemoryIdentityResources(Resources.GetIdentityResources())
                 .AddInMemoryApiScopes(Resources.GetApiScopes())
+                .AddInMemoryApiResources(Resources.GetApiResources())
                 .AddTestUsers(Users.Get(Configuration));
 
             // Get signing certificates
