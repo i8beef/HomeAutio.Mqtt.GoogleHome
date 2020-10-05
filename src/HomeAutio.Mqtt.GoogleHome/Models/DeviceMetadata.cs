@@ -82,7 +82,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
             { DeviceType.Switch, new List<TraitType> { TraitType.OnOff } },
             { DeviceType.Television, new List<TraitType> { TraitType.AppSelector, TraitType.Channel, TraitType.InputSelector, TraitType.MediaState, TraitType.Modes, TraitType.OnOff, TraitType.Toggles, TraitType.TransportControl, TraitType.Volume } },
             { DeviceType.Thermostat, new List<TraitType> { TraitType.TemperatureSetting } },
-            { DeviceType.Vacuum, new List<TraitType> { TraitType.Dock, TraitType.Modes, TraitType.OnOff, TraitType.StartStop, TraitType.Toggles } },
+            { DeviceType.Vacuum, new List<TraitType> { TraitType.Dock, TraitType.Locator, TraitType.Modes, TraitType.OnOff, TraitType.RunCycle, TraitType.StartStop, TraitType.Toggles } },
             { DeviceType.Valve, new List<TraitType> { TraitType.OpenClose } },
             { DeviceType.Washer, new List<TraitType> { TraitType.Modes, TraitType.OnOff, TraitType.RunCycle, TraitType.StartStop, TraitType.Toggles } },
             { DeviceType.WaterHeater, new List<TraitType> { TraitType.Modes, TraitType.OnOff, TraitType.TemperatureControl, TraitType.Toggles } },
