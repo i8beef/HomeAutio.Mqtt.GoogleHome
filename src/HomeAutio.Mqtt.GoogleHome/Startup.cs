@@ -10,11 +10,11 @@ using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
-using IdentityServer4.AccessTokenValidation;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -22,6 +22,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -215,7 +216,6 @@ namespace HomeAutio.Mqtt.GoogleHome
                 .AddInMemoryClients(Clients.Get(Configuration))
                 .AddInMemoryIdentityResources(Resources.GetIdentityResources())
                 .AddInMemoryApiScopes(Resources.GetApiScopes())
-                .AddInMemoryApiResources(Resources.GetApiResources())
                 .AddTestUsers(Users.Get(Configuration));
 
             // Get signing certificates
@@ -274,11 +274,15 @@ namespace HomeAutio.Mqtt.GoogleHome
                     options.ExpireTimeSpan = TimeSpan.FromHours(1);
                     options.SlidingExpiration = true;
                 })
-                .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    options.Authority = authority;
-                    options.ApiName = "api";
                     options.RequireHttpsMetadata = Configuration.GetValue<bool>("oauth:requireSSL");
+                    options.Authority = authority;
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false
+                    };
                 });
         }
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
-using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -49,7 +49,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <param name="request">Request.</param>
         /// <returns>Response.</returns>
         [HttpPost]
-        [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Post([FromBody]Models.Request.Request request)
         {
             // Begin building Response
