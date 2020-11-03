@@ -311,6 +311,9 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Accept forward headers from proxies
             app.UseForwardedHeaders();
 
+            // Add request response logging
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
             // Expose static file hosting
             app.UseStaticFiles();
 
