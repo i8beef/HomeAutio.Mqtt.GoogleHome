@@ -77,12 +77,26 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                             new List<string> { "reversible" }));
                     }
 
-                    validationErrors.AddRange(ValidateTrait(
+                    if (deviceTrait.Attributes.ContainsKey("supportsFanSpeedPercent"))
+                    {
+                        validationErrors.AddRange(ValidateTrait(
+                            deviceTrait,
+                            CommandType.SetFanSpeed,
+                            new List<string> { "fanSpeedPercent" },
+                            new List<string> { "currentFanSpeedPercent" },
+                            new List<string> { "supportsFanSpeedPercent.*" }));
+                    }
+
+                    if (deviceTrait.Attributes.ContainsKey("availableFanSpeeds"))
+                    {
+                        validationErrors.AddRange(ValidateTrait(
                         deviceTrait,
-                        CommandType.SetFanSpeed,
-                        new List<string> { "fanSpeed" },
-                        new List<string> { "currentFanSpeedSetting" },
-                        new List<string> { "availableFanSpeeds.*", "reversible" }));
+                            CommandType.SetFanSpeed,
+                            new List<string> { "fanSpeed" },
+                            new List<string> { "currentFanSpeedSetting" },
+                            new List<string> { "availableFanSpeeds.*" }));
+                    }
+
                     break;
                 case TraitType.Locator:
                     validationErrors.AddRange(ValidateTrait(

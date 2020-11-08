@@ -27,20 +27,34 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
                 { "color.spectrumHSV.value", "color.spectrumHsv.value" },
                 { "color.temperature", "color.temperatureK" },
                 { "fanSpeed", "currentFanSpeedSetting" },
+                { "fanSpeedPercent", "currentFanSpeedPercent" },
                 { "lock", "isLocked" },
                 { "pause", "isPaused" },
                 { "start", "isRunning" },
                 { "timerTimeSec", "timerRemainingSec" },
-                { "updateModeSettings", "currentModeSettings" },
-                { "updateToggleSettings", "currentToggleSettings" },
+                { "updateModeSettings*", "currentModeSettings" },
+                { "updateToggleSettings*", "currentToggleSettings" },
                 { "volumeLevel", "currentVolume" }
             };
 
             foreach (var replacement in replacements)
             {
-                if (commandParameterKey.StartsWith(replacement.Key))
+                if (replacement.Key.EndsWith('*'))
                 {
-                    return replacement.Value + commandParameterKey.Substring(replacement.Key.Length);
+                    // Handle starts with replacements
+                    var replacementBase = replacement.Key.TrimEnd('*');
+                    if (commandParameterKey.StartsWith(replacementBase))
+                    {
+                        return replacement.Value + commandParameterKey.Substring(replacementBase.Length);
+                    }
+                }
+                else
+                {
+                    // Handle regular equality replacements
+                    if (commandParameterKey == replacement.Key)
+                    {
+                        return replacement.Value + commandParameterKey.Substring(replacement.Key.Length);
+                    }
                 }
             }
 
