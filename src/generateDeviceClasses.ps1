@@ -25,47 +25,6 @@ for ($idx = 1; $idx -lt $totalRows; $idx++) {
     $devices += $device
 }
 
-# Generate device metadata
-$deviceMetadataFilePath = ".\HomeAutio.Mqtt.GoogleHome\Models\DeviceMetadata.cs"
-
-$deviceMetadataHeader = @"
-using System.Collections.Generic;
-
-namespace HomeAutio.Mqtt.GoogleHome.Models
-{
-    /// <summary>
-    /// Device type enumeration.
-    /// </summary>
-    public static class DeviceMetadata
-    {
-        /// <summary>
-        /// Device supported traits.
-        /// </summary>
-        public static IDictionary<DeviceType, IList<TraitType>> SupportedTraits => new Dictionary<DeviceType, IList<TraitType>>
-        {
-"@
-
-$deviceMetadataFooter = @"
-        };
-    }
-}
-"@
-
-$sb = [System.Text.StringBuilder]::new()
-$sb.AppendLine($deviceMetadataHeader)
-
-foreach ($device in $devices) {
-    $deviceSupportedTraits = $device.supportedTraits | Where-Object { -not ([string]::IsNullOrEmpty($_)) } | ForEach-Object { "TraitType.$($_)" }
-
-    $deviceTypeString = "            { DeviceType.$($device.name), new List<TraitType> { $($deviceSupportedTraits -join ", ") } },"
-
-    $sb.AppendLine($deviceTypeString)
-}
-
-$sb.AppendLine($deviceMetadataFooter)
-
-Set-Content -Path $deviceMetadataFilePath -Value $sb.ToString()
-
 # Generate DeviceTypes
 $deviceTypeFilePath = ".\HomeAutio.Mqtt.GoogleHome\Models\DeviceType.cs"
 

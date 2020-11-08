@@ -44,9 +44,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 return NotFound();
 
             var device = _deviceRepository.Get(deviceId);
-            ViewBag.SupportedTraits = DeviceMetadata.SupportedTraits.TryGetValue(device.Type, out IList<TraitType> supportedDevices)
-                ? supportedDevices.Select(x => new SelectListItem { Text = x.ToString(), Value = ((int)x).ToString() })
-                : Enumerable.Empty<SelectListItem>();
 
             var model = new TraitViewModel();
 
@@ -69,9 +66,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             var device = _deviceRepository.GetDetached(deviceId);
             if (device.Traits.Any(x => x.Trait == viewModel.Trait))
                 ModelState.AddModelError("Trait", "Device already contains trait");
-
-            if (DeviceMetadata.SupportedTraits.TryGetValue(device.Type, out IList<TraitType> supportedTraits) && !supportedTraits.Contains(viewModel.Trait))
-                ModelState.AddModelError("Trait", "Device does not support trait type");
 
             // Set values
             var trait = new DeviceTrait
@@ -157,10 +151,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!device.Traits.Any(x => x.Trait == traitEnumId))
                 return NotFound();
 
-            ViewBag.SupportedTraits = DeviceMetadata.SupportedTraits.TryGetValue(device.Type, out IList<TraitType> supportedDevices)
-                ? supportedDevices.Select(x => new SelectListItem { Text = x.ToString(), Value = ((int)x).ToString(), Selected = traitEnumId == x })
-                : Enumerable.Empty<SelectListItem>();
-
             // Get trait
             var trait = device.Traits.First(x => x.Trait == traitEnumId);
             var model = new TraitViewModel
@@ -211,9 +201,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             // Lock the trait type just in case
             viewModel.Trait = traitEnumId;
-
-            if (DeviceMetadata.SupportedTraits.TryGetValue(device.Type, out IList<TraitType> supportedTraits) && !supportedTraits.Contains(viewModel.Trait))
-                ModelState.AddModelError("Trait", "Device does not support trait type");
 
             // Set new values
             var trait = device.Traits.FirstOrDefault(x => x.Trait == traitEnumId);

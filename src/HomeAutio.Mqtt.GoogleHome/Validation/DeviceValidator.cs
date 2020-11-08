@@ -39,17 +39,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             {
                 foreach (var trait in device.Traits)
                 {
-                    if (DeviceMetadata.SupportedTraits.TryGetValue(device.Type, out IList<TraitType> supportedTraits))
-                    {
-                        if (supportedTraits.Contains(trait.Trait))
-                        {
-                            validationErrors.AddRange(DeviceTraitValidator.Validate(trait).Select(x => $"{x} on Device id {device.Id}"));
-                        }
-                        else
-                        {
-                            validationErrors.Add($"Trait {trait.Trait} not supported for Device type {device.Type} on Device id {device.Id}");
-                        }
-                    }
+                    validationErrors.AddRange(DeviceTraitValidator.Validate(trait).Select(x => $"{x} on Device id {device.Id}"));
                 }
             }
 

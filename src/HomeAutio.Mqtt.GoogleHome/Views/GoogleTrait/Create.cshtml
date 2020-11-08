@@ -102,7 +102,7 @@
                         <fieldset>
                             <div class="form-group">
                                 <label asp-for="Trait">Trait</label>
-                                <select class="form-control" asp-for="Trait" asp-items="@ViewBag.SupportedTraits">
+                                <select class="form-control" asp-for="Trait" asp-items="Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.TraitType>()">
                                     <option selected="selected" value="">Please select</option>
                                 </select>
                             </div>
