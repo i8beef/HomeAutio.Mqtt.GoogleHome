@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.Core;
+using HomeAutio.Mqtt.Core.Utilities;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.Request;
@@ -53,7 +55,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             _stateCache = stateCache ?? throw new ArgumentException(nameof(stateCache));
 
             // Subscribe to google home based topics
-            SubscribedTopics.Add(TopicRoot + "/#");
+            SubscribedTopics.Add(TopicRoot + "/commands/+/set");
 
             // Subscribe to all monitored state topics
             foreach (var topic in _stateCache.Keys)
@@ -91,7 +93,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             var message = e.ApplicationMessage.ConvertPayloadToString();
             _log.LogInformation("MQTT message received for topic {Topic}: {Message}", topic, message);
 
-            if (topic == TopicRoot + "/REQUEST_SYNC")
+            if (topic == $"{TopicRoot}/commands/REQUEST_SYNC/set")
             {
                 _messageHub.Publish(new RequestSyncEvent());
             }
@@ -192,28 +194,26 @@ namespace HomeAutio.Mqtt.GoogleHome
                     // Check if device supports the requested command class
                     if (deviceSupportedCommands.ContainsKey(execution.Command))
                     {
+                        // Handle command delegation
+                        var shortCommandName = execution.Command.Substring(execution.Command.LastIndexOf('.') + 1);
+                        var deviceTopicName = Regex.Replace(commandDevice.Id, @"\s", string.Empty);
+                        var delegateTopic = $"{TopicRoot}/execution/{deviceTopicName}/{shortCommandName}";
+                        var delegatePayload = execution.Params != null ? JsonConvert.SerializeObject(execution.Params) : "{}";
+
+                        await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                            .WithTopic(delegateTopic)
+                            .WithPayload(delegatePayload)
+                            .WithAtLeastOnceQoS()
+                            .Build())
+                            .ConfigureAwait(false);
+
                         // Find the specific commands supported parameters it can handle
                         var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command];
-
-                        // Handle command delegation
-                        if (deviceSupportedCommandParams.ContainsKey("_"))
-                        {
-                            // Build the MQTT message
-                            var topic = deviceSupportedCommandParams["_"];
-                            var payload = execution.Params != null ? JsonConvert.SerializeObject(execution.Params) : string.Empty;
-
-                            await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-                                .WithTopic(topic)
-                                .WithPayload(payload)
-                                .WithAtLeastOnceQoS()
-                                .Build())
-                                .ConfigureAwait(false);
-                        }
 
                         // Handle remaining command state param negotiation
                         if (execution.Params != null)
                         {
-                            // Flatten the parameters
+                            // Flatten the parameters, ignore old delegate underscores
                             var flattenedParams = execution.Params
                                 .Where(x => x.Key != "_")
                                 .ToDictionary(x => x.Key, x => x.Value)

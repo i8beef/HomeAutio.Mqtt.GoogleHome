@@ -43,8 +43,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             if (!_deviceRepository.Contains(deviceId))
                 return NotFound();
 
-            var device = _deviceRepository.Get(deviceId);
-
             var model = new TraitViewModel();
 
             return View(model);
