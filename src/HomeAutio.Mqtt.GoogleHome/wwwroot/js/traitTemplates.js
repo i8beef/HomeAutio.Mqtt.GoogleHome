@@ -502,7 +502,12 @@
     },
     "TemperatureSetting": {
         "attributes": {
-            "availableThermostatModes": "off,heat,cool,on",
+            "availableThermostatModes": [
+                "off",
+                "heat",
+                "cool",
+                "on"
+            ],
             "thermostatTemperatureUnit": "F"
         },
         "commands": {
