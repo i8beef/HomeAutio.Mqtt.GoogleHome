@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.Core;
-using HomeAutio.Mqtt.Core.Utilities;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.Request;

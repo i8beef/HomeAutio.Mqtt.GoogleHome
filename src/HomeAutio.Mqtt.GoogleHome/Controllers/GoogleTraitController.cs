@@ -10,7 +10,6 @@ using HomeAutio.Mqtt.GoogleHome.Validation;
 using HomeAutio.Mqtt.GoogleHome.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Controllers

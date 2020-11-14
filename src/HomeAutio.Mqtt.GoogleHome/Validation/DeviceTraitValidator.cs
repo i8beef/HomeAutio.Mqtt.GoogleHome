@@ -314,7 +314,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             if (deviceTrait.Commands.ContainsKey(CommandType.ThermostatTemperatureSetRange.ToEnumString()))
             {
                 // Only supported if heatcool mode is supported
-                var availableThermostatModes = ((string)deviceTrait.Attributes["availableThermostatModes"]).Split(',').ToList();
+                var availableThermostatModes = ((List<object>)deviceTrait.Attributes["availableThermostatModes"]).Cast<string>();
                 if (availableThermostatModes.Contains("heatcool"))
                 {
                     var command = queryOnlyTemperatureSetting ? CommandType.Unknown : CommandType.ThermostatTemperatureSetRange;
