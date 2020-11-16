@@ -207,7 +207,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                             .ConfigureAwait(false);
 
                         // Find the specific commands supported parameters it can handle
-                        var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command];
+                        var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command] ?? new Dictionary<string, string>();
 
                         // Handle remaining command state param negotiation
                         if (execution.Params != null)
@@ -236,23 +236,26 @@ namespace HomeAutio.Mqtt.GoogleHome
 
                                     // Build the MQTT message
                                     var topic = deviceSupportedCommandParams[parameter.Key];
-                                    string payload = null;
-                                    if (deviceState != null)
+                                    if (!string.IsNullOrEmpty(topic))
                                     {
-                                        payload = deviceState.MapValueToMqtt(parameter.Value);
-                                    }
-                                    else
-                                    {
-                                        payload = parameter.Value.ToString();
-                                        _log.LogWarning("Received supported command '{Command}' but cannot find matched state config, sending command value '{Payload}' without ValueMap", execution.Command, payload);
-                                    }
+                                        string payload = null;
+                                        if (deviceState != null)
+                                        {
+                                            payload = deviceState.MapValueToMqtt(parameter.Value);
+                                        }
+                                        else
+                                        {
+                                            payload = parameter.Value.ToString();
+                                            _log.LogWarning("Received supported command '{Command}' but cannot find matched state config, sending command value '{Payload}' without ValueMap", execution.Command, payload);
+                                        }
 
-                                    await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-                                        .WithTopic(topic)
-                                        .WithPayload(payload)
-                                        .WithAtLeastOnceQoS()
-                                        .Build())
-                                        .ConfigureAwait(false);
+                                        await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                                            .WithTopic(topic)
+                                            .WithPayload(payload)
+                                            .WithAtLeastOnceQoS()
+                                            .Build())
+                                            .ConfigureAwait(false);
+                                    }
                                 }
                             }
                         }
