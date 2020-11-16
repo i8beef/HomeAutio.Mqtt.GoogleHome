@@ -108,15 +108,19 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                     }
                     else
                     {
-                        // Copy the incoming state values, rather than getting current as they won't be updated yet
-                        var replacedParams = execution.Params
-                            .ToFlatDictionary()
-                            .ToDictionary(kvp => CommandToStateKeyMapper.Map(kvp.Key), kvp => kvp.Value)
-                            .ToNestedDictionary();
-
-                        foreach (var param in replacedParams)
+                        // Dont bother for parameter-less commands
+                        if (execution.Params != null)
                         {
-                            states.Add(param.Key, param.Value);
+                            // Copy the incoming state values, rather than getting current as they won't be updated yet
+                            var replacedParams = execution.Params
+                                .ToFlatDictionary()
+                                .ToDictionary(kvp => CommandToStateKeyMapper.Map(kvp.Key), kvp => kvp.Value)
+                                .ToNestedDictionary();
+
+                            foreach (var param in replacedParams)
+                            {
+                                states.Add(param.Key, param.Value);
+                            }
                         }
                     }
                 }
