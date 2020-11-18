@@ -29,17 +29,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 if (deviceTrait.Attributes != null && validationErrors != null)
                 {
                     var attributeJson = JsonConvert.SerializeObject(deviceTrait.Attributes);
-                    var attributeValidator = validationModel[traitName].AttributesSchema;
+                    var attributeValidator = validationModel[traitName].AttributeValidator;
                     var attributeErrors = attributeValidator.Validate(attributeJson);
 
                     validationErrors.AddRange(attributeErrors.Select(x => $"{x.Path}: {x.Kind}"));
                 }
 
                 // State validation
-                if (deviceTrait.State != null && validationModel[traitName].StatesSchema != null)
+                if (deviceTrait.State != null && validationModel[traitName].StateValidator != null)
                 {
                     var stateJson = JsonConvert.SerializeObject(GetGoogleState(deviceTrait.State));
-                    var stateValidator = validationModel[traitName].StatesSchema;
+                    var stateValidator = validationModel[traitName].StateValidator;
                     var stateErrors = stateValidator.Validate(stateJson);
 
                     validationErrors.AddRange(stateErrors.Select(x => $"{x.Path}: {x.Kind}"));
@@ -54,9 +54,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
 
                 foreach (var command in deviceCommands)
                 {
-                    if (validationModel[traitName].CommandSchemas.ContainsKey(command.Key))
+                    if (command.Value != null && command.Value.Any() && validationModel[traitName].CommandValidators.ContainsKey(command.Key))
                     {
-                        var commandValidator = validationModel[traitName].CommandSchemas[command.Key];
+                        var commandValidator = validationModel[traitName].CommandValidators[command.Key];
 
                         // Modify the schema validation, only looking for presence not type, etc. matching
                         ChangeLeafNodesToString(commandValidator);

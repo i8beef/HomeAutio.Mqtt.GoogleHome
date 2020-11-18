@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
@@ -234,6 +235,46 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             _deviceRepository.Update(deviceId, device);
 
             return RedirectToAction("Edit", "GoogleDevice", new { deviceId });
+        }
+
+        /// <summary>
+        /// Get trait examples.
+        /// </summary>
+        /// <param name="traitId">Trait id.</param>
+        /// <returns>Response.</returns>
+        public async Task<IActionResult> Examples([Required] string traitId)
+        {
+            var traitEnumId = Enum.Parse<TraitType>(traitId).ToEnumString();
+
+            var schemas = await SchemaValidationProvider.GetTraitSchemas();
+            if (!schemas.ContainsKey(traitEnumId))
+            {
+                return NotFound();
+            }
+
+            // Flatten out command examples
+            var commandExamples = new List<TraitExample>();
+            foreach (var command in schemas[traitEnumId].CommandExamples)
+            {
+                var commandName = command.Key;
+                foreach (var commandExample in command.Value)
+                {
+                    commandExamples.Add(new TraitExample
+                    {
+                        Comment = $"{commandName}<br/>{commandExample.Comment}",
+                        Example = commandExample.Example
+                    });
+                }
+            }
+
+            var examples = new
+            {
+                AttributeExamples = schemas[traitEnumId].AttributeExamples,
+                StateExamples = schemas[traitEnumId].StateExamples,
+                CommandExamples = commandExamples
+            };
+
+            return Json(examples);
         }
     }
 }
