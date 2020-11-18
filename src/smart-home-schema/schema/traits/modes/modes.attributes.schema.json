@@ -1,0 +1,283 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device with multiple mode and settings.",
+      "availableModes": [
+        {
+          "name": "load_mode",
+          "name_values": [
+            {
+              "name_synonym": [
+                "load",
+                "size",
+                "load size"
+              ],
+              "lang": "en"
+            }
+          ],
+          "settings": [
+            {
+              "setting_name": "small_load",
+              "setting_values": [
+                {
+                  "setting_synonym": [
+                    "small",
+                    "half"
+                  ],
+                  "lang": "en"
+                }
+              ]
+            },
+            {
+              "setting_name": "medium_load",
+              "setting_values": [
+                {
+                  "setting_synonym": [
+                    "medium",
+                    "normal"
+                  ],
+                  "lang": "en"
+                }
+              ]
+            },
+            {
+              "setting_name": "large_load",
+              "setting_values": [
+                {
+                  "setting_synonym": [
+                    "large",
+                    "full"
+                  ],
+                  "lang": "en"
+                }
+              ]
+            }
+          ],
+          "ordered": true
+        },
+        {
+          "name": "temp_mode",
+          "name_values": [
+            {
+              "name_synonym": [
+                "temperature",
+                "temp"
+              ],
+              "lang": "en"
+            }
+          ],
+          "settings": [
+            {
+              "setting_name": "hot_temp",
+              "setting_values": [
+                {
+                  "setting_synonym": [
+                    "hot",
+                    "white"
+                  ],
+                  "lang": "en"
+                }
+              ]
+            },
+            {
+              "setting_name": "warm_temp",
+              "setting_values": [
+                {
+                  "setting_synonym": [
+                    "warm",
+                    "color"
+                  ],
+                  "lang": "en"
+                }
+              ]
+            },
+            {
+              "setting_name": "cold_temp",
+              "setting_values": [
+                {
+                  "setting_synonym": [
+                    "cold",
+                    "delicate"
+                  ],
+                  "lang": "en"
+                }
+              ]
+            }
+          ],
+          "ordered": false
+        }
+      ]
+    },
+    {
+      "$comment": "Device with command-only modes.",
+      "availableModes": [
+        {
+          "name": "light_mode",
+          "name_values": [
+            {
+              "name_synonym": [
+                "light",
+                "lighting"
+              ],
+              "lang": "en"
+            }
+          ],
+          "settings": [
+            {
+              "setting_name": "day_light",
+              "setting_values": [
+                {
+                  "setting_synonym": [
+                    "day",
+                    "bright"
+                  ],
+                  "lang": "en"
+                }
+              ]
+            },
+            {
+              "setting_name": "night_light",
+              "setting_values": [
+                {
+                  "setting_synonym": [
+                    "night",
+                    "dark"
+                  ],
+                  "lang": "en"
+                }
+              ]
+            },
+            {
+              "setting_name": "reading_light",
+              "setting_values": [
+                {
+                  "setting_synonym": [
+                    "reading",
+                    "ambiant"
+                  ],
+                  "lang": "en"
+                }
+              ]
+            }
+          ],
+          "ordered": false
+        }
+      ],
+      "commandOnlyModes": true,
+      "queryOnlyModes": false
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "availableModes": {
+      "description": "List of available modes.",
+      "type": "array",
+      "items": {
+        "description": "Available mode.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Internal name of the mode, which will be used in commands and states. This can be non-user-friendly, and will be shared across all languages.",
+            "type": "string"
+          },
+          "name_values": {
+            "description": "Synonyms of the mode in each supported languages.",
+            "type": "array",
+            "items": {
+              "description": "Synonyms of the mode in a given language.",
+              "type": "object",
+              "properties": {
+                "name_synonym": {
+                  "description": "Synonyms of the mode. The first string in this list is used as the canonical name of the level in that language.",
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "description": "Synonym name.",
+                    "type": "string"
+                  }
+                },
+                "lang": {
+                  "description": "Language code (ISO 639-1). See <a href=\"https://developers.google.com/assistant/smarthome/traits#supported-languages\">supported languages</a>.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "lang",
+                "name_synonym"
+              ]
+            }
+          },
+          "settings": {
+            "description": "Supported settings for this mode.",
+            "type": "array",
+            "items": {
+              "description": "Supported setting.",
+              "type": "object",
+              "properties": {
+                "setting_name": {
+                  "description": "Internal name of the mode setting, which will be used in commands and states. This can be non-user-friendly, and will be shared across all languages.",
+                  "type": "string"
+                },
+                "setting_values": {
+                  "description": "Synonyms of the setting in each supported languages.",
+                  "type": "array",
+                  "items": {
+                    "description": "Synonyms of the setting in a given language.",
+                    "type": "object",
+                    "properties": {
+                      "setting_synonym": {
+                        "description": "Synonyms of the setting. The first string in this list is used as the canonical name of the level in that language.",
+                        "type": "array",
+                        "items": {
+                          "description": "Synonym name.",
+                          "type": "string"
+                        }
+                      },
+                      "lang": {
+                        "description": "Language code (ISO 639-1). See <a href=\"https://developers.google.com/assistant/smarthome/traits#supported-languages\">supported languages</a>.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "lang",
+                      "setting_synonym"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "setting_name",
+                "setting_values"
+              ]
+            },
+            "minItems": 2
+          },
+          "ordered": {
+            "description": "If this is set to true, additional grammar for increase/decrease logic will apply, in the order (increasing) of the settings array.",
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": [
+          "name",
+          "name_values",
+          "settings"
+        ]
+      }
+    },
+    "commandOnlyModes": {
+      "description": "Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.",
+      "type": "boolean",
+      "default": false
+    },
+    "queryOnlyModes": {
+      "description": "Required if the device supports query-only execution. This attribute indicates if the device can only be queried for state information, and cannot be controlled.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "availableModes"
+  ]
+}

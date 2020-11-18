@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Increase temperature 5 degrees",
+      "thermostatTemperatureRelativeDegree": 5
+    },
+    {
+      "$comment": "Decrease the temperature a lot",
+      "thermostatTemperatureRelativeWeight": -5
+    }
+  ],
+  "description": "Adjust the target temperature relative to the current state.",
+  "oneOf": [
+    {
+      "type": "object",
+      "description": "Adjust by degree.",
+      "properties": {
+        "thermostatTemperatureRelativeDegree": {
+          "description": "The exact number of degrees for the temperature to change (for example, \"Turn down 5 degrees\").",
+          "type": "number"
+        }
+      },
+      "required": [
+        "thermostatTemperatureRelativeDegree"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "description": "Adjust by weight.",
+      "properties": {
+        "thermostatTemperatureRelativeWeight": {
+          "description": "This indicates the amount of ambiguous temperature change from a small amount (\"Turn down a little\"), to a large amount (\"A lot warmer\").",
+          "type": "integer",
+          "minimum": -5,
+          "maximum": 5
+        }
+      },
+      "required": [
+        "thermostatTemperatureRelativeWeight"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

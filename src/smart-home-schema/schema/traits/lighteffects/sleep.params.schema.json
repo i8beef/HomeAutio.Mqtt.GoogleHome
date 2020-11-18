@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Gradually lower the device's brightness and, optionally, adjusts the color temperature over a duration of time.",
+  "examples": [
+    {
+      "$comment": "Make my lights sleep for 60 minutes.",
+      "duration": 3600
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "duration": {
+      "description": "Duration for the sleep command, in seconds.",
+      "type": "integer",
+      "minimum": 300,
+      "maximum": 3600
+    }
+  },
+  "additionalProperties": false
+}

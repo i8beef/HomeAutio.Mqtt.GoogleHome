@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Simple open-close device.",
+      "discreteOnlyOpenClose": true
+    },
+    {
+      "$comment": "Top-down bottom-up device. Can be opened in either direction.",
+      "openDirection": [
+        "UP",
+        "DOWN"
+      ]
+    },
+    {
+      "$comment": "Command-only device.",
+      "commandOnlyOpenClose": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "discreteOnlyOpenClose": {
+      "description": "When set to true, this indicates that the device must either be fully open or fully closed (that is, it does not support values between 0% and 100%).",
+      "type": "boolean",
+      "default": false
+    },
+    "openDirection": {
+      "description": "List of supported directions in which the device can open or close. Include this attribute if the device supports opening and closing in more than one direction.",
+      "type": "array",
+      "items": {
+        "description": "Supported direction.",
+        "type": "string",
+        "enum": [
+          "UP",
+          "DOWN",
+          "LEFT",
+          "RIGHT",
+          "IN",
+          "OUT"
+        ]
+      }
+    },
+    "commandOnlyOpenClose": {
+      "description": "Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.",
+      "type": "boolean",
+      "default": false
+    },
+    "queryOnlyOpenClose": {
+      "description": "Indicates if the device can only be queried for state information and cannot be controlled. Sensors that can only report open state should set this field to true.",
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Media device that reports both activity and playback state",
+      "activityState": "ACTIVE",
+      "playbackState": "PAUSED"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "activityState": {
+      "description": "Indicate whether the device is active and the user is actively interacting with it.",
+      "enum": [
+        "INACTIVE",
+        "STANDBY",
+        "ACTIVE"
+      ],
+      "type": "string"
+    },
+    "playbackState": {
+      "description": "Indicate the current state when playing media.",
+      "enum": [
+        "PAUSED",
+        "PLAYING",
+        "FAST_FORWARDING",
+        "REWINDING",
+        "BUFFERING",
+        "STOPPED"
+      ],
+      "type": "string"
+    }
+  }
+}

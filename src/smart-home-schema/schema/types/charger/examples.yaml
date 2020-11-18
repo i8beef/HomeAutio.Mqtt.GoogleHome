@@ -1,0 +1,35 @@
+name: Simple charger
+type: action.devices.types.CHARGER
+traits:
+  - action.devices.traits.EnergyStorage
+attributes:
+  {
+    "isRechargeable": true,
+    "queryOnlyEnergyStorage": false
+  }
+states:
+  {
+    "capacityRemaining": [{
+      "unit": "PERCENTAGE",
+      "rawValue": 50
+    }],
+    "capacityUntilFull": [{
+      "unit": "SECONDS",
+      "rawValue": 3600
+    }],
+    "isCharging": true
+  }
+commands:
+  action.devices.commands.Charge:
+    params:
+      {
+        "charge": false
+      }
+    results:
+      {
+        "capacityRemaining": [{
+          "unit": "PERCENTAGE",
+          "rawValue": 50
+        }],
+        "isCharging": false
+      }

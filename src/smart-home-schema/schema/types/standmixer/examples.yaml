@@ -1,0 +1,48 @@
+name: Simple stand mixer
+type: action.devices.types.STANDMIXER
+traits:
+  - action.devices.traits.Cook
+  - action.devices.traits.StartStop
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "supportedCookingModes": [
+      "MIX",
+      "WHIP"
+    ]
+  }
+states:
+  {
+    "on": true,
+    "isRunning": true,
+    "currentCookingMode": "MIX"
+  }
+commands:
+  action.devices.commands.Cook:
+    params:
+      {
+        "start": false,
+        "cookingMode": "MIX"
+      }
+    results:
+      {
+        "currentCookingMode": "NONE"
+      }
+  action.devices.commands.StartStop:
+    params:
+      {
+        "start": true
+      }
+    results:
+      {
+        "isRunning": true
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

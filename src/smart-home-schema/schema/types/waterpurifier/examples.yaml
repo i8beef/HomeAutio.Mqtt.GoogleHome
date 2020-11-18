@@ -1,0 +1,40 @@
+name: Simple water purifier
+type: action.devices.types.WATERPURIFIER
+traits:
+  - action.devices.traits.OnOff
+  - action.devices.traits.SensorState
+attributes:
+  {
+    "sensorStatesSupported": [
+      {
+        "name": "FilterCleanliness",
+        "descriptiveCapabilities": {
+          "availableStates": [
+            "clean",
+            "dirty",
+            "needs replacement"
+          ]
+        }
+      }
+    ]
+  }
+states:
+  {
+    "on": true,
+    "currentSensorStateData": [
+      {
+        "name": "FilterCleanliness",
+        "currentSensorState": "clean"
+      }
+    ]
+  }
+commands:
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

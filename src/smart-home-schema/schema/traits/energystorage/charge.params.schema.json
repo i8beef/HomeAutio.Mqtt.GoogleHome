@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Start charging command",
+      "charge": true
+    },
+    {
+      "$comment": "Stop charging command",
+      "charge": false
+    }
+  ],
+  "description": "Start or stop charging.",
+  "type": "object",
+  "properties": {
+    "charge": {
+      "description": "True to start charging, false to stop charging.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "charge"
+  ],
+  "additionalProperties": false
+}

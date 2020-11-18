@@ -1,0 +1,66 @@
+name: Simple security system
+type: action.devices.types.SECURITYSYSTEM
+traits:
+  - action.devices.traits.StatusReport
+  - action.devices.traits.ArmDisarm
+attributes:
+  {
+    "availableArmLevels": {
+      "levels": [
+        {
+          "level_name": "home_key",
+          "level_values": [
+            {
+              "level_synonym": [
+                "home and guarding",
+                "level 1",
+                "home",
+                "SL1"
+              ],
+              "lang": "en"
+            }
+          ]
+        },
+        {
+          "level_name": "away_key",
+          "level_values": [
+            {
+              "level_synonym": [
+                "away and guarding",
+                "level 2",
+                "away",
+                "SL2"
+              ],
+              "lang": "en"
+            }
+          ]
+        }
+      ],
+      "ordered": true
+    }
+  }
+states:
+  {
+    "isArmed": true,
+    "currentArmLevel": "home_key",
+    "currentStatusReport": [
+      {
+        "blocking": false,
+        "deviceTarget": "123",
+        "priority": 0,
+        "statusCode": "lowBattery"
+      }
+    ]
+  }
+commands:
+  action.devices.commands.ArmDisarm:
+    params:
+      {
+        "arm": true,
+        "armLevel": "away_key"
+      }
+    results:
+      {
+        "isArmed": true,
+        "currentArmLevel": "away_key"
+      }

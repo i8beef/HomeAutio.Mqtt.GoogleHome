@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Stop the device timer."
+    }
+  ],
+  "description": "Cancel the timer.",
+  "type": "object",
+  "additionalProperties": false
+}

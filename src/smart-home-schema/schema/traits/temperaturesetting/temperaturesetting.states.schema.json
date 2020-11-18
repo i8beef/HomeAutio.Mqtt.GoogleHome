@@ -1,0 +1,294 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "What is the current device temperature?",
+      "activeThermostatMode": "cool",
+      "thermostatMode": "cool",
+      "thermostatTemperatureSetpoint": 23,
+      "thermostatTemperatureAmbient": 25.1
+    },
+    {
+      "$comment": "What is the current device temperature?",
+      "activeThermostatMode": "none",
+      "thermostatMode": "heatcool",
+      "thermostatTemperatureSetpointHigh": 26,
+      "thermostatTemperatureSetpointLow": 22,
+      "thermostatTemperatureAmbient": 25.1
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "activeThermostatMode": {
+      "description": "Currently active mode of the device, from the list of <code>availableThermostatModes</code>. If no mode is currently active, set to <code>none</code>.",
+      "type": "string",
+      "oneOf": [
+        {
+          "enum": [
+            "none"
+          ],
+          "description": "No active mode"
+        },
+        {
+          "enum": [
+            "off"
+          ],
+          "description": "Heating/Cooling activity disabled"
+        },
+        {
+          "enum": [
+            "heat"
+          ],
+          "description": "Device supports heating"
+        },
+        {
+          "enum": [
+            "cool"
+          ],
+          "description": "Device supports cooling"
+        },
+        {
+          "enum": [
+            "on"
+          ],
+          "description": "Restore the previous mode of the device"
+        },
+        {
+          "enum": [
+            "heatcool"
+          ],
+          "description": "Maintaining heating/cooling target as a range"
+        },
+        {
+          "enum": [
+            "auto"
+          ],
+          "description": "Automatic mode with temperature set by a schedule or learned behavior"
+        },
+        {
+          "enum": [
+            "fan-only"
+          ],
+          "description": "Fan running without heat/cool activity"
+        },
+        {
+          "enum": [
+            "purifier"
+          ],
+          "description": "Purifying mode"
+        },
+        {
+          "enum": [
+            "eco"
+          ],
+          "description": "Energy-saving mode"
+        },
+        {
+          "enum": [
+            "dry"
+          ],
+          "description": "Dry mode"
+        }
+      ]
+    },
+    "targetTempReachedEstimateUnixTimestampSec": {
+      "description": "A timestamp representing the estimated time when the target temperature will be reached.",
+      "type": "integer"
+    },
+    "thermostatHumidityAmbient": {
+      "description": "Represents the relative level of the ambient humidity, if supported by the device.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    }
+  },
+  "oneOf": [
+    {
+      "description": "States for fixed set point.",
+      "type": "object",
+      "properties": {
+        "thermostatMode": {
+          "description": "Current mode of the device, from the list of <code>availableThermostatModes</code>.",
+          "type": "string",
+          "oneOf": [
+            {
+              "enum": [
+                "none"
+              ],
+              "description": "No active mode"
+            },
+            {
+              "enum": [
+                "off"
+              ],
+              "description": "Heating/Cooling activity disabled"
+            },
+            {
+              "enum": [
+                "heat"
+              ],
+              "description": "Device supports heating"
+            },
+            {
+              "enum": [
+                "cool"
+              ],
+              "description": "Device supports cooling"
+            },
+            {
+              "enum": [
+                "on"
+              ],
+              "description": "Restore the previous mode of the device"
+            },
+            {
+              "enum": [
+                "heatcool"
+              ],
+              "description": "Maintaining heating/cooling target as a range"
+            },
+            {
+              "enum": [
+                "auto"
+              ],
+              "description": "Automatic mode with temperature set by a schedule or learned behavior"
+            },
+            {
+              "enum": [
+                "fan-only"
+              ],
+              "description": "Fan running without heat/cool activity"
+            },
+            {
+              "enum": [
+                "purifier"
+              ],
+              "description": "Purifying mode"
+            },
+            {
+              "enum": [
+                "eco"
+              ],
+              "description": "Energy-saving mode"
+            },
+            {
+              "enum": [
+                "dry"
+              ],
+              "description": "Dry mode"
+            }
+          ]
+        },
+        "thermostatTemperatureAmbient": {
+          "description": "Current observed temperature, in degrees Celsius.",
+          "type": "number"
+        },
+        "thermostatTemperatureSetpoint": {
+          "description": "Current temperature set point (single target), in degrees Celsius.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "thermostatMode",
+        "thermostatTemperatureAmbient",
+        "thermostatTemperatureSetpoint"
+      ]
+    },
+    {
+      "description": "States for set point range.",
+      "type": "object",
+      "properties": {
+        "thermostatMode": {
+          "description": "Current mode of the device, from the list of <code>availableThermostatModes</code>.",
+          "type": "string",
+          "oneOf": [
+            {
+              "enum": [
+                "none"
+              ],
+              "description": "No active mode"
+            },
+            {
+              "enum": [
+                "off"
+              ],
+              "description": "Heating/Cooling activity disabled"
+            },
+            {
+              "enum": [
+                "heat"
+              ],
+              "description": "Device supports heating"
+            },
+            {
+              "enum": [
+                "cool"
+              ],
+              "description": "Device supports cooling"
+            },
+            {
+              "enum": [
+                "on"
+              ],
+              "description": "Restore the previous mode of the device"
+            },
+            {
+              "enum": [
+                "heatcool"
+              ],
+              "description": "Maintaining heating/cooling target as a range"
+            },
+            {
+              "enum": [
+                "auto"
+              ],
+              "description": "Automatic mode with temperature set by a schedule or learned behavior"
+            },
+            {
+              "enum": [
+                "fan-only"
+              ],
+              "description": "Fan running without heat/cool activity"
+            },
+            {
+              "enum": [
+                "purifier"
+              ],
+              "description": "Purifying mode"
+            },
+            {
+              "enum": [
+                "eco"
+              ],
+              "description": "Energy-saving mode"
+            },
+            {
+              "enum": [
+                "dry"
+              ],
+              "description": "Dry mode"
+            }
+          ]
+        },
+        "thermostatTemperatureAmbient": {
+          "description": "Current observed temperature, in degrees Celsius.",
+          "type": "number"
+        },
+        "thermostatTemperatureSetpointHigh": {
+          "description": "Current high point if in <code>heatcool</code> mode, for a range.",
+          "type": "number"
+        },
+        "thermostatTemperatureSetpointLow": {
+          "description": "Current low point if in <code>heatcool</code> mode, for a range.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "thermostatMode",
+        "thermostatTemperatureAmbient",
+        "thermostatTemperatureSetpointHigh",
+        "thermostatTemperatureSetpointLow"
+      ]
+    }
+  ]
+}

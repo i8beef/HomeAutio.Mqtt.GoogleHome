@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Media device that reports both activity and playback state",
+      "supportActivityState": true,
+      "supportPlaybackState": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "supportActivityState": {
+      "description": "Indicate if the device can report the activity state.",
+      "type": "boolean",
+      "default": false
+    },
+    "supportPlaybackState": {
+      "description": "Indicate if the device can report the current playback state.",
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Search for YouTube app by key",
+      "newApplication": "youtube"
+    },
+    {
+      "$comment": "Search for YouTube app by name",
+      "newApplicationName": "YouTube US"
+    }
+  ],
+  "description": "Search for the given application.",
+  "type": "object",
+  "properties": {
+    "newApplication": {
+      "description": "Key of the application to search for.",
+      "type": "string"
+    },
+    "newApplicationName": {
+      "description": "Name of the application to search for.",
+      "type": "string"
+    }
+  },
+  "if": {
+    "not": {
+      "required": [
+        "newApplication"
+      ]
+    }
+  },
+  "then": {
+    "required": [
+      "newApplicationName"
+    ]
+  },
+  "additionalProperties": false
+}

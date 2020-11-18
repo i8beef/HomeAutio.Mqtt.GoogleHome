@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device supporting two channels.",
+      "availableChannels": [
+        {
+          "key": "ktvu2",
+          "names": [
+            "Fox",
+            "KTVU"
+          ],
+          "number": "2"
+        },
+        {
+          "key": "abc1",
+          "names": [
+            "ABC",
+            "ABC East"
+          ],
+          "number": "4-11"
+        }
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "availableChannels": {
+      "description": "List of objects describing available media channels for this particular device. Each item describes a channel the user can select on this device.",
+      "type": "array",
+      "items": {
+        "description": "Available media channel.",
+        "type": "object",
+        "properties": {
+          "key": {
+            "description": "Unique identifier for this channel. Not exposed to users.",
+            "type": "string"
+          },
+          "names": {
+            "description": "List of user-visible names for this channel.",
+            "type": "array",
+            "items": {
+              "description": "Channel name.",
+              "type": "string"
+            },
+            "examples": [
+              [
+                "Fox",
+                "KTVU"
+              ]
+            ]
+          },
+          "number": {
+            "description": "Optional numeric identifier for this channel.",
+            "type": "string",
+            "examples": [
+              "11",
+              "12.4",
+              "4-3"
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "names"
+        ]
+      }
+    }
+  },
+  "required": [
+    "availableChannels"
+  ]
+}

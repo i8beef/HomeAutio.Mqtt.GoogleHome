@@ -1,0 +1,28 @@
+name: Simple freezer
+type: action.devices.types.FREEZER
+traits:
+  - action.devices.traits.TemperatureControl
+attributes:
+  {
+    "temperatureRange": {
+      "minThresholdCelsius": -10,
+      "maxThresholdCelsius": 5
+    },
+    "temperatureUnitForUX": "C"
+  }
+states:
+  {
+    "temperatureSetpointCelsius": 0,
+    "temperatureAmbientCelsius": 2
+  }
+commands:
+  action.devices.commands.SetTemperature:
+    params:
+      {
+        "temperature": 0
+      }
+    results:
+      {
+        "temperatureSetpointCelsius": 0,
+        "temperatureAmbientCelsius": 2
+      }

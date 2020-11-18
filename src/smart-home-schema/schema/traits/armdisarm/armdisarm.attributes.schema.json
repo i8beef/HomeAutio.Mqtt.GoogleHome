@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Security system with two distinct arm levels",
+      "availableArmLevels": {
+        "levels": [
+          {
+            "level_name": "L1",
+            "level_values": [
+              {
+                "level_synonym": [
+                  "home and guarding",
+                  "SL1"
+                ],
+                "lang": "en"
+              },
+              {
+                "level_synonym": [
+                  "zuhause und bewachen",
+                  "SL1"
+                ],
+                "lang": "de"
+              }
+            ]
+          },
+          {
+            "level_name": "L2",
+            "level_values": [
+              {
+                "level_synonym": [
+                  "away and guarding",
+                  "SL2"
+                ],
+                "lang": "en"
+              },
+              {
+                "level_synonym": [
+                  "weg und bewachen",
+                  "SL2"
+                ],
+                "lang": "de"
+              }
+            ]
+          }
+        ],
+        "ordered": true
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "availableArmLevels": {
+      "description": "Describes the supported security levels of the device. If this attribute is not reported, the device only supports one level.",
+      "type": "object",
+      "properties": {
+        "levels": {
+          "description": "List of the available security levels supported by the device.",
+          "type": "array",
+          "items": {
+            "description": "Security level.",
+            "type": "object",
+            "properties": {
+              "level_name": {
+                "description": "The internal name of the security level that is used in commands and states. This name can be non-user-friendly and is shared across all languages.",
+                "type": "string"
+              },
+              "level_values": {
+                "description": "Contains <code>level_synonym</code> and <code>lang</code>.",
+                "type": "array",
+                "items": {
+                  "description": "Level synonym for a given language.",
+                  "type": "object",
+                  "properties": {
+                    "level_synonym": {
+                      "description": "User-friendly names for the level in each supported language. The first item is treated as the canonical name.",
+                      "type": "array",
+                      "items": {
+                        "description": "Synonym name.",
+                        "type": "string"
+                      }
+                    },
+                    "lang": {
+                      "description": "Language code for the level synonyms. See <a href=\"https://developers.google.com/assistant/smarthome/traits#supported-languages\">Supported languages</a>.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "lang",
+                    "level_synonym"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "level_name",
+              "level_values"
+            ]
+          }
+        },
+        "ordered": {
+          "description": "If set to true, additional grammar for increase/decrease logic applies, in the order of the levels array. For example, \"Hey Google, increase my security level by 1\", results in the Assistant determining the current security level and then increasing that security level by one. If this value is set to false, additional grammar for increase/decrease logic is not supported.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "levels",
+        "ordered"
+      ]
+    }
+  }
+}

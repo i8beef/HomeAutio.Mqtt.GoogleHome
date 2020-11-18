@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "What is the color of the light? (Warm White)",
+      "color": {
+        "temperatureK": 3000
+      }
+    },
+    {
+      "$comment": "What is the color of the light? (Magenta)",
+      "color": {
+        "spectrumRgb": 16711935
+      }
+    },
+    {
+      "$comment": "What is the color of the light? (Magenta)",
+      "color": {
+        "spectrumHsv": {
+          "hue": 300,
+          "saturation": 1.0,
+          "value": 1.0
+        }
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "color": {
+      "description": "The current color setting currently being used on the device.",
+      "type": "object",
+      "oneOf": [
+        {
+          "description": "Color temperature support.",
+          "type": "object",
+          "properties": {
+            "temperatureK": {
+              "description": "Temperature value in Kelvin.",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "temperatureK"
+          ]
+        },
+        {
+          "description": "Color RGB spectrum support.",
+          "type": "object",
+          "properties": {
+            "spectrumRgb": {
+              "description": "Spectrum RGB value as a decimal integer.",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "spectrumRgb"
+          ]
+        },
+        {
+          "description": "Color HSV spectrum support.",
+          "type": "object",
+          "properties": {
+            "spectrumHsv": {
+              "description": "Spectrum HSV value.",
+              "type": "object",
+              "properties": {
+                "hue": {
+                  "description": "Hue.",
+                  "type": "number",
+                  "minimum": 0.0,
+                  "exclusiveMaximum": 360
+                },
+                "saturation": {
+                  "description": " Saturation.",
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0
+                },
+                "value": {
+                  "description": "Value.",
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0
+                }
+              }
+            }
+          },
+          "required": [
+            "spectrumHsv"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "color"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Is my device docked?",
+      "isDocked": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "isDocked": {
+      "description": "Whether the device is connected to the docking station or not.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "isDocked"
+  ]
+}

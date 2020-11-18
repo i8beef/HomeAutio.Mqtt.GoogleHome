@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Is my security system ok?",
+      "currentStatusReport": [
+        {
+          "blocking": false,
+          "deviceTarget": "alarm_1",
+          "priority": 0,
+          "statusCode": "lowBattery"
+        },
+        {
+          "blocking": false,
+          "deviceTarget": "front_window_1",
+          "priority": 1,
+          "statusCode": "deviceOpen"
+        },
+        {
+          "blocking": false,
+          "deviceTarget": "back_window_2",
+          "priority": 1,
+          "statusCode": "deviceOpen"
+        },
+        {
+          "blocking": true,
+          "deviceTarget": "alarm_2",
+          "priority": 0,
+          "statusCode": "needsSoftwareUpdate"
+        }
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "currentStatusReport": {
+      "description": "Current error or exception statuses of the device and any related device IDs.",
+      "type": "array",
+      "items": {
+        "description": "Current status.",
+        "type": "object",
+        "properties": {
+          "blocking": {
+            "description": "True if the error or current status is blocking further commands executions.",
+            "type": "boolean"
+          },
+          "deviceTarget": {
+            "description": "The ID of the target device.",
+            "type": "string"
+          },
+          "priority": {
+            "description": "Specifies the priority of this status. The lower the value, the higher the priority, with the highest priority being 0. Google reports the error or exception status from the highest to lowest priority. Depending on the surface, Google may report only high priority errors or exceptions.",
+            "type": "integer",
+            "minimum": 0
+          },
+          "statusCode": {
+            "description": "The current status of the device. See the full list of <a href=\"https://developers.google.com/assistant/smarthome/reference/errors-exceptions?\">errors and exceptions</a>.",
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "currentStatusReport"
+  ]
+}

@@ -1,0 +1,85 @@
+name: Simple pet feeder
+type: action.devices.types.PETFEEDER
+traits:
+  - action.devices.traits.Dispense
+attributes:
+  {
+    "supportedDispenseItems": [
+      {
+        "item_name": "cat_food_key",
+        "item_name_synonyms": [
+          {
+            "lang": "en",
+            "synonyms": [
+              "cat food",
+              "kibble"
+            ]
+          }
+        ],
+        "supported_units": [
+          "OUNCES",
+          "CUPS"
+        ],
+        "default_portion": {
+          "amount": 1,
+          "unit": "CUPS"
+        }
+      }
+    ],
+    "supportedDispensePresets": [
+      {
+        "preset_name": "cat_meal_key",
+        "preset_name_synonyms": [
+          {
+            "lang": "en",
+            "synonyms": [
+              "normal meal",
+              "dinner"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+states:
+  {
+    "dispenseItems": [
+      {
+        "itemName": "cat_food_key",
+        "amountRemaining": {
+          "amount": 6,
+          "unit": "CUPS"
+        },
+        "amountLastDispensed": {
+          "amount": 2.5,
+          "unit": "CUPS"
+        },
+        "isCurrentlyDispensing": false
+      }
+    ]
+  }
+commands:
+  action.devices.commands.Dispense:
+    params:
+      {
+        "amount": 1.0,
+        "unit": "CUPS",
+        "item": "cat_food_key"
+      }
+    results:
+      {
+        "dispenseItems": [
+          {
+            "itemName": "cat_food_key",
+            "amountRemaining": {
+              "amount": 5,
+              "unit": "CUPS"
+            },
+            "amountLastDispensed": {
+              "amount": 1.0,
+              "unit": "CUPS"
+            },
+            "isCurrentlyDispensing": true
+          }
+        ]
+      }

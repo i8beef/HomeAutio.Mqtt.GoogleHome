@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Adjust the open-close state of the device relative to the current state. This command is only available if <code>commandOnlyOpenClose</code> is set to <code>true</code>.",
+  "examples": [
+    {
+      "$comment": "Open the device a little more",
+      "openRelativePercent": 5
+    },
+    {
+      "$comment": "Close the device 10% more",
+      "openRelativePercent": -10
+    },
+    {
+      "$comment": "Open device 50% more, downward.",
+      "openRelativePercent": 50,
+      "openDirection": "DOWN"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "openRelativePercent": {
+      "description": "The exact percentage to change open-close state. Ambigous relative commands will be converted to an exact percentage parameter (for example, \"Open the blinds a little more\" vs \"Open the blinds by 5%\").",
+      "type": "number",
+      "minimum": -100,
+      "maximum": 100
+    },
+    "openDirection": {
+      "description": "Direction in which to open. Only present if device supports multiple directions, as indicated by the <code>openDirection</code> attribute, and a direction is specified by the user.",
+      "type": "string",
+      "enum": [
+        "UP",
+        "DOWN",
+        "LEFT",
+        "RIGHT",
+        "IN",
+        "OUT"
+      ]
+    }
+  },
+  "required": [
+    "openRelativePercent"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,37 @@
+name: Simple kettle
+type: action.devices.types.KETTLE
+traits:
+  - action.devices.traits.TemperatureControl
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "temperatureRange": {
+      "minThresholdCelsius": 0,
+      "maxThresholdCelsius": 100
+    },
+    "temperatureUnitForUX": "F"
+  }
+states:
+  {
+    "on": true,
+    "temperatureSetpointCelsius": 100
+  }
+commands:
+  action.devices.commands.SetTemperature:
+    params:
+      {
+        "temperature": 85
+      }
+    results:
+      {
+        "temperatureSetpointCelsius": 85
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

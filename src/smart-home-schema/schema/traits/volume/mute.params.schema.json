@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Mute speaker device",
+      "mute": true
+    }
+  ],
+  "description": "Mutes (sets the volume to 0) or unmutes the device.",
+  "type": "object",
+  "properties": {
+    "mute": {
+      "description": "Whether to mute a device or unmute a device.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "mute"
+  ],
+  "additionalProperties": false
+}

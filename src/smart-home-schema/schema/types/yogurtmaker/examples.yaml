@@ -1,0 +1,134 @@
+name: Simple yogurt maker
+type: action.devices.types.YOGURTMAKER
+traits:
+  - action.devices.traits.Cook
+  - action.devices.traits.StartStop
+  - action.devices.traits.Timer
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "supportedCookingModes": [
+      "COOK"
+    ],
+    "foodPresets": [
+      {
+        "food_preset_name": "yogurt_key",
+        "supported_units": [
+          "CUPS",
+          "OUNCES"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "yogurt",
+              "yoghurt"
+            ],
+            "lang": "en"
+          }
+        ]
+      },
+      {
+        "food_preset_name": "coconut_yogurt_key",
+        "supported_units": [
+          "CUPS",
+          "OUNCES"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "coconut yogurt",
+              "vegan yogurt"
+            ],
+            "lang": "en"
+          }
+        ]
+      }
+    ],
+    "maxTimerLimitSec": 30,
+    "pausable": true
+  }
+states:
+  {
+    "on": true,
+    "isRunning": true,
+    "isPaused": false,
+    "timerRemainingSec": 30,
+    "currentCookingMode": "COOK",
+    "currentFoodPreset": "yogurt_key"
+  }
+commands:
+  action.devices.commands.Cook:
+    params:
+      {
+        "start": false,
+        "cookingMode": "COOK"
+      }
+    results:
+      {
+        "currentCookingMode": "NONE",
+        "currentFoodPreset": "NONE"
+      }
+  action.devices.commands.StartStop:
+    params:
+      {
+        "start": true
+      }
+    results:
+      {
+        "isRunning": true,
+        "isPaused": false
+      }
+  action.devices.commands.PauseUnPause:
+    params:
+      {
+        "pause": true
+      }
+    results:
+      {
+        "isRunning": false,
+        "isPaused": true
+      }
+  action.devices.commands.TimerStart:
+    params:
+      {
+        "timerTimeSec": 30
+      }
+    results:
+      {
+        "timerRemainingSec": 30
+      }
+  action.devices.commands.TimerAdjust:
+    params:
+      {
+        "timerTimeSec": -10
+      }
+    results:
+      {
+        "timerRemainingSec": 20
+      }
+  action.devices.commands.TimerPause:
+    results:
+      {
+        "timerRemainingSec": 30,
+        "timerPaused": true
+      }
+  action.devices.commands.TimerResume:
+    results:
+      {
+        "timerRemainingSec": 30,
+        "timerPaused": false
+      }
+  action.devices.commands.TimerCancel:
+    results:
+      {
+        "timerRemainingSec": -1
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

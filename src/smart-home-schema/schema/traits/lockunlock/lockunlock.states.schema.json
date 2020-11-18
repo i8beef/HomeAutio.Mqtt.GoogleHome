@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device that is locked",
+      "isLocked": true
+    },
+    {
+      "$comment": "Device that is jammed",
+      "isJammed": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "isLocked": {
+      "description": "Whether the device is currently locked.",
+      "type": "boolean"
+    },
+    "isJammed": {
+      "description": "Whether the device is currently jammed and therefore its locked state cannot be determined.",
+      "type": "boolean"
+    }
+  },
+  "if": {
+    "properties": {
+      "isJammed": {
+        "const": true
+      }
+    },
+    "required": [
+      "isJammed"
+    ]
+  },
+  "then": {
+    "not": {
+      "required": [
+        "isLocked"
+      ]
+    }
+  }
+}

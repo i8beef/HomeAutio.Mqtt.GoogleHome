@@ -1,0 +1,53 @@
+name: Simple vacuum
+type: action.devices.types.VACUUM
+traits:
+  - action.devices.traits.Dock
+  - action.devices.traits.EnergyStorage
+  - action.devices.traits.StartStop
+attributes:
+  {
+    "queryOnlyEnergyStorage": true,
+    "pausable": true
+  }
+states:
+  {
+    "isRunning": false,
+    "isPaused": false,
+    "isDocked": true,
+    "capacityRemaining": [
+      {
+        "unit": "SECONDS",
+        "rawValue": 36000
+      },
+      {
+        "unit": "PERCENTAGE",
+        "rawValue": 90
+      }
+    ]
+  }
+commands:
+  action.devices.commands.Dock:
+    results:
+      {
+        "isDocked": true
+      }
+  action.devices.commands.StartStop:
+    params:
+      {
+        "start": true
+      }
+    results:
+      {
+        "isRunning": true,
+        "isPaused": false
+      }
+  action.devices.commands.PauseUnPause:
+    params:
+      {
+        "pause": true
+      }
+    results:
+      {
+        "isRunning": false,
+        "isPaused": true
+      }

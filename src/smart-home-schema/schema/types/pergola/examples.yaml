@@ -1,0 +1,44 @@
+name: Simple pergola
+type: action.devices.types.PERGOLA
+traits:
+  - action.devices.traits.OpenClose
+attributes:
+  {
+    "openDirection": [
+      "LEFT",
+      "RIGHT"
+    ]
+  }
+states:
+  {
+    "openState": [
+      {
+        "openPercent": 30,
+        "openDirection": "LEFT"
+      },
+      {
+        "openPercent": 50,
+        "openDirection": "RIGHT"
+      }
+    ]
+  }
+commands:
+  action.devices.commands.OpenClose:
+    params:
+      {
+        "openPercent": 10,
+        "openDirection": "LEFT"
+      }
+    results:
+      {
+        "openState": [
+          {
+            "openPercent": 10,
+            "openDirection": "LEFT"
+          },
+          {
+            "openPercent": 50,
+            "openDirection": "RIGHT"
+          }
+        ]
+      }

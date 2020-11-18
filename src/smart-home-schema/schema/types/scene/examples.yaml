@@ -1,0 +1,14 @@
+name: Simple scene
+type: action.devices.types.SCENE
+traits:
+  - action.devices.traits.Scene
+attributes:
+  {
+    "sceneReversible": true
+  }
+commands:
+  action.devices.commands.ActivateScene:
+    params:
+      {
+        "deactivate": false
+      }

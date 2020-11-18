@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Give me 1 cup of water.",
+      "amount": 1.0,
+      "unit": "CUPS",
+      "item": "water"
+    },
+    {
+      "$comment": "Fill the cat water bowl.",
+      "presetName": "cat_bowl"
+    },
+    {
+      "$comment": "Dispense water."
+    }
+  ],
+  "description": "Dispense items.",
+  "oneOf": [
+    {
+      "description": "Dispense by amount.",
+      "type": "object",
+      "properties": {
+        "item": {
+          "description": "Name of the item to dispense, from the <code>item_name</code> attribute.",
+          "type": "string"
+        },
+        "amount": {
+          "description": "Amount to dispense.",
+          "type": "number"
+        },
+        "unit": {
+          "description": "Unit for the <code>amount</code>, from the <code>supported_units</code> attribute.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "unit"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "description": "Dispense by preset.",
+      "type": "object",
+      "properties": {
+        "presetName": {
+          "description": "Name of the preset to dispense, from the <code>preset_name</code> attribute.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "presetName"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "description": "Dispense without parameters.",
+      "type": "object",
+      "additionalProperties": false
+    }
+  ]
+}

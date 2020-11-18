@@ -1,0 +1,28 @@
+name: Simple refrigerator
+type: action.devices.types.REFRIGERATOR
+traits:
+  - action.devices.traits.TemperatureControl
+attributes:
+  {
+    "temperatureRange": {
+      "minThresholdCelsius": 0,
+      "maxThresholdCelsius": 10
+    },
+    "temperatureUnitForUX": "C"
+  }
+states:
+  {
+    "temperatureSetpointCelsius": 5,
+    "temperatureAmbientCelsius": 7
+  }
+commands:
+  action.devices.commands.SetTemperature:
+    params:
+      {
+        "temperature": 4
+      }
+    results:
+      {
+        "temperatureSetpointCelsius": 4,
+        "temperatureAmbientCelsius": 7
+      }

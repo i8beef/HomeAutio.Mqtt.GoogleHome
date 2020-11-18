@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "An error occurred locking or unlocking the device.",
+  "type": "string",
+  "enum": [
+    "remoteSetDisabled",
+    "deviceJammingDetected",
+    "notSupported",
+    "alreadyLocked",
+    "alreadyUnlocked"
+  ]
+}

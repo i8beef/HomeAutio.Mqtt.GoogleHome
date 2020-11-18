@@ -1,0 +1,232 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Water dispenser that supports units for liquids with presets.",
+      "supportedDispenseItems": [
+        {
+          "item_name": "water",
+          "item_name_synonyms": [
+            {
+              "lang": "en",
+              "synonyms": [
+                "water"
+              ]
+            }
+          ],
+          "supported_units": [
+            "TEASPOONS",
+            "TABLESPOONS",
+            "FLUID_OUNCES",
+            "CUPS",
+            "PINTS",
+            "QUARTS",
+            "GALLONS",
+            "MILLILITERS",
+            "LITERS",
+            "DECILITERS"
+          ],
+          "default_portion": {
+            "amount": 2,
+            "unit": "CUPS"
+          }
+        }
+      ],
+      "supportedDispensePresets": [
+        {
+          "preset_name": "cat_bowl",
+          "preset_name_synonyms": [
+            {
+              "lang": "en",
+              "synonyms": [
+                "cat water bowl",
+                "cat water dish",
+                "cat water cup"
+              ]
+            }
+          ]
+        },
+        {
+          "preset_name": "glass_1",
+          "preset_name_synonyms": [
+            {
+              "lang": "en",
+              "synonyms": [
+                "glass of water",
+                "glass"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "$comment": "Pet food dispenser without presets.",
+      "supportedDispenseItems": [
+        {
+          "item_name": "treat",
+          "item_name_synonyms": [
+            {
+              "lang": "en",
+              "synonyms": [
+                "treats",
+                "dog treats",
+                "treat",
+                "dog treat"
+              ]
+            }
+          ],
+          "supported_units": [
+            "NO_UNITS"
+          ],
+          "default_portion": {
+            "amount": 1,
+            "unit": "NO_UNITS"
+          }
+        }
+      ]
+    }
+  ],
+  "type": "object",
+  "minProperties": 1,
+  "properties": {
+    "supportedDispenseItems": {
+      "description": "Contains information on all the items that the device can dispense.",
+      "type": "array",
+      "items": {
+        "description": "Dispensable item.",
+        "type": "object",
+        "properties": {
+          "item_name": {
+            "description": "Internal name for the dispensed item. This can be non-user-friendly, and is shared across all languages.",
+            "type": "string"
+          },
+          "item_name_synonyms": {
+            "description": "Synonyms names for the dispensed in each supported language.",
+            "type": "array",
+            "items": {
+              "description": "Synonyms names for the dispensed item in a given language.",
+              "type": "object",
+              "properties": {
+                "synonyms": {
+                  "description": "Synonym names for the dispensed item. The synomyms should include both singular and plural forms, if applicable. The first string in this list must be the plural form of the item in that language.",
+                  "type": "array",
+                  "items": {
+                    "description": "Synonym name",
+                    "type": "string"
+                  }
+                },
+                "lang": {
+                  "description": "Language code (ISO 639-1). See <a href=\"https://developers.google.com/assistant/smarthome/traits#supported-languages\">supported languages</a>.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "lang",
+                "synonyms"
+              ]
+            }
+          },
+          "supported_units": {
+            "description": "Set of units the device supports for that item.",
+            "type": "array",
+            "items": {
+              "description": "Supported units.",
+              "type": "string",
+              "enum": [
+                "CENTIMETERS",
+                "CUPS",
+                "DECILITERS",
+                "FLUID_OUNCES",
+                "GALLONS",
+                "GRAMS",
+                "KILOGRAMS",
+                "LITERS",
+                "MILLIGRAMS",
+                "MILLILITERS",
+                "MILLIMETERS",
+                "NO_UNITS",
+                "OUNCES",
+                "PINCH",
+                "PINTS",
+                "PORTION",
+                "POUNDS",
+                "QUARTS",
+                "TABLESPOONS",
+                "TEASPOONS"
+              ]
+            }
+          },
+          "default_portion": {
+            "description": "Typical amount of the item that may be dispensed.",
+            "type": "object",
+            "properties": {
+              "amount": {
+                "description": "Dispensed amount.",
+                "type": "integer"
+              },
+              "unit": {
+                "description": "Dispensed unit.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "amount",
+              "unit"
+            ]
+          }
+        },
+        "required": [
+          "default_portion",
+          "item_name",
+          "item_name_synonyms",
+          "supported_units"
+        ]
+      }
+    },
+    "supportedDispensePresets": {
+      "description": "Presets supported by the device.",
+      "type": "array",
+      "items": {
+        "description": "Preset.",
+        "type": "object",
+        "properties": {
+          "preset_name": {
+            "description": "Internal name for the preset. This name can be non-user-friendly, and is shared across all languages.",
+            "type": "string"
+          },
+          "preset_name_synonyms": {
+            "description": "Synonym names for the preset in each supported language.",
+            "type": "array",
+            "items": {
+              "description": "Synonym names for the preset in a given language.",
+              "type": "object",
+              "properties": {
+                "synonyms": {
+                  "description": "Synonym names for the preset. The synonyms should include both singular and plural forms, if applicable.",
+                  "type": "array",
+                  "items": {
+                    "description": "Synonym name",
+                    "type": "string"
+                  }
+                },
+                "lang": {
+                  "description": "Language code (ISO 639-1). See <a href=\"https://developers.google.com/assistant/smarthome/traits#supported-languages\">supported languages</a>.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "lang",
+                "synonyms"
+              ]
+            }
+          }
+        },
+        "required": [
+          "preset_name",
+          "preset_name_synonyms"
+        ]
+      }
+    }
+  }
+}

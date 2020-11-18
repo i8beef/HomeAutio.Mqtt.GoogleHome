@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Set the humidity to 20 percent.",
+      "humidity": 20
+    }
+  ],
+  "description": "Set the humidity level to an absolute value.",
+  "type": "object",
+  "properties": {
+    "humidity": {
+      "description": "Setpoint humidity percentage. Must fall within <code>humiditySetpointRange</code>.",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "humidity"
+  ],
+  "additionalProperties": false
+}

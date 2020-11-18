@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Set relative volume of speaker device in command-only mode",
+      "relativeSteps": -1
+    }
+  ],
+  "description": "Set volume up or down <i>n</i> steps, based on <code>volumeMaxLevel</code>. For commands that use a relative scale, the Assistant will select <i>n</i> appropriately to scale to the available steps. For example, <i>Make the TV much louder</i> will set a higher number of steps than <i>Make the TV a tiny bit louder</i>.",
+  "type": "object",
+  "properties": {
+    "relativeSteps": {
+      "description": "negative for 'decrease'.",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "relativeSteps"
+  ],
+  "additionalProperties": false
+}

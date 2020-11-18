@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Lower the fan speed little.",
+      "fanSpeedRelativeWeight": -1
+    },
+    {
+      "$comment": "Raise the fan speed by 10 percent.",
+      "fanSpeedRelativePercent": 10.0
+    }
+  ],
+  "description": "Set relative speed.",
+  "oneOf": [
+    {
+      "description": "Set relative speed by weight.",
+      "type": "object",
+      "properties": {
+        "fanSpeedRelativeWeight": {
+          "description": "This value indicates the relative amount of the speed change. The absolute value indicates the scaled amount while the numerical sign indicates the direction of the change.",
+          "type": "integer",
+          "minimum": -5,
+          "maximum": 5
+        }
+      },
+      "required": [
+        "fanSpeedRelativeWeight"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "description": "Set relative speed by percentage.",
+      "type": "object",
+      "properties": {
+        "fanSpeedRelativePercent": {
+          "description": "This value represents the percentage of speed to change.",
+          "type": "number",
+          "minimum": -100,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "fanSpeedRelativePercent"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

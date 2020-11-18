@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "An error occurred returning to the last channel of the device.",
+  "type": "string",
+  "enum": [
+    "channelSwitchFailed"
+  ]
+}

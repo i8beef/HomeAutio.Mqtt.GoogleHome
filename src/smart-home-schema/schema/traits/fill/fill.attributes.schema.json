@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device with basic fill or drain capabilities that does not support discrete fill levels."
+    },
+    {
+      "$comment": "Device that supports discrete fill levels.",
+      "availableFillLevels": {
+        "levels": [
+          {
+            "level_name": "half_level",
+            "level_values": [
+              {
+                "level_synonym": [
+                  "half",
+                  "half way",
+                  "one half"
+                ],
+                "lang": "en"
+              }
+            ]
+          },
+          {
+            "level_name": "full_level",
+            "level_values": [
+              {
+                "level_synonym": [
+                  "full",
+                  "all the way",
+                  "complete"
+                ],
+                "lang": "en"
+              }
+            ]
+          }
+        ],
+        "ordered": true
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "availableFillLevels": {
+      "description": "Describes different levels of filling the device.",
+      "type": "object",
+      "properties": {
+        "levels": {
+          "description": "List of level names and language-specific synonyms.",
+          "type": "array",
+          "items": {
+            "description": "Level name and its language-specific synonyms.",
+            "type": "object",
+            "properties": {
+              "level_name": {
+                "description": "Internal name of the level. This can be non-user-friendly, and will be shared across all languages.",
+                "type": "string"
+              },
+              "level_values": {
+                "description": "Synonyms of the level in each supported language.",
+                "type": "array",
+                "items": {
+                  "description": "Synonyms of the level in a given language.",
+                  "type": "object",
+                  "properties": {
+                    "level_synonym": {
+                      "description": "Synonym of the level. The first string in this list is used as the canonical name of the level in that language.",
+                      "type": "array",
+                      "items": {
+                        "description": "Synonym name.",
+                        "type": "string"
+                      }
+                    },
+                    "lang": {
+                      "description": "Language code (ISO 639-1). See <a href=\"https://developers.google.com/assistant/smarthome/traits#supported-languages\">supported languages</a>.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "lang",
+                    "level_synonym"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "level_name",
+              "level_values"
+            ]
+          }
+        },
+        "ordered": {
+          "description": "If true, the device handles additional grammar for increase or decrease logic, as represented by the <code>levels</code> array (for example, half level).",
+          "type": "boolean"
+        },
+        "supportsFillPercent": {
+          "description": "If true, accept commands for adjusting the level to a percentage.",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "levels",
+        "ordered"
+      ]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "What mode is the device in?",
+      "currentModeSettings": {
+        "load_mode": "small_load",
+        "temp_mode": "cold_temp"
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "currentModeSettings": {
+      "description": "Key/value pair with the mode <code>name</code> of the device as the key, and the current <code>setting_name</code> as the value.",
+      "type": "object",
+      "additionalProperties": {
+        "description": "Current <code>setting_name</code>.",
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "currentModeSettings"
+  ]
+}

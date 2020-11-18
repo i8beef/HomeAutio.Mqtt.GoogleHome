@@ -1,0 +1,22 @@
+name: Simple drawer
+type: action.devices.types.DRAWER
+traits:
+  - action.devices.traits.OpenClose
+attributes:
+  {
+    "discreteOnlyOpenClose": true
+  }
+states:
+  {
+    "openPercent": 100
+  }
+commands:
+  action.devices.commands.OpenClose:
+    params:
+      {
+        "openPercent": 0
+      }
+    results:
+      {
+        "openPercent": 0
+      }

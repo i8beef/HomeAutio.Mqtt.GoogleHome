@@ -1,0 +1,18 @@
+name: Simple radiator
+type: action.devices.types.RADIATOR
+traits:
+  - action.devices.traits.OnOff
+states:
+  {
+    "on": true
+  }
+commands:
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

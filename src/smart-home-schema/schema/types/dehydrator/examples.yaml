@@ -1,0 +1,134 @@
+name: Simple dehydrator
+type: action.devices.types.DEHYDRATOR
+traits:
+  - action.devices.traits.Cook
+  - action.devices.traits.StartStop
+  - action.devices.traits.Timer
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "supportedCookingModes": [
+      "DEHYDRATE"
+    ],
+    "foodPresets": [
+      {
+        "food_preset_name": "beef_jerky_key",
+        "supported_units": [
+          "POUNDS",
+          "OUNCES"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "beef jerky",
+              "jerky"
+            ],
+            "lang": "en"
+          }
+        ]
+      },
+      {
+        "food_preset_name": "beet_chips_key",
+        "supported_units": [
+          "POUNDS",
+          "OUNCES"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "beet chips",
+              "beets"
+            ],
+            "lang": "en"
+          }
+        ]
+      }
+    ],
+    "maxTimerLimitSec": 30,
+    "pausable": true
+  }
+states:
+  {
+    "on": true,
+    "isRunning": true,
+    "isPaused": false,
+    "timerRemainingSec": 30,
+    "currentCookingMode": "DEHYDRATE",
+    "currentFoodPreset": "beef_jerky_key"
+  }
+commands:
+  action.devices.commands.Cook:
+    params:
+      {
+        "start": false,
+        "cookingMode": "DEHYDRATE"
+      }
+    results:
+      {
+        "currentCookingMode": "NONE",
+        "currentFoodPreset": "NONE"
+      }
+  action.devices.commands.StartStop:
+    params:
+      {
+        "start": true
+      }
+    results:
+      {
+        "isRunning": true,
+        "isPaused": false
+      }
+  action.devices.commands.PauseUnPause:
+    params:
+      {
+        "pause": true
+      }
+    results:
+      {
+        "isRunning": false,
+        "isPaused": true
+      }
+  action.devices.commands.TimerStart:
+    params:
+      {
+        "timerTimeSec": 30
+      }
+    results:
+      {
+        "timerRemainingSec": 30
+      }
+  action.devices.commands.TimerAdjust:
+    params:
+      {
+        "timerTimeSec": -10
+      }
+    results:
+      {
+        "timerRemainingSec": 20
+      }
+  action.devices.commands.TimerPause:
+    results:
+      {
+        "timerRemainingSec": 15,
+        "timerPaused": true
+      }
+  action.devices.commands.TimerResume:
+    results:
+      {
+        "timerRemainingSec": 15,
+        "timerPaused": false
+      }
+  action.devices.commands.TimerCancel:
+    results:
+      {
+        "timerRemainingSec": -1
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Switch to the next channel",
+      "relativeChannelChange": 1
+    },
+    {
+      "$comment": "Switch to the previous channel",
+      "relativeChannelChange": -1
+    }
+  ],
+  "description": "Adjust the current channel by a relative amount.",
+  "type": "object",
+  "properties": {
+    "relativeChannelChange": {
+      "description": "The number of channels to increase or decrease.",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "relativeChannelChange"
+  ],
+  "additionalProperties": false
+}

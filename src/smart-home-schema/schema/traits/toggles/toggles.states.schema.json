@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Is sterilization on?",
+      "currentToggleSettings": {
+        "sterilization_toggle": true,
+        "energysaving_toggle": false
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "currentToggleSettings": {
+      "description": "Key/value pair with the toggle <code>name</code> of the device as the key, and the current state as the value.",
+      "type": "object",
+      "additionalProperties": {
+        "description": "Current toggle state.",
+        "type": "boolean"
+      }
+    }
+  },
+  "required": [
+    "currentToggleSettings"
+  ]
+}

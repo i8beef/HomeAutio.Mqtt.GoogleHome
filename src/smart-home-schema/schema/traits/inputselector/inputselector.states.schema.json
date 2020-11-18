@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device with HDMI input currently selected.",
+      "currentInput": "hdmi_1"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "currentInput": {
+      "description": "Key of the input currently in use.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "currentInput"
+  ]
+}

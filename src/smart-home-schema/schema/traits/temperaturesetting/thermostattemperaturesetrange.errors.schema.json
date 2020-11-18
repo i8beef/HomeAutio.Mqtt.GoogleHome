@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "An error occurred setting the target range.",
+  "type": "string",
+  "enum": [
+    "alreadyAtMax",
+    "alreadyAtMin",
+    "lockedToRange",
+    "rangeTooClose",
+    "targetAlreadyReached",
+    "valueOutOfRange"
+  ]
+}

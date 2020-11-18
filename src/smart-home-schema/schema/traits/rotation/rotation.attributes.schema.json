@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device that supports both rotation in percent and degrees.",
+      "supportsDegrees": true,
+      "supportsPercent": true,
+      "rotationDegreesRange": {
+        "rotationDegreesMin": 0,
+        "rotationDegreesMax": 180
+      }
+    },
+    {
+      "$comment": "Device that only supports rotation in degrees.",
+      "supportsDegrees": true,
+      "supportsPercent": false,
+      "rotationDegreesRange": {
+        "rotationDegreesMin": 0,
+        "rotationDegreesMax": 90
+      }
+    },
+    {
+      "$comment": "Device that only supports continuous rotation commands.",
+      "supportsDegrees": true,
+      "supportsPercent": true,
+      "rotationDegreesRange": {
+        "rotationDegreesMin": 0,
+        "rotationDegreesMax": 360
+      },
+      "supportsContinuousRotation": true,
+      "commandOnlyRotation": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "supportsDegrees": {
+      "description": "Set to true if the device allows rotation by degree.",
+      "type": "boolean"
+    },
+    "supportsPercent": {
+      "description": "Set to true if device allows rotation by percent",
+      "type": "boolean"
+    },
+    "rotationDegreesRange": {
+      "description": "Represent the range in degrees that a device can rotate.",
+      "type": "object",
+      "properties": {
+        "rotationDegreesMin": {
+          "description": "Minimum rotation in degrees.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 360
+        },
+        "rotationDegreesMax": {
+          "description": "Maximum rotation in degrees.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 360
+        }
+      },
+      "required": [
+        "rotationDegreesMax",
+        "rotationDegreesMin"
+      ]
+    },
+    "supportsContinuousRotation": {
+      "description": "Set to true if the device allows continuous rotation. When given a relative query, the <code>RotateAbsolute</code> command will wrap around the supported rotation range.",
+      "type": "boolean",
+      "default": false
+    },
+    "commandOnlyRotation": {
+      "description": "Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "supportsDegrees",
+    "supportsPercent"
+  ],
+  "if": {
+    "properties": {
+      "supportsDegrees": {
+        "const": true
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "rotationDegreesRange"
+    ]
+  },
+  "anyOf": [
+    {
+      "type": "object",
+      "description": "At least one rotation mode should be supported (degrees).",
+      "properties": {
+        "supportsDegrees": {
+          "description": "Degree rotation is supported.",
+          "const": true
+        }
+      }
+    },
+    {
+      "type": "object",
+      "description": "At least one rotation mode should be supported (percent).",
+      "properties": {
+        "supportsPercent": {
+          "description": "Percent rotation is supported.",
+          "const": true
+        }
+      }
+    }
+  ]
+}

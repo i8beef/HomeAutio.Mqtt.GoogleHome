@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Start the device.",
+      "start": true
+    },
+    {
+      "$comment": "Stop the device.",
+      "start": false
+    },
+    {
+      "$comment": "Start the device in the office.",
+      "start": true,
+      "zone": "office"
+    },
+    {
+      "$comment": "Start device in the kitchen, dining room, and living room.",
+      "start": true,
+      "multipleZones": [
+        "kitchen",
+        "dining room",
+        "living room"
+      ]
+    }
+  ],
+  "description": "Start or stop the device.",
+  "type": "object",
+  "properties": {
+    "start": {
+      "description": "True to start device operation, false to stop.",
+      "type": "boolean"
+    },
+    "zone": {
+      "description": "Indicates zone in which to start running.",
+      "type": "string"
+    },
+    "multipleZones": {
+      "description": "Indicates two or more zones in which to start running. Will be set instead of <code>zone<code> parameter.",
+      "type": "array",
+      "items": {
+        "description": "Name of a zone to start device in.",
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "start"
+  ],
+  "additionalProperties": false
+}

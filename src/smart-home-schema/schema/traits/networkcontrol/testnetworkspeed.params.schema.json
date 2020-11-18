@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "What's the Wi-Fi speed?",
+      "testDownloadSpeed": true,
+      "testUploadSpeed": true
+    }
+  ],
+  "description": "Test the network download and upload speed.",
+  "type": "object",
+  "properties": {
+    "testDownloadSpeed": {
+      "description": "Indicates whether the download speed should be tested.",
+      "type": "boolean"
+    },
+    "testUploadSpeed": {
+      "description": "Indicates whether the upload speed should be tested.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "testDownloadSpeed",
+    "testUploadSpeed"
+  ],
+  "additionalProperties": false
+}

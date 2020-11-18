@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SyncRequest",
+  "examples": [
+    {
+      "$comment": "SYNC intent request",
+      "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+      "inputs": [
+        {
+          "intent": "action.devices.SYNC"
+        }
+      ]
+    }
+  ],
+  "description": "This intent is triggered at user setup or when a user reconnects through the Action (to reconnect or disconnect) when necessary to resync devices in batch (for example, when new traits are added).",
+  "type": "object",
+  "properties": {
+    "requestId": {
+      "description": "ID of the request.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "inputs": {
+      "description": "List of inputs matching the intent request.",
+      "type": "array",
+      "items": {
+        "description": "Type and payload associated with the intent request.",
+        "type": "object",
+        "properties": {
+          "intent": {
+            "description": "Intent request type.",
+            "const": "action.devices.SYNC"
+          }
+        },
+        "required": [
+          "intent"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "requestId",
+    "inputs"
+  ],
+  "additionalProperties": false
+}

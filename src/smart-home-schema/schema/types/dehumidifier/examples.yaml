@@ -1,0 +1,90 @@
+name: Simple dehumidifier
+type: action.devices.types.DEHUMIDIFIER
+traits:
+  - action.devices.traits.FanSpeed
+  - action.devices.traits.HumiditySetting
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "humiditySetpointRange": {
+      "minPercent": 5,
+      "maxPercent": 50
+    },
+    "availableFanSpeeds": {
+      "speeds": [
+        {
+          "speed_name": "low_key",
+          "speed_values": [
+            {
+              "lang": "en",
+              "speed_synonym": [
+                "low",
+                "slow"
+              ]
+            },
+            {
+              "lang": "de",
+              "speed_synonym": [
+                "niedrig",
+                "schleppend"
+              ]
+            }
+          ]
+        },
+        {
+          "speed_name": "high_key",
+          "speed_values": [
+            {
+              "lang": "en",
+              "speed_synonym": [
+                "high"
+              ]
+            },
+            {
+              "lang": "de",
+              "speed_synonym": [
+                "hoch"
+              ]
+            }
+          ]
+        }
+      ],
+      "ordered": true
+    }
+  }
+states:
+  {
+    "on": true,
+    "currentFanSpeedSetting": "low_key",
+    "humiditySetpointPercent": 10,
+    "humidityAmbientPercent": 20
+  }
+commands:
+  action.devices.commands.SetFanSpeed:
+    params:
+      {
+        "fanSpeed": "high_key"
+      }
+    results:
+      {
+        "currentFanSpeedSetting": "high_key"
+      }
+  action.devices.commands.SetHumidity:
+    params:
+      {
+        "humidity": 15
+      }
+    results:
+      {
+        "humiditySetpointPercent": 15,
+        "humidityAmbientPercent": 20
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

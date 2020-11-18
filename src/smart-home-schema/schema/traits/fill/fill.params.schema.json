@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Fill the bathtub.",
+      "fill": true
+    },
+    {
+      "$comment": "Drain the bathtub.",
+      "fill": false
+    },
+    {
+      "$comment": "Fill the bathtub halfway.",
+      "fill": true,
+      "fillLevel": "half_level"
+    },
+    {
+      "$comment": "Increase the bathtub fill level by one (require <code>ordered</code> attribute to be <code>true</code>).",
+      "fill": true,
+      "fillLevel": "full_level"
+    }
+  ],
+  "description": "Fill or drain the device.",
+  "type": "object",
+  "properties": {
+    "fill": {
+      "description": "True to fill, false to drain.",
+      "type": "boolean"
+    },
+    "fillLevel": {
+      "description": "Indicates the <code>level_name</code> from the <code>availableFillLevels</code> attribute to set. If unspecified, fill to the default level.",
+      "type": "string"
+    },
+    "fillPercent": {
+      "description": "Indicates the requested level percentage.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    }
+  },
+  "required": [
+    "fill"
+  ],
+  "additionalProperties": false
+}

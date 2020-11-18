@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device supporting control between 150 and 500 degrees Fahrenheit, in 5 degree increments.",
+      "temperatureRange": {
+        "minThresholdCelsius": 65.5,
+        "maxThresholdCelsius": 260
+      },
+      "temperatureStepCelsius": 2.778,
+      "temperatureUnitForUX": "F"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "temperatureRange": {
+      "description": "Supported temperature range of the device.",
+      "type": "object",
+      "properties": {
+        "minThresholdCelsius": {
+          "description": "Minimum temperature for the range, in degrees Celsius.",
+          "type": "number"
+        },
+        "maxThresholdCelsius": {
+          "description": "Maximum temperature for the range, in degrees Celsius.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "minThresholdCelsius",
+        "maxThresholdCelsius"
+      ]
+    },
+    "temperatureStepCelsius": {
+      "description": "Specifies the relative temperature step. This is the minimum adjustment interval the device supports. If unspecified, relative steps are calculated as a percentage of <code>temperatureRange</code>.",
+      "type": "number"
+    },
+    "temperatureUnitForUX": {
+      "description": "Temperature unit used in responses to the user.",
+      "type": "string",
+      "enum": [
+        "C",
+        "F"
+      ]
+    },
+    "commandOnlyTemperatureControl": {
+      "description": "Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.",
+      "type": "boolean",
+      "default": false
+    },
+    "queryOnlyTemperatureControl": {
+      "description": "Required if the device supports query-only execution. This attribute indicates if the device can only be queried for state information, and cannot be controlled.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "temperatureRange",
+    "temperatureUnitForUX"
+  ]
+}

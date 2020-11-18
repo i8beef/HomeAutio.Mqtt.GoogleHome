@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device that supports the default humidity range."
+    },
+    {
+      "$comment": "Device that supports a custom humidity range.",
+      "humiditySetpointRange": {
+        "minPercent": 25,
+        "maxPercent": 75
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "humiditySetpointRange": {
+      "description": "Contains the minimum and maximum humidity levels as percentages.",
+      "type": "object",
+      "properties": {
+        "minPercent": {
+          "description": "Represents the minimum humidity level as a percentage.",
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 100
+        },
+        "maxPercent": {
+          "description": "Represents the maximum humidity level as a percentage.",
+          "type": "integer",
+          "default": 100,
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "commandOnlyHumiditySetting": {
+      "description": "Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.",
+      "type": "boolean",
+      "default": false
+    },
+    "queryOnlyHumiditySetting": {
+      "description": "Required if the device supports query-only execution. This attribute indicates if the device can only be queried for state information, and cannot be controlled.",
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device supporting playback commands",
+      "transportControlSupportedCommands": [
+        "NEXT",
+        "PREVIOUS",
+        "PAUSE",
+        "STOP",
+        "RESUME"
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "transportControlSupportedCommands": {
+      "description": "A list of strings describing supported transport control commands on this device.",
+      "type": "array",
+      "items": {
+        "description": "Supported commands.",
+        "type": "string",
+        "enum": [
+          "CAPTION_CONTROL",
+          "NEXT",
+          "PAUSE",
+          "PREVIOUS",
+          "RESUME",
+          "SEEK_RELATIVE",
+          "SEEK_TO_POSITION",
+          "SET_REPEAT",
+          "SHUFFLE",
+          "STOP"
+        ]
+      }
+    }
+  },
+  "required": [
+    "transportControlSupportedCommands"
+  ]
+}

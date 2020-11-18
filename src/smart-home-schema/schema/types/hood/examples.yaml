@@ -1,0 +1,60 @@
+name: Simple hood
+type: action.devices.types.HOOD
+traits:
+  - action.devices.traits.FanSpeed
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "availableFanSpeeds": {
+      "speeds": [
+        {
+          "speed_name": "low_key",
+          "speed_values": [
+            {
+              "speed_synonym": [
+                "low",
+                "slow"
+              ],
+              "lang": "en"
+            }
+          ]
+        },
+        {
+          "speed_name": "high_key",
+          "speed_values": [
+            {
+              "speed_synonym": [
+                "high"
+              ],
+              "lang": "en"
+            }
+          ]
+        }
+      ],
+      "ordered": true
+    }
+  }
+states:
+  {
+    "on": false,
+    "currentFanSpeedSetting": "low_key"
+  }
+commands:
+  action.devices.commands.SetFanSpeed:
+    params:
+      {
+        "fanSpeed": "high_key"
+      }
+    results:
+      {
+        "currentFanSpeedSetting": "high_key"
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

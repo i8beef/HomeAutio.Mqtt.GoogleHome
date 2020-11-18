@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Pause the device.",
+      "pause": true
+    }
+  ],
+  "description": "Pause or unpause device operation.",
+  "type": "object",
+  "properties": {
+    "pause": {
+      "description": "True to pause, false to unpause.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "pause"
+  ],
+  "additionalProperties": false
+}

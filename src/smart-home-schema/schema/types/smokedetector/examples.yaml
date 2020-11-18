@@ -1,0 +1,32 @@
+name: Simple smoke detector
+type: action.devices.types.SMOKE_DETECTOR
+traits:
+  - action.devices.traits.SensorState
+attributes:
+  {
+    "sensorStatesSupported": [
+      {
+        "name": "SmokeLevel",
+        "descriptiveCapabilities": {
+          "availableStates": [
+            "smoke detected",
+            "high",
+            "no smoke detected"
+          ]
+        },
+        "numericCapabilities": {
+          "rawValueUnit": "PARTS_PER_MILLION"
+        }
+      }
+    ]
+  }
+states:
+  {
+    "currentSensorStateData": [
+      {
+        "name": "SmokeLevel",
+        "currentSensorState": "high",
+        "rawValue": 200
+      }
+    ]
+  }

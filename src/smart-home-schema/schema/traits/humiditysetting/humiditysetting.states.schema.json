@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "What humidity does my device show?",
+      "humiditySetpointPercent": 20,
+      "humidityAmbientPercent": 15
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "humiditySetpointPercent": {
+      "description": "Indicates the current target humidity percentage of the device. Must fall within <code>humiditySetpointRange</code>.",
+      "type": "integer"
+    },
+    "humidityAmbientPercent": {
+      "description": "Indicates the current ambient humidity reading of the device as a percentage.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Seek to 30s",
+      "absPositionMs": 30000
+    }
+  ],
+  "description": "Seek to an absolute position.",
+  "type": "object",
+  "properties": {
+    "absPositionMs": {
+      "description": "Millisecond of the absolute position to seek to.",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "absPositionMs"
+  ],
+  "additionalProperties": false
+}

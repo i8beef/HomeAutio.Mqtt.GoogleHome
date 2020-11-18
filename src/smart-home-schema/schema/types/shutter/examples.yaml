@@ -1,0 +1,44 @@
+name: Simple shutter
+type: action.devices.types.SHUTTER
+traits:
+  - action.devices.traits.OpenClose
+attributes:
+  {
+    "openDirection": [
+      "UP",
+      "DOWN"
+    ]
+  }
+states:
+  {
+    "openState": [
+      {
+        "openPercent": 30,
+        "openDirection": "DOWN"
+      },
+      {
+        "openPercent": 50,
+        "openDirection": "UP"
+      }
+    ]
+  }
+commands:
+  action.devices.commands.OpenClose:
+    params:
+      {
+        "openPercent": 10,
+        "openDirection": "DOWN"
+      }
+    results:
+      {
+        "openState": [
+          {
+            "openPercent": 10,
+            "openDirection": "DOWN"
+          },
+          {
+            "openPercent": 50,
+            "openDirection": "UP"
+          }
+        ]
+      }

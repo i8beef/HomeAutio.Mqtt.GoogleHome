@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Turn on energy saving.",
+      "updateToggleSettings": {
+        "energysaving_toggle": true
+      }
+    },
+    {
+      "$comment": "Turn off filter.",
+      "updateToggleSettings": {
+        "filter_toggle": false
+      }
+    }
+  ],
+  "description": "Set a given toggle state.",
+  "type": "object",
+  "properties": {
+    "updateToggleSettings": {
+      "description": "Key/value pair with the toggle <code>name</code> of the device as the key, and the new state as the value.",
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": {
+        "description": "New toggle state",
+        "type": "boolean"
+      }
+    }
+  },
+  "required": [
+    "updateToggleSettings"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device that supports on/off command and reporting states.",
+      "commandOnlyOnOff": false,
+      "queryOnlyOnOff": false
+    },
+    {
+      "$comment": "Device that only supports on/off commands.",
+      "commandOnlyOnOff": true,
+      "queryOnlyOnOff": false
+    },
+    {
+      "$comment": "Device (typically sensor) that only supports reporting on/off state.",
+      "queryOnlyOnOff": true,
+      "commandOnlyOnOff": false
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "commandOnlyOnOff": {
+      "description": "Indicates if the device can only controlled through commands, and cannot be queried for state information.",
+      "type": "boolean",
+      "default": false
+    },
+    "queryOnlyOnOff": {
+      "description": "Indicates if the device can only be queried for state information, and cannot be controlled through commands.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "allOf": [
+    {
+      "description": "Command-only devices can't be query-only.",
+      "if": {
+        "properties": {
+          "commandOnlyOnOff": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "queryOnlyOnOff": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "description": "Query-only devices can't be command-only.",
+      "if": {
+        "properties": {
+          "queryOnlyOnOff": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "commandOnlyOnOff": {
+            "const": false
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Stop the current light effect.",
+  "examples": [
+    {
+      "$comment": "Stop the effect on my light."
+    }
+  ],
+  "type": "object",
+  "additionalProperties": false
+}

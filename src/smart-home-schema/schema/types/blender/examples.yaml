@@ -1,0 +1,136 @@
+name: Simple blender
+type: action.devices.types.BLENDER
+traits:
+  - action.devices.traits.Cook
+  - action.devices.traits.StartStop
+  - action.devices.traits.Timer
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "supportedCookingModes": [
+      "BLEND",
+      "PUREE",
+      "WHIP"
+    ],
+    "foodPresets": [
+      {
+        "food_preset_name": "smoothie_key",
+        "supported_units": [
+          "CUPS",
+          "OUNCES"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "smoothie",
+              "shake"
+            ],
+            "lang": "en"
+          }
+        ]
+      },
+      {
+        "food_preset_name": "salad_dressing_key",
+        "supported_units": [
+          "CUPS",
+          "OUNCES"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "salad dressing",
+              "dressing"
+            ],
+            "lang": "en"
+          }
+        ]
+      }
+    ],
+    "maxTimerLimitSec": 30,
+    "pausable": true
+  }
+states:
+  {
+    "on": true,
+    "isRunning": true,
+    "isPaused": false,
+    "timerRemainingSec": 15,
+    "currentCookingMode": "BLEND",
+    "currentFoodPreset": "smoothie_key"
+  }
+commands:
+  action.devices.commands.Cook:
+    params:
+      {
+        "start": true,
+        "cookingMode": "WHIP"
+      }
+    results:
+      {
+        "currentCookingMode": "WHIP",
+        "currentFoodPreset": "NONE"
+      }
+  action.devices.commands.StartStop:
+    params:
+      {
+        "start": true
+      }
+    results:
+      {
+        "isRunning": true,
+        "isPaused": false
+      }
+  action.devices.commands.PauseUnPause:
+    params:
+      {
+        "pause": true
+      }
+    results:
+      {
+        "isRunning": false,
+        "isPaused": true
+      }
+  action.devices.commands.TimerStart:
+    params:
+      {
+        "timerTimeSec": 30
+      }
+    results:
+      {
+        "timerRemainingSec": 30
+      }
+  action.devices.commands.TimerAdjust:
+    params:
+      {
+        "timerTimeSec": -10
+      }
+    results:
+      {
+        "timerRemainingSec": 20
+      }
+  action.devices.commands.TimerPause:
+    results:
+      {
+        "timerRemainingSec": 15,
+        "timerPaused": true
+      }
+  action.devices.commands.TimerResume:
+    results:
+      {
+        "timerRemainingSec": 15,
+        "timerPaused": false
+      }
+  action.devices.commands.TimerCancel:
+    results:
+      {
+        "timerRemainingSec": -1
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "When was my device last updated? (2000/1/1)",
+      "lastSoftwareUpdateUnixTimestampSec": 946652400
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "lastSoftwareUpdateUnixTimestampSec": {
+      "description": "The Unix timestamp (number of seconds since the Unix Epoch) of the last successful software update. The Unix Epoch is 00:00:00, 1 January 1970, UTC.",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "lastSoftwareUpdateUnixTimestampSec"
+  ]
+}

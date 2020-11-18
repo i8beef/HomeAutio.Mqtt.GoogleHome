@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Install YouTube app by key",
+      "newApplication": "youtube"
+    },
+    {
+      "$comment": "Install YouTube app by name",
+      "newApplicationName": "YouTube US"
+    }
+  ],
+  "description": "Install the given application.",
+  "type": "object",
+  "properties": {
+    "newApplication": {
+      "description": "Key of the application to install.",
+      "type": "string"
+    },
+    "newApplicationName": {
+      "description": "Name of the application to install.",
+      "type": "string"
+    }
+  },
+  "if": {
+    "not": {
+      "required": [
+        "newApplication"
+      ]
+    }
+  },
+  "then": {
+    "required": [
+      "newApplicationName"
+    ]
+  },
+  "additionalProperties": false
+}

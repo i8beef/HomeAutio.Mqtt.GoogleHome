@@ -1,0 +1,70 @@
+name: Simple sprinkler
+type: action.devices.types.SPRINKLER
+traits:
+  - action.devices.traits.Timer
+  - action.devices.traits.StartStop
+attributes:
+  {
+    "availableZones": [
+      "front",
+      "back"
+    ],
+    "maxTimerLimitSec": 3600
+  }
+states:
+  {
+    "isRunning": true,
+    "activeZones": [
+      "front"
+    ],
+    "timerRemainingSec": 300
+  }
+commands:
+  action.devices.commands.StartStop:
+    params:
+      {
+        "start": true,
+        "zone": "back"
+      }
+    results:
+      {
+        "isRunning": true,
+        "activeZones": [
+          "back"
+        ]
+      }
+  action.devices.commands.TimerStart:
+    params:
+      {
+        "timerTimeSec": 300
+      }
+    results:
+      {
+        "timerRemainingSec": 300
+      }
+  action.devices.commands.TimerAdjust:
+    params:
+      {
+        "timerTimeSec": -10
+      }
+    results:
+      {
+        "timerRemainingSec": 290
+      }
+  action.devices.commands.TimerPause:
+    results:
+      {
+        "timerRemainingSec": 300,
+        "timerPaused": true
+      }
+  action.devices.commands.TimerResume:
+    results:
+      {
+        "timerRemainingSec": 300,
+        "timerPaused": false
+      }
+  action.devices.commands.TimerCancel:
+    results:
+      {
+        "timerRemainingSec": -1
+      }

@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Start baking in my oven.",
+      "start": true,
+      "cookingMode": "BAKE"
+    },
+    {
+      "$comment": "Stop baking in my oven.",
+      "start": false,
+      "cookingMode": "BAKE"
+    },
+    {
+      "$comment": "Start cooking 2 cups of white rice in my rice cooker.",
+      "start": true,
+      "cookingMode": "COOK",
+      "foodPreset": "white_rice",
+      "quantity": 2,
+      "unit": "CUPS"
+    }
+  ],
+  "description": "Start or stop cooking.",
+  "type": "object",
+  "properties": {
+    "start": {
+      "description": "True to start cooking, false to stop current cooking mode.",
+      "type": "boolean"
+    },
+    "cookingMode": {
+      "description": "Requested cooking mode for the device, from the <code>supportedCookingModes</code> attribute.",
+      "type": "string"
+    },
+    "foodPreset": {
+      "description": "The name of the food preset requested by the user, from <code>foodPresets</code> attribute.",
+      "type": "string"
+    },
+    "quantity": {
+      "description": "The quantity of the food requested by the user.",
+      "type": "number"
+    },
+    "unit": {
+      "description": "The unit associated with the <code>quantity</code>, from <code>supported_units</code> attribute.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "start"
+  ],
+  "additionalProperties": false
+}

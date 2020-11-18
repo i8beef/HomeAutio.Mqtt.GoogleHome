@@ -1,0 +1,172 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device with only one cooking mode and no preset.",
+      "supportedCookingModes": [
+        "BAKE"
+      ]
+    },
+    {
+      "$comment": "Device with multiple cooking modes and food presets.",
+      "supportedCookingModes": [
+        "COOK",
+        "WARM"
+      ],
+      "foodPresets": [
+        {
+          "food_preset_name": "white_rice",
+          "supported_units": [
+            "CUPS"
+          ],
+          "food_synonyms": [
+            {
+              "synonym": [
+                "White Rice",
+                "Rice"
+              ],
+              "lang": "en"
+            }
+          ]
+        },
+        {
+          "food_preset_name": "brown_rice",
+          "supported_units": [
+            "CUPS"
+          ],
+          "food_synonyms": [
+            {
+              "synonym": [
+                "Brown Rice"
+              ],
+              "lang": "en"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "supportedCookingModes": {
+      "description": "Cooking modes supported by this device.",
+      "type": "array",
+      "items": {
+        "description": "Cooking mode.",
+        "type": "string",
+        "enum": [
+          "UNKNOWN_COOKING_MODE",
+          "BAKE",
+          "BEAT",
+          "BLEND",
+          "BOIL",
+          "BREW",
+          "BROIL",
+          "CONVECTION_BAKE",
+          "COOK",
+          "DEFROST",
+          "DEHYDRATE",
+          "FERMENT",
+          "FRY",
+          "GRILL",
+          "KNEAD",
+          "MICROWAVE",
+          "MIX",
+          "PRESSURE_COOK",
+          "PUREE",
+          "ROAST",
+          "SAUTE",
+          "SLOW_COOK",
+          "SOUS_VIDE",
+          "STEAM",
+          "STEW",
+          "STIR",
+          "WARM",
+          "WHIP"
+        ]
+      }
+    },
+    "foodPresets": {
+      "description": "Presets for certain types of food.",
+      "type": "array",
+      "items": {
+        "description": "Food preset.",
+        "type": "object",
+        "properties": {
+          "food_preset_name": {
+            "description": "Internal name of the food preset, which will be used in commands and states. This name can be non-user-friendly, and is shared across all languages.",
+            "type": "string"
+          },
+          "supported_units": {
+            "description": "Contains all of the units supported by the device for a specific food.",
+            "type": "array",
+            "items": {
+              "description": "Supported unit.",
+              "type": "string",
+              "enum": [
+                "UNKNOWN_UNITS",
+                "NO_UNITS",
+                "CENTIMETERS",
+                "CUPS",
+                "DECILITERS",
+                "FEET",
+                "FLUID_OUNCES",
+                "GALLONS",
+                "GRAMS",
+                "INCHES",
+                "KILOGRAMS",
+                "LITERS",
+                "METERS",
+                "MILLIGRAMS",
+                "MILLILITERS",
+                "MILLIMETERS",
+                "OUNCES",
+                "PINCH",
+                "PINTS",
+                "PORTION",
+                "POUNDS",
+                "QUARTS",
+                "TABLESPOONS",
+                "TEASPOONS"
+              ]
+            }
+          },
+          "food_synonyms": {
+            "description": "Food name synonyms for the preset in each supported language.",
+            "type": "array",
+            "items": {
+              "description": "Food name.",
+              "type": "object",
+              "properties": {
+                "synonym": {
+                  "description": "Synonyms for the preset, should include both singular and plural forms, if applicable.",
+                  "type": "array",
+                  "items": {
+                    "description": "Preset synonym name.",
+                    "type": "string"
+                  }
+                },
+                "lang": {
+                  "description": "Language code (ISO 639-1). See <a href=\"https://developers.google.com/assistant/smarthome/traits#supported-languages\">supported languages</a>.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "lang",
+                "synonym"
+              ]
+            }
+          }
+        },
+        "required": [
+          "food_preset_name",
+          "food_synonyms",
+          "supported_units"
+        ]
+      }
+    }
+  },
+  "required": [
+    "supportedCookingModes"
+  ]
+}

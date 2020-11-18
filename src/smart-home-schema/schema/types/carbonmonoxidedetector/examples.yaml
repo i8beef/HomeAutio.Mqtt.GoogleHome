@@ -1,0 +1,32 @@
+name: Simple carbon monoxide detector
+type: action.devices.types.CARBON_MONOXIDE_DETECTOR
+traits:
+  - action.devices.traits.SensorState
+attributes:
+  {
+    "sensorStatesSupported": [
+      {
+        "name": "CarbonMonoxideLevel",
+        "descriptiveCapabilities": {
+          "availableStates": [
+            "carbon monoxide detected",
+            "high",
+            "no carbon monoxide detected"
+          ]
+        },
+        "numericCapabilities": {
+          "rawValueUnit": "PARTS_PER_MILLION"
+        }
+      }
+    ]
+  }
+states:
+  {
+    "currentSensorStateData": [
+      {
+        "name": "CarbonMonoxideLevel",
+        "currentSensorState": "high",
+        "rawValue": 200
+      }
+    ]
+  }

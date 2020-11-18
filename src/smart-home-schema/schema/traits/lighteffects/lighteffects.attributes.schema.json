@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device supporting color loop effect.",
+      "supportedEffects": [
+        "colorLoop"
+      ]
+    },
+    {
+      "$comment": "Device supporting sleep/wake effects.",
+      "defaultSleepDuration": 300,
+      "defaultWakeDuration": 600,
+      "supportedEffects": [
+        "sleep",
+        "wake"
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "defaultSleepDuration": {
+      "description": "The default duration, in seconds, for the effect triggered by the <code>action.devices.commands.Sleep</code> command.",
+      "type": "integer",
+      "minimum": 300,
+      "maximum": 3600,
+      "default": 1800
+    },
+    "defaultWakeDuration": {
+      "description": "The default duration, in seconds, for the effect triggered by the <code>action.devices.commands.Wake</code> command.",
+      "type": "integer",
+      "minimum": 300,
+      "maximum": 3600,
+      "default": 1800
+    },
+    "supportedEffects": {
+      "description": "List of the effects that the device supports.",
+      "type": "array",
+      "items": {
+        "description": "Supported effect.",
+        "type": "string",
+        "oneOf": [
+          {
+            "enum": [
+              "colorLoop"
+            ],
+            "description": "Loops through various colors randomly."
+          },
+          {
+            "enum": [
+              "sleep"
+            ],
+            "description": "Gradually lowers brightness and, optionally, adjusts the color temperature over a period of time."
+          },
+          {
+            "enum": [
+              "wake"
+            ],
+            "description": "Gradually increases brightness and, optionally, adjusts the color temperature over a period of time."
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "supportedEffects"
+  ]
+}

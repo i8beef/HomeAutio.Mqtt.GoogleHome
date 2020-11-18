@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Activate a scene by name.",
+      "deactivate": false
+    },
+    {
+      "$comment": "Deactivate a scene by name.",
+      "deactivate": true
+    }
+  ],
+  "description": "Activate or deactivate a scene.",
+  "type": "object",
+  "properties": {
+    "deactivate": {
+      "description": "True to cancel a scene if it is reversible, false to activate a scene.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "deactivate"
+  ],
+  "additionalProperties": false
+}

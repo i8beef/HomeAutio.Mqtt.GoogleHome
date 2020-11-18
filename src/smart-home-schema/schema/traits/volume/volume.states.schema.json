@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Speaker device that can be muted and reports current state",
+      "currentVolume": 5,
+      "isMuted": false
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "currentVolume": {
+      "description": "The current volume percentage. It must be between <code>>0</code> and <code>volumeMaxLevel</code>.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "isMuted": {
+      "description": "Required if <code>volumeCanMuteAndUnmute</code> attribute is set to true. True if the device is muted; false otherwise. If <code>isMuted</code> is true, the device still returns <code>currentVolume</code> for the remembered point.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "currentVolume"
+  ]
+}

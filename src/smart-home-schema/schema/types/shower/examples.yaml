@@ -1,0 +1,37 @@
+name: Simple shower
+type: action.devices.types.SHOWER
+traits:
+  - action.devices.traits.TemperatureControl
+  - action.devices.traits.StartStop
+attributes:
+  {
+    "temperatureRange": {
+      "minThresholdCelsius": 25,
+      "maxThresholdCelsius": 100
+    },
+    "temperatureUnitForUX": "F"
+  }
+states:
+  {
+    "isRunning": true,
+    "temperatureSetpointCelsius": 30
+  }
+commands:
+  action.devices.commands.SetTemperature:
+    params:
+      {
+        "temperature": 45
+      }
+    results:
+      {
+        "temperatureSetpointCelsius": 45
+      }
+  action.devices.commands.StartStop:
+    params:
+      {
+        "start": true
+      }
+    results:
+      {
+        "isRunning": true
+      }

@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Return to the last channel"
+    }
+  ],
+  "description": "Return to the last/previous channel the user was on.",
+  "type": "object",
+  "additionalProperties": false
+}

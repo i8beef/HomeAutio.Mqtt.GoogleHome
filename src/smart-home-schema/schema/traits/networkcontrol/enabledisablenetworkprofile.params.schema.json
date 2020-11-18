@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Turn off the internet for the kids.",
+      "profile": "kids",
+      "enable": false
+    }
+  ],
+  "description": "Enable or disable a network profile.",
+  "type": "object",
+  "properties": {
+    "profile": {
+      "description": "The profile name from <code>networkProfiles</code> attribute.",
+      "type": "string"
+    },
+    "enable": {
+      "description": "True to enable the profile, false to disable the profile.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "profile",
+    "enable"
+  ],
+  "additionalProperties": false
+}
