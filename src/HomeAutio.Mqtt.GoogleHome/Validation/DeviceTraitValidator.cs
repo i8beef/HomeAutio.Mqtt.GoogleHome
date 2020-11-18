@@ -80,15 +80,24 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             {
                 switch (property.Value.Type)
                 {
-                    case NJsonSchema.JsonObjectType.String:
-                        // Do nothing
-                        break;
                     case NJsonSchema.JsonObjectType.Array:
+                        foreach (var branch in property.Value.Items)
+                        {
+                            ChangeLeafNodesToString(branch);
+                        }
+
+                        break;
                     case NJsonSchema.JsonObjectType.Object:
                         ChangeLeafNodesToString(property.Value);
                         break;
-                    default:
+                    case NJsonSchema.JsonObjectType.Integer:
+                    case NJsonSchema.JsonObjectType.Number:
+                    case NJsonSchema.JsonObjectType.Boolean:
                         property.Value.Type = NJsonSchema.JsonObjectType.String;
+                        break;
+                    case NJsonSchema.JsonObjectType.String:
+                    default:
+                        // Do nothing
                         break;
                 }
             }
@@ -97,15 +106,24 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             {
                 switch (property.Type)
                 {
-                    case NJsonSchema.JsonObjectType.String:
-                        // Do nothing
-                        break;
                     case NJsonSchema.JsonObjectType.Array:
+                        foreach (var branch in property.Items)
+                        {
+                            ChangeLeafNodesToString(branch);
+                        }
+
+                        break; 
                     case NJsonSchema.JsonObjectType.Object:
                         ChangeLeafNodesToString(property);
                         break;
-                    default:
+                    case NJsonSchema.JsonObjectType.Integer:
+                    case NJsonSchema.JsonObjectType.Number:
+                    case NJsonSchema.JsonObjectType.Boolean:
                         property.Type = NJsonSchema.JsonObjectType.String;
+                        break;
+                    case NJsonSchema.JsonObjectType.String:
+                    default:
+                        // Do nothing
                         break;
                 }
             }
@@ -116,15 +134,24 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 {
                     switch (property.Value.Type)
                     {
-                        case NJsonSchema.JsonObjectType.String:
-                            // Do nothing
-                            break;
                         case NJsonSchema.JsonObjectType.Array:
+                            foreach (var branch in property.Value.Items)
+                            {
+                                ChangeLeafNodesToString(branch);
+                            }
+
+                            break;
                         case NJsonSchema.JsonObjectType.Object:
                             ChangeLeafNodesToString(property.Value);
                             break;
-                        default:
+                        case NJsonSchema.JsonObjectType.Integer:
+                        case NJsonSchema.JsonObjectType.Number:
+                        case NJsonSchema.JsonObjectType.Boolean:
                             property.Value.Type = NJsonSchema.JsonObjectType.String;
+                            break;
+                        case NJsonSchema.JsonObjectType.String:
+                        default:
+                            // Do nothing
                             break;
                     }
                 }
