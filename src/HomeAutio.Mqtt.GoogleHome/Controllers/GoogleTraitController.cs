@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
 using HomeAutio.Mqtt.GoogleHome.Models;
+using HomeAutio.Mqtt.GoogleHome.Models.Schema;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using HomeAutio.Mqtt.GoogleHome.Models.State.Challenges;
 using HomeAutio.Mqtt.GoogleHome.Validation;
@@ -244,22 +245,21 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>Response.</returns>
         public async Task<IActionResult> Examples([Required] string traitId)
         {
-            var traitEnumId = Enum.Parse<TraitType>(traitId).ToEnumString();
-
-            var schemas = await SchemaValidationProvider.GetTraitSchemas();
-            if (!schemas.ContainsKey(traitEnumId))
+            var schemas = await TraitSchemaProvider.GetTraitSchemas();
+            var targetSchema = schemas.FirstOrDefault(x => x.Trait == Enum.Parse<TraitType>(traitId));
+            if (targetSchema == null)
             {
                 return NotFound();
             }
 
             // Flatten out command examples
-            var commandExamples = new List<TraitExample>();
-            foreach (var command in schemas[traitEnumId].CommandExamples)
+            var commandExamples = new List<SchemaExample>();
+            foreach (var commandSchema in targetSchema.CommandSchemas)
             {
-                var commandName = command.Key;
-                foreach (var commandExample in command.Value)
+                var commandName = commandSchema.Command.ToEnumString();
+                foreach (var commandExample in commandSchema.Examples)
                 {
-                    commandExamples.Add(new TraitExample
+                    commandExamples.Add(new SchemaExample
                     {
                         Comment = $"{commandName}<br/>{commandExample.Comment}",
                         Example = commandExample.Example
@@ -269,8 +269,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             var examples = new
             {
-                AttributeExamples = schemas[traitEnumId].AttributeExamples,
-                StateExamples = schemas[traitEnumId].StateExamples,
+                AttributeExamples = targetSchema.AttributeSchema.Examples,
+                StateExamples = targetSchema.StateSchema.Examples,
                 CommandExamples = commandExamples
             };
 

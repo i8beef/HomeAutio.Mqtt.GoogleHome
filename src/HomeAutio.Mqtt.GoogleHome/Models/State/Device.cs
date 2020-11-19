@@ -123,6 +123,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <returns>A Google device state object in a flattened state.</returns>
         private IDictionary<string, object> GetGoogleStateFlattened(IDictionary<string, string> stateCache)
         {
+            // TODO: Handle CameraStream better
             var stateConfigs = Traits
                 .Where(trait => trait.Trait != TraitType.CameraStream)
                 .SelectMany(trait => trait.State);

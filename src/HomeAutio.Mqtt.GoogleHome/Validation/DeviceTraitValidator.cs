@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Newtonsoft.Json;
 
@@ -19,26 +21,24 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         {
             var validationErrors = new List<string>();
 
-            var validationModel = SchemaValidationProvider.GetTraitSchemas().GetAwaiter().GetResult();
-            var traitName = deviceTrait.Trait.ToEnumString();
-            if (validationModel.ContainsKey(traitName))
+            var traitSchemas = TraitSchemaProvider.GetTraitSchemas().GetAwaiter().GetResult();
+            var traitSchema = traitSchemas.FirstOrDefault(x => x.Trait == deviceTrait.Trait);
+            if (traitSchema != null)
             {
                 // Attribute validation
-                if (deviceTrait.Attributes != null && validationErrors != null)
+                if (deviceTrait.Attributes != null && traitSchema.AttributeSchema?.Validator != null)
                 {
                     var attributeJson = JsonConvert.SerializeObject(deviceTrait.Attributes);
-                    var attributeValidator = validationModel[traitName].AttributeValidator;
-                    var attributeErrors = attributeValidator.Validate(attributeJson);
+                    var attributeErrors = traitSchema.AttributeSchema.Validator.Validate(attributeJson);
 
                     validationErrors.AddRange(attributeErrors.Select(x => $"{x.Path}: {x.Kind}"));
                 }
 
                 // State validation
-                if (deviceTrait.State != null && validationModel[traitName].StateValidator != null)
+                if (deviceTrait.State != null && traitSchema.StateSchema?.Validator != null)
                 {
                     var stateJson = JsonConvert.SerializeObject(GetGoogleState(deviceTrait.State));
-                    var stateValidator = validationModel[traitName].StateValidator;
-                    var stateErrors = stateValidator.Validate(stateJson);
+                    var stateErrors = traitSchema.StateSchema.Validator.Validate(stateJson);
 
                     validationErrors.AddRange(stateErrors.Select(x => $"{x.Path}: {x.Kind}"));
                 }
@@ -52,9 +52,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
 
                 foreach (var command in deviceCommands)
                 {
-                    if (command.Value != null && command.Value.Any() && validationModel[traitName].CommandValidators.ContainsKey(command.Key))
+                    var commandType = command.Key.ToEnum<CommandType>();
+                    if (command.Value != null && command.Value.Any() && traitSchema.CommandSchemas.Any(x => x.Command == commandType))
                     {
-                        var commandValidator = validationModel[traitName].CommandValidators[command.Key];
+                        var commandValidator = traitSchema.CommandSchemas.First(x => x.Command == commandType).Validator;
 
                         // Modify the schema validation, only looking for presence not type, etc. matching
                         ChangeLeafNodesToString(commandValidator);
@@ -190,6 +191,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 }
             }
 
+            // Hack replacement of the ColorSetting states
             var filteredStateValues = new Dictionary<string, object>();
             foreach (var key in stateValues.Keys)
             {
