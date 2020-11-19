@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
@@ -77,6 +76,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         /// <param name="schema">Schema to modify.</param>
         private static void ChangeLeafNodesToString(NJsonSchema.JsonSchema schema)
         {
+            // Normal properties
             foreach (var property in schema.Properties)
             {
                 switch (property.Value.Type)
@@ -103,6 +103,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 }
             }
 
+            // At-most-one properties
             foreach (var property in schema.OneOf)
             {
                 switch (property.Type)
@@ -113,7 +114,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                             ChangeLeafNodesToString(branch);
                         }
 
-                        break; 
+                        break;
                     case NJsonSchema.JsonObjectType.Object:
                         ChangeLeafNodesToString(property);
                         break;
@@ -129,6 +130,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 }
             }
 
+            // At-least-one properties
             foreach (var anyOf in schema.AnyOf)
             {
                 foreach (var property in anyOf.Properties)
@@ -157,14 +159,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     }
                 }
             }
-
         }
 
         /// <summary>
         /// Gets device state as a Google device state object in a flattened state.
         /// </summary>
         /// <remarks>
-        /// Largely derived from <see cref="Device"/> implementations.
+        /// Largely derived from <see cref="Device"/> implementations. This is a candidate for a helper.
         /// </remarks>
         /// <param name="stateConfigs">Current state cache.</param>
         /// <returns>A Google device state object in a flattened state.</returns>

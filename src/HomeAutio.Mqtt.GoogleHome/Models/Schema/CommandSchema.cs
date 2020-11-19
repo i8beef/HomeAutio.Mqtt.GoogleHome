@@ -6,7 +6,6 @@ using NJsonSchema;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
 {
-
     /// <summary>
     /// Command schema.
     /// </summary>
@@ -16,7 +15,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// Initializes a new instance of the <see cref="CommandSchema"/> class.
         /// </summary>
         private CommandSchema() { }
- 
+
         /// <summary>
         /// Command type.
         /// </summary>
