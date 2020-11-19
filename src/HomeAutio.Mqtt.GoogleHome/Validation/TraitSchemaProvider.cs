@@ -31,7 +31,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 {
                     var traitSchema = await TraitSchema.ForTraitType(Enum.Parse<TraitType>(traitType));
                     if (traitSchema != null)
+                    {
                         result.Add(traitSchema);
+                    }
                 }
 
                 _traitSchemaCache = result;

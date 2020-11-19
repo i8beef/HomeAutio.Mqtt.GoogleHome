@@ -60,21 +60,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
 
             // Attributes
             var attributeFile = $"{traitResourceBase}.{traitName}.attributes.schema.json";
-
-            // TODO: Check might not be necessary
-            if (resources.Contains(attributeFile))
-            {
-                traitSchema.AttributeSchema = await AttributeSchema.FromJson(GetResourceString(attributeFile));
-            }
+            traitSchema.AttributeSchema = await AttributeSchema.FromJson(GetResourceString(attributeFile, resources));
 
             // States
             var statesFile = $"{traitResourceBase}.{traitName}.states.schema.json";
-
-            // TODO: Check might not be necessary
-            if (resources.Contains(attributeFile))
-            {
-                traitSchema.StateSchema = await StateSchema.FromJson(GetResourceString(statesFile));
-            }
+            traitSchema.StateSchema = await StateSchema.FromJson(GetResourceString(statesFile, resources));
 
             // Commands
             var commandParamFiles = resources.Where(x => x.StartsWith($"{traitResourceBase}") && x.EndsWith(".params.schema.json"));
@@ -85,9 +75,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                 var commandErrorFile = $"{commandResourceBase}.errors.schema.json";
 
                 var commandSchema = await CommandSchema.FromJson(
-                    GetResourceString(commandParamFile),
-                    GetResourceString(commandResultsFile),
-                    GetResourceString(commandErrorFile));
+                    GetResourceString(commandParamFile, resources),
+                    GetResourceString(commandResultsFile, resources),
+                    GetResourceString(commandErrorFile, resources));
 
                 if (commandSchema != null)
                 {
@@ -102,17 +92,21 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// Gets resource file contents as string.
         /// </summary>
         /// <param name="resourceName">Resource name to retrieve.</param>
+        /// <param name="resources">Available resource files.</param>
         /// <returns>Resource file contents.</returns>
-        private static string GetResourceString(string resourceName)
+        private static string GetResourceString(string resourceName, IEnumerable<string> resources)
         {
             var assembly = typeof(TraitType).Assembly;
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            if (resources.Contains(resourceName))
             {
-                if (stream != null)
+                using (var stream = assembly.GetManifestResourceStream(resourceName))
                 {
-                    using (StreamReader reader = new StreamReader(stream))
+                    if (stream != null)
                     {
-                        return reader.ReadToEnd();
+                        using (var reader = new StreamReader(stream))
+                        {
+                            return reader.ReadToEnd();
+                        }
                     }
                 }
             }
