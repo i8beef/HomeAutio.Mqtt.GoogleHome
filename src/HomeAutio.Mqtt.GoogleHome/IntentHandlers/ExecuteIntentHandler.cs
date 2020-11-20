@@ -106,7 +106,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                             var trait = _deviceRepository
                                 .Get(command.Devices[0].Id)
                                 .Traits
-                                .FirstOrDefault(x => x.Commands.Any(y => y.Key == execution.Command));
+                                .FirstOrDefault(x => x.Commands.ContainsKey(execution.Command));
 
                             if (trait != null)
                             {

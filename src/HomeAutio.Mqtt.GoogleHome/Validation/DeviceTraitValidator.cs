@@ -53,7 +53,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 foreach (var command in deviceCommands)
                 {
                     var commandType = command.Key.ToEnum<CommandType>();
-                    if (command.Value != null && command.Value.Any() && traitSchema.CommandSchemas.Any(x => x.Command == commandType))
+                    if (command.Value != null && traitSchema.CommandSchemas.Any(x => x.Command == commandType))
                     {
                         var commandValidator = traitSchema.CommandSchemas.First(x => x.Command == commandType).Validator;
 
