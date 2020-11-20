@@ -20,9 +20,9 @@ namespace HomeAutio.Mqtt.GoogleHome
             var result = new Dictionary<string, object>();
             foreach (var kvp in source)
             {
-                if (kvp.Value is IDictionary<string, object>)
+                if (kvp.Value is IDictionary<string, object> dictionary)
                 {
-                    var flattenedValueDictionary = ((IDictionary<string, object>)kvp.Value).ToFlatDictionary(delimiter);
+                    var flattenedValueDictionary = dictionary.ToFlatDictionary(delimiter);
                     foreach (var subKvp in flattenedValueDictionary)
                     {
                         result.Add(string.Join(delimiter, kvp.Key, subKvp.Key), subKvp.Value);
@@ -101,8 +101,7 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             foreach (var kvp in source)
             {
-                var valueAsDictionary = kvp.Value as Dictionary<string, object>;
-                if (valueAsDictionary != null)
+                if (kvp.Value is Dictionary<string, object> valueAsDictionary)
                 {
                     if (valueAsDictionary.Keys.All(x => Regex.IsMatch(x, @"^\[\d+\]$")))
                     {
