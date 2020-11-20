@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.Request;
+using HomeAutio.Mqtt.GoogleHome.Validation;
 using Microsoft.Extensions.Logging;
 
 namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
@@ -39,7 +41,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         /// </summary>
         /// <param name="intent">Intent to process.</param>
         /// <returns>A <see cref="Models.Response.ExecutionResponsePayload"/>.</returns>
-        public Models.Response.ExecutionResponsePayload Handle(Models.Request.ExecuteIntent intent)
+        public async Task<Models.Response.ExecutionResponsePayload> Handle(Models.Request.ExecuteIntent intent)
         {
             _log.LogInformation(string.Format(
                 "Received EXECUTE intent for commands: {0}",
@@ -89,16 +91,26 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                         break;
                     }
 
-                    // Handle camera stream commands
-                    if (execution.Command == "action.devices.commands.GetCameraStream")
+                    // Get command schema and check if it has a specified result structure
+                    var schemas = await TraitSchemaProvider.GetTraitSchemas();
+                    var commandSchema = schemas
+                        .SelectMany(x => x.CommandSchemas.Where(y => y.Command.ToEnumString() == execution.Command))
+                        .FirstOrDefault();
+
+                    if (commandSchema.ResultsJson != null)
                     {
-                        // Only allow a single cast command at once
+                        // Specific result structure expected
+                        // Note this path is only supported on a single device here
                         if (command.Devices.Count() == 1)
                         {
-                            // Get the first trait for the camera, as this should be the only trait available
-                            var trait = _deviceRepository.Get(command.Devices[0].Id).Traits.FirstOrDefault();
+                            var trait = _deviceRepository
+                                .Get(command.Devices[0].Id)
+                                .Traits
+                                .FirstOrDefault(x => x.Commands.Any(y => y.Key == execution.Command));
+
                             if (trait != null)
                             {
+                                // Note: At some point might be a good idea to scan results and only populate those
                                 foreach (var state in trait.State)
                                 {
                                     states.Add(state.Key, state.Value.MapValueToGoogle(null));
@@ -108,19 +120,16 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                     }
                     else
                     {
-                        // Dont bother for parameter-less commands
-                        if (execution.Params != null)
-                        {
-                            // Copy the incoming state values, rather than getting current as they won't be updated yet
-                            var replacedParams = execution.Params
-                                .ToFlatDictionary()
-                                .ToDictionary(kvp => CommandToStateKeyMapper.Map(kvp.Key), kvp => kvp.Value)
-                                .ToNestedDictionary();
+                        // Generic device state response expected
+                        // Copy the incoming state values, rather than getting current as they won't be updated yet
+                        var replacedParams = execution.Params
+                            .ToFlatDictionary()
+                            .ToDictionary(kvp => CommandToStateKeyMapper.Map(kvp.Key), kvp => kvp.Value)
+                            .ToNestedDictionary();
 
-                            foreach (var param in replacedParams)
-                            {
-                                states.Add(param.Key, param.Value);
-                            }
+                        foreach (var param in replacedParams)
+                        {
+                            states.Add(param.Key, param.Value);
                         }
                     }
                 }

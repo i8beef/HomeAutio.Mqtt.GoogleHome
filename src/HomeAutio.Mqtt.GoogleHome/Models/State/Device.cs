@@ -74,7 +74,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         public bool IsStateFullyInitialized(IDictionary<string, string> stateCache)
         {
             return !Traits
-                .Where(trait => trait.Trait != TraitType.CameraStream)
                 .SelectMany(trait => trait.State)
                 .Where(state => state.Value.Topic != null)
                 .Where(state => stateCache.ContainsKey(state.Value.Topic))
@@ -89,10 +88,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <returns>A Google device state object in a flattened state.</returns>
         private IDictionary<string, object> GetGoogleStateFlattened(IDictionary<string, string> stateCache)
         {
-            // TODO: Handle CameraStream better
-            var stateConfigs = Traits
-                .Where(trait => trait.Trait != TraitType.CameraStream)
-                .SelectMany(trait => trait.State);
+            var stateConfigs = Traits.SelectMany(trait => trait.State);
 
             var result = new Dictionary<string, object>();
             foreach (var state in stateConfigs)

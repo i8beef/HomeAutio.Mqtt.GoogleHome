@@ -16,7 +16,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
                     new Dictionary<string, object>
                     {
                         {
-                            "spectrumHSV",
+                            "spectrumHsv",
                             new Dictionary<string, object>
                             {
                                 { "hue", 123 },
@@ -33,12 +33,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
 
             // Assert
             Assert.Equal(3, result.Count);
-            Assert.True(result.ContainsKey("color.spectrumHSV.hue"));
-            Assert.Equal(123, result["color.spectrumHSV.hue"]);
-            Assert.True(result.ContainsKey("color.spectrumHSV.saturation"));
-            Assert.Equal(456, result["color.spectrumHSV.saturation"]);
-            Assert.True(result.ContainsKey("color.spectrumHSV.value"));
-            Assert.Equal(789, result["color.spectrumHSV.value"]);
+            Assert.True(result.ContainsKey("color.spectrumHsv.hue"));
+            Assert.Equal(123, result["color.spectrumHsv.hue"]);
+            Assert.True(result.ContainsKey("color.spectrumHsv.saturation"));
+            Assert.Equal(456, result["color.spectrumHsv.saturation"]);
+            Assert.True(result.ContainsKey("color.spectrumHsv.value"));
+            Assert.Equal(789, result["color.spectrumHsv.value"]);
         }
 
         [Fact]
@@ -47,9 +47,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
             // Arrange
             var flattenedDictionary = new Dictionary<string, object>
             {
-                { "color.spectrumHSV.hue", 123 },
-                { "color.spectrumHSV.saturation", 456 },
-                { "color.spectrumHSV.value", 789 }
+                { "color.spectrumHsv.hue", 123 },
+                { "color.spectrumHsv.saturation", 456 },
+                { "color.spectrumHsv.value", 789 }
             };
 
             // Act
@@ -59,9 +59,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
             Assert.True(result.ContainsKey("color"));
 
             var colorResult = (IDictionary<string, object>)result["color"];
-            Assert.True(colorResult.ContainsKey("spectrumHSV"));
+            Assert.True(colorResult.ContainsKey("spectrumHsv"));
 
-            var spectrumHSVResult = (IDictionary<string, object>)colorResult["spectrumHSV"];
+            var spectrumHSVResult = (IDictionary<string, object>)colorResult["spectrumHsv"];
             Assert.True(spectrumHSVResult.ContainsKey("hue"));
             Assert.Equal(123, spectrumHSVResult["hue"]);
 

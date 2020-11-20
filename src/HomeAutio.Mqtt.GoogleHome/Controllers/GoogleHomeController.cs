@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace HomeAutio.Mqtt.GoogleHome.Controllers
 {
@@ -13,8 +13,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
     [Route("/smarthome")]
     public class GoogleHomeController : Controller
     {
-        private readonly ILogger<GoogleHomeController> _log;
-
         private readonly SyncIntentHandler _syncIntentHandler;
         private readonly QueryIntentHandler _queryIntentHandler;
         private readonly ExecuteIntentHandler _executeIntentHandler;
@@ -23,20 +21,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleHomeController"/> class.
         /// </summary>
-        /// <param name="logger">Logging instance.</param>
         /// <param name="syncIntentHandler">Sync intent handler.</param>
         /// <param name="queryIntentHandler">Query ntent handler.</param>
         /// <param name="executeIntentHandler">Execute intent handler.</param>
         /// <param name="disconnectIntentHandler">Disconnect intent handler.</param>
         public GoogleHomeController(
-            ILogger<GoogleHomeController> logger,
             SyncIntentHandler syncIntentHandler,
             QueryIntentHandler queryIntentHandler,
             ExecuteIntentHandler executeIntentHandler,
             DisconnectIntentHandler disconnectIntentHandler)
         {
-            _log = logger ?? throw new ArgumentException(nameof(logger));
-
             _disconnectIntentHandler = disconnectIntentHandler ?? throw new ArgumentException(nameof(disconnectIntentHandler));
             _syncIntentHandler = syncIntentHandler ?? throw new ArgumentException(nameof(syncIntentHandler));
             _queryIntentHandler = queryIntentHandler ?? throw new ArgumentException(nameof(queryIntentHandler));
@@ -50,7 +44,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>Response.</returns>
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult Post([FromBody]Models.Request.Request request)
+        public async Task<IActionResult> Post([FromBody]Models.Request.Request request)
         {
             // Begin building Response
             var response = new Models.Response.Response { RequestId = request.RequestId };
@@ -72,7 +66,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                     response.Payload = _queryIntentHandler.Handle(queryIntent);
                     return Ok(response);
                 case Models.Request.ExecuteIntent executeIntent:
-                    response.Payload = _executeIntentHandler.Handle(executeIntent);
+                    response.Payload = await _executeIntentHandler.Handle(executeIntent);
                     return Ok(response);
                 case Models.Request.DisconnectIntent disconnectIntent:
                     _disconnectIntentHandler.Handle(disconnectIntent);

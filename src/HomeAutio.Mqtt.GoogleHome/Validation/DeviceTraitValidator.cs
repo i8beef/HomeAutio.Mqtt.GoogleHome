@@ -37,7 +37,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 if (deviceTrait.State != null && traitSchema.StateSchema?.Validator != null)
                 {
                     // TODO: Transform schema validation instead of checking output?
-                    var stateJson = JsonConvert.SerializeObject(GetGoogleState(deviceTrait.State));
+                    var stateJson = JsonConvert.SerializeObject(GetFakeGoogleState(deviceTrait.State));
                     var stateErrors = traitSchema.StateSchema.Validator.Validate(stateJson);
 
                     validationErrors.AddRange(stateErrors.Select(x => $"{x.Path}: {x.Kind}"));
@@ -164,14 +164,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         }
 
         /// <summary>
-        /// Gets device state as a Google device state object in a flattened state.
+        /// Gets device state as a Google device state object in a flattened state with dummy data for initial validation.
         /// </summary>
-        /// <remarks>
-        /// TODO: Largely derived from <see cref="Device"/> implementations. This is a candidate for a helper.
-        /// </remarks>
         /// <param name="stateConfigs">Current state cache.</param>
         /// <returns>A Google device state object in a flattened state.</returns>
-        private static IDictionary<string, object> GetGoogleState(IDictionary<string, DeviceState> stateConfigs)
+        private static IDictionary<string, object> GetFakeGoogleState(IDictionary<string, DeviceState> stateConfigs)
         {
             var stateValues = new Dictionary<string, object>();
             foreach (var state in stateConfigs)
@@ -194,31 +191,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 }
             }
 
-            // Hack replacement of the ColorSetting states
-            var filteredStateValues = new Dictionary<string, object>();
-            foreach (var key in stateValues.Keys)
-            {
-                switch (key)
-                {
-                    case "color.spectrumRGB":
-                        filteredStateValues.Add("color.spectrumRgb", stateValues[key]);
-                        break;
-                    case "color.spectrumHSV.hue":
-                        filteredStateValues.Add("color.spectrumHsv.hue", stateValues[key]);
-                        break;
-                    case "color.spectrumHSV.saturation":
-                        filteredStateValues.Add("color.spectrumHsv.saturation", stateValues[key]);
-                        break;
-                    case "color.spectrumHSV.value":
-                        filteredStateValues.Add("color.spectrumHsv.value", stateValues[key]);
-                        break;
-                    default:
-                        filteredStateValues.Add(key, stateValues[key]);
-                        break;
-                }
-            }
-
-            return filteredStateValues.ToNestedDictionary();
+            return stateValues.ToNestedDictionary();
         }
     }
 }
