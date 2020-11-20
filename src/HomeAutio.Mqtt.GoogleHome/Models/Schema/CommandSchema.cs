@@ -49,17 +49,19 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// <summary>
         /// Instantiates from supplied JSON string.
         /// </summary>
+        /// <param name="commandType">Command type.</param>
         /// <param name="paramJson">Param JSON to parse.</param>
         /// <param name="resultsJson">Results JSON to parse.</param>
         /// <param name="errorJson">Error JSON to parse.</param>
         /// <returns>An instantiated <see cref="CommandSchema"/>.</returns>
-        public static async Task<CommandSchema> FromJson(string paramJson, string resultsJson, string errorJson)
+        public static async Task<CommandSchema> FromJson(CommandType commandType, string paramJson, string resultsJson, string errorJson)
         {
             if (string.IsNullOrEmpty(paramJson))
                 return null;
 
             var commandSchema = new CommandSchema
             {
+                Command = commandType,
                 ErrorJson = errorJson,
                 Examples = ExtractExamples(paramJson),
                 ParamJson = paramJson,

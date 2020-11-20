@@ -67,40 +67,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         }
 
         /// <summary>
-        /// Gets device state as a Google device state object for use in QUERY responses.
-        /// </summary>
-        /// <param name="stateCache">Current state cache.</param>
-        /// <returns>A Google device state object for use in QUERY responses.</returns>
-        public IDictionary<string, object> GetGoogleQueryState(IDictionary<string, string> stateCache)
-        {
-            var stateConfigs = GetGoogleStateFlattened(stateCache);
-            var filteredStateConfigs = new Dictionary<string, object>();
-            foreach (var key in stateConfigs.Keys)
-            {
-                switch (key)
-                {
-                    case "color.spectrumRGB":
-                        filteredStateConfigs.Add("color.spectrumRgb", stateConfigs[key]);
-                        break;
-                    case "color.spectrumHSV.hue":
-                        filteredStateConfigs.Add("color.spectrumHsv.hue", stateConfigs[key]);
-                        break;
-                    case "color.spectrumHSV.saturation":
-                        filteredStateConfigs.Add("color.spectrumHsv.saturation", stateConfigs[key]);
-                        break;
-                    case "color.spectrumHSV.value":
-                        filteredStateConfigs.Add("color.spectrumHsv.value", stateConfigs[key]);
-                        break;
-                    default:
-                        filteredStateConfigs.Add(key, stateConfigs[key]);
-                        break;
-                }
-            }
-
-            return filteredStateConfigs.ToNestedDictionary();
-        }
-
-        /// <summary>
         /// Checks if the state cache for the device has been fully initialized.
         /// </summary>
         /// <param name="stateCache">Current state cache.</param>

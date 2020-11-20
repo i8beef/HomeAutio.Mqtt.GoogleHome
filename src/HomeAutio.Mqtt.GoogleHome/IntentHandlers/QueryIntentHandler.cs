@@ -74,7 +74,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                         queryDeviceId =>
                         {
                             var device = devices.FirstOrDefault(x => x.Id == queryDeviceId);
-                            return device != null ? device.GetGoogleQueryState(_stateCache) : offlineDeviceState;
+                            return device != null ? device.GetGoogleState(_stateCache) : offlineDeviceState;
                         })
             };
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -71,10 +72,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
             foreach (var commandParamFile in commandParamFiles)
             {
                 var commandResourceBase = commandParamFile.Replace(".params.schema.json", string.Empty);
+                var commandTypeName = commandResourceBase.Replace($"{traitResourceBase}.", string.Empty);
                 var commandResultsFile = $"{commandResourceBase}.results.schema.json";
                 var commandErrorFile = $"{commandResourceBase}.errors.schema.json";
 
+                var commandType = Enum.Parse<CommandType>(commandTypeName, true);
+
                 var commandSchema = await CommandSchema.FromJson(
+                    commandType,
                     GetResourceString(commandParamFile, resources),
                     GetResourceString(commandResultsFile, resources),
                     GetResourceString(commandErrorFile, resources));
