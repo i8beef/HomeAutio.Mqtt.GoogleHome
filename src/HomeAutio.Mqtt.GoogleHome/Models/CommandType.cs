@@ -44,6 +44,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         BrightnessAbsolute,
 
         /// <summary>
+        /// action.devices.commands.BrightnessRelative
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.BrightnessRelative")]
+        BrightnessRelative,
+
+        /// <summary>
         /// action.devices.commands.Charge
         /// </summary>
         [EnumMember(Value = "action.devices.commands.Charge")]
@@ -200,6 +206,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Mute,
 
         /// <summary>
+        /// action.devices.commands.NextInput
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.NextInput")]
+        NextInput,
+
+        /// <summary>
         /// action.devices.commands.OnOff
         /// </summary>
         [EnumMember(Value = "action.devices.commands.OnOff")]
@@ -212,10 +224,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         OpenClose,
 
         /// <summary>
+        /// action.devices.commands.OpenCloseRelative
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.OpenCloseRelative")]
+        OpenCloseRelative,
+
+        /// <summary>
         /// action.devices.commands.PauseUnpause
         /// </summary>
         [EnumMember(Value = "action.devices.commands.PauseUnpause")]
         PauseUnpause,
+
+        /// <summary>
+        /// action.devices.commands.PreviousInput
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.PreviousInput")]
+        PreviousInput,
 
         /// <summary>
         /// action.devices.commands.Reboot
@@ -260,10 +284,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         SetFanSpeed,
 
         /// <summary>
-        /// action.devices.commands.SetFanSpeedRelativeSpeed
+        /// action.devices.commands.SetFanSpeedRelative
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.SetFanSpeedRelativeSpeed")]
-        SetFanSpeedRelativeSpeed,
+        [EnumMember(Value = "action.devices.commands.SetFanSpeedRelative")]
+        SetFanSpeedRelative,
 
         /// <summary>
         /// action.devices.commands.SetHumidity
