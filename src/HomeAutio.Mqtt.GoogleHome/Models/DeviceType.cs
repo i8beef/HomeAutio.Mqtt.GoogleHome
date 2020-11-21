@@ -8,6 +8,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
     public enum DeviceType
     {
         /// <summary>
+        /// Unknown device type.
+        /// </summary>
+        Unknown,
+
+        /// <summary>
         /// action.devices.types.AC_UNIT.
         /// </summary>
         [EnumMember(Value = "action.devices.types.AC_UNIT")]
@@ -473,11 +478,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// action.devices.types.YOGURTMAKER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.YOGURTMAKER")]
-        YogurtMaker,
-
-        /// <summary>
-        /// Unknown device type.
-        /// </summary>
-        Unknown
+        YogurtMaker
     }
 }

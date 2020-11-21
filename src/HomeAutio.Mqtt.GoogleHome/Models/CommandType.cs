@@ -8,6 +8,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
     public enum CommandType
     {
         /// <summary>
+        /// Unknown command type.
+        /// </summary>
+        [EnumMember(Value = "Unknown")]
+        Unknown,
+
+        /// <summary>
         /// action.devices.commands.ActivateScene
         /// </summary>
         [EnumMember(Value = "action.devices.commands.ActivateScene")]
@@ -419,12 +425,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// action.devices.commands.Wake
         /// </summary>
         [EnumMember(Value = "action.devices.commands.Wake")]
-        Wake,
-
-        /// <summary>
-        /// Unknown command type.
-        /// </summary>
-        [EnumMember(Value = "Unknown")]
-        Unknown
+        Wake
     }
 }

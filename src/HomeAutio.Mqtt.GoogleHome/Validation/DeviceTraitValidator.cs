@@ -96,18 +96,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     break;
                 case NJsonSchema.JsonObjectType.Object:
                     foreach (var property in schema.Properties)
+                    {
                         ChangeLeafNodesToString(property.Value);
+                    }
 
                     foreach (var property in schema.OneOf)
+                    {
                         ChangeLeafNodesToString(property);
+                    }
 
                     foreach (var property in schema.AnyOf)
+                    {
                         ChangeLeafNodesToString(property);
+                    }
 
                     break;
                 case NJsonSchema.JsonObjectType.None:
-                    // Do nothing
-                    break;
                 case NJsonSchema.JsonObjectType.Integer:
                 case NJsonSchema.JsonObjectType.Number:
                 case NJsonSchema.JsonObjectType.Boolean:

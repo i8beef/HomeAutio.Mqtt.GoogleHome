@@ -8,6 +8,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
     public enum TraitType
     {
         /// <summary>
+        /// Unknown trait type.
+        /// </summary>
+        Unknown,
+
+        /// <summary>
         /// action.devices.traits.AppSelector.
         /// </summary>
         [EnumMember(Value = "action.devices.traits.AppSelector")]
@@ -233,11 +238,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// action.devices.traits.Volume.
         /// </summary>
         [EnumMember(Value = "action.devices.traits.Volume")]
-        Volume,
-
-        /// <summary>
-        /// Unknown trait type.
-        /// </summary>
-        Unknown
+        Volume
     }
 }
