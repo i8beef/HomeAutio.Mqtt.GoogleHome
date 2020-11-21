@@ -105,12 +105,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 {
                     if (valueAsDictionary.Keys.All(x => Regex.IsMatch(x, @"^\[\d+\]$")))
                     {
-                        // Convert to list
-                        var list = new List<Dictionary<string, object>>();
-                        foreach (var i in valueAsDictionary.Keys)
-                        {
-                            list.Add((Dictionary<string, object>)valueAsDictionary[i]);
-                        }
+                        var list = valueAsDictionary.Values.ToList();
 
                         result.Add(kvp.Key, list);
                     }

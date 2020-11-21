@@ -57,7 +57,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     {
                         var commandValidator = traitSchema.CommandSchemas.First(x => x.Command == commandType).Validator;
 
-                        // Modify the schema validation, only looking for presence not type, etc. matching
+                        // Modify the schema validation, only looking for presence not type or value
                         ChangeLeafNodesToString(commandValidator);
 
                         // TODO: Transform schema validation instead of checking output?
@@ -78,88 +78,49 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         /// <param name="schema">Schema to modify.</param>
         private static void ChangeLeafNodesToString(NJsonSchema.JsonSchema schema)
         {
-            // Normal properties
-            foreach (var property in schema.Properties)
+            switch (schema.Type)
             {
-                switch (property.Value.Type)
-                {
-                    case NJsonSchema.JsonObjectType.Array:
-                        foreach (var branch in property.Value.Items)
-                        {
-                            ChangeLeafNodesToString(branch);
-                        }
-
-                        break;
-                    case NJsonSchema.JsonObjectType.Object:
-                        ChangeLeafNodesToString(property.Value);
-                        break;
-                    case NJsonSchema.JsonObjectType.Integer:
-                    case NJsonSchema.JsonObjectType.Number:
-                    case NJsonSchema.JsonObjectType.Boolean:
-                        property.Value.Type = NJsonSchema.JsonObjectType.String;
-                        break;
-                    case NJsonSchema.JsonObjectType.String:
-                    default:
-                        // Do nothing
-                        break;
-                }
-            }
-
-            // At-most-one properties
-            foreach (var property in schema.OneOf)
-            {
-                switch (property.Type)
-                {
-                    case NJsonSchema.JsonObjectType.Array:
-                        foreach (var branch in property.Items)
-                        {
-                            ChangeLeafNodesToString(branch);
-                        }
-
-                        break;
-                    case NJsonSchema.JsonObjectType.Object:
-                        ChangeLeafNodesToString(property);
-                        break;
-                    case NJsonSchema.JsonObjectType.Integer:
-                    case NJsonSchema.JsonObjectType.Number:
-                    case NJsonSchema.JsonObjectType.Boolean:
-                        property.Type = NJsonSchema.JsonObjectType.String;
-                        break;
-                    case NJsonSchema.JsonObjectType.String:
-                    default:
-                        // Do nothing
-                        break;
-                }
-            }
-
-            // At-least-one properties
-            foreach (var anyOf in schema.AnyOf)
-            {
-                foreach (var property in anyOf.Properties)
-                {
-                    switch (property.Value.Type)
+                case NJsonSchema.JsonObjectType.Array:
+                    if (schema.Item != null)
                     {
-                        case NJsonSchema.JsonObjectType.Array:
-                            foreach (var branch in property.Value.Items)
-                            {
-                                ChangeLeafNodesToString(branch);
-                            }
-
-                            break;
-                        case NJsonSchema.JsonObjectType.Object:
-                            ChangeLeafNodesToString(property.Value);
-                            break;
-                        case NJsonSchema.JsonObjectType.Integer:
-                        case NJsonSchema.JsonObjectType.Number:
-                        case NJsonSchema.JsonObjectType.Boolean:
-                            property.Value.Type = NJsonSchema.JsonObjectType.String;
-                            break;
-                        case NJsonSchema.JsonObjectType.String:
-                        default:
-                            // Do nothing
-                            break;
+                        ChangeLeafNodesToString(schema.Item);
                     }
-                }
+                    else
+                    {
+                        foreach (var branch in schema.Items)
+                        {
+                            ChangeLeafNodesToString(branch);
+                        }
+                    }
+
+                    break;
+                case NJsonSchema.JsonObjectType.Object:
+                    foreach (var property in schema.Properties)
+                        ChangeLeafNodesToString(property.Value);
+
+                    foreach (var property in schema.OneOf)
+                        ChangeLeafNodesToString(property);
+
+                    foreach (var property in schema.AnyOf)
+                        ChangeLeafNodesToString(property);
+
+                    break;
+                case NJsonSchema.JsonObjectType.None:
+                    // Do nothing
+                    break;
+                case NJsonSchema.JsonObjectType.Integer:
+                case NJsonSchema.JsonObjectType.Number:
+                case NJsonSchema.JsonObjectType.Boolean:
+                case NJsonSchema.JsonObjectType.String:
+                default:
+                    // Replace with simple schema
+                    schema.Type = NJsonSchema.JsonObjectType.None;
+                    if (schema.IsEnumeration)
+                    {
+                        schema.Enumeration.Clear();
+                    }
+
+                    break;
             }
         }
 
