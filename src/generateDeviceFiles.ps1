@@ -18,11 +18,11 @@ foreach ($file in $yamlDeviceFiles) {
     }
 }
 
+$devices = $devices | Sort-Object { $_.name }, { $_.name }
+
 $traits = $traits | Select -Unique | Sort
-$traits
 
 $commands = $commands | Select -Unique | Sort
-$commands
 
 ## File generation
 # Generate DeviceTypes
@@ -56,6 +56,7 @@ foreach ($device in $devices) {
     $deviceName = (Get-Culture).TextInfo.ToTitleCase($device.name)
     $deviceName = $deviceName -Replace "Simple ", "" 
     $deviceName = $deviceName -Replace " ", ""
+    $deviceName = $deviceName -Replace "-", ""
     $deviceTypeString = @"
 ,
 
@@ -72,8 +73,8 @@ foreach ($device in $devices) {
 $sb.AppendLine()
 $sb.AppendLine($deviceTypesFooter)
 
-$sb.ToString()
-#Set-Content -Path $deviceTypeFilePath -Value $sb.ToString()
+$deviceTypesContent = $sb.ToString()
+Set-Content -Path $deviceTypeFilePath -Value $deviceTypesContent.Trim()
 
 # Generate TraitTypes
 $traitTypeFilePath = ".\HomeAutio.Mqtt.GoogleHome\Models\TraitType.cs"
@@ -120,8 +121,7 @@ foreach ($trait in $traits) {
 $sb.AppendLine()
 $sb.AppendLine($traitTypesFooter)
 $traitTypesContent = $sb.ToString()
-$traitTypesContent
-#Set-Content -Path $traitTypeFilePath -Value $traitTypesContent.Trim()
+Set-Content -Path $traitTypeFilePath -Value $traitTypesContent.Trim()
 
 # Generate CommandTypes
 $commandTypeFilePath = ".\HomeAutio.Mqtt.GoogleHome\Models\CommandType.cs"
@@ -171,5 +171,4 @@ foreach ($command in $commands) {
 $sb.AppendLine()
 $sb.AppendLine($commandTypesFooter)
 $commandTypesContent = $sb.ToString()
-$commandTypesContent
-#Set-Content -Path $commandTypeFilePath -Value $commandTypesContent.Trim()
+Set-Content -Path $commandTypeFilePath -Value $commandTypesContent.Trim()

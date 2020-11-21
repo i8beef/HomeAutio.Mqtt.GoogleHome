@@ -16,7 +16,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// action.devices.types.AC_UNIT.
         /// </summary>
         [EnumMember(Value = "action.devices.types.AC_UNIT")]
-        AirConditioningUnit,
+        ACUnit,
 
         /// <summary>
         /// action.devices.types.AIRCOOLER.
@@ -190,7 +190,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// action.devices.types.GARAGE.
         /// </summary>
         [EnumMember(Value = "action.devices.types.GARAGE")]
-        GarageDoor,
+        Garage,
 
         /// <summary>
         /// action.devices.types.GATE.
@@ -247,6 +247,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         MediaRemote,
 
         /// <summary>
+        /// action.devices.types.MICROWAVE.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.MICROWAVE")]
+        Microwave,
+
+        /// <summary>
         /// action.devices.types.MOP.
         /// </summary>
         [EnumMember(Value = "action.devices.types.MOP")]
@@ -257,12 +263,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.types.MOWER")]
         Mower,
-
-        /// <summary>
-        /// action.devices.types.MICROWAVE.
-        /// </summary>
-        [EnumMember(Value = "action.devices.types.MICROWAVE")]
-        Microwave,
 
         /// <summary>
         /// action.devices.types.MULTICOOKER.
@@ -331,16 +331,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Scene,
 
         /// <summary>
-        /// action.devices.types.SENSOR.
-        /// </summary>
-        [EnumMember(Value = "action.devices.types.SENSOR")]
-        Sensor,
-
-        /// <summary>
         /// action.devices.types.SECURITYSYSTEM.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SECURITYSYSTEM")]
         SecuritySystem,
+
+        /// <summary>
+        /// action.devices.types.SENSOR.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.SENSOR")]
+        Sensor,
 
         /// <summary>
         /// action.devices.types.SETTOP.
@@ -349,22 +349,28 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         SetTopBox,
 
         /// <summary>
-        /// action.devices.types.SHUTTER.
-        /// </summary>
-        [EnumMember(Value = "action.devices.types.SHUTTER")]
-        Shutter,
-
-        /// <summary>
         /// action.devices.types.SHOWER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SHOWER")]
         Shower,
 
         /// <summary>
+        /// action.devices.types.SHUTTER.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.SHUTTER")]
+        Shutter,
+
+        /// <summary>
         /// action.devices.types.SMOKE_DETECTOR.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SMOKE_DETECTOR")]
         SmokeDetector,
+
+        /// <summary>
+        /// action.devices.types.SOUNDBAR.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.SOUNDBAR")]
+        Soundbar,
 
         /// <summary>
         /// action.devices.types.SOUSVIDE.
@@ -379,30 +385,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Speaker,
 
         /// <summary>
-        /// action.devices.types.STREAMING_BOX.
-        /// </summary>
-        [EnumMember(Value = "action.devices.types.STREAMING_BOX")]
-        StreamingBox,
-
-        /// <summary>
-        /// action.devices.types.STREAMING_STICK.
-        /// </summary>
-        [EnumMember(Value = "action.devices.types.STREAMING_STICK")]
-        StreamingStick,
-
-        /// <summary>
-        /// action.devices.types.STREAMING_SOUNDBAR.
-        /// </summary>
-        [EnumMember(Value = "action.devices.types.STREAMING_SOUNDBAR")]
-        StreamingSoundbar,
-
-        /// <summary>
-        /// action.devices.types.SOUNDBAR.
-        /// </summary>
-        [EnumMember(Value = "action.devices.types.SOUNDBAR")]
-        Soundbar,
-
-        /// <summary>
         /// action.devices.types.SPRINKLER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SPRINKLER")]
@@ -415,22 +397,40 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         StandMixer,
 
         /// <summary>
+        /// action.devices.types.STREAMING_BOX.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.STREAMING_BOX")]
+        StreamingBox,
+
+        /// <summary>
+        /// action.devices.types.STREAMING_SOUNDBAR.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.STREAMING_SOUNDBAR")]
+        StreamingSoundbar,
+
+        /// <summary>
+        /// action.devices.types.STREAMING_STICK.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.STREAMING_STICK")]
+        StreamingStick,
+
+        /// <summary>
         /// action.devices.types.SWITCH.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SWITCH")]
         Switch,
 
         /// <summary>
-        /// action.devices.types.TV.
-        /// </summary>
-        [EnumMember(Value = "action.devices.types.TV")]
-        Television,
-
-        /// <summary>
         /// action.devices.types.THERMOSTAT.
         /// </summary>
         [EnumMember(Value = "action.devices.types.THERMOSTAT")]
         Thermostat,
+
+        /// <summary>
+        /// action.devices.types.TV.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.TV")]
+        TV,
 
         /// <summary>
         /// action.devices.types.VACUUM.

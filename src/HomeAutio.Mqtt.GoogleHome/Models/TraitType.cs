@@ -49,18 +49,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         ColorSetting,
 
         /// <summary>
-        /// action.devices.traits.ColorSpectrum.
-        /// </summary>
-        [EnumMember(Value = "action.devices.traits.ColorSpectrum")]
-        ColorSpectrum,
-
-        /// <summary>
-        /// action.devices.traits.ColorTemperature.
-        /// </summary>
-        [EnumMember(Value = "action.devices.traits.ColorTemperature")]
-        ColorTemperature,
-
-        /// <summary>
         /// action.devices.traits.Cook.
         /// </summary>
         [EnumMember(Value = "action.devices.traits.Cook")]
@@ -175,16 +163,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         RunCycle,
 
         /// <summary>
-        /// action.devices.traits.SensorState.
-        /// </summary>
-        [EnumMember(Value = "action.devices.traits.SensorState")]
-        SensorState,
-
-        /// <summary>
         /// action.devices.traits.Scene.
         /// </summary>
         [EnumMember(Value = "action.devices.traits.Scene")]
         Scene,
+
+        /// <summary>
+        /// action.devices.traits.SensorState.
+        /// </summary>
+        [EnumMember(Value = "action.devices.traits.SensorState")]
+        SensorState,
 
         /// <summary>
         /// action.devices.traits.SoftwareUpdate.

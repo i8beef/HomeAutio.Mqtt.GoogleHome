@@ -236,10 +236,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         OpenCloseRelative,
 
         /// <summary>
-        /// action.devices.commands.PauseUnpause
+        /// action.devices.commands.PauseUnPause
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.PauseUnpause")]
-        PauseUnpause,
+        [EnumMember(Value = "action.devices.commands.PauseUnPause")]
+        PauseUnPause,
 
         /// <summary>
         /// action.devices.commands.PreviousInput
