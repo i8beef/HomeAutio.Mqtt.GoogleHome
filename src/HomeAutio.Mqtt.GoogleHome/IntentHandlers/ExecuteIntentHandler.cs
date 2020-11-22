@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.Request;
+using HomeAutio.Mqtt.GoogleHome.Models.State;
 using HomeAutio.Mqtt.GoogleHome.Validation;
 using Microsoft.Extensions.Logging;
 
@@ -19,6 +20,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
 
         private readonly IMessageHub _messageHub;
         private readonly IGoogleDeviceRepository _deviceRepository;
+        private readonly IDictionary<string, string> _stateCache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExecuteIntentHandler"/> class.
@@ -26,14 +28,17 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         /// <param name="logger">Logging instance.</param>
         /// <param name="messageHub">Message nhub.</param>
         /// <param name="deviceRepository">Device repository.</param>
+        /// <param name="stateCache">State cache,</param>
         public ExecuteIntentHandler(
             ILogger<ExecuteIntentHandler> logger,
             IMessageHub messageHub,
-            IGoogleDeviceRepository deviceRepository)
+            IGoogleDeviceRepository deviceRepository,
+            StateCache stateCache)
         {
             _log = logger ?? throw new ArgumentException(nameof(logger));
             _messageHub = messageHub ?? throw new ArgumentException(nameof(messageHub));
             _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
+            _stateCache = stateCache ?? throw new ArgumentException(nameof(stateCache));
         }
 
         /// <summary>
@@ -111,9 +116,10 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                             if (trait != null)
                             {
                                 // Note: At some point might be a good idea to scan results and only populate those
-                                foreach (var state in trait.State)
+                                var googleState = trait.GetGoogleStateFlattened(_stateCache);
+                                foreach (var state in googleState)
                                 {
-                                    states.Add(state.Key, state.Value.MapValueToGoogle(null));
+                                    states.Add(state.Key, state.Value);
                                 }
                             }
                         }

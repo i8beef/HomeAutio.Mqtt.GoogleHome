@@ -36,7 +36,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 // State validation
                 if (deviceTrait.State != null && traitSchema.StateSchema?.Validator != null)
                 {
-                    // TODO: Transform schema validation instead of checking output?
                     var stateJson = JsonConvert.SerializeObject(GetFakeGoogleState(deviceTrait.State));
                     var stateErrors = traitSchema.StateSchema.Validator.Validate(stateJson);
 
@@ -60,7 +59,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         // Modify the schema validation, only looking for presence not type or value
                         ChangeLeafNodesToString(commandValidator);
 
-                        // TODO: Transform schema validation instead of checking output?
                         var commandJson = JsonConvert.SerializeObject(command.Value);
                         var commandErrors = commandValidator.Validate(commandJson);
 

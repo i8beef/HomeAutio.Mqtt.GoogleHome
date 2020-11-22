@@ -63,7 +63,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <returns>A Google device state object.</returns>
         public IDictionary<string, object> GetGoogleState(IDictionary<string, string> stateCache)
         {
-            return GetGoogleStateFlattened(stateCache).ToNestedDictionary();
+            var results = new Dictionary<string, object>();
+            foreach (var trait in Traits)
+            {
+                foreach (var googleState in trait.GetGoogleState(stateCache))
+                {
+                    results.Add(googleState.Key, googleState.Value);
+                }
+            }
+
+            return results;
         }
 
         /// <summary>
@@ -79,31 +88,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
                 .Where(state => stateCache.ContainsKey(state.Value.Topic))
                 .Where(state => stateCache[state.Value.Topic] == null)
                 .Any();
-        }
-
-        /// <summary>
-        /// Gets device state as a Google device state object in a flattened state.
-        /// </summary>
-        /// <param name="stateCache">Current state cache.</param>
-        /// <returns>A Google device state object in a flattened state.</returns>
-        private IDictionary<string, object> GetGoogleStateFlattened(IDictionary<string, string> stateCache)
-        {
-            var stateConfigs = Traits.SelectMany(trait => trait.State);
-
-            var result = new Dictionary<string, object>();
-            foreach (var state in stateConfigs)
-            {
-                if (state.Value.Topic != null && stateCache.ContainsKey(state.Value.Topic))
-                {
-                    result.Add(state.Key, state.Value.MapValueToGoogle(stateCache[state.Value.Topic]));
-                }
-                else if (state.Value.Topic == null && state.Value.ValueMap.Any(x => x is StaticMap))
-                {
-                    result.Add(state.Key, state.Value.MapValueToGoogle(null));
-                }
-            }
-
-            return result;
         }
     }
 }

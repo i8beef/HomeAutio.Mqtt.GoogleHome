@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using HomeAutio.Mqtt.GoogleHome.Models.State.Challenges;
+using HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.State
@@ -45,5 +47,43 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// </summary>
         [JsonConverter(typeof(ChallengeJsonConverter))]
         public ChallengeBase Challenge { get; set; }
+
+        /// <summary>
+        /// Gets trait state as a Google device state object.
+        /// </summary>
+        /// <param name="stateCache">Current state cache.</param>
+        /// <returns>A Google device state object.</returns>
+        public IDictionary<string, object> GetGoogleState(IDictionary<string, string> stateCache)
+        {
+            return GetGoogleStateFlattened(stateCache).ToNestedDictionary();
+        }
+
+        /// <summary>
+        /// Gets trait state as a Google device state object in a flattened state.
+        /// </summary>
+        /// <param name="stateCache">Current state cache.</param>
+        /// <returns>A Google device state object in a flattened state.</returns>
+        public IDictionary<string, object> GetGoogleStateFlattened(IDictionary<string, string> stateCache)
+        {
+            var result = new Dictionary<string, object>();
+
+            if (State != null)
+            {
+                foreach (var state in State)
+                {
+                    if (state.Value.Topic != null && stateCache.ContainsKey(state.Value.Topic))
+                    {
+                        result.Add(state.Key, state.Value.MapValueToGoogle(stateCache[state.Value.Topic]));
+                    }
+                    else if (state.Value.Topic == null && state.Value.ValueMap.Any(x => x is StaticMap))
+                    {
+                        result.Add(state.Key, state.Value.MapValueToGoogle(null));
+                    }
+                }
+            }
+
+            return result;
+        }
+
     }
 }
