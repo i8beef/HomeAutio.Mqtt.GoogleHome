@@ -122,6 +122,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         schema.Enumeration.Clear();
                     }
 
+                    if (!string.IsNullOrEmpty(schema.Pattern))
+                    {
+                        schema.Pattern = null;
+                    }
+
                     break;
             }
         }
