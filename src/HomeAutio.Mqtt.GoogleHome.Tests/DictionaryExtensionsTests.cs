@@ -94,7 +94,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
             Assert.True(result.ContainsKey("currentSensorStateData"));
             Assert.True(result.ContainsKey("deepvalue"));
 
-            var currentSensorStateDataResult = (IList<Dictionary<string, object>>)result["currentSensorStateData"];
+            var currentSensorStateDataResult = (IList<object>)result["currentSensorStateData"];
 
             var firstResult = (IDictionary<string, object>)currentSensorStateDataResult[0];
             Assert.Equal(flattenedDictionary["currentSensorStateData.[0].name"], firstResult["name"]);
@@ -107,8 +107,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
             Assert.Equal(flattenedDictionary["currentSensorStateData.[1].rawValue"], secondResult["rawValue"]);
 
             var deepvalueResult = (Dictionary<string, object>)result["deepvalue"];
-            var level2Result = (IList<Dictionary<string, object>>)deepvalueResult["level2"];
-            var deepResult = (Dictionary<string, object>)level2Result[0];
+            var level2Result = (IList<object>)deepvalueResult["level2"];
+            var deepResult = (IDictionary<string, object>)level2Result[0];
             Assert.Equal(flattenedDictionary["deepvalue.level2.[0].name"], deepResult["name"]);
         }
     }

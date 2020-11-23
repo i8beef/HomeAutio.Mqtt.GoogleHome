@@ -16,6 +16,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
         private readonly Mock<ILogger<ExecuteIntentHandler>> _logMock;
         private readonly Mock<IMessageHub> _messageHubMock;
         private readonly Mock<IGoogleDeviceRepository> _deviceRepositoryMock;
+        private readonly GoogleHome.Models.State.StateCache _stateCache;
 
         public ExecuteIntentHandlerTests()
         {
@@ -23,6 +24,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
             _messageHubMock = new Mock<IMessageHub>();
 
             _deviceRepositoryMock = new Mock<IGoogleDeviceRepository>();
+            _stateCache = new GoogleHome.Models.State.StateCache(new Dictionary<string, string>());
         }
 
         [Fact]
@@ -74,7 +76,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                 }
             };
 
-            var handler = new ExecuteIntentHandler(_logMock.Object, _messageHubMock.Object, _deviceRepositoryMock.Object);
+            var handler = new ExecuteIntentHandler(_logMock.Object, _messageHubMock.Object, _deviceRepositoryMock.Object, _stateCache);
 
             // Act
             var result = await handler.Handle(intent);
@@ -191,7 +193,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
             _deviceRepositoryMock.Setup(x => x.Get(It.IsAny<string>()))
                 .Returns(device);
 
-            var handler = new ExecuteIntentHandler(_logMock.Object, _messageHubMock.Object, _deviceRepositoryMock.Object);
+            var handler = new ExecuteIntentHandler(_logMock.Object, _messageHubMock.Object, _deviceRepositoryMock.Object, _stateCache);
 
             // Act
             var result = await handler.Handle(intent);

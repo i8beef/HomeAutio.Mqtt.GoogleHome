@@ -22,10 +22,30 @@ namespace HomeAutio.Mqtt.GoogleHome
             {
                 if (kvp.Value is IDictionary<string, object> dictionary)
                 {
+                    // Objects
                     var flattenedValueDictionary = dictionary.ToFlatDictionary(delimiter);
                     foreach (var subKvp in flattenedValueDictionary)
                     {
                         result.Add(string.Join(delimiter, kvp.Key, subKvp.Key), subKvp.Value);
+                    }
+                }
+                else if (kvp.Value is IList<object> list)
+                {
+                    // Arrays
+                    for (var i = 0; i < list.Count; i++)
+                    {
+                        if (list[i] is IDictionary<string, object> itemDictionary)
+                        {
+                            var flattenedValueDictionary = itemDictionary.ToFlatDictionary(delimiter);
+                            foreach (var subKvp in flattenedValueDictionary)
+                            {
+                                result.Add(string.Join(delimiter, kvp.Key, $"[{i}]", subKvp.Key), subKvp.Value);
+                            }
+                        }
+                        else
+                        {
+                            result.Add(string.Join(delimiter, kvp.Key, $"[{i}]"), list[i]);
+                        }
                     }
                 }
                 else

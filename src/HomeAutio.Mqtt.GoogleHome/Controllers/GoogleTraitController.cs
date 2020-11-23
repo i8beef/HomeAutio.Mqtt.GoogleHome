@@ -269,8 +269,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             var examples = new
             {
-                AttributeExamples = targetSchema.AttributeSchema.Examples,
-                StateExamples = targetSchema.StateSchema.Examples,
+                AttributeExamples = targetSchema.AttributeSchema?.Examples,
+                StateExamples = targetSchema.StateSchema?.Examples,
                 CommandExamples = commandExamples
             };
 
