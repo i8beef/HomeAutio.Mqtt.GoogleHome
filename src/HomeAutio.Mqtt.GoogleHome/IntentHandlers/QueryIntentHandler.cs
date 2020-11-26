@@ -51,7 +51,8 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
             var offlineDeviceState = new Dictionary<string, object>
             {
                 { "errorCode", "deviceNotFound" },
-                { "online", false }
+                { "online", false },
+                { "status", "ERROR" }
             };
 
             // Get distinct devices
@@ -74,7 +75,22 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                         queryDeviceId =>
                         {
                             var device = devices.FirstOrDefault(x => x.Id == queryDeviceId);
-                            return device != null ? device.GetGoogleState(_stateCache) : offlineDeviceState;
+
+                            var results = device != null ? device.GetGoogleState(_stateCache) : offlineDeviceState;
+
+                            // Add explicit online if not specified by state mappings
+                            if (!results.ContainsKey("online"))
+                            {
+                                results.Add("online", true);
+                            }
+
+                            // Add explicit status if not specified by state mappings
+                            if (!results.ContainsKey("status"))
+                            {
+                                results.Add("status", "SUCCESS");
+                            }
+
+                            return results;
                         })
             };
 
