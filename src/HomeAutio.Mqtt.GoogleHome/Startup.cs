@@ -171,7 +171,8 @@ namespace HomeAutio.Mqtt.GoogleHome
                     serviceProvider.GetRequiredService<IMessageHub>(),
                     brokerSettings,
                     serviceProvider.GetRequiredService<IGoogleDeviceRepository>(),
-                    serviceProvider.GetRequiredService<StateCache>());
+                    serviceProvider.GetRequiredService<StateCache>(),
+                    Configuration.GetValue<string>("mqtt:topicRoot", "google/home"));
             });
 
             // Setup token cleanup hosted service

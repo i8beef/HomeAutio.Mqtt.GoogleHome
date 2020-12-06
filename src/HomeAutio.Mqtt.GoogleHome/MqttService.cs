@@ -39,14 +39,16 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <param name="messageHub">Message hub.</param>
         /// <param name="brokerSettings">MQTT broker settings.</param>
         /// <param name="deviceRepository">Device repository.</param>
-        /// <param name="stateCache">State cache,</param>
+        /// <param name="stateCache">State cache.</param>
+        /// <param name="topicRoot">Topic root.</param>
         public MqttService(
             ILogger<MqttService> logger,
             IMessageHub messageHub,
             BrokerSettings brokerSettings,
             IGoogleDeviceRepository deviceRepository,
-            StateCache stateCache)
-            : base(logger, brokerSettings, "google/home")
+            StateCache stateCache,
+            string topicRoot = "google/home")
+            : base(logger, brokerSettings, topicRoot)
         {
             _log = logger ?? throw new ArgumentException(nameof(logger));
             _messageHub = messageHub ?? throw new ArgumentException(nameof(messageHub));
