@@ -75,14 +75,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                         queryDeviceId =>
                         {
                             var device = devices.FirstOrDefault(x => x.Id == queryDeviceId);
-
                             var results = device != null ? device.GetGoogleState(_stateCache) : offlineDeviceState;
-
-                            // Add explicit online if not specified by state mappings
-                            if (!results.ContainsKey("online"))
-                            {
-                                results.Add("online", true);
-                            }
 
                             // Add explicit status if not specified by state mappings
                             if (!results.ContainsKey("status"))

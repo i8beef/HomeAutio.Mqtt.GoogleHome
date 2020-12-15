@@ -10,6 +10,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// <summary>
         /// Maps a command parameter key to a state key.
         /// </summary>
+        /// <remarks>
+        /// This is possibly the most ill advised implementation in this whole project...
+        /// </remarks>
         /// <param name="commandParameterKey">The command parameter key to map.</param>
         /// <returns>The state key.</returns>
         public static string Map(string commandParameterKey)
@@ -21,14 +24,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
             {
                 { "arm", "isArmed" },
                 { "armLevel", "currentArmLevel" },
+                { "color.spectrumHSV*", "color.spectrumHsv" },
                 { "color.spectrumRGB", "color.spectrumRgb" },
-                { "color.spectrumHSV.hue", "color.spectrumHsv.hue" },
-                { "color.spectrumHSV.saturation", "color.spectrumHsv.saturation" },
-                { "color.spectrumHSV.value", "color.spectrumHsv.value" },
                 { "color.temperature", "color.temperatureK" },
                 { "fanSpeed", "currentFanSpeedSetting" },
                 { "fanSpeedPercent", "currentFanSpeedPercent" },
                 { "lock", "isLocked" },
+                { "newApplication", "currentApplication" },
+                { "newApplicationName", "currentApplication" },
                 { "pause", "isPaused" },
                 { "start", "isRunning" },
                 { "timerTimeSec", "timerRemainingSec" },

@@ -20,7 +20,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         {
             var validationErrors = new List<string>();
 
-            var traitSchemas = TraitSchemaProvider.GetTraitSchemas().GetAwaiter().GetResult();
+            var traitSchemas = TraitSchemaProvider.GetTraitSchemas();
             var traitSchema = traitSchemas.FirstOrDefault(x => x.Trait == deviceTrait.Trait);
             if (traitSchema != null)
             {

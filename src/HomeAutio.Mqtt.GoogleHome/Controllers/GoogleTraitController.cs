@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.Schema;
@@ -243,9 +242,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// </summary>
         /// <param name="traitId">Trait id.</param>
         /// <returns>Response.</returns>
-        public async Task<IActionResult> Examples([Required] string traitId)
+        public IActionResult Examples([Required] string traitId)
         {
-            var schemas = await TraitSchemaProvider.GetTraitSchemas();
+            var schemas = TraitSchemaProvider.GetTraitSchemas();
             var targetSchema = schemas.FirstOrDefault(x => x.Trait == Enum.Parse<TraitType>(traitId));
             if (targetSchema == null)
             {

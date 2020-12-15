@@ -44,7 +44,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>Response.</returns>
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> Post([FromBody]Models.Request.Request request)
+        public IActionResult Post([FromBody]Models.Request.Request request)
         {
             // Begin building Response
             var response = new Models.Response.Response { RequestId = request.RequestId };
@@ -66,7 +66,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                     response.Payload = _queryIntentHandler.Handle(queryIntent);
                     return Ok(response);
                 case Models.Request.ExecuteIntent executeIntent:
-                    response.Payload = await _executeIntentHandler.Handle(executeIntent);
+                    response.Payload = _executeIntentHandler.Handle(executeIntent);
                     return Ok(response);
                 case Models.Request.DisconnectIntent disconnectIntent:
                     _disconnectIntentHandler.Handle(disconnectIntent);

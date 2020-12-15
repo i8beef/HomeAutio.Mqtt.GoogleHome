@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using HomeAutio.Mqtt.GoogleHome.Models.Request;
@@ -28,7 +27,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
         }
 
         [Fact]
-        public async Task ReturnsTransformedStateOnSuccess()
+        public void ReturnsTransformedStateOnSuccess()
         {
             // Arrange
             var commandParams = new Dictionary<string, object>
@@ -61,7 +60,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                         {
                             Devices = new List<Device>
                             {
-                                new Device { Id = "test/testLight" }
+                                new Device { Id = "test/device" }
                             },
                             Execution = new List<Execution>
                             {
@@ -76,10 +75,70 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                 }
             };
 
+            var device = new GoogleHome.Models.State.Device
+            {
+                Id = "test/device",
+                Traits = new List<GoogleHome.Models.State.DeviceTrait>
+                {
+                    new GoogleHome.Models.State.DeviceTrait
+                    {
+                       Trait = GoogleHome.Models.TraitType.ColorSetting,
+                       Commands = new Dictionary<string, IDictionary<string, string>>
+                       {
+                           { "action.devices.commands.ColorAbsolute", new Dictionary<string, string>() }
+                       },
+                       State = new Dictionary<string, GoogleHome.Models.State.DeviceState>
+                       {
+                           {
+                               "color.temperatureK",
+                               new GoogleHome.Models.State.DeviceState {
+                                   Topic = "color.temperatureK",
+                                   GoogleType = GoogleHome.Models.State.GoogleType.Numeric,
+                                   ValueMap = null
+                               }
+                           },
+                           {
+                               "color.spectrumHsv.hue",
+                               new GoogleHome.Models.State.DeviceState {
+                                   Topic = "color.spectrumHsv.hue",
+                                   GoogleType = GoogleHome.Models.State.GoogleType.Numeric,
+                                   ValueMap = null
+                               }
+                           },
+                           {
+                               "color.spectrumHsv.saturation",
+                               new GoogleHome.Models.State.DeviceState {
+                                   Topic = "color.spectrumHsv.saturation",
+                                   GoogleType = GoogleHome.Models.State.GoogleType.Numeric,
+                                   ValueMap = null
+                               }
+                           },
+                           {
+                               "color.spectrumHsv.value",
+                               new GoogleHome.Models.State.DeviceState {
+                                   Topic = "color.spectrumHsv.value",
+                                   GoogleType = GoogleHome.Models.State.GoogleType.Numeric,
+                                   ValueMap = null
+                               }
+                           },
+
+                       }
+                    }
+                }
+            };
+
+            _deviceRepositoryMock.Setup(x => x.Get(It.IsAny<string>()))
+                .Returns(device);
+
+            _stateCache.TryAdd("color.temperatureK", "75");
+            _stateCache.TryAdd("color.spectrumHsv.hue", "1123");
+            _stateCache.TryAdd("color.spectrumHsv.saturation", "1456");
+            _stateCache.TryAdd("color.spectrumHsv.value", "1789");
+
             var handler = new ExecuteIntentHandler(_logMock.Object, _messageHubMock.Object, _deviceRepositoryMock.Object, _stateCache);
 
             // Act
-            var result = await handler.Handle(intent);
+            var result = handler.Handle(intent);
 
             //Assert
             var commandResult = result.Commands.First();
@@ -87,6 +146,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
 
             // Transformed temperature
             Assert.True(colorState.ContainsKey("temperatureK"));
+            Assert.Equal(85, colorState["temperatureK"]);
 
             // Tertiary level items
             var spectrumHSVState = (IDictionary<string, object>)colorState["spectrumHsv"];
@@ -96,7 +156,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
         }
 
         [Fact]
-        public async Task ReturnsCameraStreamStateOnSuccess()
+        public void ReturnsCameraStreamStateOnSuccess()
         {
             // Arrange
             var commandParams = new Dictionary<string, object>
@@ -196,7 +256,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
             var handler = new ExecuteIntentHandler(_logMock.Object, _messageHubMock.Object, _deviceRepositoryMock.Object, _stateCache);
 
             // Act
-            var result = await handler.Handle(intent);
+            var result = handler.Handle(intent);
 
             //Assert            
             var commandResult = result.Commands.First();

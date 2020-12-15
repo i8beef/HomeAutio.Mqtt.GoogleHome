@@ -8,7 +8,6 @@ using Easy.MessageHub;
 using HomeAutio.Mqtt.Core;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.Events;
-using HomeAutio.Mqtt.GoogleHome.Models.Request;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
@@ -69,7 +68,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         protected override Task StartServiceAsync(CancellationToken cancellationToken)
         {
             // Subscribe to event aggregator
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<Command>((e) => HandleGoogleHomeCommand(e)));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<DeviceCommandExecutionEvent>((e) => HandleGoogleHomeCommand(e)));
             _messageHubSubscriptions.Add(_messageHub.Subscribe<ConfigSubscriptionChangeEvent>((e) => HandleConfigSubscriptionChange(e)));
 
             return Task.CompletedTask;
@@ -176,89 +175,85 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <summary>
         /// Hanlder for Google Home commands.
         /// </summary>
-        /// <param name="command">The command to handle.</param>
-        private async void HandleGoogleHomeCommand(Command command)
+        /// <param name="deviceCommandExecutionEvent">The device command to handle.</param>
+        private async void HandleGoogleHomeCommand(DeviceCommandExecutionEvent deviceCommandExecutionEvent)
         {
-            foreach (var commandDevice in command.Devices)
+            var device = _deviceRepository.Get(deviceCommandExecutionEvent.DeviceId);
+            if (device.Disabled)
+                return;
+
+            // Find all supported commands for the device
+            var deviceSupportedCommands = device.Traits
+                .SelectMany(x => x.Commands)
+                .ToDictionary(x => x.Key, x => x.Value);
+
+            // Check if device supports the requested command class
+            var execution = deviceCommandExecutionEvent.Execution;
+            if (deviceSupportedCommands.ContainsKey(execution.Command))
             {
-                var device = _deviceRepository.Get(commandDevice.Id);
-                if (device.Disabled)
-                    continue;
+                // Handle command delegation
+                var shortCommandName = execution.Command.Substring(execution.Command.LastIndexOf('.') + 1);
+                var deviceTopicName = Regex.Replace(deviceCommandExecutionEvent.DeviceId, @"\s", string.Empty);
+                var delegateTopic = $"{TopicRoot}/execution/{deviceTopicName}/{shortCommandName}";
+                var delegatePayload = execution.Params != null ? JsonConvert.SerializeObject(execution.Params) : "{}";
 
-                // Find all supported commands for the device
-                var deviceSupportedCommands = device.Traits
-                    .SelectMany(x => x.Commands)
-                    .ToDictionary(x => x.Key, x => x.Value);
+                await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                    .WithTopic(delegateTopic)
+                    .WithPayload(delegatePayload)
+                    .WithAtLeastOnceQoS()
+                    .Build())
+                    .ConfigureAwait(false);
 
-                foreach (var execution in command.Execution)
+                // Find the specific commands supported parameters it can handle
+                var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command] ?? new Dictionary<string, string>();
+
+                // Handle remaining command state param negotiation
+                if (execution.Params != null)
                 {
-                    // Check if device supports the requested command class
-                    if (deviceSupportedCommands.ContainsKey(execution.Command))
+                    // TODO: Remove the Where filter here eventually
+                    // Flatten the parameters, ignore old delegate underscores
+                    var flattenedParams = execution.Params
+                        .Where(x => x.Key != "_")
+                        .ToDictionary(x => x.Key, x => x.Value)
+                        .ToFlatDictionary();
+
+                    foreach (var parameter in flattenedParams)
                     {
-                        // Handle command delegation
-                        var shortCommandName = execution.Command.Substring(execution.Command.LastIndexOf('.') + 1);
-                        var deviceTopicName = Regex.Replace(commandDevice.Id, @"\s", string.Empty);
-                        var delegateTopic = $"{TopicRoot}/execution/{deviceTopicName}/{shortCommandName}";
-                        var delegatePayload = execution.Params != null ? JsonConvert.SerializeObject(execution.Params) : "{}";
-
-                        await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-                            .WithTopic(delegateTopic)
-                            .WithPayload(delegatePayload)
-                            .WithAtLeastOnceQoS()
-                            .Build())
-                            .ConfigureAwait(false);
-
-                        // Find the specific commands supported parameters it can handle
-                        var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command] ?? new Dictionary<string, string>();
-
-                        // Handle remaining command state param negotiation
-                        if (execution.Params != null)
+                        // Check if device supports the requested parameter
+                        if (deviceSupportedCommandParams.ContainsKey(parameter.Key))
                         {
-                            // Flatten the parameters, ignore old delegate underscores
-                            var flattenedParams = execution.Params
-                                .Where(x => x.Key != "_")
-                                .ToDictionary(x => x.Key, x => x.Value)
-                                .ToFlatDictionary();
+                            // Handle remapping of command param to state key
+                            var stateKey = CommandToStateKeyMapper.Map(parameter.Key);
 
-                            foreach (var parameter in flattenedParams)
+                            // Find the DeviceState object that provides configuration for mapping state/command values
+                            var deviceState = device.Traits
+                                .Where(x => x.Commands.ContainsKey(execution.Command))
+                                .SelectMany(x => x.State)
+                                .Where(x => x.Key == stateKey)
+                                .Select(x => x.Value)
+                                .FirstOrDefault();
+
+                            // Build the MQTT message
+                            var topic = deviceSupportedCommandParams[parameter.Key];
+                            if (!string.IsNullOrEmpty(topic))
                             {
-                                // Check if device supports the requested parameter
-                                if (deviceSupportedCommandParams.ContainsKey(parameter.Key))
+                                string payload = null;
+                                if (deviceState != null)
                                 {
-                                    // Handle remapping of Modes, Toggles and FanSpeed
-                                    var stateKey = CommandToStateKeyMapper.Map(parameter.Key);
-
-                                    // Find the DeviceState object that provides configuration for mapping state/command values
-                                    var deviceState = device.Traits
-                                        .Where(x => x.Commands.ContainsKey(execution.Command))
-                                        .SelectMany(x => x.State)
-                                        .Where(x => x.Key == stateKey)
-                                        .Select(x => x.Value)
-                                        .FirstOrDefault();
-
-                                    // Build the MQTT message
-                                    var topic = deviceSupportedCommandParams[parameter.Key];
-                                    if (!string.IsNullOrEmpty(topic))
-                                    {
-                                        string payload = null;
-                                        if (deviceState != null)
-                                        {
-                                            payload = deviceState.MapValueToMqtt(parameter.Value);
-                                        }
-                                        else
-                                        {
-                                            payload = parameter.Value.ToString();
-                                            _log.LogWarning("Received supported command '{Command}' but cannot find matched state config, sending command value '{Payload}' without ValueMap", execution.Command, payload);
-                                        }
-
-                                        await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-                                            .WithTopic(topic)
-                                            .WithPayload(payload)
-                                            .WithAtLeastOnceQoS()
-                                            .Build())
-                                            .ConfigureAwait(false);
-                                    }
+                                    payload = deviceState.MapValueToMqtt(parameter.Value);
                                 }
+                                else
+                                {
+                                    payload = parameter.Value.ToString();
+                                    _log.LogWarning("Received supported command '{Command}' but cannot find matched state config, sending command value '{Payload}' without ValueMap", execution.Command, payload);
+                                }
+
+                                await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                                    .WithTopic(topic)
+                                    .WithPayload(payload)
+                                    .WithAtLeastOnceQoS()
+                                    .Build())
+                                    .ConfigureAwait(false);
                             }
                         }
                     }

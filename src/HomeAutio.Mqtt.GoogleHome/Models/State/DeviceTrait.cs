@@ -75,7 +75,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
                     {
                         result.Add(state.Key, state.Value.MapValueToGoogle(stateCache[state.Value.Topic]));
                     }
-                    else if (state.Value.Topic == null && state.Value.ValueMap.Any(x => x is StaticMap))
+                    else if (state.Value.Topic == null && state.Value.ValueMap != null && state.Value.ValueMap.Any(x => x is StaticMap))
                     {
                         result.Add(state.Key, state.Value.MapValueToGoogle(null));
                     }
@@ -84,6 +84,5 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
 
             return result;
         }
-
     }
 }

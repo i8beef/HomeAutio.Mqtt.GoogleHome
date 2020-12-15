@@ -42,6 +42,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         public string ResultsJson { get; private set; }
 
         /// <summary>
+        /// Results validator instance.
+        /// </summary>
+        public JsonSchema ResultsValidator { get; private set; }
+
+        /// <summary>
         /// Validator instance.
         /// </summary>
         public JsonSchema Validator { get; private set; }
@@ -66,6 +71,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                 Examples = ExtractExamples(paramJson),
                 ParamJson = paramJson,
                 ResultsJson = resultsJson,
+                ResultsValidator = resultsJson != null ? await JsonSchema.FromJsonAsync(resultsJson) : null,
                 Validator = await JsonSchema.FromJsonAsync(paramJson)
             };
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps;
+using HomeAutio.Mqtt.GoogleHome.Validation;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.State
@@ -64,12 +64,29 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         public IDictionary<string, object> GetGoogleState(IDictionary<string, string> stateCache)
         {
             var results = new Dictionary<string, object>();
+            var schemas = TraitSchemaProvider.GetTraitSchemas();
             foreach (var trait in Traits)
             {
+                // Dont include "stateless" traits
+                var schema = schemas.FirstOrDefault(x => x.Trait == trait.Trait);
+                if (schema?.StateSchema == null)
+                    continue;
+
                 foreach (var googleState in trait.GetGoogleState(stateCache))
                 {
-                    results.Add(googleState.Key, googleState.Value);
+                    // Only add pure state parameters
+                    if (schema.StateSchema.Validator.ValidateFlattenedPath(googleState.Key))
+                    {
+                        // Note: there explicitly shouldnt be overlap here requiring TryAdd
+                        results.Add(googleState.Key, googleState.Value);
+                    }
                 }
+            }
+
+            // Add explicit online if not specified by state mappings
+            if (!results.ContainsKey("online"))
+            {
+                results.Add("online", true);
             }
 
             return results;
