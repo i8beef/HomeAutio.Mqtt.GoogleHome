@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using HomeAutio.Mqtt.GoogleHome.Models.State;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
 {
@@ -91,6 +92,37 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
             }
 
             return traitSchema;
+        }
+
+        /// <summary>
+        /// Gets the Google type for the specified path is valid for this schema.
+        /// </summary>
+        /// <param name="flattenedPath">Flattened state path.</param>
+        /// <returns>The <see cref="GoogleType"/> for the specified path.</returns>
+        public GoogleType GetGoogleTypeForFlattenedPath(string flattenedPath)
+        {
+            if (StateSchema != null)
+            {
+                var result = StateSchema.Validator.GetGoogleTypeForFlattenedPath(flattenedPath);
+                if (result != GoogleType.Unknown)
+                {
+                    return result;
+                }
+            }
+
+            if (CommandSchemas != null && CommandSchemas.Any())
+            {
+                foreach (var schema in CommandSchemas.Where(x => x.ResultsValidator != null))
+                {
+                    var result = schema.ResultsValidator.GetGoogleTypeForFlattenedPath(flattenedPath);
+                    if (result != GoogleType.Unknown)
+                    {
+                        return result;
+                    }
+                }
+            }
+
+            return GoogleType.Unknown;
         }
 
         /// <summary>

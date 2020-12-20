@@ -43,16 +43,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                 return null;
 
             var stateValidator = await JsonSchema.FromJsonAsync(json);
-
-            // Build an index of google types for state paths
-            var googleTypes = GetGoogleTypes(stateValidator)
-                .GroupBy(x => x.Key)
-                .Select(x => x.FirstOrDefault())
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
             var stateSchema = new StateSchema
             {
-                Examples = ExtractExamples(json, googleTypes),
+                Examples = ExtractExamples(json),
                 Json = json,
                 Validator = stateValidator
             };
@@ -64,9 +57,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// Extract example JSON from a schema.
         /// </summary>
         /// <param name="json">Schema JSON to parse.</param>
-        /// <param name="googleTypes">Google type mappings for properties.</param>
         /// <returns>A list of <see cref="SchemaExample"/>.</returns>
-        private static IList<SchemaExample> ExtractExamples(string json, IDictionary<string, GoogleType> googleTypes)
+        private static IList<SchemaExample> ExtractExamples(string json)
         {
             var examples = new List<SchemaExample>();
             var parsed = JsonConvert.DeserializeObject<Dictionary<string, object>>(json, new ObjectDictionaryConverter());
@@ -81,7 +73,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                         .Where(x => x.Key != "$comment")
                         .ToDictionary(kv => kv.Key, kv => kv.Value)
                         .ToFlatDictionary()
-                        .ToDictionary(kv => kv.Key, kv => new DeviceState { Topic = "MQTT_STATE_TOPIC", GoogleType = googleTypes.ContainsKey(kv.Key) ? googleTypes[kv.Key] : GoogleType.String });
+                        .ToDictionary(kv => kv.Key, kv => new DeviceState { Topic = "MQTT_STATE_TOPIC" });
 
                     var traitExample = new SchemaExample
                     {
@@ -99,73 +91,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
             }
 
             return examples;
-        }
-
-        /// <summary>
-        /// Gets the <see cref="GoogleType"/> for the properties specified in the schema.
-        /// </summary>
-        /// <param name="schema">The parsed schema.</param>
-        /// <param name="path">The current path.</param>
-        /// <returns>The <see cref="GoogleType"/>.</returns>
-        private static IList<KeyValuePair<string, GoogleType>> GetGoogleTypes(JsonSchema schema, string path = "")
-        {
-            var result = new List<KeyValuePair<string, GoogleType>>();
-            if (schema != null)
-            {
-                switch (schema.Type)
-                {
-                    case JsonObjectType.Object:
-                        foreach (var property in schema.Properties)
-                        {
-                            if (string.IsNullOrEmpty(path))
-                                result.AddRange(GetGoogleTypes(property.Value, property.Key));
-                            else
-                                result.AddRange(GetGoogleTypes(property.Value, $"{path}.{property.Key}"));
-                        }
-
-                        foreach (var property in schema.OneOf)
-                        {
-                            if (string.IsNullOrEmpty(path))
-                                result.AddRange(GetGoogleTypes(property, path));
-                            else
-                                result.AddRange(GetGoogleTypes(property, path));
-                        }
-
-                        foreach (var anyOf in schema.AnyOf)
-                        {
-                            foreach (var property in anyOf.Properties)
-                            {
-                                if (string.IsNullOrEmpty(path))
-                                    result.AddRange(GetGoogleTypes(property.Value, property.Key));
-                                else
-                                    result.AddRange(GetGoogleTypes(property.Value, $"{path}.{property.Key}"));
-                            }
-                        }
-
-                        break;
-                    case JsonObjectType.Array:
-                        var index = 0;
-                        foreach (var item in schema.Items)
-                        {
-                            result.AddRange(GetGoogleTypes(item, $"{path}[{index}]"));
-                            index++;
-                        }
-
-                        break;
-                    case JsonObjectType.Boolean:
-                        result.Add(new KeyValuePair<string, GoogleType>(path, GoogleType.Bool));
-                        break;
-                    case JsonObjectType.Integer:
-                    case JsonObjectType.Number:
-                        result.Add(new KeyValuePair<string, GoogleType>(path, GoogleType.Numeric));
-                        break;
-                    case JsonObjectType.String:
-                        result.Add(new KeyValuePair<string, GoogleType>(path, GoogleType.String));
-                        break;
-                }
-            }
-
-            return result;
         }
     }
 }

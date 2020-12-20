@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.JsonConverters;
+using HomeAutio.Mqtt.GoogleHome.Models.Schema;
 using HomeAutio.Mqtt.GoogleHome.Models.State.Challenges;
 using HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps;
 using Newtonsoft.Json;
@@ -49,21 +50,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         public ChallengeBase Challenge { get; set; }
 
         /// <summary>
-        /// Gets trait state as a Google device state object.
-        /// </summary>
-        /// <param name="stateCache">Current state cache.</param>
-        /// <returns>A Google device state object.</returns>
-        public IDictionary<string, object> GetGoogleState(IDictionary<string, string> stateCache)
-        {
-            return GetGoogleStateFlattened(stateCache).ToNestedDictionary();
-        }
-
-        /// <summary>
         /// Gets trait state as a Google device state object in a flattened state.
         /// </summary>
         /// <param name="stateCache">Current state cache.</param>
+        /// <param name="traitSchema">Trait schema.</param>
         /// <returns>A Google device state object in a flattened state.</returns>
-        public IDictionary<string, object> GetGoogleStateFlattened(IDictionary<string, string> stateCache)
+        public IDictionary<string, object> GetGoogleStateFlattened(IDictionary<string, string> stateCache, TraitSchema traitSchema)
         {
             var result = new Dictionary<string, object>();
 
@@ -73,11 +65,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
                 {
                     if (state.Value.Topic != null && stateCache.ContainsKey(state.Value.Topic))
                     {
-                        result.Add(state.Key, state.Value.MapValueToGoogle(stateCache[state.Value.Topic]));
+                        var googleType = traitSchema.GetGoogleTypeForFlattenedPath(state.Key);
+                        result.Add(state.Key, state.Value.MapValueToGoogle(stateCache[state.Value.Topic], googleType));
                     }
                     else if (state.Value.Topic == null && state.Value.ValueMap != null && state.Value.ValueMap.Any(x => x is StaticMap))
                     {
-                        result.Add(state.Key, state.Value.MapValueToGoogle(null));
+                        var googleType = traitSchema.GetGoogleTypeForFlattenedPath(state.Key);
+                        result.Add(state.Key, state.Value.MapValueToGoogle(null, googleType));
                     }
                 }
             }

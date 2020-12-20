@@ -72,14 +72,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
                 if (schema?.StateSchema == null)
                     continue;
 
-                foreach (var googleState in trait.GetGoogleState(stateCache))
+                var validState = trait.GetGoogleStateFlattened(stateCache, schema)
+                    .Where(kvp => schema.StateSchema.Validator.ValidateFlattenedPath(kvp.Key))
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                foreach (var googleState in validState.ToNestedDictionary())
                 {
-                    // Only add pure state parameters
-                    if (schema.StateSchema.Validator.ValidateFlattenedPath(googleState.Key))
-                    {
-                        // Note: there explicitly shouldnt be overlap here requiring TryAdd
-                        results.Add(googleState.Key, googleState.Value);
-                    }
+                    // Note: there explicitly shouldnt be overlap here requiring TryAdd
+                    results.Add(googleState.Key, googleState.Value);
                 }
             }
 

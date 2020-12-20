@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.Models;
+using HomeAutio.Mqtt.GoogleHome.Models.Schema;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Newtonsoft.Json;
 
@@ -36,7 +37,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 // State validation
                 if (deviceTrait.State != null && traitSchema.StateSchema?.Validator != null)
                 {
-                    var stateJson = JsonConvert.SerializeObject(GetFakeGoogleState(deviceTrait.State));
+                    var stateJson = JsonConvert.SerializeObject(GetFakeGoogleState(deviceTrait.State, traitSchema));
                     var stateErrors = traitSchema.StateSchema.Validator.Validate(stateJson);
 
                     validationErrors.AddRange(stateErrors.Select(x => $"{x.Path}: {x.Kind}"));
@@ -135,25 +136,27 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         /// Gets device state as a Google device state object in a flattened state with dummy data for initial validation.
         /// </summary>
         /// <param name="stateConfigs">Current state cache.</param>
+        /// <param name="traitSchema">Trait schema.</param>
         /// <returns>A Google device state object in a flattened state.</returns>
-        private static IDictionary<string, object> GetFakeGoogleState(IDictionary<string, DeviceState> stateConfigs)
+        private static IDictionary<string, object> GetFakeGoogleState(IDictionary<string, DeviceState> stateConfigs, TraitSchema traitSchema)
         {
             var stateValues = new Dictionary<string, object>();
             foreach (var state in stateConfigs)
             {
                 if (state.Value.Topic != null)
                 {
-                    switch (state.Value.GoogleType)
+                    var googleType = traitSchema.GetGoogleTypeForFlattenedPath(state.Key);
+                    switch (googleType)
                     {
                         case GoogleType.Bool:
-                            stateValues.Add(state.Key, state.Value.MapValueToGoogle("true"));
+                            stateValues.Add(state.Key, state.Value.MapValueToGoogle("true", googleType));
                             break;
                         case GoogleType.Numeric:
-                            stateValues.Add(state.Key, state.Value.MapValueToGoogle("1"));
+                            stateValues.Add(state.Key, state.Value.MapValueToGoogle("1", googleType));
                             break;
                         case GoogleType.String:
                         default:
-                            stateValues.Add(state.Key, state.Value.MapValueToGoogle("default"));
+                            stateValues.Add(state.Key, state.Value.MapValueToGoogle("default", googleType));
                             break;
                     }
                 }

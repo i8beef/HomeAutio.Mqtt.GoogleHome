@@ -143,7 +143,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                             var traitSchema = schemas.FirstOrDefault(x => x.Trait == trait.Trait);
                             var commandSchema = traitSchema.CommandSchemas.FirstOrDefault(x => x.Command == execution.Command.ToEnum<CommandType>());
 
-                            var googleState = trait.GetGoogleStateFlattened(_stateCache);
+                            var googleState = trait.GetGoogleStateFlattened(_stateCache, traitSchema);
 
                             // Map incoming params to "fake" state changes to override existing state value
                             var replacedParams = execution.Params

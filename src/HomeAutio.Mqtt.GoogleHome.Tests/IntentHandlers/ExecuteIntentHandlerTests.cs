@@ -93,7 +93,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                                "color.temperatureK",
                                new GoogleHome.Models.State.DeviceState {
                                    Topic = "color.temperatureK",
-                                   GoogleType = GoogleHome.Models.State.GoogleType.Numeric,
                                    ValueMap = null
                                }
                            },
@@ -101,7 +100,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                                "color.spectrumHsv.hue",
                                new GoogleHome.Models.State.DeviceState {
                                    Topic = "color.spectrumHsv.hue",
-                                   GoogleType = GoogleHome.Models.State.GoogleType.Numeric,
                                    ValueMap = null
                                }
                            },
@@ -109,7 +107,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                                "color.spectrumHsv.saturation",
                                new GoogleHome.Models.State.DeviceState {
                                    Topic = "color.spectrumHsv.saturation",
-                                   GoogleType = GoogleHome.Models.State.GoogleType.Numeric,
                                    ValueMap = null
                                }
                            },
@@ -117,7 +114,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                                "color.spectrumHsv.value",
                                new GoogleHome.Models.State.DeviceState {
                                    Topic = "color.spectrumHsv.value",
-                                   GoogleType = GoogleHome.Models.State.GoogleType.Numeric,
                                    ValueMap = null
                                }
                            },
@@ -207,7 +203,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                            {
                                "cameraStreamAccessUrl",
                                new GoogleHome.Models.State.DeviceState { 
-                                   GoogleType = GoogleHome.Models.State.GoogleType.String,
                                    ValueMap = new List<MapBase>
                                    {
                                        new StaticMap { Google = "https://fluffysheep.com/baaaaa.mp4", Type = MapType.Static }
@@ -217,7 +212,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                            {
                                "cameraStreamReceiverAppId",
                                new GoogleHome.Models.State.DeviceState {
-                                   GoogleType = GoogleHome.Models.State.GoogleType.String,
                                    ValueMap = new List<MapBase>
                                    {
                                        new StaticMap { Google = "1g2f89213hg", Type = MapType.Static }
@@ -227,7 +221,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                            {
                                "cameraStreamAuthToken",
                                new GoogleHome.Models.State.DeviceState {
-                                   GoogleType = GoogleHome.Models.State.GoogleType.String,
                                    ValueMap = new List<MapBase>
                                    {
                                        new StaticMap { Google = "12657342190192783", Type = MapType.Static }
@@ -237,7 +230,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                            {
                                "cameraStreamProtocol",
                                new GoogleHome.Models.State.DeviceState {
-                                   GoogleType = GoogleHome.Models.State.GoogleType.String,
                                    ValueMap = new List<MapBase>
                                    {
                                        new StaticMap { Google = "progressive_mp4", Type = MapType.Static }
