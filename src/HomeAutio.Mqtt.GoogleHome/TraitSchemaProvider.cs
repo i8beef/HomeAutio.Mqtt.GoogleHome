@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.Schema;
 
-namespace HomeAutio.Mqtt.GoogleHome.Validation
+namespace HomeAutio.Mqtt.GoogleHome
 {
     /// <summary>
     /// Trait schema provider.

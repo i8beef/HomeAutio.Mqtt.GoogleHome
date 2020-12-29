@@ -1,12 +1,31 @@
 ﻿using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.Models;
-using HomeAutio.Mqtt.GoogleHome.Validation;
+using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Xunit;
 
 namespace HomeAutio.Mqtt.GoogleHome.Tests
 {
     public class JsonSchemaExtensionsTests
     {
+        [Theory]
+        [InlineData(TraitType.OnOff, null, GoogleType.Unknown)]
+        [InlineData(TraitType.OnOff, "on", GoogleType.Bool)]
+        [InlineData(TraitType.Modes, "currentModeSettings.test", GoogleType.String)]
+        [InlineData(TraitType.ColorSetting, "color.spectrumHsv.saturation", GoogleType.Numeric)]
+        [InlineData(TraitType.EnergyStorage, "capacityRemaining.[0].rawValue", GoogleType.Numeric)]
+        public void GetGoogleTypeForFlattenedPathReturns(TraitType traitType, string target, GoogleType googleType)
+        {
+            // Arrange
+            var schemas = TraitSchemaProvider.GetTraitSchemas();
+            var schema = schemas.FirstOrDefault(x => x.Trait == traitType);
+
+            // Act
+            var result = schema.StateSchema.Validator.GetGoogleTypeForFlattenedPath(target);
+
+            // Assert
+            Assert.Equal(googleType, result);
+        }
+
         [Theory]
         [InlineData(TraitType.OnOff, "on")]
         [InlineData(TraitType.ColorSetting, "color.spectrumHsv.saturation")]

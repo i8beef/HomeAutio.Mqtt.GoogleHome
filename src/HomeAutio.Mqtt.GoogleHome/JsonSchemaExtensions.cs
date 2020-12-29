@@ -98,6 +98,12 @@ namespace HomeAutio.Mqtt.GoogleHome
                         }
                     }
 
+                    if (schema.AllowAdditionalProperties)
+                    {
+                        // Use the additional property schema, if available
+                        return schema.AdditionalPropertiesSchema;
+                    }
+
                     break;
                 case NJsonSchema.JsonObjectType.Array:
                     if (currentPathFragment == null)

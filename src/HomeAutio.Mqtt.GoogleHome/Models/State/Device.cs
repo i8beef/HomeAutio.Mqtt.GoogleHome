@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using HomeAutio.Mqtt.GoogleHome.Validation;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.State

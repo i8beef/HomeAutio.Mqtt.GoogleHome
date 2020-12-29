@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

@@ -6,7 +6,6 @@ using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.Request;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
-using HomeAutio.Mqtt.GoogleHome.Validation;
 using Microsoft.Extensions.Logging;
 
 namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
