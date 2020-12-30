@@ -57,10 +57,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     if (command.Value != null && traitSchema.CommandSchemas.Any(x => x.Command == commandType))
                     {
                         var commandValidator = traitSchema.CommandSchemas.First(x => x.Command == commandType).Validator;
-
-                        // Modify the schema validation, only looking for presence not type or value
-                        ChangeLeafNodesToString(commandValidator);
-
                         var commandJson = JsonConvert.SerializeObject(command.Value);
                         var commandErrors = commandValidator.Validate(commandJson);
 
@@ -70,77 +66,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             }
 
             return validationErrors;
-        }
-
-        /// <summary>
-        /// Changes the leaf node type to string.
-        /// </summary>
-        /// <param name="schema">Schema to modify.</param>
-        private static void ChangeLeafNodesToString(NJsonSchema.JsonSchema schema)
-        {
-            switch (schema.Type)
-            {
-                case NJsonSchema.JsonObjectType.Array:
-                    if (schema.Item != null)
-                    {
-                        // Default single type array
-                        ChangeLeafNodesToString(schema.Item);
-                    }
-                    else
-                    {
-                        // Tuple handling
-                        foreach (var tupleSchema in schema.Items)
-                        {
-                            ChangeLeafNodesToString(tupleSchema);
-                        }
-                    }
-
-                    break;
-                case NJsonSchema.JsonObjectType.Object:
-                    foreach (var property in schema.Properties)
-                    {
-                        ChangeLeafNodesToString(property.Value);
-                    }
-
-                    foreach (var property in schema.OneOf)
-                    {
-                        ChangeLeafNodesToString(property);
-                    }
-
-                    foreach (var property in schema.AnyOf)
-                    {
-                        ChangeLeafNodesToString(property);
-                    }
-
-                    if (schema.AllowAdditionalProperties)
-                    {
-                        foreach (var property in schema.AdditionalPropertiesSchema.Properties)
-                        {
-                            ChangeLeafNodesToString(property.Value);
-                        }
-                    }
-
-                    break;
-                case NJsonSchema.JsonObjectType.None:
-                case NJsonSchema.JsonObjectType.Integer:
-                case NJsonSchema.JsonObjectType.Number:
-                case NJsonSchema.JsonObjectType.Boolean:
-                case NJsonSchema.JsonObjectType.String:
-                default:
-                    // Replace with simple schema
-                    schema.Type = NJsonSchema.JsonObjectType.None;
-                    if (schema.IsEnumeration)
-                    {
-                        schema.Enumeration.Clear();
-                    }
-
-                    if (!string.IsNullOrEmpty(schema.Pattern))
-                    {
-                        schema.Pattern = null;
-                    }
-
-                    break;
-            }
         }
 
         /// <summary>

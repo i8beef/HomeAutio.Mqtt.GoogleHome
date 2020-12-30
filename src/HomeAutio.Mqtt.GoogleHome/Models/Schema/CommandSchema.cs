@@ -83,7 +83,81 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                 Validator = await JsonSchema.FromJsonAsync(paramJson, cancellationToken)
             };
 
+            // Modify the schema validation, only looking for presence not type or value
+            ChangeLeafNodesToString(commandSchema.Validator);
+
             return commandSchema;
+        }
+
+        /// <summary>
+        /// Changes the leaf node type to string.
+        /// </summary>
+        /// <param name="schema">Schema to modify.</param>
+        private static void ChangeLeafNodesToString(JsonSchema schema)
+        {
+            switch (schema.Type)
+            {
+                case JsonObjectType.Array:
+                    if (schema.Item != null)
+                    {
+                        // Default single type array
+                        ChangeLeafNodesToString(schema.Item);
+                    }
+                    else
+                    {
+                        // Tuple handling
+                        foreach (var tupleSchema in schema.Items)
+                        {
+                            ChangeLeafNodesToString(tupleSchema);
+                        }
+                    }
+
+                    break;
+                case JsonObjectType.Object:
+                    foreach (var property in schema.Properties)
+                    {
+                        ChangeLeafNodesToString(property.Value);
+                    }
+
+                    foreach (var property in schema.OneOf)
+                    {
+                        ChangeLeafNodesToString(property);
+                    }
+
+                    foreach (var property in schema.AnyOf)
+                    {
+                        ChangeLeafNodesToString(property);
+                    }
+
+                    if (schema.AllowAdditionalProperties)
+                    {
+                        foreach (var property in schema.AdditionalPropertiesSchema.Properties)
+                        {
+                            ChangeLeafNodesToString(property.Value);
+                        }
+                    }
+
+                    break;
+                case JsonObjectType.None:
+                case JsonObjectType.Integer:
+                case JsonObjectType.Number:
+                case JsonObjectType.Boolean:
+                case JsonObjectType.String:
+                default:
+                    // Replace with simple schema
+                    schema.Type = JsonObjectType.None;
+                    if (schema.IsEnumeration)
+                    {
+                        schema.Enumeration.Clear();
+                    }
+
+                    if (!string.IsNullOrEmpty(schema.Pattern))
+                    {
+                        schema.Pattern = null;
+                    }
+
+                    break;
+            }
         }
 
         /// <summary>
