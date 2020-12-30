@@ -20,6 +20,8 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
             {
                 case "celsius":
                     return new TemperatureMap();
+                case "linearRange":
+                    return new LinearRangeMap();
                 case "range":
                     return new RangeMap();
                 case "regex":
