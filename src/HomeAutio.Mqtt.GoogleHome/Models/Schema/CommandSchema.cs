@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.Extensions;
 using Newtonsoft.Json;
@@ -59,8 +60,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// <param name="paramJson">Param JSON to parse.</param>
         /// <param name="resultsJson">Results JSON to parse.</param>
         /// <param name="errorJson">Error JSON to parse.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>An instantiated <see cref="CommandSchema"/>.</returns>
-        public static async Task<CommandSchema> FromJson(CommandType commandType, string paramJson, string resultsJson, string errorJson)
+        public static async Task<CommandSchema> FromJson(
+            CommandType commandType,
+            string paramJson,
+            string resultsJson,
+            string errorJson,
+            CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(paramJson))
                 return null;
@@ -72,8 +79,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                 Examples = ExtractExamples(paramJson),
                 ParamJson = paramJson,
                 ResultsJson = resultsJson,
-                ResultsValidator = resultsJson != null ? await JsonSchema.FromJsonAsync(resultsJson) : null,
-                Validator = await JsonSchema.FromJsonAsync(paramJson)
+                ResultsValidator = resultsJson != null ? await JsonSchema.FromJsonAsync(resultsJson, cancellationToken) : null,
+                Validator = await JsonSchema.FromJsonAsync(paramJson, cancellationToken)
             };
 
             return commandSchema;

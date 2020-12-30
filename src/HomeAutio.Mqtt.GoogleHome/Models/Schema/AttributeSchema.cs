@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NJsonSchema;
@@ -35,8 +36,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// Instantiates from supplied JSON string.
         /// </summary>
         /// <param name="json">JSON to parse.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>An instantiated <see cref="AttributeSchema"/>.</returns>
-        public static async Task<AttributeSchema> FromJson(string json)
+        public static async Task<AttributeSchema> FromJson(string json, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(json))
                 return null;
@@ -45,7 +47,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
             {
                 Examples = ExtractExamples(json),
                 Json = json,
-                Validator = await JsonSchema.FromJsonAsync(json)
+                Validator = await JsonSchema.FromJsonAsync(json, cancellationToken)
             };
 
             return attributeSchema;

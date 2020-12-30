@@ -83,13 +83,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 case NJsonSchema.JsonObjectType.Array:
                     if (schema.Item != null)
                     {
+                        // Default single type array
                         ChangeLeafNodesToString(schema.Item);
                     }
                     else
                     {
-                        foreach (var branch in schema.Items)
+                        // Tuple handling
+                        foreach (var tupleSchema in schema.Items)
                         {
-                            ChangeLeafNodesToString(branch);
+                            ChangeLeafNodesToString(tupleSchema);
                         }
                     }
 
@@ -108,6 +110,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     foreach (var property in schema.AnyOf)
                     {
                         ChangeLeafNodesToString(property);
+                    }
+
+                    if (schema.AllowAdditionalProperties)
+                    {
+                        foreach (var property in schema.AdditionalPropertiesSchema.Properties)
+                        {
+                            ChangeLeafNodesToString(property.Value);
+                        }
                     }
 
                     break;

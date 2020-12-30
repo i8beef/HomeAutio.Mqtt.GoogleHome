@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.Extensions;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
@@ -42,8 +43,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// Instantiates from embedded resources for specified trait type.
         /// </summary>
         /// <param name="traitType">Trait type.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>An instantiated <see cref="TraitSchema"/>.</returns>
-        public static async Task<TraitSchema> ForTraitType(TraitType traitType)
+        public static async Task<TraitSchema> ForTraitType(TraitType traitType, CancellationToken cancellationToken = default)
         {
             // Get resource paths
             var allTraitsResourceBase = "HomeAutio.Mqtt.GoogleHome.schema.traits";
@@ -63,11 +65,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
 
             // Attributes
             var attributeFile = $"{traitResourceBase}.{traitName}.attributes.schema.json";
-            traitSchema.AttributeSchema = await AttributeSchema.FromJson(GetResourceString(attributeFile, resources));
+            traitSchema.AttributeSchema = await AttributeSchema.FromJson(GetResourceString(attributeFile, resources), cancellationToken);
 
             // States
             var statesFile = $"{traitResourceBase}.{traitName}.states.schema.json";
-            traitSchema.StateSchema = await StateSchema.FromJson(GetResourceString(statesFile, resources));
+            traitSchema.StateSchema = await StateSchema.FromJson(GetResourceString(statesFile, resources), cancellationToken);
 
             // Commands
             var commandParamFiles = resources.Where(x => x.StartsWith($"{traitResourceBase}") && x.EndsWith(".params.schema.json"));
@@ -84,7 +86,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                     commandType,
                     GetResourceString(commandParamFile, resources),
                     GetResourceString(commandResultsFile, resources),
-                    GetResourceString(commandErrorFile, resources));
+                    GetResourceString(commandErrorFile, resources),
+                    cancellationToken);
 
                 if (commandSchema != null)
                 {

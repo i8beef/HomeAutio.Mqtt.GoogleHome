@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.Extensions;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
@@ -37,13 +38,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// Instantiates from supplied JSON string.
         /// </summary>
         /// <param name="json">JSON to parse.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>An instantiated <see cref="StateSchema"/>.</returns>
-        public static async Task<StateSchema> FromJson(string json)
+        public static async Task<StateSchema> FromJson(string json, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(json))
                 return null;
 
-            var stateValidator = await JsonSchema.FromJsonAsync(json);
+            var stateValidator = await JsonSchema.FromJsonAsync(json, cancellationToken);
             var stateSchema = new StateSchema
             {
                 Examples = ExtractExamples(json),
