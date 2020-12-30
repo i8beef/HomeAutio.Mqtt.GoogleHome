@@ -1,9 +1,10 @@
 ﻿using System.Linq;
+using HomeAutio.Mqtt.GoogleHome.Extensions;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Xunit;
 
-namespace HomeAutio.Mqtt.GoogleHome.Tests
+namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
 {
     public class JsonSchemaExtensionsTests
     {

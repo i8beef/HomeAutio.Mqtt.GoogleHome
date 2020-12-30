@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace HomeAutio.Mqtt.GoogleHome
+namespace HomeAutio.Mqtt.GoogleHome.Extensions
 {
     /// <summary>
     /// Dictionary extensions.

@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 
-namespace HomeAutio.Mqtt.GoogleHome
+namespace HomeAutio.Mqtt.GoogleHome.Extensions
 {
     /// <summary>
     /// JSON schema extensions.

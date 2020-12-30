@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace HomeAutio.Mqtt.GoogleHome
+namespace HomeAutio.Mqtt.GoogleHome.Extensions
 {
     /// <summary>
     /// Enum extensions.

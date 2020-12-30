@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using HomeAutio.Mqtt.GoogleHome.Extensions;
+using System.Collections.Generic;
 using Xunit;
 
-namespace HomeAutio.Mqtt.GoogleHome.Tests
+namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
 {
     public class DictionaryExtensionsTests
     {

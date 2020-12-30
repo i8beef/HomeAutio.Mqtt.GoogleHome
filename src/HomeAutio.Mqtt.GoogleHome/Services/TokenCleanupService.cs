@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.Identity;
 using Microsoft.Extensions.Hosting;
 
-namespace HomeAutio.Mqtt.GoogleHome
+namespace HomeAutio.Mqtt.GoogleHome.Services
 {
     /// <summary>
     /// Token cleanup service.

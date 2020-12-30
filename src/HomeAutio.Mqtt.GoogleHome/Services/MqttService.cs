@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.Core;
+using HomeAutio.Mqtt.GoogleHome.Extensions;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
@@ -14,7 +15,7 @@ using MQTTnet;
 using MQTTnet.Extensions.ManagedClient;
 using Newtonsoft.Json;
 
-namespace HomeAutio.Mqtt.GoogleHome
+namespace HomeAutio.Mqtt.GoogleHome.Services
 {
     /// <summary>
     /// MQTT Service.

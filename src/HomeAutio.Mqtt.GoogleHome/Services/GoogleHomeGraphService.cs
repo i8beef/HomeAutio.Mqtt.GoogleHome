@@ -9,7 +9,7 @@ using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace HomeAutio.Mqtt.GoogleHome
+namespace HomeAutio.Mqtt.GoogleHome.Services
 {
     /// <summary>
     /// Google HomeGraph API service.
