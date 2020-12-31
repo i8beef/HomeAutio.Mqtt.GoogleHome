@@ -129,7 +129,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                         ChangeLeafNodesToString(property);
                     }
 
-                    if (schema.AllowAdditionalProperties)
+                    if (schema.AdditionalPropertiesSchema != null)
                     {
                         foreach (var property in schema.AdditionalPropertiesSchema.Properties)
                         {
