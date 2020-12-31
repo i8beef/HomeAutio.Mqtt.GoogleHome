@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace HomeAutio.Mqtt.GoogleHome.Validation
 {
@@ -14,7 +15,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         /// <returns>Validation errors.</returns>
         public static IEnumerable<string> Validate(IDictionary<string, object> customData)
         {
-            return new List<string>();
+            return Enumerable.Empty<string>();
         }
     }
 }

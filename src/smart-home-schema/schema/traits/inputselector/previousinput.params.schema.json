@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "No parameters"
+    }
+  ],
+  "description": "Select the previous input. Only applicable when the <code>orderedInputs</code> attribute is set to true.",
+  "type": "object",
+  "additionalProperties": false
+}

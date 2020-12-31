@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Increase the humidity 10 percent",
+      "humidityRelativePercent": 10
+    },
+    {
+      "$comment": "Decrease the humidity a lot",
+      "humidityRelativeWeight": -5
+    }
+  ],
+  "description": "Adjust the humidity level relative to the current value.",
+  "type": "object",
+  "oneOf": [
+    {
+      "description": "Set humidity percent.",
+      "type": "object",
+      "properties": {
+        "humidityRelativePercent": {
+          "description": "The percentage value to adjust the humidity level.",
+          "type": "integer",
+          "minimum": -100,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "humidityRelativePercent"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "description": "Set humidity weight.",
+      "type": "object",
+      "properties": {
+        "humidityRelativeWeight": {
+          "description": "Indicates the amount of ambiguous humidity change from a small amount (\"a little\") to a large amount (\"a lot\").",
+          "type": "integer",
+          "minimum": -5,
+          "maximum": 5
+        }
+      },
+      "required": [
+        "humidityRelativeWeight"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

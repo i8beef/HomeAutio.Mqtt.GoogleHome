@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Seek 10s forward",
+      "relativePositionMs": 10000
+    },
+    {
+      "$comment": "Seek 10s backward",
+      "relativePositionMs": -10000
+    }
+  ],
+  "description": "Seek to a relative position.",
+  "type": "object",
+  "properties": {
+    "relativePositionMs": {
+      "description": "Milliseconds of the forward (positive int) or backward (negative int) amount to seek.",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "relativePositionMs"
+  ],
+  "additionalProperties": false
+}

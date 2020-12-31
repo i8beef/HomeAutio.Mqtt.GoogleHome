@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Adjust my light to 65% brightness.",
+      "brightness": 65
+    }
+  ],
+  "description": "Adjust device absolute brightness.",
+  "type": "object",
+  "properties": {
+    "brightness": {
+      "description": "New absolute brightness percentage.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    }
+  },
+  "required": [
+    "brightness"
+  ],
+  "additionalProperties": false
+}

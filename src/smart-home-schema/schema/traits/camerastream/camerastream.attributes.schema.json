@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Camera with multiple protocols support, not requiring an auth token.",
+      "cameraStreamSupportedProtocols": [
+        "hls",
+        "dash",
+        "smooth_stream",
+        "progressive_mp4"
+      ],
+      "cameraStreamNeedAuthToken": false
+    },
+    {
+      "$comment": "Camera supporting a single protocol, requiring an auth token.",
+      "cameraStreamSupportedProtocols": [
+        "hls"
+      ],
+      "cameraStreamNeedAuthToken": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "cameraStreamSupportedProtocols": {
+      "description": "Supported media types, according to preference, for the real-time stream.",
+      "type": "array",
+      "items": {
+        "description": "Media type.",
+        "type": "string",
+        "enum": [
+          "hls",
+          "dash",
+          "smooth_stream",
+          "progressive_mp4"
+        ]
+      }
+    },
+    "cameraStreamNeedAuthToken": {
+      "description": "Whether an auth token will be provided via <code>cameraStreamAuthToken</code> for your custom Cast receiver to stream the camera feed.",
+      "type": "boolean"
+    },
+    "cameraStreamNeedDrmEncryption": {
+      "description": "Whether the stream content requires DRM encryption.",
+      "type": "boolean",
+      "default": false,
+      "deprecated": true
+    }
+  },
+  "required": [
+    "cameraStreamNeedAuthToken",
+    "cameraStreamSupportedProtocols"
+  ]
+}

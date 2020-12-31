@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Set the target temperature for a thermostat device.",
+  "examples": [
+    {
+      "$comment": "Set the device temperature to 22 degrees.",
+      "thermostatTemperatureSetpoint": 22.0
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "thermostatTemperatureSetpoint": {
+      "description": "Target temperature setpoint. Supports up to one decimal place.",
+      "type": "number"
+    }
+  },
+  "required": [
+    "thermostatTemperatureSetpoint"
+  ],
+  "additionalProperties": false
+}

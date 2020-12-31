@@ -1,0 +1,69 @@
+name: Simple bathtub
+type: action.devices.types.BATHTUB
+traits:
+  - action.devices.traits.Fill
+  - action.devices.traits.TemperatureControl
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "availableFillLevels": {
+      "levels": [
+        {
+          "level_name": "half_key",
+          "level_values": [
+            {
+              "level_synonym": [
+                "half",
+                "halfway",
+                "one half"
+              ],
+              "lang": "en"
+            }
+          ]
+        }
+      ],
+      "ordered": false
+    },
+    "temperatureRange": {
+      "minThresholdCelsius": 25,
+      "maxThresholdCelsius": 100
+    },
+    "temperatureUnitForUX": "F"
+  }
+states:
+  {
+    "on": false,
+    "currentFillLevel": "half_key",
+    "isFilled": true,
+    "temperatureSetpointCelsius": 30
+  }
+commands:
+  action.devices.commands.Fill:
+    params:
+      {
+        "fill": true,
+        "fillLevel": "half_key"
+      }
+    results:
+      {
+        "on": true,
+        "currentFillLevel": "half_key"
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }
+  action.devices.commands.SetTemperature:
+    params:
+      {
+        "temperature": 40
+      }
+    results:
+      {
+        "temperatureSetpointCelsius": 40
+      }

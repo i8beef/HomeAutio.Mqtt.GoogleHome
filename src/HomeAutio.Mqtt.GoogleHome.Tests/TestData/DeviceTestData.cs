@@ -45,8 +45,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.TestData
                                 "on",
                                 new DeviceState
                                 {
-                                    Topic = "/test/device",
-                                    GoogleType = GoogleType.Bool,
+                                    Topic = "test/device",
                                     ValueMap = null
                                 }
                             }

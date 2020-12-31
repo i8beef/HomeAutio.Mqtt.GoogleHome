@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "An error occurred while attempting to request a speed test.",
+  "type": "string",
+  "enum": [
+    "networkSpeedTestInProgress"
+  ]
+}

@@ -1,0 +1,223 @@
+name: Simple media remote
+type: action.devices.types.REMOTECONTROL
+traits:
+  - action.devices.traits.Channel
+  - action.devices.traits.AppSelector
+  - action.devices.traits.InputSelector
+  - action.devices.traits.MediaState
+  - action.devices.traits.OnOff
+  - action.devices.traits.TransportControl
+  - action.devices.traits.Volume
+attributes:
+  {
+    "transportControlSupportedCommands": [
+      "NEXT",
+      "PREVIOUS",
+      "PAUSE",
+      "STOP",
+      "RESUME",
+      "CAPTION_CONTROL"
+    ],
+    "availableApplications": [
+      {
+        "key": "youtube",
+        "names": [
+          {
+            "name_synonym": [
+              "Youtube",
+              "Youtube_en"
+            ],
+            "lang": "en"
+          }
+        ]
+      }
+    ],
+    "availableChannels": [
+      {
+        "key": "ktvu2",
+        "names": [
+          "Fox",
+          "KTVU"
+        ],
+        "number": "2"
+      },
+      {
+        "key": "abc1",
+        "names": [
+          "ABC",
+          "ABC East"
+        ],
+        "number": "702.4-11"
+      }
+    ],
+    "availableInputs": [
+      {
+        "key": "hdmi_1",
+        "names": [
+          {
+            "name_synonym": [
+              "HDMI 1",
+              "DVD player"
+            ],
+            "lang": "en"
+          }
+        ]
+      },
+      {
+        "key": "hdmi_2",
+        "names": [
+          {
+            "name_synonym": [
+              "HDMI 2",
+              "TV"
+            ],
+            "lang": "en"
+          }
+        ]
+      }
+    ],
+    "orderedInputs": false,
+    "volumeMaxLevel": 11,
+    "volumeCanMuteAndUnmute": true,
+    "volumeDefaultPercentage": 6,
+    "levelStepSize": 2,
+    "commandOnlyVolume": false,
+    "supportActivityState": true,
+    "supportPlaybackState": true
+  }
+states:
+  {
+    "on": true,
+    "currentApplication": "youtube",
+    "currentInput": "hdmi_1",
+    "currentVolume": 10,
+    "isMuted": false,
+    "activityState": "ACTIVE",
+    "playbackState": "PAUSED"
+  }
+commands:
+  action.devices.commands.SelectChannel:
+    params:
+      {
+        "channelCode": "ktvu2"
+      }
+  action.devices.commands.RelativeChannel:
+    params:
+      {
+        "relativeChannelChange": 1
+      }
+  action.devices.commands.ReturnChannel: {}
+  action.devices.commands.appInstall:
+    params:
+      {
+        "newApplication": "youtube"
+      }
+    results:
+      {
+        "currentApplication": "youtube"
+      }
+  action.devices.commands.appSearch:
+    params:
+      {
+        "newApplication": "youtube"
+      }
+    results:
+      {
+        "currentApplication": "youtube"
+      }
+  action.devices.commands.appSelect:
+    params:
+      {
+        "newApplication": "youtube"
+      }
+    results:
+      {
+        "currentApplication": "youtube"
+      }
+  action.devices.commands.SetInput:
+    params:
+      {
+        "newInput": "hdmi_2"
+      }
+    results:
+      {
+        "currentInput": "hdmi_2"
+      }
+  action.devices.commands.NextInput:
+    results:
+      {
+        "currentInput": "hdmi_2"
+      }
+  action.devices.commands.PreviousInput:
+    results:
+      {
+        "currentInput": "hdmi_2"
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }
+  action.devices.commands.mediaClosedCaptioningOff:
+    results:
+      {
+        "playbackState": "PLAYING"
+      }
+  action.devices.commands.mediaClosedCaptioningOn:
+    params:
+      {
+        "closedCaptioningLanguage": "en"
+      }
+    results:
+      {
+        "playbackState": "PLAYING"
+      }
+  action.devices.commands.mediaNext:
+    results:
+      {
+        "playbackState": "FAST_FORWARDING"
+      }
+  action.devices.commands.mediaPause:
+    results:
+      {
+        "playbackState": "PAUSED"
+      }
+  action.devices.commands.mediaPrevious:
+    results:
+      {
+        "playbackState": "REWINDING"
+      }
+  action.devices.commands.mediaResume:
+    results:
+      {
+        "playbackState": "PLAYING"
+      }
+  action.devices.commands.mediaStop:
+    results:
+      {
+        "playbackState": "STOPPED"
+      }
+  action.devices.commands.setVolume:
+    params:
+      {
+        "volumeLevel": 11
+      }
+    results:
+      {
+        "currentVolume": 11,
+        "isMuted": false
+      }
+  action.devices.commands.mute:
+    params:
+      {
+        "mute": true
+      }
+    results:
+      {
+        "currentVolume": 10,
+        "isMuted": true
+      }

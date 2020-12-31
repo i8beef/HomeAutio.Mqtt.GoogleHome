@@ -115,7 +115,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
                         new DeviceState
                         {
                             Topic = "/test/device/brightness",
-                            GoogleType = GoogleType.Numeric,
                             ValueMap = null
                         }
                     }

@@ -1,0 +1,74 @@
+name: Simple fan
+type: action.devices.types.FAN
+traits:
+  - action.devices.traits.FanSpeed
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "availableFanSpeeds": {
+      "speeds": [
+        {
+          "speed_name": "low_key",
+          "speed_values": [
+            {
+              "speed_synonym": [
+                "low",
+                "slow"
+              ],
+              "lang": "en"
+            },
+            {
+              "speed_synonym": [
+                "niedrig",
+                "schleppend"
+              ],
+              "lang": "de"
+            }
+          ]
+        },
+        {
+          "speed_name": "high_key",
+          "speed_values": [
+            {
+              "speed_synonym": [
+                "high"
+              ],
+              "lang": "en"
+            },
+            {
+              "speed_synonym": [
+                "hoch"
+              ],
+              "lang": "de"
+            }
+          ]
+        }
+      ],
+      "ordered": true
+    },
+    "reversible": true
+  }
+states:
+  {
+    "on": true,
+    "currentFanSpeedSetting": "low_key"
+  }
+commands:
+  action.devices.commands.SetFanSpeed:
+    params:
+      {
+        "fanSpeed": "high_key"
+      }
+    results:
+      {
+        "currentFanSpeedSetting": "high_key"
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

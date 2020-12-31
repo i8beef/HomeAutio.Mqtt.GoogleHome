@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Set a target temperature range for a thermostat device.",
+  "examples": [
+    {
+      "$comment": "Hold the temperature between 22 and 26 degrees.",
+      "thermostatTemperatureSetpointHigh": 26,
+      "thermostatTemperatureSetpointLow": 22
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "thermostatTemperatureSetpointHigh": {
+      "description": "High target setpoint for the range. Requires <code>heatcool</code> mode support.",
+      "type": "number"
+    },
+    "thermostatTemperatureSetpointLow": {
+      "description": "Low target setpoint for the range. Requires <code>heatcool</code> mode support.",
+      "type": "number"
+    }
+  },
+  "required": [
+    "thermostatTemperatureSetpointHigh",
+    "thermostatTemperatureSetpointLow"
+  ],
+  "additionalProperties": false
+}

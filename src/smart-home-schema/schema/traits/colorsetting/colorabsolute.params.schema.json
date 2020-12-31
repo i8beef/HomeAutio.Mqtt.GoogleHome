@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Make the light warm white.",
+      "color": {
+        "name": "warm white",
+        "temperature": 3000
+      }
+    },
+    {
+      "$comment": "Make the light magenta.",
+      "color": {
+        "name": "magenta",
+        "spectrumRGB": 16711935
+      }
+    },
+    {
+      "$comment": "Make the light magenta.",
+      "color": {
+        "name": "magenta",
+        "spectrumHSV": {
+          "hue": 300,
+          "saturation": 1.0,
+          "value": 1.0
+        }
+      }
+    }
+  ],
+  "description": "Set the absolute color value.",
+  "type": "object",
+  "properties": {
+    "color": {
+      "description": "Color to set.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Color name parsed from the user's command; may not always be available (i.e. when using relative commands).",
+          "type": "string"
+        }
+      },
+      "oneOf": [
+        {
+          "description": "Color temperature support.",
+          "type": "object",
+          "properties": {
+            "temperature": {
+              "description": "Temperature value in Kelvin.",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "temperature"
+          ]
+        },
+        {
+          "description": "Color RGB spectrum support.",
+          "type": "object",
+          "properties": {
+            "spectrumRGB": {
+              "description": "Spectrum RGB value as a decimal integer.",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "spectrumRGB"
+          ]
+        },
+        {
+          "description": "Color HSV spectrum support.",
+          "type": "object",
+          "properties": {
+            "spectrumHSV": {
+              "description": "Spectrum HSV value.",
+              "type": "object",
+              "properties": {
+                "hue": {
+                  "description": "Hue.",
+                  "type": "number",
+                  "minimum": 0.0,
+                  "exclusiveMaximum": 360
+                },
+                "saturation": {
+                  "description": " Saturation.",
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0
+                },
+                "value": {
+                  "description": "Value.",
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0
+                }
+              }
+            }
+          },
+          "required": [
+            "spectrumHSV"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "color"
+  ],
+  "additionalProperties": false
+}

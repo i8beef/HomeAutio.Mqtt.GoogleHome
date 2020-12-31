@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device that supports a reversible scene.",
+      "sceneReversible": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "sceneReversible": {
+      "description": "Indicates that this scene can be cancelled. This attribute is only relevant for scenes that modify state and remember previous state. The device supports the <code>ActivateScene</code> command with the <code>deactivate</code> parameter to true.",
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

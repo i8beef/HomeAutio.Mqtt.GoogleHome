@@ -1,0 +1,63 @@
+name: Simple thermostat
+type: action.devices.types.THERMOSTAT
+traits:
+  - action.devices.traits.TemperatureSetting
+attributes:
+  {
+    "availableThermostatModes": [
+      "off",
+      "heat",
+      "cool",
+      "heatcool",
+      "on"
+    ],
+    "thermostatTemperatureRange": {
+      "minThresholdCelsius": 15,
+      "maxThresholdCelsius": 30
+    },
+    "thermostatTemperatureUnit": "F"
+  }
+states:
+  {
+    "thermostatMode": "cool",
+    "thermostatTemperatureSetpoint": 23,
+    "thermostatTemperatureAmbient": 25.1,
+    "thermostatHumidityAmbient": 45.3
+  }
+commands:
+  action.devices.commands.ThermostatTemperatureSetpoint:
+    params:
+      {
+        "thermostatTemperatureSetpoint": 22.0
+      }
+    results:
+      {
+        "thermostatMode": "cool",
+        "thermostatTemperatureSetpoint": 22.0,
+        "thermostatTemperatureAmbient": 25.1
+      }
+  action.devices.commands.ThermostatTemperatureSetRange:
+    params:
+      {
+        "thermostatTemperatureSetpointHigh": 26,
+        "thermostatTemperatureSetpointLow": 22
+      }
+    results:
+      {
+        "thermostatMode": "heatcool",
+        "thermostatTemperatureSetpointHigh": 26,
+        "thermostatTemperatureSetpointLow": 22,
+        "thermostatTemperatureAmbient": 25.1
+      }
+  action.devices.commands.ThermostatSetMode:
+    params:
+      {
+        "thermostatMode": "heatcool"
+      }
+    results:
+      {
+        "thermostatMode": "heatcool",
+        "thermostatTemperatureSetpointHigh": 26,
+        "thermostatTemperatureSetpointLow": 22,
+        "thermostatTemperatureAmbient": 25.1
+      }

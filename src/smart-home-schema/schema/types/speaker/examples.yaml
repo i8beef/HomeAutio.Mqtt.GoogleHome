@@ -1,0 +1,87 @@
+name: Simple speaker
+type: action.devices.types.SPEAKER
+traits:
+  - action.devices.traits.MediaState
+  - action.devices.traits.Volume
+  - action.devices.traits.TransportControl
+attributes:
+  {
+    "transportControlSupportedCommands": [
+      "NEXT",
+      "PREVIOUS",
+      "PAUSE",
+      "STOP",
+      "RESUME"
+    ],
+    "volumeMaxLevel": 11,
+    "volumeCanMuteAndUnmute": true,
+    "supportActivityState": true,
+    "supportPlaybackState": true
+  }
+states:
+  {
+    "currentVolume": 10,
+    "isMuted": false,
+    "activityState": "ACTIVE",
+    "playbackState": "PAUSED"
+  }
+commands:
+  action.devices.commands.mediaClosedCaptioningOff:
+    results:
+      {
+        "playbackState": "PLAYING"
+      }
+  action.devices.commands.mediaClosedCaptioningOn:
+    params:
+      {
+        "closedCaptioningLanguage": "en"
+      }
+    results:
+      {
+        "playbackState": "PLAYING"
+      }
+  action.devices.commands.mediaNext:
+    results:
+      {
+        "playbackState": "FAST_FORWARDING"
+      }
+  action.devices.commands.mediaPause:
+    results:
+      {
+        "playbackState": "PAUSED"
+      }
+  action.devices.commands.mediaPrevious:
+    results:
+      {
+        "playbackState": "REWINDING"
+      }
+  action.devices.commands.mediaResume:
+    results:
+      {
+        "playbackState": "PLAYING"
+      }
+  action.devices.commands.mediaStop:
+    results:
+      {
+        "playbackState": "STOPPED"
+      }
+  action.devices.commands.setVolume:
+    params:
+      {
+        "volumeLevel": 11
+      }
+    results:
+      {
+        "currentVolume": 11,
+        "isMuted": false
+      }
+  action.devices.commands.mute:
+    params:
+      {
+        "mute": true
+      }
+    results:
+      {
+        "currentVolume": 10,
+        "isMuted": true
+      }

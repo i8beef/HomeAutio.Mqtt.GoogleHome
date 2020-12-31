@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device with YouTube app",
+      "availableApplications": [
+        {
+          "key": "youtube",
+          "names": [
+            {
+              "name_synonym": [
+                "youtube",
+                "YouTube US"
+              ],
+              "lang": "en"
+            },
+            {
+              "name_synonym": [
+                "youtube",
+                "YouTube DE"
+              ],
+              "lang": "de"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "availableApplications": {
+      "description": "A list of applications. Each application has one or more synonyms in each supported language. The first synonym is used in the response.",
+      "type": "array",
+      "items": {
+        "description": "Application that users of this device can interact with.",
+        "type": "object",
+        "properties": {
+          "key": {
+            "description": "Unique key for the application which is not exposed to users in speech or response.",
+            "type": "string"
+          },
+          "names": {
+            "description": "Name of each application and its language-specific synonyms.",
+            "type": "array",
+            "items": {
+              "description": "Application synonyms.",
+              "type": "object",
+              "properties": {
+                "name_synonym": {
+                  "description": "User-friendly synonyms for the application name for a given language. The first synonym is used in the response.",
+                  "type": "array",
+                  "items": {
+                    "description": "Application name.",
+                    "type": "string"
+                  }
+                },
+                "lang": {
+                  "description": "Language code.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name_synonym",
+                "lang"
+              ]
+            }
+          }
+        },
+        "required": [
+          "key",
+          "names"
+        ]
+      }
+    }
+  },
+  "required": [
+    "availableApplications"
+  ]
+}

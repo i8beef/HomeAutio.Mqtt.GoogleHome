@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Is my oven cooking?",
+      "currentCookingMode": "BAKE"
+    },
+    {
+      "$comment": "What's cooking in my rice cooker right now?",
+      "currentCookingMode": "COOK",
+      "currentFoodPreset": "brown_rice",
+      "currentFoodQuantity": 2,
+      "currentFoodUnit": "CUPS"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "currentCookingMode": {
+      "description": "Describes the current cooking mode set on the device, from the list of <code>supportedCookingModes</code> attribute. Only one mode may be reported. If no mode is currently selected, this should be set to NONE.",
+      "type": "string"
+    },
+    "currentFoodPreset": {
+      "description": "Describes the current food cooking in the device, from the list of <code>foodPresets</code> attribute. Only one food may be reported. If no food is currently selected, this should be set to NONE.",
+      "type": "string"
+    },
+    "currentFoodQuantity": {
+      "description": "Defines the current amount of food cooking associated with the <code>currentFoodUnit</code>, if a quantity was specified. Should not be reported if nothing is currently cooking, or if there is no quantity associated with this food preset.",
+      "type": "number"
+    },
+    "currentFoodUnit": {
+      "description": "The unit associated with the <code>currentFoodQuantity</code>, from the list of <code>supported_units</code> attribute.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "currentCookingMode"
+  ]
+}

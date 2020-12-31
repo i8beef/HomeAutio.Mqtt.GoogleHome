@@ -8,10 +8,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
     public enum MapType
     {
         /// <summary>
-        /// Value map.
+        /// Celsius map.
         /// </summary>
-        [EnumMember(Value = "value")]
-        Value,
+        [EnumMember(Value = "celsius")]
+        Celsius,
+
+        /// <summary>
+        /// Range Calc map.
+        /// </summary>
+        [EnumMember(Value = "linearRange")]
+        LinearRange,
 
         /// <summary>
         /// Range map.
@@ -20,21 +26,21 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         Range,
 
         /// <summary>
-        /// Static map.
-        /// </summary>
-        [EnumMember(Value = "static")]
-        Static,
-
-        /// <summary>
         /// Regex map.
         /// </summary>
         [EnumMember(Value = "regex")]
         Regex,
 
         /// <summary>
-        /// Celsius map.
+        /// Static map.
         /// </summary>
-        [EnumMember(Value = "celsius")]
-        Celsius
+        [EnumMember(Value = "static")]
+        Static,
+
+        /// <summary>
+        /// Value map.
+        /// </summary>
+        [EnumMember(Value = "value")]
+        Value
     }
 }

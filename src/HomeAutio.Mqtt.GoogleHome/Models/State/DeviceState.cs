@@ -16,11 +16,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         public string Topic { get; set; }
 
         /// <summary>
-        /// Google device state.
-        /// </summary>
-        public GoogleType GoogleType { get; set; }
-
-        /// <summary>
         /// Value mappings.
         /// </summary>
         [JsonProperty(ItemConverterType = typeof(ValueMapJsonConverter))]
@@ -30,8 +25,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// Handles mapping some common state values to google acceptable state values.
         /// </summary>
         /// <param name="stateValue">State value.</param>
+        /// <param name="googleType">Google type.</param>
         /// <returns>Remapped value.</returns>
-        public object MapValueToGoogle(string stateValue)
+        public object MapValueToGoogle(string stateValue, GoogleType googleType)
         {
             // Run any transforms first
             if (ValueMap != null && ValueMap.Count > 0)
@@ -48,7 +44,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
             }
 
             // Convert to Google type
-            switch (GoogleType)
+            switch (googleType)
             {
                 case GoogleType.Bool:
                     if (bool.TryParse(stateValue, out bool boolValue))

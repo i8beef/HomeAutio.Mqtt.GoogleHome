@@ -1,4 +1,4 @@
-@using HomeAutio.Mqtt.GoogleHome
+@using HomeAutio.Mqtt.GoogleHome.Extensions
 @model HomeAutio.Mqtt.GoogleHome.ViewModels.TraitViewModel
 
 @section Scripts {
@@ -34,6 +34,101 @@
         var commandsEditor = CodeMirror.fromTextArea(document.getElementById("Commands"), codemirrorOptions);
         var stateEditor = CodeMirror.fromTextArea(document.getElementById("State"), codemirrorOptions);
 
+        var attributeExamples = document.getElementById("attributeExamples");
+        var commandExamples = document.getElementById("commandExamples");
+        var stateExamples = document.getElementById("stateExamples");
+
+        // Create example accordion item
+        var getCardCollapseNode = function (parentId, collapseId, comment, example) {
+            var cardNode = document.createElement("div");
+            cardNode.className = "card";
+
+            // Header
+            var cardHeaderNode = document.createElement("div");
+            cardHeaderNode.className = "card-header";
+
+            var cardHeaderButtonNode = document.createElement("a");
+            cardHeaderButtonNode.className = "btn btn-link btn-primary";
+            cardHeaderButtonNode.dataset.toggle = "collapse";
+            cardHeaderButtonNode.dataset.target = "#" + collapseId;
+            cardHeaderButtonNode.innerHTML = comment;
+
+            cardHeaderNode.appendChild(cardHeaderButtonNode);
+
+            // Collapse
+            var cardCollapseNode = document.createElement("div");
+            cardCollapseNode.id = collapseId;
+            cardCollapseNode.className = "collapse";
+            cardCollapseNode.dataset.parent = "#" + parentId;
+            $(cardCollapseNode).collapse({ parent: "#" + parentId, toggle: false });
+
+            // Card body
+            var cardBodyNode = document.createElement("div");
+            cardBodyNode.className = "card-body";
+
+            var preformattedText = document.createElement("pre");
+            preformattedText.innerText = example;
+
+            cardBodyNode.appendChild(preformattedText);
+            cardCollapseNode.appendChild(cardBodyNode);
+
+            cardNode.appendChild(cardHeaderNode);
+            cardNode.appendChild(cardCollapseNode);
+
+            return cardNode;
+        }
+
+        // Templates
+        var loadTemplate = function () {
+            var traitDropDown = document.getElementById("Trait");
+            var traitName = traitDropDown.options[traitDropDown.selectedIndex].text;
+
+            if (traitName !== "Please select") {
+                // Dispose any existing accordions
+                $(attributeExamples.querySelectorAll(".collapse")).collapse("dispose");
+                attributeExamples.innerHTML = "";
+
+                $(commandExamples.querySelectorAll(".collapse")).collapse("dispose");
+                commandExamples.innerHTML = "";
+
+                $(stateExamples.querySelectorAll(".collapse")).collapse("dispose");
+                stateExamples.innerHTML = "";
+
+                // Make call to get examples for traitName
+                $.get("Examples?traitId=" + traitName, function (examples) {
+                    // Add new accordions
+                    for (var i in examples.attributeExamples) {
+                        var parentId = "attributeExamples";
+                        var childId = "attributeExample" + i;
+                        var comment = examples.attributeExamples[i].comment;
+                        var example = examples.attributeExamples[i].example;
+
+                        attributeExamples.appendChild(getCardCollapseNode(parentId, childId, comment, example));
+                    }
+
+                    // Add new accordions
+                    for (var i in examples.commandExamples) {
+                        var parentId = "commandExamples";
+                        var childId = "commandExample" + i;
+                        var comment = examples.commandExamples[i].comment;
+                        var example = examples.commandExamples[i].example;
+
+                        commandExamples.appendChild(getCardCollapseNode(parentId, childId, comment, example));
+                    }
+
+                    // Add new accordions
+                    for (var i in examples.stateExamples) {
+                        var parentId = "stateExamples";
+                        var childId = "stateExample" + i;
+                        var comment = examples.stateExamples[i].comment;
+                        var example = examples.stateExamples[i].example;
+
+                        stateExamples.appendChild(getCardCollapseNode(parentId, childId, comment, example));
+                    }
+                });
+            }
+        };
+
         var openDocumentation = function () {
             var traitDropDown = document.getElementById("Trait");
             var traitName = traitDropDown.options[traitDropDown.selectedIndex].text;
@@ -52,6 +147,7 @@
         };
 
         $(function () {
+            loadTemplate();
             challengePinHideShow();
             $('#ChallengeType').change(challengePinHideShow);
         });
@@ -75,7 +171,7 @@
     <partial name="_ValidationSummary" />
 
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <div class="card">
                 <div class="card-header">
                     <h2>Trait Information</h2>
@@ -91,25 +187,6 @@
                             </div>
 
                             <div class="form-group">
-                                <a onclick="openDocumentation()" class="btn btn-warning">Trait documentation</a>
-                            </div>
-
-                            <div class="form-group">
-                                <label asp-for="Attributes">Attributes</label>
-                                <textarea class="form-control" asp-for="Attributes" rows="10"></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label asp-for="Commands">Commands</label>
-                                <textarea class="form-control" asp-for="Commands" rows="10"></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label asp-for="State">State</label>
-                                <textarea class="form-control" asp-for="State" rows="10"></textarea>
-                            </div>
-
-                            <div class="form-group">
                                 <label asp-for="ChallengeType">Challenge Type</label>
                                 <select class="form-control" asp-for="ChallengeType" asp-items="@Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.State.Challenges.ChallengeType>()"></select>
                             </div>
@@ -117,6 +194,21 @@
                             <div class="form-group" id="challengePin-form-group">
                                 <label asp-for="ChallengePin">Challenge Pin</label>
                                 <input class="form-control" placeholder="Challenge Pin" asp-for="ChallengePin">
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Attributes">Attributes</label>
+                                <textarea class="form-control" asp-for="Attributes"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Commands">Commands</label>
+                                <textarea class="form-control" asp-for="Commands"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="State">State</label>
+                                <textarea class="form-control" asp-for="State"></textarea>
                             </div>
                         </fieldset>
                     </div>
@@ -130,6 +222,23 @@
                 <form method="post" asp-action="Delete" asp-route-deviceId="@(Context.Request.Query["deviceId"])" asp-route-traitId="@Model.Trait.ToEnumString()" style="height: 0;">
                     <button class="btn btn-danger float-right" style="position: relative;top: -49px;right:20px" name="button" value="delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
                 </form>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Examples <a onclick="openDocumentation()" class="btn btn-warning">Trait documentation</a></h2>
+                </div>
+                <div class="card-body">
+                    <h6>Attribute Examples</h6>
+                    <div id="attributeExamples"></div>
+
+                    <h6>Command Examples</h6>
+                    <div id="commandExamples"></div>
+
+                    <h6>State Examples</h6>
+                    <div id="stateExamples"></div>
+                </div>
             </div>
         </div>
     </div>

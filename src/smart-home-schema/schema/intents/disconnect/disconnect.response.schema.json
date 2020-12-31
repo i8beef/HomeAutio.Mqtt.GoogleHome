@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DisconnectResponse",
+  "examples": [
+    {
+      "$comment": "DISCONNECT intent response"
+    }
+  ],
+  "description": "This intent is triggered to inform you when a user has unlinked the app account from the Google Assistant. After receiving a DISCONNECT intent, you should not report state for this user's devices. Empty JSON body is all that is needed.",
+  "type": "object",
+  "additionalProperties": false
+}

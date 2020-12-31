@@ -1,0 +1,253 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SyncResponse",
+  "examples": [
+    {
+      "$comment": "SYNC intent response",
+      "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+      "payload": {
+        "agentUserId": "1836.15267389",
+        "devices": [
+          {
+            "id": "123",
+            "type": "action.devices.types.OUTLET",
+            "traits": [
+              "action.devices.traits.OnOff"
+            ],
+            "name": {
+              "defaultNames": [
+                "My Outlet 1234"
+              ],
+              "name": "Night light",
+              "nicknames": [
+                "wall plug"
+              ]
+            },
+            "willReportState": false,
+            "roomHint": "kitchen",
+            "deviceInfo": {
+              "manufacturer": "lights-out-inc",
+              "model": "hs1234",
+              "hwVersion": "3.2",
+              "swVersion": "11.4"
+            },
+            "otherDeviceIds": [
+              {
+                "deviceId": "local-device-id"
+              }
+            ],
+            "customData": {
+              "fooValue": 74,
+              "barValue": true,
+              "bazValue": "foo"
+            }
+          },
+          {
+            "id": "456",
+            "type": "action.devices.types.LIGHT",
+            "traits": [
+              "action.devices.traits.OnOff",
+              "action.devices.traits.Brightness",
+              "action.devices.traits.ColorSetting"
+            ],
+            "name": {
+              "defaultNames": [
+                "lights out inc. bulb A19 color hyperglow"
+              ],
+              "name": "lamp1",
+              "nicknames": [
+                "reading lamp"
+              ]
+            },
+            "willReportState": false,
+            "roomHint": "office",
+            "attributes": {
+              "colorModel": "rgb",
+              "colorTemperatureRange": {
+                "temperatureMinK": 2000,
+                "temperatureMaxK": 9000
+              },
+              "commandOnlyColorSetting": false
+            },
+            "deviceInfo": {
+              "manufacturer": "lights out inc.",
+              "model": "hg11",
+              "hwVersion": "1.2",
+              "swVersion": "5.4"
+            },
+            "customData": {
+              "fooValue": 12,
+              "barValue": false,
+              "bazValue": "bar"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "description": "This intent is triggered at user setup or when a user reconnects through the Action (to reconnect or disconnect) when necessary to resync devices in batch (for example, when new traits are added).",
+  "type": "object",
+  "properties": {
+    "requestId": {
+      "description": "ID of the corresponding request.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "payload": {
+      "description": "Intent response payload.",
+      "type": "object",
+      "properties": {
+        "agentUserId": {
+          "description": "Reflects the unique (and immutable) user ID on the agent's platform. The string is opaque to Google, so if there's an immutable form vs a mutable form on the agent side, use the immutable form (e.g. an account number rather than email).",
+          "type": "string"
+        },
+        "errorCode": {
+          "description": "For systematic errors on SYNC",
+          "type": "string"
+        },
+        "debugString": {
+          "description": "Detailed error which will never be presented to users but may be logged or used during development.",
+          "type": "string"
+        },
+        "devices": {
+          "description": "List of devices owned by the user. Zero or more devices are returned (zero devices meaning the user has no devices, or has disconnected them all).",
+          "type": "array",
+          "items": {
+            "description": "Device metadata.",
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "The ID of the device in the developer's cloud. This must be unique for the user and for the developer, as in cases of sharing we may use this to dedupe multiple views of the same device. It should be immutable for the device; if it changes, the Assistant will treat it as a new device.",
+                "type": "string"
+              },
+              "type": {
+                "description": "The hardware type of device.",
+                "type": "string",
+                "pattern": "^action.devices.types.[a-zA-z]+$"
+              },
+              "traits": {
+                "type": "array",
+                "description": "List of traits this device has. This defines the commands, attributes, and states that the device supports.",
+                "items": {
+                  "description": "Name of the supported trait.",
+                  "type": "string",
+                  "pattern": "^action.devices.traits.[a-zA-z]+$"
+                }
+              },
+              "name": {
+                "description": "Names of this device.",
+                "type": "object",
+                "properties": {
+                  "defaultNames": {
+                    "description": "List of names provided by the developer rather than the user, often manufacturer names, SKUs, etc.",
+                    "type": "array",
+                    "items": {
+                      "description": "Device default name.",
+                      "type": "string"
+                    }
+                  },
+                  "name": {
+                    "description": "Primary name of the device, generally provided by the user. This is also the name the Assistant will prefer to describe the device in responses.",
+                    "type": "string"
+                  },
+                  "nicknames": {
+                    "description": "Additional names provided by the user for the device.",
+                    "type": "array",
+                    "items": {
+                      "description": "Device nickname.",
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              },
+              "willReportState": {
+                "description": "Indicates whether this device will have its states updated by the Real Time Feed. (true to use the Real Time Feed for reporting state, and false to use the polling model.)",
+                "type": "boolean"
+              },
+              "roomHint": {
+                "description": "Provides the current room of the device in the user's home to simplify setup.",
+                "type": "string"
+              },
+              "deviceInfo": {
+                "description": "Contains fields describing the device for use in one-off logic if needed (e.g. 'broken firmware version X of light Y requires adjusting color', or 'security flaw requires notifying all users of firmware Z').",
+                "type": "object",
+                "properties": {
+                  "manufacturer": {
+                    "description": "Especially useful when the developer is a hub for other devices. Google may provide a standard list of manufacturers here so that e.g. TP-Link and Smartthings both describe 'osram' the same way.",
+                    "type": "string"
+                  },
+                  "model": {
+                    "description": "The model or SKU identifier of the particular device.",
+                    "type": "string"
+                  },
+                  "hwVersion": {
+                    "description": "Specific version number attached to the hardware if available.",
+                    "type": "string"
+                  },
+                  "swVersion": {
+                    "description": "Specific version number attached to the software/firmware, if available.",
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "attributes": {
+                "description": "Aligned with per-trait attributes described in each trait schema reference.",
+                "type": "object",
+                "additionalProperties": true
+              },
+              "customData": {
+                "description": "This is a special object defined by the developer which will be attached to future QUERY and EXECUTE requests. Developers can use this object to store additional information about the device to improve performance or routing within their cloud, such as the global region of the device. Data in this object has a few constraints: No Personally Identifiable Information. Data should change rarely, akin to other attributes -- so this should not contain real-time state. The total object is limited to 512 bytes per device.",
+                "type": "object"
+              },
+              "otherDeviceIds": {
+                "description": "List of alternate IDs used to identify a cloud synced device for local execution.",
+                "type": "array",
+                "items": {
+                  "description": "Alternate device ID.",
+                  "type": "object",
+                  "properties": {
+                    "agentId": {
+                      "description": "The agent's ID. Generally, this is the project ID in the Actions console.",
+                      "type": "string"
+                    },
+                    "deviceId": {
+                      "description": "Device ID defined by the agent. The device ID must be unique.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "deviceId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "traits",
+              "name",
+              "willReportState"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "agentUserId",
+        "devices"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "requestId",
+    "payload"
+  ],
+  "additionalProperties": false
+}

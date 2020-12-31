@@ -8,6 +8,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
     public enum TraitType
     {
         /// <summary>
+        /// Unknown trait type.
+        /// </summary>
+        Unknown,
+
+        /// <summary>
         /// action.devices.traits.AppSelector.
         /// </summary>
         [EnumMember(Value = "action.devices.traits.AppSelector")]
@@ -42,18 +47,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.traits.ColorSetting")]
         ColorSetting,
-
-        /// <summary>
-        /// action.devices.traits.ColorSpectrum.
-        /// </summary>
-        [EnumMember(Value = "action.devices.traits.ColorSpectrum")]
-        ColorSpectrum,
-
-        /// <summary>
-        /// action.devices.traits.ColorTemperature.
-        /// </summary>
-        [EnumMember(Value = "action.devices.traits.ColorTemperature")]
-        ColorTemperature,
 
         /// <summary>
         /// action.devices.traits.Cook.
@@ -170,16 +163,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         RunCycle,
 
         /// <summary>
-        /// action.devices.traits.SensorState.
-        /// </summary>
-        [EnumMember(Value = "action.devices.traits.SensorState")]
-        SensorState,
-
-        /// <summary>
         /// action.devices.traits.Scene.
         /// </summary>
         [EnumMember(Value = "action.devices.traits.Scene")]
         Scene,
+
+        /// <summary>
+        /// action.devices.traits.SensorState.
+        /// </summary>
+        [EnumMember(Value = "action.devices.traits.SensorState")]
+        SensorState,
 
         /// <summary>
         /// action.devices.traits.SoftwareUpdate.
@@ -233,11 +226,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// action.devices.traits.Volume.
         /// </summary>
         [EnumMember(Value = "action.devices.traits.Volume")]
-        Volume,
-
-        /// <summary>
-        /// Unknown trait type.
-        /// </summary>
-        Unknown
+        Volume
     }
 }

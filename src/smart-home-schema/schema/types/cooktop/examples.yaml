@@ -1,0 +1,137 @@
+name: Simple cooktop
+type: action.devices.types.COOKTOP
+traits:
+  - action.devices.traits.Cook
+  - action.devices.traits.StartStop
+  - action.devices.traits.Timer
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "supportedCookingModes": [
+      "COOK",
+      "BOIL",
+      "SAUTE"
+    ],
+    "foodPresets": [
+      {
+        "food_preset_name": "chicken_key",
+        "supported_units": [
+          "POUNDS",
+          "OUNCES"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "chicken",
+              "chicken breast",
+              "chicken thigh"
+            ],
+            "lang": "en"
+          }
+        ]
+      },
+      {
+        "food_preset_name": "bacon_key",
+        "supported_units": [
+          "POUNDS",
+          "OUNCES"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "bacon",
+              "bacon strips"
+            ],
+            "lang": "en"
+          }
+        ]
+      }
+    ],
+    "maxTimerLimitSec": 1200,
+    "pausable": true
+  }
+states:
+  {
+    "on": true,
+    "isRunning": true,
+    "isPaused": false,
+    "timerRemainingSec": 120,
+    "currentCookingMode": "COOK",
+    "currentFoodPreset": "chicken_key"
+  }
+commands:
+  action.devices.commands.Cook:
+    params:
+      {
+        "start": true,
+        "cookingMode": "BOIL"
+      }
+    results:
+      {
+        "currentCookingMode": "BOIL",
+        "currentFoodPreset": "NONE"
+      }
+  action.devices.commands.StartStop:
+    params:
+      {
+        "start": true
+      }
+    results:
+      {
+        "isRunning": true,
+        "isPaused": false
+      }
+  action.devices.commands.PauseUnPause:
+    params:
+      {
+        "pause": true
+      }
+    results:
+      {
+        "isRunning": false,
+        "isPaused": true
+      }
+  action.devices.commands.TimerStart:
+    params:
+      {
+        "timerTimeSec": 300
+      }
+    results:
+      {
+        "timerRemainingSec": 300
+      }
+  action.devices.commands.TimerAdjust:
+    params:
+      {
+        "timerTimeSec": -10
+      }
+    results:
+      {
+        "timerRemainingSec": 110
+      }
+  action.devices.commands.TimerPause:
+    results:
+      {
+        "timerRemainingSec": 120,
+        "timerPaused": true
+      }
+  action.devices.commands.TimerResume:
+    results:
+      {
+        "timerRemainingSec": 120,
+        "timerPaused": false
+      }
+  action.devices.commands.TimerCancel:
+    results:
+      {
+        "timerRemainingSec": -1
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

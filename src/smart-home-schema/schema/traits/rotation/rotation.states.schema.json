@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "How much is the device rotated? (percent and degrees).",
+      "rotationDegrees": 45,
+      "rotationPercent": 25
+    },
+    {
+      "$comment": "How much is the device rotated? (only degrees).",
+      "rotationDegrees": 45
+    },
+    {
+      "$comment": "How much is the device rotated? (continous).",
+      "rotationDegrees": 270,
+      "rotationPercent": 75
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "rotationDegrees": {
+      "description": "Current level within <code>rotationDegreesRange</code> that indicates how many degrees the device is rotated. This value should always be relative to the clockwise rotation.",
+      "type": "number"
+    },
+    "rotationPercent": {
+      "description": "Current level that indicates what percent the device is currently rotated. 0.0 corresponds to closed and 100.0 to open.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    }
+  }
+}

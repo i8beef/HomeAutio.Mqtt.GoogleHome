@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "cycleSynonym": {
+      "description": "Cycle synonym names.",
+      "type": "object",
+      "properties": {
+        "currentCycle": {
+          "description": "Current cycle being performed.",
+          "type": "string"
+        },
+        "nextCycle": {
+          "description": "Optional. Next cycle to perform.",
+          "type": "string"
+        },
+        "lang": {
+          "description": "Language code for the given cycle names. See <a href=\"https://developers.google.com/assistant/smarthome/traits#supported-languages\">Supported languages</a>.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "currentCycle",
+        "lang"
+      ]
+    }
+  },
+  "examples": [
+    {
+      "$comment": "The device is in rinse for another 5 minutes, and will be done in 20 minutes.",
+      "currentRunCycle": [
+        {
+          "currentCycle": "rinse",
+          "lang": "en"
+        }
+      ],
+      "currentTotalRemainingTime": 1200,
+      "currentCycleRemainingTime": 300
+    },
+    {
+      "$comment": "The device is in rinse for another 5 minutes, before moving to spin.",
+      "currentRunCycle": [
+        {
+          "currentCycle": "rinse",
+          "nextCycle": "spin",
+          "lang": "en"
+        }
+      ],
+      "currentTotalRemainingTime": 600,
+      "currentCycleRemainingTime": 300
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "currentRunCycle": {
+      "description": "Contains the synonyms for the current cycle in each supported language.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/cycleSynonym"
+      }
+    },
+    "currentTotalRemainingTime": {
+      "description": "Time remaining on operation, in seconds.",
+      "type": "integer"
+    },
+    "currentCycleRemainingTime": {
+      "description": "Time remaining on current cycle, in seconds.",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "currentRunCycle",
+    "currentTotalRemainingTime",
+    "currentCycleRemainingTime"
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device with two speed settings, support for reverse direction and percentage adjustments.",
+      "availableFanSpeeds": {
+        "speeds": [
+          {
+            "speed_name": "speed_low",
+            "speed_values": [
+              {
+                "speed_synonym": [
+                  "low",
+                  "slow"
+                ],
+                "lang": "en"
+              }
+            ]
+          },
+          {
+            "speed_name": "speed_high",
+            "speed_values": [
+              {
+                "speed_synonym": [
+                  "high",
+                  "fast"
+                ],
+                "lang": "en"
+              }
+            ]
+          }
+        ],
+        "ordered": true
+      },
+      "reversible": true,
+      "supportsFanSpeedPercent": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "reversible": {
+      "description": "If set to true, this device supports blowing the fan in both directions and can accept the command to reverse fan direction.",
+      "type": "boolean",
+      "default": false
+    },
+    "commandOnlyFanSpeed": {
+      "description": "Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "anyOf": [
+    {
+      "description": "Support for speed settings.",
+      "type": "object",
+      "properties": {
+        "availableFanSpeeds": {
+          "description": "Speed settings supported by the device.",
+          "type": "object",
+          "properties": {
+            "speeds": {
+              "description": "List of speed settings.",
+              "type": "array",
+              "items": {
+                "description": "Speed setting.",
+                "type": "object",
+                "properties": {
+                  "speed_name": {
+                    "description": "Internal name of the speed setting. This can be non-user-friendly, and will be shared across all languages.",
+                    "type": "string"
+                  },
+                  "speed_values": {
+                    "description": "Synonyms for the speed setting in each supported languages.",
+                    "type": "array",
+                    "items": {
+                      "description": "Synonym for the speed setting in a given language.",
+                      "type": "object",
+                      "properties": {
+                        "speed_synonym": {
+                          "description": "Synonyms for the speed setting, should include both singular and plural forms, if applicable. The first synonym in the list will be considered the canonical name of the speed setting.",
+                          "type": "array",
+                          "items": {
+                            "description": "Synonym.",
+                            "type": "string"
+                          }
+                        },
+                        "lang": {
+                          "description": "Language code (ISO 639-1). See <a href=\"https://developers.google.com/assistant/smarthome/traits#supported-languages\">supported languages</a>.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "lang",
+                        "speed_synonym"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "speed_name",
+                  "speed_values"
+                ]
+              }
+            },
+            "ordered": {
+              "description": "If set to true, additional grammar for increase or decrease logic will apply, in the order (increasing) of the speeds array.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "ordered",
+            "speeds"
+          ]
+        }
+      },
+      "required": [
+        "availableFanSpeeds"
+      ]
+    },
+    {
+      "description": "Support for speed percentage.",
+      "type": "object",
+      "properties": {
+        "supportsFanSpeedPercent": {
+          "description": "If set to true, this device will accept commands for adjusting the speed using a percentage from 0.0 to 100.0.",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "supportsFanSpeedPercent"
+      ]
+    }
+  ]
+}

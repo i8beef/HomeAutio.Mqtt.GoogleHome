@@ -1,0 +1,37 @@
+name: Simple boiler
+type: action.devices.types.BOILER
+traits:
+  - action.devices.traits.TemperatureControl
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "temperatureRange": {
+      "minThresholdCelsius": 10,
+      "maxThresholdCelsius": 50
+    },
+    "temperatureUnitForUX": "F"
+  }
+states:
+  {
+    "on": true,
+    "temperatureSetpointCelsius": 35
+  }
+commands:
+  action.devices.commands.SetTemperature:
+    params:
+      {
+        "temperature": 40
+      }
+    results:
+      {
+        "temperatureSetpointCelsius": 40
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

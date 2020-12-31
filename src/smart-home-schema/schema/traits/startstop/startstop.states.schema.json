@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Is the device paused?",
+      "isRunning": false,
+      "isPaused": true
+    },
+    {
+      "$comment": "Is the device paused?",
+      "isRunning": true,
+      "isPaused": false
+    },
+    {
+      "$comment": "Is the device running?",
+      "isRunning": true,
+      "isPaused": false,
+      "activeZones": [
+        "kitchen",
+        "living room"
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "isRunning": {
+      "description": "Indicates if the device is currently in operation.",
+      "type": "boolean"
+    },
+    "isPaused": {
+      "description": "Indicates if the device is explicitly paused. If this value is true, it implies <code>isRunning</code> is false but can be resumed.",
+      "type": "boolean"
+    },
+    "activeZones": {
+      "description": "Indicates zones in which the device is currently running, from list of <code>availableZones</code>.",
+      "type": "array",
+      "items": {
+        "description": "The zone name.",
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "isRunning"
+  ]
+}

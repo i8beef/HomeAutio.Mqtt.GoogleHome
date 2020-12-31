@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Speaker device that can be muted and reports current state",
+      "volumeMaxLevel": 11,
+      "volumeCanMuteAndUnmute": true,
+      "levelStepSize": 2,
+      "commandOnlyVolume": false,
+      "volumeDefaultPercentage": 6
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "volumeMaxLevel": {
+      "description": "The maximum volume level, assuming a baseline of 0 (mute). Assistant will adjust adverbial commands (e.g. 'make the tv a little louder') accordingly.",
+      "type": "integer"
+    },
+    "volumeCanMuteAndUnmute": {
+      "description": "Indicates if the device can mute and unmute the volume. Mute is a separate option as the 'mute' behavior takes the volume to 0 while remembering the previous volume, so that unmute restores it. This is reflected in volume state&mdash;if volume is 5, and the user mutes, the volume remains 5 and <code>isMuted</code> is true.",
+      "type": "boolean"
+    },
+    "volumeDefaultPercentage": {
+      "description": "The volume (in percentage) for the default volume defined by user or manufacturer. The scale must be 0-100.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 40
+    },
+    "levelStepSize": {
+      "description": "The default step size for relative volume queries like 'volume up on &lt;device_name&gt;.",
+      "type": "integer",
+      "default": 1
+    },
+    "commandOnlyVolume": {
+      "description": "Indicates if the device operates using one-way (true) or two-way (false) communication. For example, if the controller can confirm the new device state after sending the request, this field would be false. If it's not possible to confirm if the request is successfully executed or to get the state of the device (for example, if the device is a traditional infrared remote), set this field to true.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "volumeMaxLevel",
+    "volumeCanMuteAndUnmute"
+  ]
+}

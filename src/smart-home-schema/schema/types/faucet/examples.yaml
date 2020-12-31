@@ -1,0 +1,139 @@
+name: Simple faucet
+type: action.devices.types.FAUCET
+traits:
+  - action.devices.traits.Dispense
+  - action.devices.traits.TemperatureControl
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "supportedDispenseItems": [
+      {
+        "item_name": "water_key",
+        "item_name_synonyms": [
+          {
+            "lang": "en",
+            "synonyms": [
+              "water"
+            ]
+          },
+          {
+            "lang": "es",
+            "synonyms": [
+              "agua"
+            ]
+          },
+          {
+            "lang": "fr",
+            "synonyms": [
+              "eau"
+            ]
+          }
+        ],
+        "supported_units": [
+          "TEASPOONS",
+          "TABLESPOONS",
+          "FLUID_OUNCES",
+          "CUPS",
+          "PINTS",
+          "QUARTS",
+          "GALLONS",
+          "MILLILITERS",
+          "LITERS",
+          "DECILITERS"
+        ],
+        "default_portion": {
+          "amount": 2,
+          "unit": "CUPS"
+        }
+      }
+    ],
+    "supportedDispensePresets": [
+      {
+        "preset_name": "cat_water_bowl_key",
+        "preset_name_synonyms": [
+          {
+            "lang": "en",
+            "synonyms": [
+              "cat water bowl",
+              "cat water dish",
+              "cat water cup"
+            ]
+          },
+          {
+            "lang": "es",
+            "synonyms": [
+              "plato de agua para gato",
+              "bebedero para gato"
+            ]
+          },
+          {
+            "lang": "fr",
+            "synonyms": [
+              "bol d'eau de chat",
+              "bac à eau pour chat",
+              "tasse d'eau de chat"
+            ]
+          }
+        ]
+      }
+    ],
+    "temperatureRange": {
+      "minThresholdCelsius": 25,
+      "maxThresholdCelsius": 100
+    },
+    "temperatureUnitForUX": "F"
+  }
+states:
+  {
+    "on": false,
+    "temperatureSetpointCelsius": 30,
+    "dispenseItems": [
+      {
+        "itemName": "water_key",
+        "amountLastDispensed": {
+          "amount": 2.5,
+          "unit": "CUPS"
+        },
+        "isCurrentlyDispensing": false
+      }
+    ]
+  }
+commands:
+  action.devices.commands.Dispense:
+    params:
+      {
+        "amount": 1.0,
+        "unit": "CUPS",
+        "item": "water_key"
+      }
+    results:
+      {
+        "dispenseItems": [
+          {
+            "itemName": "water_key",
+            "amountLastDispensed": {
+              "amount": 1.0,
+              "unit": "CUPS"
+            },
+            "isCurrentlyDispensing": true
+          }
+        ]
+      }
+  action.devices.commands.SetTemperature:
+    params:
+      {
+        "temperature": 65
+      }
+    results:
+      {
+        "temperatureSetpointCelsius": 65
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

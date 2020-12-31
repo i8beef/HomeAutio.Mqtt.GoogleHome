@@ -1,0 +1,31 @@
+name: Simple window
+type: action.devices.types.WINDOW
+traits:
+  - action.devices.traits.LockUnlock
+  - action.devices.traits.OpenClose
+states:
+  {
+    "openPercent": 0,
+    "isLocked": true,
+    "isJammed": false
+  }
+commands:
+  action.devices.commands.LockUnlock:
+    params:
+      {
+        "lock": true
+      }
+    results:
+      {
+        "isLocked": true,
+        "isJammed": false
+      }
+  action.devices.commands.OpenClose:
+    params:
+      {
+        "openPercent": 100
+      }
+    results:
+      {
+        "openPercent": 100
+      }

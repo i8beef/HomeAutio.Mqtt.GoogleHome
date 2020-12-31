@@ -2,10 +2,9 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <PackageProjectUrl>https://github.com/i8beef/HomeAutio.Mqtt.GoogleHome</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/i8beef/HomeAutio.Mqtt.GoogleHome/blob/master/LICENSE</PackageLicenseUrl>
     <Company></Company>
     <Product>HomeAutio.Mqtt.GoogleHome</Product>
     <Version>1.0.0.0</Version>
@@ -14,6 +13,7 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
     <StartupObject>HomeAutio.Mqtt.GoogleHome.Program</StartupObject>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -29,17 +29,18 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Easy.MessageHub" Version="5.0.0" />
-    <PackageReference Include="HomeAutio.Mqtt.Core" Version="3.0.0.59" />
+    <PackageReference Include="HomeAutio.Mqtt.Core" Version="3.0.0.65" />
     <PackageReference Include="IdentityServer4" Version="4.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
-    <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="1.3.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.1" />
+    <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="1.3.6" />
+    <PackageReference Include="NJsonSchema" Version="10.3.1" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.8" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-    <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,6 +59,11 @@
     <Content Update="Views\GoogleTrait\Edit.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\smart-home-schema\**\*.json" />
+    <EmbeddedResource Include="..\smart-home-schema\**\*.yaml" />
   </ItemGroup>
 
 </Project>

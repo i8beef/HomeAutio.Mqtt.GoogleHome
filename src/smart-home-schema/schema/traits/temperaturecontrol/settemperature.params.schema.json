@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Set the device to 350 degrees Fahrenheit.",
+      "temperature": 176.67
+    }
+  ],
+  "description": "Set the temperature to a specific value.",
+  "type": "object",
+  "properties": {
+    "temperature": {
+      "description": "The temperature to set, in degrees Celsius. Must fall within <code>temperatureRange</code>.",
+      "type": "number"
+    }
+  },
+  "required": [
+    "temperature"
+  ],
+  "additionalProperties": false
+}

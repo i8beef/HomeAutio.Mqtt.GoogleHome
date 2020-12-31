@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device with YouTube app currently active on foreground.",
+      "currentApplication": "youtube"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "currentApplication": {
+      "description": "Key value of the current application that is active in the foreground.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "currentApplication"
+  ]
+}

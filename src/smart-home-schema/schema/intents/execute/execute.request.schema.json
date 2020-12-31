@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ExecuteRequest",
+  "examples": [
+    {
+      "$comment": "EXECUTE intent request",
+      "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+      "inputs": [
+        {
+          "intent": "action.devices.EXECUTE",
+          "payload": {
+            "commands": [
+              {
+                "devices": [
+                  {
+                    "id": "123",
+                    "customData": {
+                      "fooValue": 74,
+                      "barValue": true,
+                      "bazValue": "sheepdip"
+                    }
+                  },
+                  {
+                    "id": "456",
+                    "customData": {
+                      "fooValue": 36,
+                      "barValue": false,
+                      "bazValue": "moarsheep"
+                    }
+                  }
+                ],
+                "execution": [
+                  {
+                    "command": "action.devices.commands.OnOff",
+                    "params": {
+                      "on": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "description": "This intent is triggered to provide commands to execute on smart home devices. The new state should be provided in the response if available. One triggered intent can target multiple devices, with multiple commands. For example, a triggered intent may set both brightness and color on a set of lights or may set multiple lights each to a different color.",
+  "type": "object",
+  "properties": {
+    "requestId": {
+      "description": "ID of the request.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "inputs": {
+      "description": "List of inputs matching the intent request.",
+      "type": "array",
+      "items": {
+        "description": "Type and payload associated with the intent request.",
+        "type": "object",
+        "properties": {
+          "intent": {
+            "description": "Intent request type.",
+            "const": "action.devices.EXECUTE"
+          },
+          "payload": {
+            "description": "EXECUTE request payload.",
+            "type": "object",
+            "properties": {
+              "commands": {
+                "description": "List of device target and command pairs.",
+                "type": "array",
+                "items": {
+                  "description": "Set of commands to execute on the attached device targets.",
+                  "type": "object",
+                  "properties": {
+                    "devices": {
+                      "description": "List of target devices.",
+                      "type": "array",
+                      "items": {
+                        "description": "Device target to execute.",
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "Device ID, as per the ID provided in SYNC.",
+                            "type": "string"
+                          },
+                          "customData": {
+                            "description": "If the opaque customData object is provided in SYNC, it's sent here.",
+                            "type": "object"
+                          }
+                        },
+                        "required": [
+                          "id"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "execution": {
+                      "description": "List of commands to execute on target devices.",
+                      "type": "array",
+                      "items": {
+                        "description": "Device command.",
+                        "type": "object",
+                        "properties": {
+                          "command": {
+                            "description": "The command to execute, usually with accompanying parameters.",
+                            "type": "string"
+                          },
+                          "params": {
+                            "description": "Aligned with the parameters for each command.",
+                            "type": "object",
+                            "additionalProperties": true
+                          }
+                        },
+                        "required": [
+                          "command"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "devices",
+                    "execution"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "commands"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "intent",
+          "payload"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "requestId",
+    "inputs"
+  ],
+  "additionalProperties": false
+}

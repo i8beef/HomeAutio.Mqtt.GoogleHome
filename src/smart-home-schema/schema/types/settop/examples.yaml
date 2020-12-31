@@ -1,0 +1,147 @@
+name: Simple set-top box
+type: action.devices.types.SETTOP
+traits:
+  - action.devices.traits.OnOff
+  - action.devices.traits.AppSelector
+  - action.devices.traits.MediaState
+  - action.devices.traits.Channel
+  - action.devices.traits.TransportControl
+attributes:
+  {
+    "transportControlSupportedCommands": [
+      "NEXT",
+      "PREVIOUS",
+      "PAUSE",
+      "STOP",
+      "RESUME",
+      "CAPTION_CONTROL"
+    ],
+    "availableApplications": [
+      {
+        "key": "youtube",
+        "names": [
+          {
+            "name_synonym": [
+              "Youtube",
+              "Youtube_en"
+            ],
+            "lang": "en"
+          }
+        ]
+      }
+    ],
+    "availableChannels": [
+      {
+        "key": "ktvu2",
+        "names": [
+          "Fox",
+          "KTVU"
+        ],
+        "number": "2"
+      },
+      {
+        "key": "abc1",
+        "names": [
+          "ABC",
+          "ABC East"
+        ],
+        "number": "702.4-11"
+      }
+    ],
+    "supportActivityState": true,
+    "supportPlaybackState": true
+  }
+states:
+  {
+    "on": true,
+    "currentApplication": "youtube",
+    "activityState": "ACTIVE",
+    "playbackState": "PAUSED"
+  }
+commands:
+  action.devices.commands.SelectChannel:
+    params:
+      {
+        "channelCode": "ktvu2"
+      }
+  action.devices.commands.RelativeChannel:
+    params:
+      {
+        "relativeChannelChange": 1
+      }
+  action.devices.commands.ReturnChannel: {}
+  action.devices.commands.appInstall:
+    params:
+      {
+        "newApplication": "youtube"
+      }
+    results:
+      {
+        "currentApplication": "youtube"
+      }
+  action.devices.commands.appSearch:
+    params:
+      {
+        "newApplication": "youtube"
+      }
+    results:
+      {
+        "currentApplication": "youtube"
+      }
+  action.devices.commands.appSelect:
+    params:
+      {
+        "newApplication": "youtube"
+      }
+    results:
+      {
+        "currentApplication": "youtube"
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }
+  action.devices.commands.mediaClosedCaptioningOff:
+    results:
+      {
+        "playbackState": "PLAYING"
+      }
+  action.devices.commands.mediaClosedCaptioningOn:
+    params:
+      {
+        "closedCaptioningLanguage": "en"
+      }
+    results:
+      {
+        "playbackState": "PLAYING"
+      }
+  action.devices.commands.mediaNext:
+    results:
+      {
+        "playbackState": "FAST_FORWARDING"
+      }
+  action.devices.commands.mediaPause:
+    results:
+      {
+        "playbackState": "PAUSED"
+      }
+  action.devices.commands.mediaPrevious:
+    results:
+      {
+        "playbackState": "REWINDING"
+      }
+  action.devices.commands.mediaResume:
+    results:
+      {
+        "playbackState": "PLAYING"
+      }
+  action.devices.commands.mediaStop:
+    results:
+      {
+        "playbackState": "STOPPED"
+      }

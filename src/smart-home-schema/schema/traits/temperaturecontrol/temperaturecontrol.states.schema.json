@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "What temperature is the device set to?",
+      "temperatureSetpointCelsius": 150
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "temperatureSetpointCelsius": {
+      "description": "The current temperature setpoint, in degrees Celsius. Must fall within <code>temperatureRange</code>.",
+      "type": "number"
+    },
+    "temperatureAmbientCelsius": {
+      "description": "The currently observed temperature, in degrees Celsius. Must fall within <code>temperatureRange</code>.",
+      "type": "number"
+    }
+  },
+  "required": [
+    "temperatureSetpointCelsius"
+  ]
+}

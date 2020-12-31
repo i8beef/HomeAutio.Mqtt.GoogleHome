@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device with an active network.",
+      "networkEnabled": true,
+      "networkSettings": {
+        "ssid": "home-network-123"
+      },
+      "guestNetworkSettings": {
+        "ssid": "home-network-123-guest"
+      },
+      "numConnectedDevices": 4,
+      "networkUsageMB": 100.8
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "networkEnabled": {
+      "description": "Whether the main network is enabled.",
+      "type": "boolean"
+    },
+    "networkSettings": {
+      "description": "Contains the SSID of the main network.",
+      "type": "object",
+      "properties": {
+        "ssid": {
+          "description": "Network SSID.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ssid"
+      ]
+    },
+    "guestNetworkEnabled": {
+      "description": "Whether the guest network is enabled.",
+      "type": "boolean"
+    },
+    "guestNetworkSettings": {
+      "description": "Contains the SSID of the guest network.",
+      "type": "object",
+      "properties": {
+        "ssid": {
+          "description": "Network SSID.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ssid"
+      ]
+    },
+    "numConnectedDevices": {
+      "description": "The number of devices connected to the network.",
+      "type": "integer"
+    },
+    "networkUsageMB": {
+      "description": "The network usage in MB (megabytes). The network usage is within the current billing period, which can be useful to monitor with respect to a billing period network usage limit.",
+      "type": "number"
+    },
+    "networkUsageLimitMB": {
+      "description": "The network usage limit in MB (megabytes). The network usage limit is within the current billing period.",
+      "type": "number"
+    },
+    "networkUsageUnlimited": {
+      "description": "Whether the network usage is unlimited. The device state networkUsageLimitMB will be ignored if this is set to true.",
+      "type": "boolean"
+    }
+  }
+}

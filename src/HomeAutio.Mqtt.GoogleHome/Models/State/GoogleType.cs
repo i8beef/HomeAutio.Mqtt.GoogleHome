@@ -10,6 +10,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <summary>
         /// String.
         /// </summary>
+        Unknown,
+
+        /// <summary>
+        /// String.
+        /// </summary>
         [EnumMember(Value = "string")]
         String,
 

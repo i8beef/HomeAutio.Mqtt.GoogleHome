@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Request the device to cycle through a set of colors.",
+  "examples": [
+    {
+      "$comment": "Colorloop my lights for 60 minutes.",
+      "duration": 3600
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "duration": {
+      "description": "Duration for the color loop command, in seconds.",
+      "type": "integer",
+      "minimum": 300,
+      "maximum": 3600
+    }
+  },
+  "additionalProperties": false
+}

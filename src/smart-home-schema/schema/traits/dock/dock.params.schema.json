@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Dock my device."
+    }
+  ],
+  "description": "Dock the device.",
+  "type": "object",
+  "additionalProperties": false
+}

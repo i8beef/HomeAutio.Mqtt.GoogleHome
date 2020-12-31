@@ -23,7 +23,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Models.State
                                 "action.devices.commands.ColorAbsolute",
                                 new Dictionary<string, string>
                                 {
-                                    { "color.name", "device/color/name/set" },
                                     { "color.temperature", "device/color/temperature/set" },
                                     { "color.spectrumRGB", "device/color/spectrumRGB/set" },
                                     { "color.spectrumHSV.hue", "device/color/spectrumHSV/hue/set" },
@@ -35,56 +34,42 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Models.State
                         State = new Dictionary<string, DeviceState>
                         {
                             {
-                                "color.name",
+                                "color.temperatureK",
                                 new DeviceState
                                 {
-                                    Topic = "device/color/name",
-                                    GoogleType = GoogleType.String,
+                                    Topic = "device/color/temperatureK",
                                     ValueMap = null
                                 }
                             },
                             {
-                                "color.temperature",
-                                new DeviceState
-                                {
-                                    Topic = "device/color/temperature",
-                                    GoogleType = GoogleType.Numeric,
-                                    ValueMap = null
-                                }
-                            },
-                            {
-                                "color.spectrumRGB",
+                                "color.spectrumRgb",
                                 new DeviceState
                                 {
                                     Topic = "device/color/spectrumRGB",
-                                    GoogleType = GoogleType.Numeric,
                                     ValueMap = null
                                 }
                             },
                             {
-                                "color.spectrumHSV.hue",
+                                "color.spectrumHsv.hue",
                                 new DeviceState
                                 {
                                     Topic = "device/color/spectrumHSV/hue",
-                                    GoogleType = GoogleType.Numeric,
                                     ValueMap = null
                                 }
                             },
                             {
-                                "color.spectrumHSV.saturation",
+                                "color.spectrumHsv.saturation",
                                 new DeviceState
                                 {
                                     Topic = "device/color/spectrumHSV/saturation",
-                                    GoogleType = GoogleType.Numeric,
                                     ValueMap = null
                                 }
                             },
                             {
-                                "color.spectrumHSV.value",
+                                "color.spectrumHsv.value",
                                 new DeviceState
                                 {
                                     Topic = "device/color/spectrumHSV/value",
-                                    GoogleType = GoogleType.Numeric,
                                     ValueMap = null
                                 }
                             }
@@ -110,9 +95,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Models.State
             Assert.True(result.ContainsKey("color"));
 
             var colorResult = (IDictionary<string, object>)result["color"];
-            Assert.True(colorResult.ContainsKey("spectrumHSV"));
+            Assert.True(colorResult.ContainsKey("spectrumHsv"));
 
-            var spectrumHSVResult = (IDictionary<string, object>)colorResult["spectrumHSV"];
+            var spectrumHSVResult = (IDictionary<string, object>)colorResult["spectrumHsv"];
             Assert.True(spectrumHSVResult.ContainsKey("hue"));
             Assert.Equal(123, spectrumHSVResult["hue"]);
             Assert.True(spectrumHSVResult.ContainsKey("saturation"));

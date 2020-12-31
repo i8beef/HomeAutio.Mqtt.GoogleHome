@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "How many dog treats are remaining in my dispenser?",
+      "dispenseItems": [
+        {
+          "itemName": "dog treats",
+          "amountRemaining": {
+            "amount": 83,
+            "unit": "NO_UNITS"
+          },
+          "amountLastDispensed": {
+            "amount": 2,
+            "unit": "NO_UNITS"
+          },
+          "isCurrentlyDispensing": false
+        }
+      ]
+    },
+    {
+      "$comment": "How much water is remaining in my water cooler?",
+      "dispenseItems": [
+        {
+          "itemName": "water",
+          "amountRemaining": {
+            "amount": 6.2,
+            "unit": "GALLONS"
+          },
+          "amountLastDispensed": {
+            "amount": 1,
+            "unit": "CUPS"
+          },
+          "isCurrentlyDispensing": false
+        }
+      ]
+    },
+    {
+      "$comment": "How much cat food did I give before?",
+      "dispenseItems": [
+        {
+          "itemName": "cat_food",
+          "amountRemaining": {
+            "amount": 16.5,
+            "unit": "CUPS"
+          },
+          "amountLastDispensed": {
+            "amount": 2.5,
+            "unit": "CUPS"
+          },
+          "isCurrentlyDispensing": false
+        }
+      ]
+    },
+    {
+      "$comment": "Is the faucet still dispensing water?",
+      "dispenseItems": [
+        {
+          "itemName": "water",
+          "isCurrentlyDispensing": true
+        }
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "dispenseItems": {
+      "description": "States of the items that the device can dispense.",
+      "type": "array",
+      "items": {
+        "description": "State of a given item.",
+        "type": "object",
+        "properties": {
+          "itemName": {
+            "description": "Name of the item from the <code>item_name</code> attribute.",
+            "type": "string"
+          },
+          "amountRemaining": {
+            "description": "Amount of that item remaining in the device. If the device is currently dispensing, this reports the remaining amount or what the amount will be once the device finishes dispensing.",
+            "type": "object",
+            "properties": {
+              "amount": {
+                "description": "Remaining amount",
+                "type": "number"
+              },
+              "unit": {
+                "description": "Unit for the <code>amount</code> from the <code>supported_units</code> attribute.",
+                "type": "string"
+              }
+            }
+          },
+          "amountLastDispensed": {
+            "description": "Amount of that item that the device most recently dispensed. If the device is currently dispensing, this should report the amount it dispensed prior to the current dispensing amount.",
+            "type": "object",
+            "properties": {
+              "amount": {
+                "description": "Remaining amount",
+                "type": "number"
+              },
+              "unit": {
+                "description": "Unit for the <code>amount</code> from the <code>supported_units</code> attribute.",
+                "type": "string"
+              }
+            }
+          },
+          "isCurrentlyDispensing": {
+            "description": "Indicates if the device is currently dispensing this item.",
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

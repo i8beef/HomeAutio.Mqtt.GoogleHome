@@ -1,0 +1,29 @@
+name: Simple camera
+type: action.devices.types.CAMERA
+traits:
+  - action.devices.traits.CameraStream
+attributes:
+  {
+    "cameraStreamSupportedProtocols": [
+      "hls",
+      "progressive_mp4"
+    ],
+    "cameraStreamNeedAuthToken": true,
+    "cameraStreamNeedDrmEncryption": false
+  }
+commands:
+  action.devices.commands.GetCameraStream:
+    params:
+      {
+        "StreamToChromecast": true,
+        "SupportedStreamProtocols": [
+          "progressive_mp4"
+        ]
+      }
+    results:
+      {
+        "cameraStreamAccessUrl": "https://fluffysheep.com/baaaaa.mp4",
+        "cameraStreamReceiverAppId": "1g2f89213hg",
+        "cameraStreamAuthToken": "12657342190192783",
+        "cameraStreamProtocol": "progressive_mp4"
+      }

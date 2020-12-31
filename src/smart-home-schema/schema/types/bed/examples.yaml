@@ -1,0 +1,67 @@
+name: Simple bed
+type: action.devices.types.BED
+traits:
+  - action.devices.traits.Modes
+attributes:
+  {
+    "availableModes": [
+      {
+        "name": "massage_key",
+        "name_values": [
+          {
+            "name_synonym": [
+              "massage"
+            ],
+            "lang": "en"
+          }
+        ],
+        "settings": [
+          {
+            "setting_name": "lumbar_key",
+            "setting_values": [
+              {
+                "setting_synonym": [
+                  "back",
+                  "middle"
+                ],
+                "lang": "en"
+              }
+            ]
+          },
+          {
+            "setting_name": "head_key",
+            "setting_values": [
+              {
+                "setting_synonym": [
+                  "head",
+                  "neck"
+                ],
+                "lang": "en"
+              }
+            ]
+          }
+        ],
+        "ordered": true
+      }
+    ]
+  }
+states:
+  {
+    "currentModeSettings": {
+      "massage_key": "lumbar_key"
+    }
+  }
+commands:
+  action.devices.commands.SetModes:
+    params:
+      {
+        "updateModeSettings": {
+          "massage_key": "head_key"
+        }
+      }
+    results:
+      {
+        "currentModeSettings": {
+          "massage_key": "head_key"
+        }
+      }

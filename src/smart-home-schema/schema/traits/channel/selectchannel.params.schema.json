@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Change to KTVU",
+      "channelCode": "ktvu2",
+      "channelName": "KTVU"
+    },
+    {
+      "$comment": "Turn to channel three.",
+      "channelNumber": "3"
+    }
+  ],
+  "description": "Set the current channel to a specific value.",
+  "oneOf": [
+    {
+      "description": "Select channel by ID",
+      "type": "object",
+      "properties": {
+        "channelCode": {
+          "description": "Unique identifier for the requested channel, matching one of the <code>availableChannels</code>.",
+          "type": "string"
+        },
+        "channelName": {
+          "description": "User-friendly name of the requested channel.",
+          "type": "string"
+        },
+        "channelNumber": {
+          "description": "Numeric identifier for the requested channel.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channelCode"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "description": "Select channel by number",
+      "type": "object",
+      "properties": {
+        "channelNumber": {
+          "description": "Numeric identifier for the requested channel.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channelNumber"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

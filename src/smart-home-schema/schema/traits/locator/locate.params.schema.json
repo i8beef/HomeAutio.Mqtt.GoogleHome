@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Find my device.",
+      "silence": false
+    },
+    {
+      "$comment": "Stop locating my device.",
+      "silence": true
+    }
+  ],
+  "description": "Locate the target device by generating a local alert.",
+  "type": "object",
+  "properties": {
+    "silence": {
+      "description": "For use on devices that make an audible response for local alerts. If set to true, the device should silence any in-progress alarms.",
+      "type": "boolean",
+      "default": false
+    },
+    "lang": {
+      "description": "Current language of query or display, for return of localized location strings if needed. See <a href=\"https://developers.google.com/assistant/smarthome/traits#supported-languages\">supported languages</a>.",
+      "type": "string",
+      "default": "en"
+    }
+  },
+  "additionalProperties": false
+}

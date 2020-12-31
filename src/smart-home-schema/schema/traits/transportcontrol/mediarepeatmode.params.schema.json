@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Repeat on",
+      "isOn": true
+    },
+    {
+      "$comment": "Repeat off",
+      "isOn": false
+    },
+    {
+      "$comment": "Repeat a single track",
+      "isOn": true,
+      "isSingle": true
+    }
+  ],
+  "description": "Set repeat playback mode.",
+  "type": "object",
+  "properties": {
+    "isOn": {
+      "description": "True to turn on repeat mode, false to turn off repeat mode.",
+      "type": "boolean"
+    },
+    "isSingle": {
+      "description": "If specified, true means turning on single-item repeat mode, false means turning on normal repeat mode (for example a playlist).",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "isOn"
+  ],
+  "additionalProperties": false
+}

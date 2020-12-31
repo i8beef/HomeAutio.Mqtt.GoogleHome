@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Security system that reports distinct arm level",
+      "isArmed": true,
+      "currentArmLevel": "L1"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "isArmed": {
+      "description": "Indicates if the device is currently armed.",
+      "type": "boolean"
+    },
+    "currentArmLevel": {
+      "description": "Required if the <code>availableArmLevels</code> attribute is specified. If multiple security levels exist, indicates the name of the current security level.",
+      "type": "string"
+    },
+    "exitAllowance": {
+      "description": "Indicates the time, in seconds, the user has to leave before <code>currentArmLevel</code> takes effect.",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "currentArmLevel",
+    "isArmed"
+  ]
+}

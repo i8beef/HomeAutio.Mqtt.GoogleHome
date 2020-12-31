@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device with multiple toggle.",
+      "availableToggles": [
+        {
+          "name": "sterilization_toggle",
+          "name_values": [
+            {
+              "name_synonym": [
+                "clean",
+                "bio clean"
+              ],
+              "lang": "en"
+            }
+          ]
+        },
+        {
+          "name": "energysaving_toggle",
+          "name_values": [
+            {
+              "name_synonym": [
+                "energy saving",
+                "eco"
+              ],
+              "lang": "en"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "$comment": "Device with command-only toggles.",
+      "availableToggles": [
+        {
+          "name": "filter_toggle",
+          "name_values": [
+            {
+              "name_synonym": [
+                "filtered",
+                "filter"
+              ],
+              "lang": "en"
+            }
+          ]
+        }
+      ],
+      "commandOnlyToggles": true
+    },
+    {
+      "$comment": "Device with query-only toggles.",
+      "availableToggles": [
+        {
+          "name": "filter_toggle",
+          "name_values": [
+            {
+              "name_synonym": [
+                "filtered",
+                "filter"
+              ],
+              "lang": "en"
+            }
+          ]
+        }
+      ],
+      "queryOnlyToggles": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "availableToggles": {
+      "description": "List of available toggles.",
+      "type": "array",
+      "items": {
+        "description": "Available toggle.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Internal name of the toggle, which will be used in commands and states. This can be non-user-friendly, and will be shared across all languages.",
+            "type": "string"
+          },
+          "name_values": {
+            "description": "Synonyms of the toggle in each supported languages.",
+            "type": "array",
+            "items": {
+              "description": "Synonyms of the toggle in a given language.",
+              "type": "object",
+              "properties": {
+                "name_synonym": {
+                  "type": "array",
+                  "description": "Synonyms of the toggle. The first string in this list is used as the canonical name of the level in that language.",
+                  "items": {
+                    "description": "Synonym name.",
+                    "type": "string"
+                  }
+                },
+                "lang": {
+                  "description": "Language code (ISO 639-1). See <a href=\"https://developers.google.com/assistant/smarthome/traits#supported-languages\">supported languages</a>.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "lang",
+                "name_synonym"
+              ]
+            }
+          }
+        },
+        "required": [
+          "name",
+          "name_values"
+        ]
+      }
+    },
+    "commandOnlyToggles": {
+      "description": "Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.",
+      "type": "boolean",
+      "default": false
+    },
+    "queryOnlyToggles": {
+      "description": "Required if the device supports query-only execution. This attribute indicates if the device can only be queried for state information, and cannot be controlled.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "availableToggles"
+  ]
+}

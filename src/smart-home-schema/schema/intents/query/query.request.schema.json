@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QueryRequest",
+  "examples": [
+    {
+      "$comment": "QUERY intent request",
+      "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+      "inputs": [
+        {
+          "intent": "action.devices.QUERY",
+          "payload": {
+            "devices": [
+              {
+                "id": "123",
+                "customData": {
+                  "fooValue": 74,
+                  "barValue": true,
+                  "bazValue": "foo"
+                }
+              },
+              {
+                "id": "456",
+                "customData": {
+                  "fooValue": 12,
+                  "barValue": false,
+                  "bazValue": "bar"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "description": "This intent queries for the current states of devices. It is used for queries where truly real-time accuracy is required (for example, the status of a door lock). Only states are returned when action.devices.QUERY is triggered. To update the properties or traits or other persistent elements of the device, action.devices.SYNC is used.",
+  "type": "object",
+  "properties": {
+    "requestId": {
+      "description": "ID of the request.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "inputs": {
+      "description": "List of inputs matching the intent request.",
+      "type": "array",
+      "items": {
+        "description": "Type and payload associated with the intent request.",
+        "type": "object",
+        "properties": {
+          "intent": {
+            "description": "Intent request type.",
+            "const": "action.devices.QUERY"
+          },
+          "payload": {
+            "description": "QUERY request payload.",
+            "type": "object",
+            "properties": {
+              "devices": {
+                "description": "List of target devices.",
+                "type": "array",
+                "items": {
+                  "description": "Device targets to query.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "Device ID, as per the ID provided in SYNC.",
+                      "type": "string"
+                    },
+                    "customData": {
+                      "description": "If the opaque customData object is provided in SYNC, it's sent here.",
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "devices"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "intent",
+          "payload"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "requestId",
+    "inputs"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,20 @@
+name: Simple lock
+type: action.devices.types.LOCK
+traits:
+  - action.devices.traits.LockUnlock
+states:
+  {
+    "isLocked": true,
+    "isJammed": false
+  }
+commands:
+  action.devices.commands.LockUnlock:
+    params:
+      {
+        "lock": true
+      }
+    results:
+      {
+        "isLocked": true,
+        "isJammed": false
+      }

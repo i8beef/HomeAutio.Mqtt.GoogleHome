@@ -1,0 +1,37 @@
+name: Simple water heater
+type: action.devices.types.WATERHEATER
+traits:
+  - action.devices.traits.TemperatureControl
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "temperatureRange": {
+      "minThresholdCelsius": 25,
+      "maxThresholdCelsius": 100
+    },
+    "temperatureUnitForUX": "F"
+  }
+states:
+  {
+    "on": false,
+    "temperatureSetpointCelsius": 30
+  }
+commands:
+  action.devices.commands.SetTemperature:
+    params:
+      {
+        "temperature": 45
+      }
+    results:
+      {
+        "temperatureSetpointCelsius": 45
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

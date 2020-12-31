@@ -1,0 +1,31 @@
+name: Simple gate
+type: action.devices.types.GATE
+traits:
+  - action.devices.traits.LockUnlock
+  - action.devices.traits.OpenClose
+states:
+  {
+    "openPercent": 50,
+    "isLocked": false,
+    "isJammed": false
+  }
+commands:
+  action.devices.commands.LockUnlock:
+    params:
+      {
+        "lock": true
+      }
+    results:
+      {
+        "isLocked": true,
+        "isJammed": false
+      }
+  action.devices.commands.OpenClose:
+    params:
+      {
+        "openPercent": 100
+      }
+    results:
+      {
+        "openPercent": 100
+      }

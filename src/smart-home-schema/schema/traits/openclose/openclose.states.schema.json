@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Simple open-close device.",
+      "openPercent": 100
+    },
+    {
+      "$comment": "Open device by 30% in down direction, and by 50% in up direction.",
+      "openState": [
+        {
+          "openPercent": 30,
+          "openDirection": "DOWN"
+        },
+        {
+          "openPercent": 50,
+          "openDirection": "UP"
+        }
+      ]
+    }
+  ],
+  "oneOf": [
+    {
+      "description": "Single direction open-close",
+      "type": "object",
+      "properties": {
+        "openPercent": {
+          "description": "Indicates the percentage that a device is opened, where 0 is closed and 100 is fully open.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "openPercent"
+      ]
+    },
+    {
+      "description": "Multiple direction open-close",
+      "type": "object",
+      "properties": {
+        "openState": {
+          "description": "List of states for each supported open direction.",
+          "type": "array",
+          "items": {
+            "description": "Current state for the given open direction.",
+            "type": "object",
+            "properties": {
+              "openPercent": {
+                "description": "Indicates the percentage that a device is opened, where 0 is closed and 100 is fully open.",
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "openDirection": {
+                "description": "Direction in which the device is opened.",
+                "type": "string",
+                "enum": [
+                  "UP",
+                  "DOWN",
+                  "LEFT",
+                  "RIGHT",
+                  "IN",
+                  "OUT"
+                ]
+              }
+            },
+            "required": [
+              "openPercent",
+              "openDirection"
+            ]
+          }
+        }
+      },
+      "required": [
+        "openState"
+      ]
+    }
+  ]
+}

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
+using HomeAutio.Mqtt.GoogleHome.Extensions;
 using HomeAutio.Mqtt.GoogleHome.Models;
+using HomeAutio.Mqtt.GoogleHome.Models.Schema;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using HomeAutio.Mqtt.GoogleHome.Models.State.Challenges;
 using HomeAutio.Mqtt.GoogleHome.Validation;
@@ -234,6 +236,45 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             _deviceRepository.Update(deviceId, device);
 
             return RedirectToAction("Edit", "GoogleDevice", new { deviceId });
+        }
+
+        /// <summary>
+        /// Get trait examples.
+        /// </summary>
+        /// <param name="traitId">Trait id.</param>
+        /// <returns>Response.</returns>
+        public IActionResult Examples([Required] string traitId)
+        {
+            var schemas = TraitSchemaProvider.GetTraitSchemas();
+            var targetSchema = schemas.FirstOrDefault(x => x.Trait == Enum.Parse<TraitType>(traitId));
+            if (targetSchema == null)
+            {
+                return NotFound();
+            }
+
+            // Flatten out command examples
+            var commandExamples = new List<SchemaExample>();
+            foreach (var commandSchema in targetSchema.CommandSchemas)
+            {
+                var commandName = commandSchema.Command.ToEnumString();
+                foreach (var commandExample in commandSchema.Examples)
+                {
+                    commandExamples.Add(new SchemaExample
+                    {
+                        Comment = $"{commandName}<br/>{commandExample.Comment}",
+                        Example = commandExample.Example
+                    });
+                }
+            }
+
+            var examples = new
+            {
+                AttributeExamples = targetSchema.AttributeSchema?.Examples,
+                StateExamples = targetSchema.StateSchema?.Examples,
+                CommandExamples = commandExamples
+            };
+
+            return Json(examples);
         }
     }
 }

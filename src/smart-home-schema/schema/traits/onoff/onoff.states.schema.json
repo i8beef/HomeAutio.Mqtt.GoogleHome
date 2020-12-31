@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Is the device on?",
+      "on": true
+    },
+    {
+      "$comment": "Is the device off?",
+      "on": false
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "on": {
+      "description": "Whether a device with an on/off switch is on or off.",
+      "type": "boolean"
+    }
+  }
+}

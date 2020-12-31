@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "No parameters"
+    }
+  ],
+  "description": "Pause media playback.",
+  "type": "object",
+  "additionalProperties": false
+}

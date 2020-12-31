@@ -1,0 +1,461 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Sensor device that reports descriptive state value.",
+      "sensorStatesSupported": [
+        {
+          "name": "AirQuality",
+          "descriptiveCapabilities": {
+            "availableStates": [
+              "healthy",
+              "moderate",
+              "unhealthy",
+              "very unhealthy"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "$comment": "Sensor device that reports numeric state value.",
+      "sensorStatesSupported": [
+        {
+          "name": "CarbonMonoxideLevel",
+          "numericCapabilities": {
+            "rawValueUnit": "PARTS_PER_MILLION"
+          }
+        }
+      ]
+    },
+    {
+      "$comment": "Sensor device that reports descriptive and numeric state value.",
+      "sensorStatesSupported": [
+        {
+          "name": "SmokeLevel",
+          "numericCapabilities": {
+            "rawValueUnit": "PARTS_PER_MILLION"
+          },
+          "descriptiveCapabilities": {
+            "availableStates": [
+              "smoke detected",
+              "high",
+              "no smoke detected"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "sensorStatesSupported": {
+      "description": "Each object represents sensor state capabilities supported by this specific device. Each sensor must have at least a descriptive or numeric capability. Sensors can also report both, in which case the numeric value will be preferred.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "description": "Supported sensor capabilities.",
+        "type": "object",
+        "minProperties": 2,
+        "properties": {
+          "name": {
+            "description": "Supported sensor type. See the Supported Sensors table.",
+            "type": "string"
+          },
+          "descriptiveCapabilities": {
+            "description": "A description of the sensor's capabilities.",
+            "type": "object",
+            "properties": {
+              "availableStates": {
+                "description": "List of the available states for the device. The \"unknown\" state is implicitly supported when the sensor does not return a value.",
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "description": "Supported descriptive state value.",
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "availableStates"
+            ]
+          },
+          "numericCapabilities": {
+            "description": "Describes the possible numerical values that the sensor can report.",
+            "type": "object",
+            "properties": {
+              "rawValueUnit": {
+                "description": "Supported numerical unit.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "rawValueUnit"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Air quality",
+            "properties": {
+              "name": {
+                "enum": [
+                  "AirQuality"
+                ]
+              },
+              "descriptiveCapabilities": {
+                "type": "object",
+                "properties": {
+                  "availableStates": {
+                    "items": {
+                      "enum": [
+                        "healthy",
+                        "moderate",
+                        "unhealthy",
+                        "unhealthy for sensitive groups",
+                        "very unhealthy",
+                        "hazardous",
+                        "good",
+                        "fair",
+                        "poor",
+                        "very poor",
+                        "severe",
+                        "unknown"
+                      ]
+                    }
+                  }
+                }
+              },
+              "numericCapabilities": {
+                "type": "object",
+                "properties": {
+                  "rawValueUnit": {
+                    "enum": [
+                      "AQI"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "description": "Carbon monoxide",
+            "properties": {
+              "name": {
+                "enum": [
+                  "CarbonMonoxideLevel"
+                ]
+              },
+              "descriptiveCapabilities": {
+                "type": "object",
+                "properties": {
+                  "availableStates": {
+                    "items": {
+                      "enum": [
+                        "carbon monoxide detected",
+                        "high",
+                        "no carbon monoxide detected",
+                        "unknown"
+                      ]
+                    }
+                  }
+                }
+              },
+              "numericCapabilities": {
+                "type": "object",
+                "properties": {
+                  "rawValueUnit": {
+                    "enum": [
+                      "PARTS_PER_MILLION"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "description": "Smoke level",
+            "properties": {
+              "name": {
+                "enum": [
+                  "SmokeLevel"
+                ]
+              },
+              "descriptiveCapabilities": {
+                "type": "object",
+                "properties": {
+                  "availableStates": {
+                    "items": {
+                      "enum": [
+                        "smoke detected",
+                        "high",
+                        "no smoke detected",
+                        "unknown"
+                      ]
+                    }
+                  }
+                }
+              },
+              "numericCapabilities": {
+                "type": "object",
+                "properties": {
+                  "rawValueUnit": {
+                    "enum": [
+                      "PARTS_PER_MILLION"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "description": "Filter cleanliness",
+            "properties": {
+              "name": {
+                "enum": [
+                  "FilterCleanliness"
+                ]
+              },
+              "descriptiveCapabilities": {
+                "type": "object",
+                "properties": {
+                  "availableStates": {
+                    "items": {
+                      "enum": [
+                        "clean",
+                        "dirty",
+                        "needs replacement",
+                        "unknown"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "not": {
+              "required": [
+                "numericCapabilities"
+              ]
+            }
+          },
+          {
+            "type": "object",
+            "description": "Water leak",
+            "properties": {
+              "name": {
+                "enum": [
+                  "WaterLeak"
+                ]
+              },
+              "descriptiveCapabilities": {
+                "type": "object",
+                "properties": {
+                  "availableStates": {
+                    "items": {
+                      "enum": [
+                        "leak",
+                        "no leak",
+                        "unknown"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "not": {
+              "required": [
+                "numericCapabilities"
+              ]
+            }
+          },
+          {
+            "type": "object",
+            "description": "Rain detection",
+            "properties": {
+              "name": {
+                "enum": [
+                  "RainDetection"
+                ]
+              },
+              "descriptiveCapabilities": {
+                "type": "object",
+                "properties": {
+                  "availableStates": {
+                    "items": {
+                      "enum": [
+                        "rain detected",
+                        "no rain detected",
+                        "unknown"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "not": {
+              "required": [
+                "numericCapabilities"
+              ]
+            }
+          },
+          {
+            "type": "object",
+            "description": "Filter lifetime",
+            "properties": {
+              "name": {
+                "enum": [
+                  "FilterLifeTime"
+                ]
+              },
+              "descriptiveCapabilities": {
+                "type": "object",
+                "properties": {
+                  "availableStates": {
+                    "items": {
+                      "enum": [
+                        "new",
+                        "good",
+                        "replace soon",
+                        "replace now",
+                        "unknown"
+                      ]
+                    }
+                  }
+                }
+              },
+              "numericCapabilities": {
+                "type": "object",
+                "properties": {
+                  "rawValueUnit": {
+                    "enum": [
+                      "PERCENTAGE"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "description": "Computed filter lifetime",
+            "properties": {
+              "name": {
+                "enum": [
+                  "PreFilterLifeTime",
+                  "HEPAFilterLifeTime",
+                  "Max2FilterLifeTime"
+                ]
+              },
+              "numericCapabilities": {
+                "type": "object",
+                "properties": {
+                  "rawValueUnit": {
+                    "enum": [
+                      "PERCENTAGE"
+                    ]
+                  }
+                }
+              }
+            },
+            "not": {
+              "required": [
+                "descriptiveCapabilities"
+              ]
+            }
+          },
+          {
+            "type": "object",
+            "description": "Carbon dioxide level",
+            "properties": {
+              "name": {
+                "enum": [
+                  "CarbonDioxideLevel"
+                ]
+              },
+              "numericCapabilities": {
+                "type": "object",
+                "properties": {
+                  "rawValueUnit": {
+                    "enum": [
+                      "PARTS_PER_MILLION"
+                    ]
+                  }
+                }
+              }
+            },
+            "not": {
+              "required": [
+                "descriptiveCapabilities"
+              ]
+            }
+          },
+          {
+            "type": "object",
+            "description": "Particulate matter",
+            "properties": {
+              "name": {
+                "enum": [
+                  "PM2.5",
+                  "PM10"
+                ]
+              },
+              "numericCapabilities": {
+                "type": "object",
+                "properties": {
+                  "rawValueUnit": {
+                    "enum": [
+                      "MICROGRAMS_PER_CUBIC_METER"
+                    ]
+                  }
+                }
+              }
+            },
+            "not": {
+              "required": [
+                "descriptiveCapabilities"
+              ]
+            }
+          },
+          {
+            "type": "object",
+            "description": "Volatile organic compounds",
+            "properties": {
+              "name": {
+                "enum": [
+                  "VolatileOrganicCompounds"
+                ]
+              },
+              "numericCapabilities": {
+                "type": "object",
+                "properties": {
+                  "rawValueUnit": {
+                    "enum": [
+                      "PARTS_PER_MILLION"
+                    ]
+                  }
+                }
+              }
+            },
+            "not": {
+              "required": [
+                "descriptiveCapabilities"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "sensorStatesSupported"
+  ]
+}

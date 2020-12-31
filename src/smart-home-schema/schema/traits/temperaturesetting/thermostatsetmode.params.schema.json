@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Set the target operating mode for a thermostat device.",
+  "examples": [
+    {
+      "$comment": "Set the device to heatcool mode.",
+      "thermostatMode": "heatcool"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "thermostatMode": {
+      "description": "Target mode, from the list of <code>availableThermostatModes</code>.",
+      "type": "string",
+      "oneOf": [
+        {
+          "enum": [
+            "off"
+          ],
+          "description": "Heating/Cooling activity disabled"
+        },
+        {
+          "enum": [
+            "heat"
+          ],
+          "description": "Device supports heating"
+        },
+        {
+          "enum": [
+            "cool"
+          ],
+          "description": "Device supports cooling"
+        },
+        {
+          "enum": [
+            "on"
+          ],
+          "description": "Restore the previous mode of the device"
+        },
+        {
+          "enum": [
+            "heatcool"
+          ],
+          "description": "Maintaining heating/cooling target as a range"
+        },
+        {
+          "enum": [
+            "auto"
+          ],
+          "description": "Automatic mode with temperature set by a schedule or learned behavior"
+        },
+        {
+          "enum": [
+            "fan-only"
+          ],
+          "description": "Fan running without heat/cool activity"
+        },
+        {
+          "enum": [
+            "purifier"
+          ],
+          "description": "Purifying mode"
+        },
+        {
+          "enum": [
+            "eco"
+          ],
+          "description": "Energy-saving mode"
+        },
+        {
+          "enum": [
+            "dry"
+          ],
+          "description": "Dry mode"
+        }
+      ]
+    }
+  },
+  "required": [
+    "thermostatMode"
+  ],
+  "additionalProperties": false
+}

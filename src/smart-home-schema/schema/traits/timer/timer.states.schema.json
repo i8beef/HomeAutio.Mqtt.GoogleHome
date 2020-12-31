@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "How much time is left on device timer? (not running).",
+      "timerRemainingSec": -1
+    },
+    {
+      "$comment": "How much time is left on device timer? (running).",
+      "timerRemainingSec": 60
+    },
+    {
+      "$comment": "How much time is left on device timer? (paused).",
+      "timerRemainingSec": 30,
+      "timerPaused": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "timerRemainingSec": {
+      "description": "Current time remaining in seconds, -1, or [0, <code>maxTimerLimitSec</code>]. Set to -1 to indicate no timer is running.",
+      "type": "integer"
+    },
+    "timerPaused": {
+      "description": "True if a active timer exists but is currently paused.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "timerRemainingSec"
+  ]
+}

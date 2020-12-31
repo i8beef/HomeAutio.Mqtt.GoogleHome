@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "The user tried to pause a device, but the device is in some state where it cannot be paused.",
+  "type": "string",
+  "enum": [
+    "unpauseableState"
+  ]
+}

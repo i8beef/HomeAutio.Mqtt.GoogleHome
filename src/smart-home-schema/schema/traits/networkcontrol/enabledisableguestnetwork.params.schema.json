@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Turn on the guest network.",
+      "enable": true
+    }
+  ],
+  "description": "Enable or disable the guest network.",
+  "type": "object",
+  "properties": {
+    "enable": {
+      "description": "True to enable the guest network, false to disable the guest network.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "enable"
+  ],
+  "additionalProperties": false
+}

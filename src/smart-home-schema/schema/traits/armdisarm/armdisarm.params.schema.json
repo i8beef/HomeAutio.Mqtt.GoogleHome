@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Set the alarm level of this device.",
+  "examples": [
+    {
+      "$comment": "Arm the system",
+      "arm": true,
+      "followUpToken": "123"
+    },
+    {
+      "$comment": "Set the system to arm level L1",
+      "arm": true,
+      "armLevel": "L1",
+      "followUpToken": "456"
+    },
+    {
+      "$comment": "Cancel the arming operation",
+      "arm": true,
+      "cancel": true
+    }
+  ],
+  "oneOf": [
+    {
+      "description": "Cancel the arm or disarm operation",
+      "type": "object",
+      "properties": {
+        "followUpToken": {
+          "description": "Google-provided token for follow-up response.",
+          "type": "string"
+        },
+        "arm": {
+          "description": "True when command is to arm. False to disarm.",
+          "type": "boolean"
+        },
+        "cancel": {
+          "description": "True when command is to cancel the <code>arm</code> value.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "arm",
+        "cancel"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "description": "Arm or disarm the device, with an optional security level.",
+      "type": "object",
+      "properties": {
+        "followUpToken": {
+          "description": "Google-provided token for follow-up response.",
+          "type": "string"
+        },
+        "arm": {
+          "description": "True when command is to arm. False to disarm.",
+          "type": "boolean"
+        },
+        "armLevel": {
+          "description": "The <code>level_name</code> to arm to.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "arm"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

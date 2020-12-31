@@ -1,0 +1,134 @@
+name: Simple pressure cooker
+type: action.devices.types.PRESSURECOOKER
+traits:
+  - action.devices.traits.Cook
+  - action.devices.traits.OnOff
+  - action.devices.traits.Timer
+  - action.devices.traits.StartStop
+attributes:
+  {
+    "supportedCookingModes": [
+      "PRESSURE_COOK"
+    ],
+    "foodPresets": [
+      {
+        "food_preset_name": "roast_key",
+        "supported_units": [
+          "POUNDS",
+          "OUNCES"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "roast",
+              "chuck roast"
+            ],
+            "lang": "en"
+          }
+        ]
+      },
+      {
+        "food_preset_name": "ribs_key",
+        "supported_units": [
+          "POUNDS",
+          "OUNCES"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "ribs",
+              "rack of ribs"
+            ],
+            "lang": "en"
+          }
+        ]
+      }
+    ],
+    "maxTimerLimitSec": 1200,
+    "pausable": true
+  }
+states:
+  {
+    "on": true,
+    "isRunning": true,
+    "isPaused": false,
+    "timerRemainingSec": 600,
+    "currentCookingMode": "PRESSURE_COOK",
+    "currentFoodPreset": "roast_key"
+  }
+commands:
+  action.devices.commands.Cook:
+    params:
+      {
+        "start": false,
+        "cookingMode": "PRESSURE_COOK"
+      }
+    results:
+      {
+        "currentCookingMode": "NONE",
+        "currentFoodPreset": "NONE"
+      }
+  action.devices.commands.StartStop:
+    params:
+      {
+        "start": true
+      }
+    results:
+      {
+        "isRunning": true,
+        "isPaused": false
+      }
+  action.devices.commands.PauseUnPause:
+    params:
+      {
+        "pause": true
+      }
+    results:
+      {
+        "isRunning": false,
+        "isPaused": true
+      }
+  action.devices.commands.TimerStart:
+    params:
+      {
+        "timerTimeSec": 600
+      }
+    results:
+      {
+        "timerRemainingSec": 600
+      }
+  action.devices.commands.TimerAdjust:
+    params:
+      {
+        "timerTimeSec": -10
+      }
+    results:
+      {
+        "timerRemainingSec": 590
+      }
+  action.devices.commands.TimerPause:
+    results:
+      {
+        "timerRemainingSec": 600,
+        "timerPaused": true
+      }
+  action.devices.commands.TimerResume:
+    results:
+      {
+        "timerRemainingSec": 600,
+        "timerPaused": false
+      }
+  action.devices.commands.TimerCancel:
+    results:
+      {
+        "timerRemainingSec": -1
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

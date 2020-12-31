@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Rechargeable device",
+      "isRechargeable": true,
+      "queryOnlyEnergyStorage": false
+    },
+    {
+      "$comment": "Rechargeable device that displays current charge level in miles",
+      "isRechargeable": true,
+      "energyStorageDistanceUnitForUX": "MILES",
+      "queryOnlyEnergyStorage": false
+    },
+    {
+      "$comment": "Non-rechargable device that only support reporting current charge level",
+      "isRechargeable": false,
+      "queryOnlyEnergyStorage": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "queryOnlyEnergyStorage": {
+      "description": "True if this device only supports queries about the stored energy levels and, optionally, active charging state (dependent on <code>isRechargeable</code> attribute), but does not support starting and stopping charging.",
+      "type": "boolean"
+    },
+    "energyStorageDistanceUnitForUX": {
+      "description": "Will be used in responses to the user.",
+      "type": "string",
+      "enum": [
+        "KILOMETERS",
+        "MILES"
+      ],
+      "default": "KILOMETERS"
+    },
+    "isRechargeable": {
+      "description": "Set to true if this device is rechargeable. This indicates the device may report <code>capacityUntilFull</code>, <code>isCharging</code>, and optionally <code>isPluggedIn</code> state, and can accept the <code>Charge</code> command.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "queryOnlyEnergyStorage"
+  ]
+}

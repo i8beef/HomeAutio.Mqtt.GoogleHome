@@ -1,0 +1,137 @@
+name: Simple multicooker
+type: action.devices.types.MULTICOOKER
+traits:
+  - action.devices.traits.Cook
+  - action.devices.traits.OnOff
+  - action.devices.traits.Timer
+  - action.devices.traits.StartStop
+attributes:
+  {
+    "supportedCookingModes": [
+      "COOK",
+      "BOIL",
+      "STEW"
+    ],
+    "foodPresets": [
+      {
+        "food_preset_name": "soup_key",
+        "supported_units": [
+          "CUPS",
+          "OUNCES"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "soup",
+              "stew"
+            ],
+            "lang": "en"
+          }
+        ]
+      },
+      {
+        "food_preset_name": "oatmeal_key",
+        "supported_units": [
+          "CUPS",
+          "OUNCES"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "oatmeal",
+              "oats",
+              "porridge"
+            ],
+            "lang": "en"
+          }
+        ]
+      }
+    ],
+    "maxTimerLimitSec": 1200,
+    "pausable": true
+  }
+states:
+  {
+    "on": true,
+    "isRunning": true,
+    "isPaused": false,
+    "timerRemainingSec": 300,
+    "currentCookingMode": "BOIL",
+    "currentFoodPreset": "soup_key"
+  }
+commands:
+  action.devices.commands.Cook:
+    params:
+      {
+        "start": true,
+        "cookingMode": "COOK"
+      }
+    results:
+      {
+        "currentCookingMode": "COOK",
+        "currentFoodPreset": "NONE"
+      }
+  action.devices.commands.StartStop:
+    params:
+      {
+        "start": true
+      }
+    results:
+      {
+        "isRunning": true,
+        "isPaused": false
+      }
+  action.devices.commands.PauseUnPause:
+    params:
+      {
+        "pause": true
+      }
+    results:
+      {
+        "isRunning": false,
+        "isPaused": true
+      }
+  action.devices.commands.TimerStart:
+    params:
+      {
+        "timerTimeSec": 300
+      }
+    results:
+      {
+        "timerRemainingSec": 300
+      }
+  action.devices.commands.TimerAdjust:
+    params:
+      {
+        "timerTimeSec": -10
+      }
+    results:
+      {
+        "timerRemainingSec": 290
+      }
+  action.devices.commands.TimerPause:
+    results:
+      {
+        "timerRemainingSec": 300,
+        "timerPaused": true
+      }
+  action.devices.commands.TimerResume:
+    results:
+      {
+        "timerRemainingSec": 300,
+        "timerPaused": false
+      }
+  action.devices.commands.TimerCancel:
+    results:
+      {
+        "timerRemainingSec": -1
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Is the bathtub filled?",
+      "isFilled": true
+    },
+    {
+      "$comment": "Is the bathtub filled? (with levels).",
+      "isFilled": true,
+      "currentFillLevel": "half_level"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "isFilled": {
+      "description": "True if the device is filled to any level. False if the device is completly drained.",
+      "type": "boolean"
+    },
+    "currentFillLevel": {
+      "description": "Required if <code>availableFillLevels</code> attribute is set. Indicates the current <code>level_name</code> from the <code>availableFillLevels</code> attribute at which the device is filled.",
+      "type": "string"
+    },
+    "currentFillPercent": {
+      "description": "Required if <code>supportsFillPercent</code> attribute is set. Indicates the current fill level percentage.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    }
+  },
+  "required": [
+    "isFilled"
+  ]
+}

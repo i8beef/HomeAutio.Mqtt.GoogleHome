@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Set the open-close state of the device.",
+  "examples": [
+    {
+      "$comment": "Open the device.",
+      "openPercent": 100
+    },
+    {
+      "$comment": "Open device 50 percent down.",
+      "openPercent": 50,
+      "openDirection": "DOWN"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "openPercent": {
+      "description": "Indicates the percentage that a device is opened, where 0 is closed and 100 is fully open.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "openDirection": {
+      "description": "Direction in which to open. Only present if device supports multiple directions, as indicated by the <code>openDirection</code> attribute, and a direction is specified by the user.",
+      "type": "string",
+      "enum": [
+        "UP",
+        "DOWN",
+        "LEFT",
+        "RIGHT",
+        "IN",
+        "OUT"
+      ]
+    }
+  },
+  "required": [
+    "openPercent"
+  ],
+  "additionalProperties": false
+}

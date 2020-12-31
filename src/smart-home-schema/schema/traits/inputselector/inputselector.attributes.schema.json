@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device with two ordered inputs.",
+      "availableInputs": [
+        {
+          "key": "hdmi_1",
+          "names": [
+            {
+              "lang": "en",
+              "name_synonym": [
+                "hdmi 1",
+                "1st hdmi",
+                "DVD player"
+              ]
+            },
+            {
+              "lang": "de",
+              "name_synonym": [
+                "hdmi 1",
+                "zuerst hdmi",
+                "DVD Spieler"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "usb_1",
+          "names": [
+            {
+              "lang": "en",
+              "name_synonym": [
+                "usb 1",
+                "first usb",
+                "Hard drive"
+              ]
+            },
+            {
+              "lang": "de",
+              "name_synonym": [
+                "usb 1",
+                "zuerst usb",
+                "Festplatte"
+              ]
+            }
+          ]
+        }
+      ],
+      "orderedInputs": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "availableInputs": {
+      "description": "List of objects representing input audio or video feeds. Feeds can be hardwired or networked. Each feed should be named and reasonably persistent. Make sure to define your synonyms carefully to prevent undesired (over-)triggering.",
+      "type": "array",
+      "items": {
+        "description": "Available input.",
+        "type": "object",
+        "properties": {
+          "key": {
+            "description": "Unique key for the input. The key should not be exposed to users in speech or response.",
+            "type": "string"
+          },
+          "names": {
+            "description": "List of names for the input for all available languages.",
+            "type": "array",
+            "items": {
+              "description": "Input for a given available language.",
+              "type": "object",
+              "properties": {
+                "lang": {
+                  "description": "Language code.",
+                  "type": "string"
+                },
+                "name_synonym": {
+                  "description": "User-friendly names for the input, in a given language. The first synonym is used in Google Assistant's response to the user.",
+                  "type": "array",
+                  "items": {
+                    "description": "Input name.",
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "lang",
+                "name_synonym"
+              ]
+            }
+          }
+        },
+        "required": [
+          "key",
+          "names"
+        ]
+      }
+    },
+    "commandOnlyInputSelector": {
+      "description": "Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.",
+      "type": "boolean",
+      "default": false
+    },
+    "orderedInputs": {
+      "description": "True if the list of output is ordered. This also indicates that the 'next' and 'previous' functionality is available.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "availableInputs"
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Brighten my light by 20%.",
+      "brightnessRelativePercent": 20
+    },
+    {
+      "$comment": "Dim my light a little.",
+      "brightnessRelativeWeight": -1
+    }
+  ],
+  "description": "Adjust device relative brightness.",
+  "oneOf": [
+    {
+      "description": "Percentage relative adjustment.",
+      "type": "object",
+      "properties": {
+        "brightnessRelativePercent": {
+          "description": "The exact percentage of brightness to change.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "brightnessRelativePercent"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "description": "Weight relative adjustment.",
+      "type": "object",
+      "properties": {
+        "brightnessRelativeWeight": {
+          "description": "This indicates the ambiguous amount of the brightness change. From small amount to large amount, this param will be scaled to integer 0 to 5, with the sign to indicate direction.",
+          "type": "integer",
+          "minimum": -5,
+          "maximum": 5
+        }
+      },
+      "required": [
+        "brightnessRelativeWeight"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

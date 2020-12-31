@@ -1,0 +1,89 @@
+name: Simple microwave
+type: action.devices.types.MICROWAVE
+traits:
+  - action.devices.traits.Cook
+  - action.devices.traits.Timer
+  - action.devices.traits.StartStop
+attributes:
+  {
+    "supportedCookingModes": [
+      "DEFROST",
+      "MICROWAVE",
+      "WARM"
+    ],
+    "maxTimerLimitSec": 6039,
+    "pausable": true
+  }
+states:
+  {
+    "isRunning": true,
+    "isPaused": false,
+    "timerRemainingSec": 60,
+    "currentCookingMode": "WARM"
+  }
+commands:
+  action.devices.commands.Cook:
+    params:
+      {
+        "start": true,
+        "cookingMode": "MICROWAVE"
+      }
+    results:
+      {
+        "currentCookingMode": "MICROWAVE"
+      }
+  action.devices.commands.StartStop:
+    params:
+      {
+        "start": true
+      }
+    results:
+      {
+        "isRunning": true,
+        "isPaused": false
+      }
+  action.devices.commands.PauseUnPause:
+    params:
+      {
+        "pause": true
+      }
+    results:
+      {
+        "isRunning": false,
+        "isPaused": true
+      }
+  action.devices.commands.TimerStart:
+    params:
+      {
+        "timerTimeSec": 60
+      }
+    results:
+      {
+        "timerRemainingSec": 60
+      }
+  action.devices.commands.TimerAdjust:
+    params:
+      {
+        "timerTimeSec": -10
+      }
+    results:
+      {
+        "timerRemainingSec": 50
+      }
+  action.devices.commands.TimerPause:
+    results:
+      {
+        "timerRemainingSec": 60,
+        "timerPaused": true
+      }
+  action.devices.commands.TimerResume:
+    results:
+      {
+        "timerRemainingSec": 60,
+        "timerPaused": false
+      }
+  action.devices.commands.TimerCancel:
+    results:
+      {
+        "timerRemainingSec": -1
+      }

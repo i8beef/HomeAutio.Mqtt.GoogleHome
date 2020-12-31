@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Show the front door (default Cast receiver).",
+      "cameraStreamAccessUrl": "https://fluffysheep.com/baaaaa.mp4",
+      "cameraStreamProtocol": "progressive_mp4"
+    },
+    {
+      "$comment": "Show front door camera (custom Cast receiver).",
+      "cameraStreamAccessUrl": "https://fluffysheep.com/baaaaa.mp4",
+      "cameraStreamReceiverAppId": "1g2f89213hg",
+      "cameraStreamAuthToken": "12657342190192783",
+      "cameraStreamProtocol": "progressive_mp4"
+    }
+  ],
+  "description": "<code>GetCameraStream</code> command results.",
+  "type": "object",
+  "properties": {
+    "cameraStreamAccessUrl": {
+      "description": "URL endpoint for retrieving the real-time stream in the format specified by <code>cameraStreamProtocol</code>.",
+      "type": "string"
+    },
+    "cameraStreamReceiverAppId": {
+      "description": "Cast receiver ID to process the camera stream; default receiver will be used if not provided.",
+      "type": "string"
+    },
+    "cameraStreamAuthToken": {
+      "description": "An auth token for the specific receiver to authorize access to the stream. If <code>cameraStreamNeedAuthToken</code> is true and this value is not provided, the user's OAuth credentials will be used as the auth token.",
+      "type": "string"
+    },
+    "cameraStreamProtocol": {
+      "description": "The media format that the stream url points to. It should be one of the protocol listed in the <code>SupportedStreamProtocols</code> command parameter.",
+      "type": "string",
+      "enum": [
+        "hls",
+        "dash",
+        "smooth_stream",
+        "progressive_mp4"
+      ]
+    }
+  },
+  "required": [
+    "cameraStreamAccessUrl",
+    "cameraStreamProtocol"
+  ]
+}

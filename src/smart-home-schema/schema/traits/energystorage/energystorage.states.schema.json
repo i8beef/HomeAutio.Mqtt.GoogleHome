@@ -1,0 +1,147 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Rechargeable device",
+      "capacityRemaining": [
+        {
+          "rawValue": 36000,
+          "unit": "SECONDS"
+        },
+        {
+          "rawValue": 90,
+          "unit": "PERCENTAGE"
+        }
+      ],
+      "capacityUntilFull": [
+        {
+          "rawValue": 120,
+          "unit": "SECONDS"
+        }
+      ],
+      "isCharging": true,
+      "isPluggedIn": true
+    },
+    {
+      "$comment": "Rechargeable device that displays current charge level in miles",
+      "capacityRemaining": [
+        {
+          "rawValue": 12,
+          "unit": "MILES"
+        }
+      ],
+      "capacityUntilFull": [
+        {
+          "rawValue": 6000,
+          "unit": "SECONDS"
+        }
+      ],
+      "isCharging": true,
+      "isPluggedIn": true
+    },
+    {
+      "$comment": "Non-rechargable device that only support reporting current charge level",
+      "descriptiveCapacityRemaining": "LOW"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "capacityUntilFull": {
+      "description": "Array of unit/value pairs that hold information on the capacity until the device is fully charged. For example: <i>How much time until &lt;device&gt; is fully charged</i>.",
+      "type": "array",
+      "items": {
+        "description": "Capacity until charged.",
+        "type": "object",
+        "properties": {
+          "rawValue": {
+            "description": "The capacity value.",
+            "type": "integer"
+          },
+          "unit": {
+            "description": "The capacity unit.",
+            "type": "string",
+            "enum": [
+              "SECONDS",
+              "MILES",
+              "KILOMETERS",
+              "PERCENTAGE",
+              "KILOWATT_HOURS"
+            ]
+          }
+        },
+        "required": [
+          "rawValue",
+          "unit"
+        ]
+      }
+    },
+    "isCharging": {
+      "description": "Whether the device is currently charging.",
+      "type": "boolean"
+    },
+    "isPluggedIn": {
+      "description": "Whether the device is currently plugged in. The device can be plugged in, but not actively charging.",
+      "type": "boolean"
+    }
+  },
+  "anyOf": [
+    {
+      "description": "Supports unit remaining capacity.",
+      "type": "object",
+      "properties": {
+        "capacityRemaining": {
+          "description": "Array of unit/value pairs that hold information on the energy capacity the device currently holds. For example: <i>How many miles does my &lt;device&gt; currently have</i> or <i>What percentage charge does my &lt;device&gt; have</i>",
+          "type": "array",
+          "items": {
+            "description": "Remaining capacity in unit and value pair.",
+            "type": "object",
+            "properties": {
+              "rawValue": {
+                "description": "The capacity value.",
+                "type": "integer"
+              },
+              "unit": {
+                "description": "The capacity unit.",
+                "type": "string",
+                "enum": [
+                  "SECONDS",
+                  "MILES",
+                  "KILOMETERS",
+                  "PERCENTAGE",
+                  "KILOWATT_HOURS"
+                ]
+              }
+            },
+            "required": [
+              "rawValue",
+              "unit"
+            ]
+          }
+        }
+      },
+      "required": [
+        "capacityRemaining"
+      ]
+    },
+    {
+      "description": "Supports descriptive remaining capacity.",
+      "type": "object",
+      "properties": {
+        "descriptiveCapacityRemaining": {
+          "description": "A qualitative description of the energy capacity level. Note this is for when there's no numeric capacity data. If numeric capacity data is available, it will be preferred over descriptive.",
+          "type": "string",
+          "enum": [
+            "CRITICALLY_LOW",
+            "LOW",
+            "MEDIUM",
+            "HIGH",
+            "FULL"
+          ]
+        }
+      },
+      "required": [
+        "descriptiveCapacityRemaining"
+      ]
+    }
+  ]
+}

@@ -10,6 +10,7 @@ using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
+using HomeAutio.Mqtt.GoogleHome.Services;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication;
@@ -171,7 +172,8 @@ namespace HomeAutio.Mqtt.GoogleHome
                     serviceProvider.GetRequiredService<IMessageHub>(),
                     brokerSettings,
                     serviceProvider.GetRequiredService<IGoogleDeviceRepository>(),
-                    serviceProvider.GetRequiredService<StateCache>());
+                    serviceProvider.GetRequiredService<StateCache>(),
+                    Configuration.GetValue<string>("mqtt:topicRoot", "google/home"));
             });
 
             // Setup token cleanup hosted service

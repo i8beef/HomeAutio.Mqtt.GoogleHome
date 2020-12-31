@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using HomeAutio.Mqtt.GoogleHome.Extensions;
 using HomeAutio.Mqtt.GoogleHome.Models;
+using HomeAutio.Mqtt.GoogleHome.Models.Schema;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
-using HomeAutio.Mqtt.GoogleHome.Models.State.Challenges;
+using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Validation
 {
@@ -20,340 +22,46 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         {
             var validationErrors = new List<string>();
 
-            if (deviceTrait.Trait == TraitType.Unknown)
-                validationErrors.Add("Trait is missing or not a valid type");
-
-            if (deviceTrait.Challenge != null)
+            var traitSchemas = TraitSchemaProvider.GetTraitSchemas();
+            var traitSchema = traitSchemas.FirstOrDefault(x => x.Trait == deviceTrait.Trait);
+            if (traitSchema != null)
             {
-                var pinChallenge = deviceTrait.Challenge as PinChallenge;
-                if (pinChallenge != null && string.IsNullOrWhiteSpace(pinChallenge.Pin))
-                    validationErrors.Add("Trait pin challenge is missing pin");
-            }
-
-            switch (deviceTrait.Trait)
-            {
-                case TraitType.Brightness:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.BrightnessAbsolute,
-                        new List<string> { "brightness" },
-                        new List<string> { "brightness" }));
-                    break;
-                case TraitType.CameraStream:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.GetCameraStream,
-                        null,
-                        new List<string> { "cameraStreamAccessUrl" },
-                        new List<string> { "cameraStreamSupportedProtocols", "cameraStreamNeedAuthToken", "cameraStreamNeedDrmEncryption" }));
-                    break;
-                case TraitType.Channel:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.SelectChannel,
-                        new List<string> { "channelNumber" },
-                        null,
-                        new List<string> { "availableChannels" }));
-                    break;
-                case TraitType.ColorSetting:
-                    validationErrors.AddRange(ValidateColorSetting(deviceTrait));
-                    break;
-                case TraitType.Dock:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.Dock,
-                        null,
-                        new List<string> { "isDocked" },
-                        null));
-                    break;
-                case TraitType.FanSpeed:
-                    if (deviceTrait.Attributes.ContainsKey("reversible") && (bool)deviceTrait.Attributes["reversible"])
-                    {
-                        validationErrors.AddRange(ValidateTrait(
-                            deviceTrait,
-                            CommandType.Reverse,
-                            null,
-                            null,
-                            new List<string> { "reversible" }));
-                    }
-
-                    if (deviceTrait.Attributes.ContainsKey("supportsFanSpeedPercent"))
-                    {
-                        validationErrors.AddRange(ValidateTrait(
-                            deviceTrait,
-                            CommandType.SetFanSpeed,
-                            new List<string> { "fanSpeedPercent" },
-                            new List<string> { "currentFanSpeedPercent" },
-                            new List<string> { "supportsFanSpeedPercent.*" }));
-                    }
-
-                    if (deviceTrait.Attributes.ContainsKey("availableFanSpeeds"))
-                    {
-                        validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                            CommandType.SetFanSpeed,
-                            new List<string> { "fanSpeed" },
-                            new List<string> { "currentFanSpeedSetting" },
-                            new List<string> { "availableFanSpeeds.*" }));
-                    }
-
-                    break;
-                case TraitType.Locator:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.Locate,
-                        null,
-                        null,
-                        null));
-                    break;
-                case TraitType.Modes:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.SetModes,
-                        new List<string> { "updateModeSettings.*" },
-                        new List<string> { "currentModeSettings.*" },
-                        new List<string> { "availableModes" }));
-                    break;
-                case TraitType.OnOff:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.OnOff,
-                        new List<string> { "on" },
-                        new List<string> { "on" }));
-                    break;
-                case TraitType.OpenClose:
-                    if (deviceTrait.Attributes.ContainsKey("queryOnlyOpenClose") && (bool)deviceTrait.Attributes["queryOnlyOpenClose"])
-                    {
-                        validationErrors.AddRange(ValidateTrait(
-                            deviceTrait,
-                            CommandType.Unknown,
-                            null,
-                            new List<string> { "openPercent" },
-                            new List<string> { "queryOnlyOpenClose" }));
-                    }
-                    else
-                    {
-                        validationErrors.AddRange(ValidateTrait(
-                            deviceTrait,
-                            CommandType.OpenClose,
-                            new List<string> { "openPercent" },
-                            new List<string> { "openPercent" }));
-                    }
-
-                    break;
-                case TraitType.RunCycle:
-                    validationErrors.AddRange(ValidateRunCycle(deviceTrait));
-                    break;
-                case TraitType.Scene:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.ActivateScene,
-                        new List<string> { "deactivate" },
-                        null,
-                        new List<string> { "sceneReversible" }));
-                    break;
-                case TraitType.StartStop:
-                    if (deviceTrait.Attributes.ContainsKey("pausable") && (bool)deviceTrait.Attributes["pausable"])
-                    {
-                        validationErrors.AddRange(ValidateTrait(
-                            deviceTrait,
-                            CommandType.PauseUnpause,
-                            new List<string> { "pause" },
-                            new List<string> { "isPaused" },
-                            new List<string> { "pausable" }));
-                    }
-
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.StartStop,
-                        new List<string> { "start" },
-                        new List<string> { "isRunning" },
-                        null));
-                    break;
-                case TraitType.TemperatureControl:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.SetTemperature,
-                        new List<string> { "temperature" },
-                        new List<string> { "temperatureSetpointCelsius", "temperatureAmbientCelsius" },
-                        new List<string> { "temperatureRange.*", "temperatureUnitForUX" }));
-                    break;
-                case TraitType.TemperatureSetting:
-                    validationErrors.AddRange(ValidateTemperatureSetting(deviceTrait));
-                    break;
-                case TraitType.Toggles:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.SetToggles,
-                        new List<string> { "updateToggleSettings.*" },
-                        new List<string> { "currentToggleSettings.*" },
-                        new List<string> { "availableToggles" }));
-                    break;
-                case TraitType.Volume:
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        CommandType.SetVolume,
-                        new List<string> { "volumeLevel" },
-                        new List<string> { "currentVolume", "isMuted" },
-                        null));
-                    break;
-            }
-
-            return validationErrors;
-        }
-
-        /// <summary>
-        /// Validates a ColorAbsolute trait.
-        /// </summary>
-        /// <param name="deviceTrait">Device trait to validate.</param>
-        /// <returns>Validation errors.</returns>
-        private static IEnumerable<string> ValidateColorSetting(DeviceTrait deviceTrait)
-        {
-            var command = CommandType.ColorAbsolute;
-            var commandParams = new List<string>();
-            var stateKeys = new List<string>();
-            var attributeKeys = new List<string>();
-
-            if (deviceTrait.Attributes.ContainsKey("colorTemperatureRange"))
-            {
-                // Temperature range
-                attributeKeys.AddRange(new List<string> { "colorTemperatureRange.temperatureMinK", "colorTemperatureRange.temperatureMaxK" });
-                commandParams.AddRange(new List<string> { "color.temperature" });
-                stateKeys.AddRange(new List<string> { "color.temperatureK" });
-            }
-
-            if (deviceTrait.Attributes.ContainsKey("colorModel") && (string)deviceTrait.Attributes["colorModel"] == "hsv")
-            {
-                // HSV requirements
-                commandParams.AddRange(new List<string> { "color.spectrumHSV.hue", "color.spectrumHSV.saturation", "color.spectrumHSV.value" });
-                stateKeys.AddRange(new List<string> { "color.spectrumHsv.hue", "color.spectrumHsv.saturation", "color.spectrumHsv.value" });
-            }
-            else if (deviceTrait.Attributes.ContainsKey("colorModel") && (string)deviceTrait.Attributes["colorModel"] == "rgb")
-            {
-                // RGB requirements
-                commandParams.AddRange(new List<string> { "color.spectrumRGB" });
-                stateKeys.AddRange(new List<string> { "color.spectrumRgb" });
-            }
-
-            if (deviceTrait.Attributes.ContainsKey("commandOnlyColorSetting") && (bool)deviceTrait.Attributes["commandOnlyColorSetting"] == true)
-            {
-                // Command checks only, wipe expeced states
-                stateKeys = null;
-            }
-
-            return ValidateTrait(deviceTrait, command, commandParams, stateKeys, attributeKeys);
-        }
-
-        /// <summary>
-        /// Validates a RunCycle trait.
-        /// </summary>
-        /// <param name="deviceTrait">Device trait to validate.</param>
-        /// <returns>Validation errors.</returns>
-        private static IEnumerable<string> ValidateRunCycle(DeviceTrait deviceTrait)
-        {
-            var validationErrors = new List<string>();
-
-            var stateKeys = new List<string> { "currentRunCycle", "currentTotalRemainingTime", "currentCycleRemainingTime" };
-            foreach (var stateKey in stateKeys)
-            {
-                if (!deviceTrait.State.ContainsKey(stateKey))
-                    validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing state '{stateKey}'");
-            }
-
-            return validationErrors;
-        }
-
-        /// <summary>
-        /// Validates a RunCycle trait.
-        /// </summary>
-        /// <param name="deviceTrait">Device trait to validate.</param>
-        /// <returns>Validation errors.</returns>
-        private static IEnumerable<string> ValidateTemperatureSetting(DeviceTrait deviceTrait)
-        {
-            var validationErrors = new List<string>();
-
-            // Command only mode
-            var commandOnlyTemperatureSetting = deviceTrait.Attributes.ContainsKey("commandOnlyTemperatureSetting")
-                ? (bool)deviceTrait.Attributes["commandOnlyTemperatureSetting"]
-                : false;
-
-            // Query only mode
-            var queryOnlyTemperatureSetting = deviceTrait.Attributes.ContainsKey("queryOnlyTemperatureSetting")
-                ? (bool)deviceTrait.Attributes["queryOnlyTemperatureSetting"]
-                : false;
-
-            // ThermostatSetMode
-            if (deviceTrait.Commands.ContainsKey(CommandType.ThermostatSetMode.ToEnumString()))
-            {
-                var command = queryOnlyTemperatureSetting ? CommandType.Unknown : CommandType.ThermostatSetMode;
-                var commandParams = queryOnlyTemperatureSetting ? null : new List<string> { "thermostatMode" };
-                var stateKeys = commandOnlyTemperatureSetting ? null : new List<string> { "thermostatMode" };
-                validationErrors.AddRange(ValidateTrait(
-                    deviceTrait,
-                    command,
-                    commandParams,
-                    stateKeys,
-                    new List<string> { "availableThermostatModes" }));
-            }
-
-            // ThermostatTemperatureSetpoint
-            if (deviceTrait.Commands.ContainsKey(CommandType.ThermostatTemperatureSetpoint.ToEnumString()))
-            {
-                var command = queryOnlyTemperatureSetting ? CommandType.Unknown : CommandType.ThermostatTemperatureSetpoint;
-                var commandParams = queryOnlyTemperatureSetting ? null : new List<string> { "thermostatTemperatureSetpoint" };
-                var stateKeys = commandOnlyTemperatureSetting ? null : new List<string> { "thermostatTemperatureSetpoint" };
-                validationErrors.AddRange(ValidateTrait(
-                    deviceTrait,
-                    command,
-                    commandParams,
-                    stateKeys,
-                    new List<string> { "thermostatTemperatureUnit" }));
-            }
-
-            // ThermostatTemperatureSetRange
-            if (deviceTrait.Commands.ContainsKey(CommandType.ThermostatTemperatureSetRange.ToEnumString()))
-            {
-                // Only supported if heatcool mode is supported
-                var availableThermostatModes = ((List<object>)deviceTrait.Attributes["availableThermostatModes"]).Cast<string>();
-                if (availableThermostatModes.Contains("heatcool"))
+                // Attribute validation
+                if (deviceTrait.Attributes != null && traitSchema.AttributeSchema?.Validator != null)
                 {
-                    var command = queryOnlyTemperatureSetting ? CommandType.Unknown : CommandType.ThermostatTemperatureSetRange;
-                    var commandParams = queryOnlyTemperatureSetting ? null : new List<string> { "thermostatTemperatureSetpointHigh", "thermostatTemperatureSetpointLow" };
-                    var stateKeys = commandOnlyTemperatureSetting ? null : new List<string> { "thermostatTemperatureSetpointHigh", "thermostatTemperatureSetpointLow" };
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        command,
-                        commandParams,
-                        stateKeys,
-                        new List<string> { "thermostatTemperatureUnit" }));
+                    var attributeJson = JsonConvert.SerializeObject(deviceTrait.Attributes);
+                    var attributeErrors = traitSchema.AttributeSchema.Validator.Validate(attributeJson);
+
+                    validationErrors.AddRange(attributeErrors.Select(x => $"{x.Path}: {x.Kind}"));
                 }
-            }
 
-            // TemperatureRelative
-            var temperatureRelativeCommandName = CommandType.TemperatureRelative.ToEnumString();
-            if (commandOnlyTemperatureSetting && deviceTrait.Commands.ContainsKey(temperatureRelativeCommandName))
-            {
-                // This command is only available if the commandOnlyTemperatureSetting attribute of the device is set to true. Only one of the following parameters will be set:
-                var command = queryOnlyTemperatureSetting ? CommandType.Unknown : CommandType.TemperatureRelative;
-                if (!deviceTrait.Commands[temperatureRelativeCommandName].ContainsKey("thermostatTemperatureRelativeDegree"))
+                // State validation
+                if (deviceTrait.State != null && traitSchema.StateSchema?.Validator != null)
                 {
-                    var commandParams = queryOnlyTemperatureSetting ? null : new List<string> { "thermostatTemperatureRelativeDegree" };
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        command,
-                        commandParams,
-                        null,
-                        new List<string> { "commandOnlyTemperatureSetting" }));
+                    var stateJson = JsonConvert.SerializeObject(GetFakeGoogleState(deviceTrait.State, traitSchema));
+                    var stateErrors = traitSchema.StateSchema.Validator.Validate(stateJson);
+
+                    validationErrors.AddRange(stateErrors.Select(x => $"{x.Path}: {x.Kind}"));
                 }
-                else
+
+                // Command validations
+                var deviceCommands = deviceTrait.Commands.ToDictionary(
+                    k => k.Key,
+                    v => v.Value.ToDictionary(
+                        x => x.Key,
+                        x => (object)x.Value).ToNestedDictionary());
+
+                foreach (var command in deviceCommands)
                 {
-                    var commandParams = queryOnlyTemperatureSetting ? null : new List<string> { "thermostatTemperatureRelativeWeight" };
-                    validationErrors.AddRange(ValidateTrait(
-                        deviceTrait,
-                        command,
-                        commandParams,
-                        null,
-                        new List<string> { "commandOnlyTemperatureSetting" }));
+                    var commandType = command.Key.ToEnum<CommandType>();
+                    if (command.Value != null && traitSchema.CommandSchemas.Any(x => x.Command == commandType))
+                    {
+                        var commandValidator = traitSchema.CommandSchemas.First(x => x.Command == commandType).Validator;
+                        var commandJson = JsonConvert.SerializeObject(command.Value);
+                        var commandErrors = commandValidator.Validate(commandJson);
+
+                        validationErrors.AddRange(commandErrors.Select(x => $"{x.Path}: {x.Kind}"));
+                    }
                 }
             }
 
@@ -361,82 +69,36 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         }
 
         /// <summary>
-        /// Validates a trait.
+        /// Gets device state as a Google device state object in a flattened state with dummy data for initial validation.
         /// </summary>
-        /// <param name="deviceTrait">Device trait to validate.</param>
-        /// <param name="command">Command to verify.</param>
-        /// <param name="commandParams">Command params expected for command.</param>
-        /// <param name="stateKeys">State keys expected for command.</param>
-        /// <param name="attributeKeys">Attribute keys expected for command.</param>
-        /// <returns>Validation errors.</returns>
-        private static IEnumerable<string> ValidateTrait(
-            DeviceTrait deviceTrait,
-            CommandType command,
-            IEnumerable<string> commandParams,
-            IEnumerable<string> stateKeys,
-            IEnumerable<string> attributeKeys = null)
+        /// <param name="stateConfigs">Current state cache.</param>
+        /// <param name="traitSchema">Trait schema.</param>
+        /// <returns>A Google device state object in a flattened state.</returns>
+        private static IDictionary<string, object> GetFakeGoogleState(IDictionary<string, DeviceState> stateConfigs, TraitSchema traitSchema)
         {
-            var validationErrors = new List<string>();
-
-            var commandName = command.ToEnumString();
-            if (command != CommandType.Unknown && !deviceTrait.Commands.ContainsKey(commandName))
-                validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing required command '{commandName}'");
-
-            if (commandParams != null)
+            var stateValues = new Dictionary<string, object>();
+            foreach (var state in stateConfigs)
             {
-                foreach (var commandParam in commandParams)
+                if (state.Value.Topic != null)
                 {
-                    if (commandParam.EndsWith(".*"))
+                    var googleType = traitSchema.GetGoogleTypeForFlattenedPath(state.Key);
+                    switch (googleType)
                     {
-                        if (!deviceTrait.Commands[commandName].Keys.Any(x => x.StartsWith(commandParam.Substring(0, commandParam.Length - 2))))
-                            validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing command param '{commandParam}' for command '{commandName}'");
-                    }
-                    else
-                    {
-                        if (!deviceTrait.Commands[commandName].ContainsKey(commandParam))
-                            validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing command param '{commandParam}' for command '{commandName}'");
+                        case GoogleType.Bool:
+                            stateValues.Add(state.Key, state.Value.MapValueToGoogle("true", googleType));
+                            break;
+                        case GoogleType.Numeric:
+                            stateValues.Add(state.Key, state.Value.MapValueToGoogle("1", googleType));
+                            break;
+                        case GoogleType.String:
+                        default:
+                            stateValues.Add(state.Key, state.Value.MapValueToGoogle("default", googleType));
+                            break;
                     }
                 }
             }
 
-            if (stateKeys != null)
-            {
-                foreach (var stateKey in stateKeys)
-                {
-                    if (stateKey.EndsWith(".*"))
-                    {
-                        if (!deviceTrait.State.Keys.Any(x => x.StartsWith(stateKey.Substring(0, stateKey.Length - 2))))
-                            validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing state '{stateKey}' for command '{commandName}'");
-                    }
-                    else
-                    {
-                        if (!deviceTrait.State.ContainsKey(stateKey))
-                            validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing state '{stateKey}' for command '{commandName}'");
-                    }
-                }
-            }
-
-            if (attributeKeys != null)
-            {
-                var flattenedAttributes = deviceTrait.Attributes != null
-                    ? deviceTrait.Attributes.ToFlatDictionary()
-                    : new Dictionary<string, object>();
-                foreach (var attributeKey in attributeKeys)
-                {
-                    if (attributeKey.EndsWith(".*"))
-                    {
-                        if (!flattenedAttributes.Keys.Any(x => x.StartsWith(attributeKey.Substring(0, attributeKey.Length - 2))))
-                            validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing attribute '{attributeKey}' for command '{commandName}'");
-                    }
-                    else
-                    {
-                        if (!flattenedAttributes.ContainsKey(attributeKey))
-                            validationErrors.Add($"Trait '{deviceTrait.Trait}' is missing attribute '{attributeKey}' for command '{commandName}'");
-                    }
-                }
-            }
-
-            return validationErrors;
+            return stateValues.ToNestedDictionary();
         }
     }
 }

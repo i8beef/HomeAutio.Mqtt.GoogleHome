@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Set absolute volume of speaker device",
+      "volumeLevel": 6
+    }
+  ],
+  "description": "Set volume to the requested level, based on <code>volumeMaxLevel</code>.",
+  "type": "object",
+  "properties": {
+    "volumeLevel": {
+      "description": "New volume, from <code>0</code> to <code>volumeMaxLevel</code>.",
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "volumeLevel"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,104 @@
+name: Simple oven
+type: action.devices.types.OVEN
+traits:
+  - action.devices.traits.Cook
+  - action.devices.traits.OnOff
+  - action.devices.traits.TemperatureControl
+  - action.devices.traits.Timer
+  - action.devices.traits.StartStop
+attributes:
+  {
+    "supportedCookingModes": [
+      "BAKE",
+      "CONVECTION_BAKE",
+      "ROAST"
+    ],
+    "maxTimerLimitSec": 3600,
+    "temperatureRange": {
+      "minThresholdCelsius": 65,
+      "maxThresholdCelsius": 288
+    },
+    "temperatureUnitForUX": "F"
+  }
+states:
+  {
+    "on": true,
+    "isRunning": true,
+    "temperatureSetpointCelsius": 175,
+    "currentCookingMode": "BAKE",
+    "timerRemainingSec": -1
+  }
+commands:
+  action.devices.commands.Cook:
+    params:
+      {
+        "start": true,
+        "cookingMode": "ROAST"
+      }
+    results:
+      {
+        "currentCookingMode": "ROAST"
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }
+  action.devices.commands.SetTemperature:
+    params:
+      {
+        "temperature": 200
+      }
+    results:
+      {
+        "temperatureSetpointCelsius": 200,
+        "temperatureAmbientCelsius": 100
+      }
+  action.devices.commands.TimerStart:
+    params:
+      {
+        "timerTimeSec": 300
+      }
+    results:
+      {
+        "timerRemainingSec": 300
+      }
+  action.devices.commands.TimerAdjust:
+    params:
+      {
+        "timerTimeSec": -10
+      }
+    results:
+      {
+        "timerRemainingSec": 290
+      }
+  action.devices.commands.TimerPause:
+    results:
+      {
+        "timerRemainingSec": 300,
+        "timerPaused": true
+      }
+  action.devices.commands.TimerResume:
+    results:
+      {
+        "timerRemainingSec": 300,
+        "timerPaused": false
+      }
+  action.devices.commands.TimerCancel:
+    results:
+      {
+        "timerRemainingSec": -1
+      }
+  action.devices.commands.StartStop:
+    params:
+      {
+        "start": true
+      }
+    results:
+      {
+        "isRunning": true
+      }

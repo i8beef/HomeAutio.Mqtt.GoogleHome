@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Add one minute to device timer.",
+      "timerTimeSec": 60
+    },
+    {
+      "$comment": "Subtracts 30 seconds from device timer.",
+      "timerTimeSec": -30
+    }
+  ],
+  "description": "Adjust the timer duration.",
+  "type": "object",
+  "properties": {
+    "timerTimeSec": {
+      "description": "Positive or negative adjustment of the timer in seconds; must be within [<code>-maxTimerLimitSec</code>, <code>maxTimerLimitSec</code>].",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "timerTimeSec"
+  ],
+  "additionalProperties": false
+}

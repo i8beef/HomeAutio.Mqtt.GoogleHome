@@ -8,6 +8,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
     public enum CommandType
     {
         /// <summary>
+        /// Unknown command type.
+        /// </summary>
+        [EnumMember(Value = "Unknown")]
+        Unknown,
+
+        /// <summary>
         /// action.devices.commands.ActivateScene
         /// </summary>
         [EnumMember(Value = "action.devices.commands.ActivateScene")]
@@ -42,6 +48,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.commands.BrightnessAbsolute")]
         BrightnessAbsolute,
+
+        /// <summary>
+        /// action.devices.commands.BrightnessRelative
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.BrightnessRelative")]
+        BrightnessRelative,
 
         /// <summary>
         /// action.devices.commands.Charge
@@ -200,6 +212,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Mute,
 
         /// <summary>
+        /// action.devices.commands.NextInput
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.NextInput")]
+        NextInput,
+
+        /// <summary>
         /// action.devices.commands.OnOff
         /// </summary>
         [EnumMember(Value = "action.devices.commands.OnOff")]
@@ -212,10 +230,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         OpenClose,
 
         /// <summary>
-        /// action.devices.commands.PauseUnpause
+        /// action.devices.commands.OpenCloseRelative
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.PauseUnpause")]
-        PauseUnpause,
+        [EnumMember(Value = "action.devices.commands.OpenCloseRelative")]
+        OpenCloseRelative,
+
+        /// <summary>
+        /// action.devices.commands.PauseUnPause
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.PauseUnPause")]
+        PauseUnPause,
+
+        /// <summary>
+        /// action.devices.commands.PreviousInput
+        /// </summary>
+        [EnumMember(Value = "action.devices.commands.PreviousInput")]
+        PreviousInput,
 
         /// <summary>
         /// action.devices.commands.Reboot
@@ -260,10 +290,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         SetFanSpeed,
 
         /// <summary>
-        /// action.devices.commands.SetFanSpeedRelativeSpeed
+        /// action.devices.commands.SetFanSpeedRelative
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.SetFanSpeedRelativeSpeed")]
-        SetFanSpeedRelativeSpeed,
+        [EnumMember(Value = "action.devices.commands.SetFanSpeedRelative")]
+        SetFanSpeedRelative,
 
         /// <summary>
         /// action.devices.commands.SetHumidity
@@ -395,12 +425,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// action.devices.commands.Wake
         /// </summary>
         [EnumMember(Value = "action.devices.commands.Wake")]
-        Wake,
-
-        /// <summary>
-        /// Unknown command type.
-        /// </summary>
-        [EnumMember(Value = "Unknown")]
-        Unknown
+        Wake
     }
 }

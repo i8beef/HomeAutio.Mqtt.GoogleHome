@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "What speed are the fans in the living room?",
+      "currentFanSpeedSetting": "speed_low",
+      "currentFanSpeedPercent": 10.0
+    }
+  ],
+  "type": "object",
+  "minProperties": 1,
+  "properties": {
+    "currentFanSpeedSetting": {
+      "description": "This represents the internal name of the current speed setting from the <code>availableFanSpeeds</code> attribute.",
+      "type": "string"
+    },
+    "currentFanSpeedPercent": {
+      "description": "Indicates the current fan speed by percentage. Required if <code>supportsFanSpeedPercent</code> attribute is set to <code>true</code>",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    }
+  }
+}

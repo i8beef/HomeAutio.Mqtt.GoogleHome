@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Lock the front door.",
+      "lock": true,
+      "followUpToken": "123"
+    },
+    {
+      "$comment": "Unlock the front door.",
+      "lock": false,
+      "followUpToken": "567"
+    }
+  ],
+  "type": "object",
+  "description": "Lock or unlock the device.",
+  "properties": {
+    "lock": {
+      "description": "True when command is to lock, false to unlock.",
+      "type": "boolean"
+    },
+    "followUpToken": {
+      "description": "Google-provided token for follow-up response.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "lock"
+  ],
+  "additionalProperties": false
+}

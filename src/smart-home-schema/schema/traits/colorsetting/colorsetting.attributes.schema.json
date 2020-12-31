@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device that supports both RGB spectrum color model and color temperature.",
+      "colorModel": "rgb",
+      "colorTemperatureRange": {
+        "temperatureMinK": 2000,
+        "temperatureMaxK": 9000
+      }
+    },
+    {
+      "$comment": "Device that only supports HSV spectrum color model.",
+      "colorModel": "hsv"
+    },
+    {
+      "$comment": "Device that only supports color temperature.",
+      "colorTemperatureRange": {
+        "temperatureMinK": 2000,
+        "temperatureMaxK": 9000
+      }
+    },
+    {
+      "$comment": "Device that only supports HSV color model commands.",
+      "colorModel": "hsv",
+      "commandOnlyColorSetting": true
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "commandOnlyColorSetting": {
+      "description": "Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "anyOf": [
+    {
+      "description": "Color model support.",
+      "type": "object",
+      "properties": {
+        "colorModel": {
+          "description": "Full spectrum color model supported by the device.",
+          "type": "string",
+          "enum": [
+            "rgb",
+            "hsv"
+          ]
+        }
+      },
+      "required": [
+        "colorModel"
+      ]
+    },
+    {
+      "description": "Color temperature support.",
+      "type": "object",
+      "properties": {
+        "colorTemperatureRange": {
+          "description": "Supported color temperature range in Kelvin.",
+          "type": "object",
+          "properties": {
+            "temperatureMinK": {
+              "description": "Minimum supported color temperature in Kelvin.",
+              "type": "integer"
+            },
+            "temperatureMaxK": {
+              "description": "Maximum supported color temperature in Kelvin.",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "temperatureMaxK",
+            "temperatureMinK"
+          ]
+        }
+      },
+      "required": [
+        "colorTemperatureRange"
+      ]
+    }
+  ]
+}

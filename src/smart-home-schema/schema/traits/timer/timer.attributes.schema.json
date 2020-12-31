@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Device with two hours timer limit.",
+      "maxTimerLimitSec": 7200
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "maxTimerLimitSec": {
+      "description": "Indicates the longest timer setting available on the device, measured in seconds.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "commandOnlyTimer": {
+      "default": false,
+      "description": "Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "maxTimerLimitSec"
+  ]
+}

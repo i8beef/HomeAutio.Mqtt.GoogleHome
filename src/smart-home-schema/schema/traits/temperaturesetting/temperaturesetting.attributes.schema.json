@@ -1,0 +1,192 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Thermostat device that supports discrete heating and cooling",
+      "availableThermostatModes": [
+        "off",
+        "heat",
+        "cool",
+        "on"
+      ],
+      "thermostatTemperatureUnit": "F"
+    },
+    {
+      "$comment": "Command-only thermostat device",
+      "availableThermostatModes": [
+        "off",
+        "heat",
+        "cool",
+        "on"
+      ],
+      "thermostatTemperatureUnit": "C",
+      "commandOnlyTemperatureSetting": true,
+      "queryOnlyTemperatureSetting": false
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "availableThermostatModes": {
+      "description": "Describes the thermostat modes this device can support.",
+      "oneOf": [
+        {
+          "description": "Comma-separated list of modes supported by this specific device. New integrations should use the <code>Array</code> form of this attribute.",
+          "type": "string",
+          "pattern": "^((off|heat|cool|on|heatcool|auto|fan-only|purifier|eco|dry|),?)+$",
+          "deprecated": true
+        },
+        {
+          "description": "List of modes supported by this specific device.",
+          "type": "array",
+          "items": {
+            "description": "Name of the supported mode.",
+            "type": "string",
+            "oneOf": [
+              {
+                "enum": [
+                  "off"
+                ],
+                "description": "Heating/Cooling activity disabled"
+              },
+              {
+                "enum": [
+                  "heat"
+                ],
+                "description": "Device supports heating"
+              },
+              {
+                "enum": [
+                  "cool"
+                ],
+                "description": "Device supports cooling"
+              },
+              {
+                "enum": [
+                  "on"
+                ],
+                "description": "Restore the previous mode of the device"
+              },
+              {
+                "enum": [
+                  "heatcool"
+                ],
+                "description": "Maintaining heating/cooling target as a range"
+              },
+              {
+                "enum": [
+                  "auto"
+                ],
+                "description": "Automatic mode with temperature set by a schedule or learned behavior"
+              },
+              {
+                "enum": [
+                  "fan-only"
+                ],
+                "description": "Fan running without heat/cool activity"
+              },
+              {
+                "enum": [
+                  "purifier"
+                ],
+                "description": "Purifying mode"
+              },
+              {
+                "enum": [
+                  "eco"
+                ],
+                "description": "Energy-saving mode"
+              },
+              {
+                "enum": [
+                  "dry"
+                ],
+                "description": "Dry mode"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "thermostatTemperatureRange": {
+      "description": "Contains two float values that indicate the supported temperature range for this device (in degrees Celsius).",
+      "type": "object",
+      "properties": {
+        "minThresholdCelsius": {
+          "description": "Minimum threshold of the temperature range.",
+          "type": "number"
+        },
+        "maxThresholdCelsius": {
+          "description": "Maximum threshold of the temperature range.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "minThresholdCelsius",
+        "maxThresholdCelsius"
+      ]
+    },
+    "thermostatTemperatureUnit": {
+      "description": "The display unit the device is set to by default. Google reports temperature information using the display unit.",
+      "type": "string",
+      "enum": [
+        "C",
+        "F"
+      ]
+    },
+    "bufferRangeCelsius": {
+      "description": "Specifies the minimum offset between heat-cool setpoints in degrees Celsius, if <code>heatcool</code> mode is supported.",
+      "type": "number",
+      "default": 2
+    },
+    "commandOnlyTemperatureSetting": {
+      "description": "Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.",
+      "type": "boolean",
+      "default": false
+    },
+    "queryOnlyTemperatureSetting": {
+      "description": "Required if the device supports query-only execution. This attribute indicates if the device can only be queried for state information, and cannot be controlled.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "availableThermostatModes",
+    "thermostatTemperatureUnit"
+  ],
+  "allOf": [
+    {
+      "description": "Supports only commands.",
+      "if": {
+        "properties": {
+          "commandOnlyTemperatureSetting": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "queryOnlyTemperatureSetting": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "description": "Supports only queries.",
+      "if": {
+        "properties": {
+          "queryOnlyTemperatureSetting": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "commandOnlyTemperatureSetting": {
+            "const": false
+          }
+        }
+      }
+    }
+  ]
+}

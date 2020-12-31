@@ -1,0 +1,136 @@
+name: Simple audio video receiver
+type: action.devices.types.AUDIO_VIDEO_RECEIVER
+traits:
+  - action.devices.traits.AppSelector
+  - action.devices.traits.InputSelector
+  - action.devices.traits.OnOff
+  - action.devices.traits.Volume
+attributes:
+  {
+    "volumeMaxLevel": 11,
+    "volumeCanMuteAndUnmute": true,
+    "availableApplications": [
+      {
+        "key": "youtube",
+        "names": [
+          {
+            "name_synonym": [
+              "Youtube",
+              "Youtube_en"
+            ],
+            "lang": "en"
+          }
+        ]
+      }
+    ],
+    "availableInputs": [
+      {
+        "key": "hdmi_1",
+        "names": [
+          {
+            "name_synonym": [
+              "HDMI 1",
+              "DVD player"
+            ],
+            "lang": "en"
+          }
+        ]
+      },
+      {
+        "key": "hdmi_2",
+        "names": [
+          {
+            "name_synonym": [
+              "HDMI 2",
+              "TV"
+            ],
+            "lang": "en"
+          }
+        ]
+      }
+    ]
+  }
+states:
+  {
+    "on": true,
+    "currentApplication": "youtube",
+    "currentInput": "hdmi_1",
+    "currentVolume": 10,
+    "isMuted": false
+  }
+commands:
+  action.devices.commands.appInstall:
+    params:
+      {
+        "newApplication": "youtube"
+      }
+    results:
+      {
+        "currentApplication": "youtube"
+      }
+  action.devices.commands.appSearch:
+    params:
+      {
+        "newApplication": "youtube"
+      }
+    results:
+      {
+        "currentApplication": "youtube"
+      }
+  action.devices.commands.appSelect:
+    params:
+      {
+        "newApplication": "youtube"
+      }
+    results:
+      {
+        "currentApplication": "youtube"
+      }
+  action.devices.commands.SetInput:
+    params:
+      {
+        "newInput": "hdmi_2"
+      }
+    results:
+      {
+        "currentInput": "hdmi_2"
+      }
+  action.devices.commands.NextInput:
+    results:
+      {
+        "currentInput": "hdmi_2"
+      }
+  action.devices.commands.PreviousInput:
+    results:
+      {
+        "currentInput": "hdmi_2"
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }
+  action.devices.commands.setVolume:
+    params:
+      {
+        "volumeLevel": 11
+      }
+    results:
+      {
+        "currentVolume": 11,
+        "isMuted": false
+      }
+  action.devices.commands.mute:
+    params:
+      {
+        "mute": true
+      }
+    results:
+      {
+        "currentVolume": 10,
+        "isMuted": true
+      }

@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Network device that supports guest network, profiles, and speed test.",
+      "supportsEnablingGuestNetwork": true,
+      "supportsDisablingGuestNetwork": true,
+      "supportsEnablingNetworkProfile": true,
+      "supportsDisablingNetworkProfile": true,
+      "supportsNetworkDownloadSpeedTest": true,
+      "supportsNetworkUploadSpeedTest": true,
+      "supportsGettingGuestNetworkPassword": true,
+      "networkProfiles": [
+        "kids"
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "supportsEnablingGuestNetwork": {
+      "description": "Set to true if the guest network can be enabled.",
+      "type": "boolean",
+      "default": false
+    },
+    "supportsDisablingGuestNetwork": {
+      "description": "Set to true if the guest network can be disabled.",
+      "type": "boolean",
+      "default": false
+    },
+    "supportsGettingGuestNetworkPassword": {
+      "description": "Set to true if the guest network password can be obtained via the <code>GetGuestNetworkPassword</code> command.",
+      "type": "boolean",
+      "default": false
+    },
+    "networkProfiles": {
+      "description": "Indicates the supported network profile names.",
+      "type": "array",
+      "items": {
+        "description": "Name of a network profile representing a group of related devices.",
+        "type": "string"
+      }
+    },
+    "supportsEnablingNetworkProfile": {
+      "description": "Set to true if network profiles can be enabled.",
+      "type": "boolean",
+      "default": "false"
+    },
+    "supportsDisablingNetworkProfile": {
+      "description": "Set to true if network profiles can be disabled.",
+      "type": "boolean",
+      "default": "false"
+    },
+    "supportsNetworkDownloadSpeedTest": {
+      "description": "Set to true if a download speed test can be run.",
+      "type": "boolean",
+      "default": false
+    },
+    "supportsNetworkUploadSpeedTest": {
+      "description": "Set to true if an upload speed test can be run.",
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

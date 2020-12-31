@@ -1,0 +1,45 @@
+name: Simple router
+type: action.devices.types.ROUTER
+traits:
+  - action.devices.traits.Reboot
+  - action.devices.traits.NetworkControl
+attributes:
+  {
+    "supportsEnablingNetworkProfile": true,
+    "supportsDisablingNetworkProfile": true,
+    "supportsNetworkDownloadSpeedTest": true,
+    "supportsNetworkUploadSpeedTest": true,
+    "networkProfiles": [
+      "kids"
+    ]
+  }
+states:
+  {
+    "networkEnabled": true,
+    "networkSettings": {
+      "ssid": "home-network-123"
+    },
+    "numConnectedDevices": 4,
+    "networkUsageMB": 100.8
+  }
+commands:
+  action.devices.commands.Reboot: {}
+  action.devices.commands.EnableDisableNetworkProfile:
+    params:
+      {
+        "profile": "kids",
+        "enable": false
+      }
+    results:
+      {
+        "networkEnabled": true,
+        "networkSettings": {
+          "ssid": "home-network-123"
+        }
+      }
+  action.devices.commands.TestNetworkSpeed:
+      params:
+        {
+          "testDownloadSpeed": true,
+          "testUploadSpeed": true
+        }

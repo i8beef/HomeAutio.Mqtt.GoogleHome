@@ -1,0 +1,73 @@
+name: Simple coffee maker
+type: action.devices.types.COFFEE_MAKER
+traits:
+  - action.devices.traits.Cook
+  - action.devices.traits.TemperatureControl
+  - action.devices.traits.OnOff
+attributes:
+  {
+    "temperatureRange": {
+      "minThresholdCelsius": 0,
+      "maxThresholdCelsius": 100
+    },
+    "temperatureUnitForUX": "F",
+    "supportedCookingModes": [
+      "BREW"
+    ],
+    "foodPresets": [
+      {
+        "food_preset_name": "coffee_key",
+        "supported_units": [
+          "NO_UNITS",
+          "CUPS"
+        ],
+        "food_synonyms": [
+          {
+            "synonym": [
+              "coffee"
+            ],
+            "lang": "en"
+          }
+        ]
+      }
+    ]
+  }
+states:
+  {
+    "on": true,
+    "temperatureSetpointCelsius": 70,
+    "currentCookingMode": "BREW",
+    "currentFoodPreset": "coffee_key",
+    "currentFoodQuantity": 2,
+    "currentFoodUnit": "CUPS"
+  }
+commands:
+  action.devices.commands.Cook:
+    params:
+      {
+        "start": false,
+        "cookingMode": "BREW"
+      }
+    results:
+      {
+        "currentCookingMode": "NONE",
+        "currentFoodPreset": "NONE"
+      }
+  action.devices.commands.SetTemperature:
+    params:
+      {
+        "temperature": 85
+      }
+    results:
+      {
+        "temperatureSetpointCelsius": 85
+      }
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }

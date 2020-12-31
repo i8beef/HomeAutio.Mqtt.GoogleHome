@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Run device timer for five minutes.",
+      "timerTimeSec": 300
+    }
+  ],
+  "description": "Start a new timer.",
+  "type": "object",
+  "properties": {
+    "timerTimeSec": {
+      "description": "Duration of the timer in seconds; must be within [1, <code>maxTimerLimitSec</code>].",
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "required": [
+    "timerTimeSec"
+  ],
+  "additionalProperties": false
+}

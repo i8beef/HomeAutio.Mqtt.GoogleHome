@@ -1,7 +1,6 @@
 @model HomeAutio.Mqtt.GoogleHome.ViewModels.TraitViewModel
 
 @section Scripts {
-    <script src="~/js/traitTemplates.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.8.8/beautify.js"></script>
     <script src="~/lib/codemirror/lib/codemirror.js"></script>
     <script src="~/lib/codemirror/mode/javascript/javascript.js"></script>
@@ -35,20 +34,98 @@
         var commandsEditor = CodeMirror.fromTextArea(document.getElementById("Commands"), codemirrorOptions);
         var stateEditor = CodeMirror.fromTextArea(document.getElementById("State"), codemirrorOptions);
 
+        var attributeExamples = document.getElementById("attributeExamples");
+        var commandExamples = document.getElementById("commandExamples");
+        var stateExamples = document.getElementById("stateExamples");
+
+        // Create example accordion item
+        var getCardCollapseNode = function(parentId, collapseId, comment, example) {
+            var cardNode = document.createElement("div");
+            cardNode.className = "card";
+
+            // Header
+            var cardHeaderNode = document.createElement("div");
+            cardHeaderNode.className = "card-header";
+
+            var cardHeaderButtonNode = document.createElement("a");
+            cardHeaderButtonNode.className = "btn btn-link btn-primary";
+            cardHeaderButtonNode.dataset.toggle = "collapse";
+            cardHeaderButtonNode.dataset.target = "#" + collapseId;
+            cardHeaderButtonNode.innerHTML = comment;
+
+            cardHeaderNode.appendChild(cardHeaderButtonNode);
+
+            // Collapse
+            var cardCollapseNode = document.createElement("div");
+            cardCollapseNode.id = collapseId;
+            cardCollapseNode.className = "collapse";
+            cardCollapseNode.dataset.parent = "#" + parentId;
+            $(cardCollapseNode).collapse({ parent: "#" + parentId, toggle: false });
+
+            // Card body
+            var cardBodyNode = document.createElement("div");
+            cardBodyNode.className = "card-body";
+
+            var preformattedText = document.createElement("pre");
+            preformattedText.innerText = example;
+
+            cardBodyNode.appendChild(preformattedText);
+            cardCollapseNode.appendChild(cardBodyNode);
+
+            cardNode.appendChild(cardHeaderNode);
+            cardNode.appendChild(cardCollapseNode);
+
+            return cardNode;
+        }
+
         // Templates
         var loadTemplate = function () {
             var traitDropDown = document.getElementById("Trait");
             var traitName = traitDropDown.options[traitDropDown.selectedIndex].text;
 
             if (traitName !== "Please select") {
-                var beautifySettings = {
-                    indent_size: 2,
-                    space_in_empty_paren: true
-                };
+                // Dispose any existing accordions
+                $(attributeExamples.querySelectorAll(".collapse")).collapse("dispose");
+                attributeExamples.innerHTML = "";
 
-                attributesEditor.setValue(js_beautify(JSON.stringify(traitTemplates[traitName].attributes), beautifySettings));
-                commandsEditor.setValue(js_beautify(JSON.stringify(traitTemplates[traitName].commands), beautifySettings));
-                stateEditor.setValue(js_beautify(JSON.stringify(traitTemplates[traitName].state), beautifySettings));
+                $(commandExamples.querySelectorAll(".collapse")).collapse("dispose");
+                commandExamples.innerHTML = "";
+
+                $(stateExamples.querySelectorAll(".collapse")).collapse("dispose");
+                stateExamples.innerHTML = "";
+
+                // Make call to get examples for traitName
+                $.get("Examples?traitId=" + traitName, function (examples) {
+                    // Add new accordions
+                    for (var i in examples.attributeExamples) {
+                        var parentId = "attributeExamples";
+                        var childId = "attributeExample" + i;
+                        var comment = examples.attributeExamples[i].comment;
+                        var example = examples.attributeExamples[i].example;
+
+                        attributeExamples.appendChild(getCardCollapseNode(parentId, childId, comment, example));
+                    }
+
+                    // Add new accordions
+                    for (var i in examples.commandExamples) {
+                        var parentId = "commandExamples";
+                        var childId = "commandExample" + i;
+                        var comment = examples.commandExamples[i].comment;
+                        var example = examples.commandExamples[i].example;
+
+                        commandExamples.appendChild(getCardCollapseNode(parentId, childId, comment, example));
+                    }
+
+                    // Add new accordions
+                    for (var i in examples.stateExamples) {
+                        var parentId = "stateExamples";
+                        var childId = "stateExample" + i;
+                        var comment = examples.stateExamples[i].comment;
+                        var example = examples.stateExamples[i].example;
+
+                        stateExamples.appendChild(getCardCollapseNode(parentId, childId, comment, example));
+                    }
+                });
             }
         };
 
@@ -70,6 +147,7 @@
         };
 
         $(function () {
+            loadTemplate();
             challengePinHideShow();
             $('#ChallengeType').change(challengePinHideShow);
         });
@@ -92,7 +170,7 @@
     <partial name="_ValidationSummary" />
 
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <div class="card">
                 <div class="card-header">
                     <h2>Trait Information</h2>
@@ -102,14 +180,19 @@
                         <fieldset>
                             <div class="form-group">
                                 <label asp-for="Trait">Trait</label>
-                                <select class="form-control" asp-for="Trait" asp-items="Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.TraitType>()">
+                                <select class="form-control" asp-for="Trait" asp-items="Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.TraitType>()" onchange="loadTemplate()">
                                     <option selected="selected" value="">Please select</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <a onclick="loadTemplate()" class="btn btn-warning">Load Example Templates</a>
-                                <a onclick="openDocumentation()" class="btn btn-warning">Trait documentation</a>
+                                <label asp-for="ChallengeType">Challenge Type</label>
+                                <select class="form-control" asp-for="ChallengeType" asp-items="@Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.State.Challenges.ChallengeType>()"></select>
+                            </div>
+
+                            <div class="form-group" id="challengePin-form-group">
+                                <label asp-for="ChallengePin">Challenge Pin</label>
+                                <input class="form-control" placeholder="Challenge Pin" asp-for="ChallengePin">
                             </div>
 
                             <div class="form-group">
@@ -126,16 +209,6 @@
                                 <label asp-for="State">State</label>
                                 <textarea class="form-control" asp-for="State"></textarea>
                             </div>
-
-                            <div class="form-group">
-                                <label asp-for="ChallengeType">Challenge Type</label>
-                                <select class="form-control" asp-for="ChallengeType" asp-items="@Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.State.Challenges.ChallengeType>()"></select>
-                            </div>
-
-                            <div class="form-group" id="challengePin-form-group">
-                                <label asp-for="ChallengePin">Challenge Pin</label>
-                                <input class="form-control" placeholder="Challenge Pin" asp-for="ChallengePin">
-                            </div>
                         </fieldset>
                     </div>
                     <div class="card-footer">
@@ -145,6 +218,23 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Examples <a onclick="openDocumentation()" class="btn btn-warning">Trait documentation</a></h2>
+                </div>
+                <div class="card-body">
+                    <h6>Attribute Examples</h6>
+                    <div id="attributeExamples"></div>
+
+                    <h6>Command Examples</h6>
+                    <div id="commandExamples"></div>
+
+                    <h6>State Examples</h6>
+                    <div id="stateExamples"></div>
+                </div>
             </div>
         </div>
     </div>
