@@ -9,6 +9,7 @@ COPY HomeAutio.Mqtt.GoogleHome.Tests/*.csproj ./HomeAutio.Mqtt.GoogleHome.Tests/
 RUN dotnet restore
 
 # copy and build everything else
+COPY smart-home-schema/. ./smart-home-schema/
 COPY HomeAutio.Mqtt.GoogleHome/. ./HomeAutio.Mqtt.GoogleHome/
 COPY HomeAutio.Mqtt.GoogleHome.Tests/. ./HomeAutio.Mqtt.GoogleHome.Tests/
 RUN dotnet build -c Release
