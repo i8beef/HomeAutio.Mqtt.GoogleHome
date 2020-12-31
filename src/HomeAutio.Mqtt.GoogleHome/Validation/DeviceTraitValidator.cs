@@ -47,7 +47,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 // Command validations
                 var deviceCommands = deviceTrait.Commands.ToDictionary(
                     k => k.Key,
-                    v => v.Value.ToDictionary(
+                    v => v.Value?.ToDictionary(
                         x => x.Key,
                         x => (object)x.Value).ToNestedDictionary());
 
