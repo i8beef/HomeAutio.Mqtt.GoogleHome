@@ -63,6 +63,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
             switch (schema.Type)
             {
                 case NJsonSchema.JsonObjectType.Object:
+                case NJsonSchema.JsonObjectType.None:
+                    // Treat unspecified types as possible subschemas
                     if (currentPathFragment == null)
                         return null;
 

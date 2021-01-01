@@ -11,6 +11,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
         [Theory]
         [InlineData(TraitType.OnOff, null, GoogleType.Unknown)]
         [InlineData(TraitType.OnOff, "on", GoogleType.Bool)]
+        [InlineData(TraitType.OpenClose, "openPercent", GoogleType.Numeric)]
         [InlineData(TraitType.Modes, "currentModeSettings.test", GoogleType.String)]
         [InlineData(TraitType.ColorSetting, "color.spectrumHsv.saturation", GoogleType.Numeric)]
         [InlineData(TraitType.EnergyStorage, "capacityRemaining.[0].rawValue", GoogleType.Numeric)]
@@ -29,6 +30,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
 
         [Theory]
         [InlineData(TraitType.OnOff, "on")]
+        [InlineData(TraitType.OpenClose, "openPercent")]
         [InlineData(TraitType.ColorSetting, "color.spectrumHsv.saturation")]
         [InlineData(TraitType.EnergyStorage, "capacityRemaining.[0].rawValue")]
         public void ValidateFlattenedPathReturnsTrue(TraitType traitType, string target)

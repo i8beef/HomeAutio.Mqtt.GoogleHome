@@ -97,23 +97,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         {
             switch (schema.Type)
             {
-                case JsonObjectType.Array:
-                    if (schema.Item != null)
-                    {
-                        // Default single type array
-                        ChangeLeafNodesToString(schema.Item);
-                    }
-                    else
-                    {
-                        // Tuple handling
-                        foreach (var tupleSchema in schema.Items)
-                        {
-                            ChangeLeafNodesToString(tupleSchema);
-                        }
-                    }
-
-                    break;
                 case JsonObjectType.Object:
+                case JsonObjectType.None:
                     foreach (var property in schema.Properties)
                     {
                         ChangeLeafNodesToString(property.Value);
@@ -138,7 +123,22 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                     }
 
                     break;
-                case JsonObjectType.None:
+                case JsonObjectType.Array:
+                    if (schema.Item != null)
+                    {
+                        // Default single type array
+                        ChangeLeafNodesToString(schema.Item);
+                    }
+                    else
+                    {
+                        // Tuple handling
+                        foreach (var tupleSchema in schema.Items)
+                        {
+                            ChangeLeafNodesToString(tupleSchema);
+                        }
+                    }
+
+                    break;
                 case JsonObjectType.Integer:
                 case JsonObjectType.Number:
                 case JsonObjectType.Boolean:
