@@ -26,7 +26,6 @@
         "state": {
           "temperatureAmbientCelsius": {
             "topic": "tele/esplight/SENSOR",
-            "googleType": "numeric",
             "valueMap": [
               {
                 "type": "static",

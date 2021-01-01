@@ -22,7 +22,6 @@
         "state": {
           "on": {
             "topic": "google/home/dimmableLight",
-            "googleType": "bool",
             "valueMap": [
               {
                 "mqtt": "on",
@@ -55,7 +54,6 @@
         "state": {
           "brightness": {
             "topic": "google/home/dimmableLight",
-            "googleType": "numeric",
             "valueMap": [
               {
                 "mqtt": "on",
@@ -96,7 +94,6 @@
         "state": {
           "on": {
             "topic": "google/home/switch",
-            "googleType": "bool",
             "valueMap": [
               {
                 "mqtt": "on",
@@ -180,7 +177,6 @@
         "state": {
           "currentModeSettings.input source": {
             "topic": "google/home/modeDevice",
-            "googleType": "string",
             "valueMap": [
               {
                 "mqtt": "Watch TV",
@@ -231,10 +227,11 @@
         "commands": { "action.devices.commands.StartStop": { "start": "google/home/vacuum/clean/set" } },
         "state": {
           "isRunning": {
-            "topic": "google/home/vacuum/docked",
-            "googleType": "bool"
+            "topic": "google/home/vacuum/docked"
           },
-          "isPaused": { "googleType": "bool" }
+          "isPaused": {
+            "topic":  "google/home/vacuum/paused"
+          }
         }
       }
     ]
@@ -266,7 +263,6 @@
         "commands": { "action.devices.commands.GetCameraStream": {} },
         "state": {
           "cameraStreamAccessUrl": {
-            "googleType": "string",
             "valueMap": [
               {
                 "type": "static",
@@ -275,11 +271,9 @@
             ]
           },
           "cameraStreamReceiverAppId": {
-            "googleType": "string",
             "valueMap": [ { "type": "static" } ]
           },
           "cameraStreamAuthToken": {
-            "googleType": "string",
             "valueMap": [ { "type": "static" } ]
           }
         }
