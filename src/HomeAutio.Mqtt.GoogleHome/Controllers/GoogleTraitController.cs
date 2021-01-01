@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
 using HomeAutio.Mqtt.GoogleHome.Extensions;
 using HomeAutio.Mqtt.GoogleHome.Models;
@@ -259,10 +260,34 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 var commandName = commandSchema.Command.ToEnumString();
                 foreach (var commandExample in commandSchema.Examples)
                 {
+                    // Transform on the way out to keep pure examples in schemas
+                    var wrappedExample = new StringBuilder();
+                    wrappedExample.AppendLine("{");
+                    wrappedExample.Append($"  \"{commandName}\": ");
+
+                    if (commandExample.Example == string.Empty)
+                    {
+                        wrappedExample.AppendLine("null");
+                    }
+                    else
+                    {
+                        var exampleLines = commandExample.Example.Split(Environment.NewLine);
+                        for (var i = 0; i < exampleLines.Length; i++)
+                        {
+                            // Handle indent modification
+                            if (i != 0)
+                                wrappedExample.Append("  ");
+
+                            wrappedExample.AppendLine(exampleLines[i]);
+                        }
+                    }
+
+                    wrappedExample.Append("}");
+
                     commandExamples.Add(new SchemaExample
                     {
                         Comment = $"{commandName}<br/>{commandExample.Comment}",
-                        Example = commandExample.Example
+                        Example = wrappedExample.ToString()
                     });
                 }
             }
