@@ -258,36 +258,21 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             foreach (var commandSchema in targetSchema.CommandSchemas)
             {
                 var commandName = commandSchema.Command.ToEnumString();
+
+                // Add a "command delegation mode" example
+                commandExamples.Add(new SchemaExample
+                {
+                    Comment = $"{commandName}<br/>Pure command delegation mode.",
+                    Example = GetWrappedCommandExample(commandName)
+                });
+
                 foreach (var commandExample in commandSchema.Examples)
                 {
                     // Transform on the way out to keep pure examples in schemas
-                    var wrappedExample = new StringBuilder();
-                    wrappedExample.AppendLine("{");
-                    wrappedExample.Append($"  \"{commandName}\": ");
-
-                    if (commandExample.Example == string.Empty)
-                    {
-                        wrappedExample.AppendLine("null");
-                    }
-                    else
-                    {
-                        var exampleLines = commandExample.Example.Split(Environment.NewLine);
-                        for (var i = 0; i < exampleLines.Length; i++)
-                        {
-                            // Handle indent modification
-                            if (i != 0)
-                                wrappedExample.Append("  ");
-
-                            wrappedExample.AppendLine(exampleLines[i]);
-                        }
-                    }
-
-                    wrappedExample.Append("}");
-
                     commandExamples.Add(new SchemaExample
                     {
                         Comment = $"{commandName}<br/>{commandExample.Comment}",
-                        Example = wrappedExample.ToString()
+                        Example = GetWrappedCommandExample(commandExample.Example)
                     });
                 }
             }
@@ -300,6 +285,41 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             };
 
             return Json(examples);
+        }
+
+        /// <summary>
+        /// Generates a pure command delegation mode example for the specified command.
+        /// </summary>
+        /// <param name="commandName">Command name.</param>
+        /// <param name="example">Example.</param>
+        /// <returns>Command delegation example string.</returns>
+        private string GetWrappedCommandExample(string commandName, string example = null)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("{");
+            sb.Append($"  \"{commandName}\": ");
+
+            if (example == string.Empty)
+            {
+                sb.AppendLine("null");
+            }
+            else
+            {
+                var exampleLines = example.Split(Environment.NewLine);
+                for (var i = 0; i < exampleLines.Length; i++)
+                {
+                    // Handle indent modification
+                    if (i != 0)
+                        sb.Append("  ");
+
+                    sb.AppendLine(exampleLines[i]);
+                }
+            }
+
+            sb.AppendLine("}");
+
+            return sb.ToString();
         }
     }
 }

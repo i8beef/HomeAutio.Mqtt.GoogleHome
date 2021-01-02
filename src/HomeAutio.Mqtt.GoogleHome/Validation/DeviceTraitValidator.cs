@@ -32,7 +32,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     var attributeJson = JsonConvert.SerializeObject(deviceTrait.Attributes);
                     var attributeErrors = traitSchema.AttributeSchema.Validator.Validate(attributeJson);
 
-                    validationErrors.AddRange(attributeErrors.Select(x => $"{x.Path}: {x.Kind}"));
+                    validationErrors.AddRange(attributeErrors.Select(x => $"Attributes: {x.Path}/{x.Property}: {x.Kind}"));
                 }
 
                 // State validation
@@ -41,7 +41,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     var stateJson = JsonConvert.SerializeObject(GetFakeGoogleState(deviceTrait.State, traitSchema));
                     var stateErrors = traitSchema.StateSchema.Validator.Validate(stateJson);
 
-                    validationErrors.AddRange(stateErrors.Select(x => $"{x.Path}: {x.Kind}"));
+                    validationErrors.AddRange(stateErrors.Select(x => $"State: {x.Path}/{x.Property}: {x.Kind}"));
                 }
 
                 // Command validations
@@ -60,7 +60,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         var commandJson = JsonConvert.SerializeObject(command.Value);
                         var commandErrors = commandValidator.Validate(commandJson);
 
-                        validationErrors.AddRange(commandErrors.Select(x => $"{x.Path}: {x.Kind}"));
+                        validationErrors.AddRange(commandErrors.Select(x => $"Commands ({command.Key}): {x.Path}/{x.Property}: {x.Kind}"));
                     }
                 }
             }
@@ -82,17 +82,19 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                 if (state.Value.Topic != null)
                 {
                     var googleType = traitSchema.GetGoogleTypeForFlattenedPath(state.Key);
+                    var enumValues = traitSchema.GetEnumValuesForFlattenedPath(state.Key);
+                    var enumValue = enumValues?.FirstOrDefault()?.ToString();
                     switch (googleType)
                     {
                         case GoogleType.Bool:
-                            stateValues.Add(state.Key, state.Value.MapValueToGoogle("true", googleType));
+                            stateValues.Add(state.Key, state.Value.MapValueToGoogle(enumValue ?? "true", googleType));
                             break;
                         case GoogleType.Numeric:
-                            stateValues.Add(state.Key, state.Value.MapValueToGoogle("1", googleType));
+                            stateValues.Add(state.Key, state.Value.MapValueToGoogle(enumValue ?? "1", googleType));
                             break;
                         case GoogleType.String:
                         default:
-                            stateValues.Add(state.Key, state.Value.MapValueToGoogle("default", googleType));
+                            stateValues.Add(state.Key, state.Value.MapValueToGoogle(enumValue ?? "default", googleType));
                             break;
                     }
                 }

@@ -130,6 +130,37 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         }
 
         /// <summary>
+        /// Gets the enum values, if any, for the specified path for this schema.
+        /// </summary>
+        /// <param name="flattenedPath">Flattened state path.</param>
+        /// <returns>The enum values, or null if not an enum.</returns>
+        public ICollection<object> GetEnumValuesForFlattenedPath(string flattenedPath)
+        {
+            if (StateSchema != null)
+            {
+                var result = StateSchema.Validator.GetEnumValuesForFlattenedPath(flattenedPath);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            if (CommandSchemas != null && CommandSchemas.Any())
+            {
+                foreach (var schema in CommandSchemas.Where(x => x.ResultsValidator != null))
+                {
+                    var result = schema.ResultsValidator.GetEnumValuesForFlattenedPath(flattenedPath);
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Gets resource file contents as string.
         /// </summary>
         /// <param name="resourceName">Resource name to retrieve.</param>

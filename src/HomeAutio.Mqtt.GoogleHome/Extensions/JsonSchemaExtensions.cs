@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 
 namespace HomeAutio.Mqtt.GoogleHome.Extensions
@@ -8,6 +9,23 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
     /// </summary>
     public static class JsonSchemaExtensions
     {
+        /// <summary>
+        /// Gets the Google type for the specified path is valid for this schema.
+        /// </summary>
+        /// <param name="schema">JSON Schema.</param>
+        /// <param name="flattenedPath">Flattened state path.</param>
+        /// <returns>The <see cref="GoogleType"/> for the specified path.</returns>
+        public static ICollection<object> GetEnumValuesForFlattenedPath(this NJsonSchema.JsonSchema schema, string flattenedPath)
+        {
+            var foundSchema = schema.GetByFlattenedPath(flattenedPath);
+            if (foundSchema != null && foundSchema.IsEnumeration)
+            {
+                return foundSchema.Enumeration;
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Gets the Google type for the specified path is valid for this schema.
         /// </summary>
