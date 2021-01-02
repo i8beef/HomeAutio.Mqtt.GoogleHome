@@ -32,7 +32,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     var attributeJson = JsonConvert.SerializeObject(deviceTrait.Attributes);
                     var attributeErrors = traitSchema.AttributeSchema.Validator.Validate(attributeJson);
 
-                    validationErrors.AddRange(attributeErrors.Select(x => $"Attributes: {x.Path}/{x.Property}: {x.Kind}"));
+                    validationErrors.AddRange(attributeErrors.Select(x => $"Attributes: {x.Path}: {x.Kind}"));
                 }
 
                 // State validation
@@ -41,7 +41,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     var stateJson = JsonConvert.SerializeObject(GetFakeGoogleState(deviceTrait.State, traitSchema));
                     var stateErrors = traitSchema.StateSchema.Validator.Validate(stateJson);
 
-                    validationErrors.AddRange(stateErrors.Select(x => $"State: {x.Path}/{x.Property}: {x.Kind}"));
+                    validationErrors.AddRange(stateErrors.Select(x => $"State: {x.Path}: {x.Kind}"));
                 }
 
                 // Command validations
@@ -60,7 +60,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                         var commandJson = JsonConvert.SerializeObject(command.Value);
                         var commandErrors = commandValidator.Validate(commandJson);
 
-                        validationErrors.AddRange(commandErrors.Select(x => $"Commands ({command.Key}): {x.Path}/{x.Property}: {x.Kind}"));
+                        validationErrors.AddRange(commandErrors.Select(x => $"Commands ({command.Key}): {x.Path}: {x.Kind}"));
                     }
                 }
             }
