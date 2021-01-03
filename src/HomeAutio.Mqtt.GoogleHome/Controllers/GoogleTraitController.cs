@@ -272,7 +272,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                     commandExamples.Add(new SchemaExample
                     {
                         Comment = $"{commandName}<br/>{commandExample.Comment}",
-                        Example = GetWrappedCommandExample(commandExample.Example)
+                        Example = GetWrappedCommandExample(commandName, commandExample.Example)
                     });
                 }
             }
@@ -300,7 +300,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             sb.AppendLine("{");
             sb.Append($"  \"{commandName}\": ");
 
-            if (example == string.Empty)
+            if (string.IsNullOrEmpty(example))
             {
                 sb.AppendLine("null");
             }
