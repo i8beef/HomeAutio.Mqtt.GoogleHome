@@ -72,6 +72,24 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
             if (string.IsNullOrEmpty(paramJson))
                 return null;
 
+            var resultValidator = resultsJson != null ? await JsonSchema.FromJsonAsync(resultsJson, cancellationToken) : null;
+            var validator = await JsonSchema.FromJsonAsync(paramJson, cancellationToken);
+
+            if (resultValidator != null)
+            {
+                // Convert to be used for validation
+                ChangeOneOfsToAnyOfs(resultValidator);
+            }
+
+            if (validator != null)
+            {
+                // Convert to be used for validation
+                ChangeOneOfsToAnyOfs(validator);
+
+                // Modify the schema validation, only looking for presence not type or value
+                ChangeLeafNodesToString(validator);
+            }
+
             var commandSchema = new CommandSchema
             {
                 Command = commandType,
@@ -79,14 +97,81 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                 Examples = ExtractExamples(paramJson),
                 ParamJson = paramJson,
                 ResultsJson = resultsJson,
-                ResultsValidator = resultsJson != null ? await JsonSchema.FromJsonAsync(resultsJson, cancellationToken) : null,
-                Validator = await JsonSchema.FromJsonAsync(paramJson, cancellationToken)
+                ResultsValidator = resultValidator,
+                Validator = validator
             };
 
-            // Modify the schema validation, only looking for presence not type or value
-            ChangeLeafNodesToString(commandSchema.Validator);
-
             return commandSchema;
+        }
+
+        /// <summary>
+        /// Change OneOfs to AnyOfs.
+        /// </summary>
+        /// <param name="schema">JSON Schema.</param>
+        private static void ChangeOneOfsToAnyOfs(JsonSchema schema)
+        {
+            if (schema.OneOf != null && schema.OneOf.Any())
+            {
+                foreach (var oneOf in schema.OneOf)
+                {
+                    oneOf.AllowAdditionalProperties = true;
+                    schema.AnyOf.Add(oneOf);
+                }
+
+                schema.OneOf.Clear();
+            }
+
+            // Recursive apply
+            switch (schema.Type)
+            {
+                case JsonObjectType.Object:
+                case JsonObjectType.None:
+                    // Treat unspecified types as possible subschemas
+                    if (schema.Properties != null)
+                    {
+                        foreach (var property in schema.Properties)
+                        {
+                            ChangeOneOfsToAnyOfs(property.Value);
+                        }
+                    }
+
+                    if (schema.AnyOf != null)
+                    {
+                        foreach (var propertySchema in schema.AnyOf)
+                        {
+                            ChangeOneOfsToAnyOfs(propertySchema);
+                        }
+                    }
+
+                    if (schema.OneOf != null)
+                    {
+                        foreach (var propertySchema in schema.OneOf)
+                        {
+                            ChangeOneOfsToAnyOfs(propertySchema);
+                        }
+                    }
+
+                    if (schema.AdditionalPropertiesSchema != null)
+                    {
+                        ChangeOneOfsToAnyOfs(schema.AdditionalPropertiesSchema);
+                    }
+
+                    break;
+                case JsonObjectType.Array:
+                    if (schema.Item != null)
+                    {
+                        ChangeOneOfsToAnyOfs(schema.Item);
+                    }
+                    else
+                    {
+                        foreach (var branch in schema.Items)
+                        {
+                            ChangeOneOfsToAnyOfs(branch);
+                        }
+                    }
+
+                    break;
+            }
         }
 
         /// <summary>
@@ -116,10 +201,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
 
                     if (schema.AdditionalPropertiesSchema != null)
                     {
-                        foreach (var property in schema.AdditionalPropertiesSchema.Properties)
-                        {
-                            ChangeLeafNodesToString(property.Value);
-                        }
+                        ChangeLeafNodesToString(schema.AdditionalPropertiesSchema);
                     }
 
                     break;
