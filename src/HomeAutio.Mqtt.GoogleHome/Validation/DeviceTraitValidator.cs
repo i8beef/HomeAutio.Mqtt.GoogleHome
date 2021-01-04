@@ -35,34 +35,34 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
                     validationErrors.AddRange(attributeErrors.Select(x => $"Attributes: {x.Path}: {x.Kind}"));
                 }
 
-                // State validation
-                if (deviceTrait.State != null && traitSchema.StateSchema?.Validator != null)
-                {
-                    var stateJson = JsonConvert.SerializeObject(GetFakeGoogleState(deviceTrait.State, traitSchema));
-                    var stateErrors = traitSchema.StateSchema.Validator.Validate(stateJson);
+                //// State validation
+                ////if (deviceTrait.State != null && traitSchema.StateSchema?.Validator != null)
+                ////{
+                ////    var stateJson = JsonConvert.SerializeObject(GetFakeGoogleState(deviceTrait.State, traitSchema));
+                ////    var stateErrors = traitSchema.StateSchema.Validator.Validate(stateJson);
 
-                    validationErrors.AddRange(stateErrors.Select(x => $"State: {x.Path}: {x.Kind}"));
-                }
+                ////    validationErrors.AddRange(stateErrors.Select(x => $"State: {x.Path}: {x.Kind}"));
+                ////}
 
-                // Command validations
-                var deviceCommands = deviceTrait.Commands.ToDictionary(
-                    k => k.Key,
-                    v => v.Value?.ToDictionary(
-                        x => x.Key,
-                        x => (object)x.Value).ToNestedDictionary());
+                //// Command validations
+                ////var deviceCommands = deviceTrait.Commands.ToDictionary(
+                ////    k => k.Key,
+                ////    v => v.Value?.ToDictionary(
+                ////        x => x.Key,
+                ////        x => (object)x.Value).ToNestedDictionary());
 
-                foreach (var command in deviceCommands)
-                {
-                    var commandType = command.Key.ToEnum<CommandType>();
-                    if (command.Value != null && traitSchema.CommandSchemas.Any(x => x.Command == commandType))
-                    {
-                        var commandValidator = traitSchema.CommandSchemas.First(x => x.Command == commandType).Validator;
-                        var commandJson = JsonConvert.SerializeObject(command.Value);
-                        var commandErrors = commandValidator.Validate(commandJson);
+                ////foreach (var command in deviceCommands)
+                ////{
+                ////    var commandType = command.Key.ToEnum<CommandType>();
+                ////    if (command.Value != null && traitSchema.CommandSchemas.Any(x => x.Command == commandType))
+                ////    {
+                ////        var commandValidator = traitSchema.CommandSchemas.First(x => x.Command == commandType).Validator;
+                ////        var commandJson = JsonConvert.SerializeObject(command.Value);
+                ////        var commandErrors = commandValidator.Validate(commandJson);
 
-                        validationErrors.AddRange(commandErrors.Select(x => $"Commands ({command.Key}): {x.Path}: {x.Kind}"));
-                    }
-                }
+                ////        validationErrors.AddRange(commandErrors.Select(x => $"Commands ({command.Key}): {x.Path}: {x.Kind}"));
+                ////    }
+                ////}
             }
 
             return validationErrors;
@@ -79,24 +79,21 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             var stateValues = new Dictionary<string, object>();
             foreach (var state in stateConfigs)
             {
-                if (state.Value.Topic != null)
+                var googleType = traitSchema.GetGoogleTypeForFlattenedPath(state.Key);
+                var enumValues = traitSchema.GetEnumValuesForFlattenedPath(state.Key);
+                var enumValue = enumValues?.FirstOrDefault()?.ToString();
+                switch (googleType)
                 {
-                    var googleType = traitSchema.GetGoogleTypeForFlattenedPath(state.Key);
-                    var enumValues = traitSchema.GetEnumValuesForFlattenedPath(state.Key);
-                    var enumValue = enumValues?.FirstOrDefault()?.ToString();
-                    switch (googleType)
-                    {
-                        case GoogleType.Bool:
-                            stateValues.Add(state.Key, state.Value.MapValueToGoogle(enumValue ?? "true", googleType));
-                            break;
-                        case GoogleType.Numeric:
-                            stateValues.Add(state.Key, state.Value.MapValueToGoogle(enumValue ?? "1", googleType));
-                            break;
-                        case GoogleType.String:
-                        default:
-                            stateValues.Add(state.Key, state.Value.MapValueToGoogle(enumValue ?? "default", googleType));
-                            break;
-                    }
+                    case GoogleType.Bool:
+                        stateValues.Add(state.Key, state.Value.MapValueToGoogle(enumValue ?? "true", googleType));
+                        break;
+                    case GoogleType.Numeric:
+                        stateValues.Add(state.Key, state.Value.MapValueToGoogle(enumValue ?? "1", googleType));
+                        break;
+                    case GoogleType.String:
+                    default:
+                        stateValues.Add(state.Key, state.Value.MapValueToGoogle(enumValue ?? "default", googleType));
+                        break;
                 }
             }
 

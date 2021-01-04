@@ -15,6 +15,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
         [InlineData(TraitType.Modes, "currentModeSettings.test", GoogleType.String)]
         [InlineData(TraitType.ColorSetting, "color.spectrumHsv.saturation", GoogleType.Numeric)]
         [InlineData(TraitType.EnergyStorage, "capacityRemaining.[0].rawValue", GoogleType.Numeric)]
+        [InlineData(TraitType.SensorState, "currentSensorStateData.[0].currentSensorState", GoogleType.String)]
+        [InlineData(TraitType.SensorState, "currentSensorStateData.[0].rawValue", GoogleType.Numeric)]
         public void GetGoogleTypeForFlattenedPathReturns(TraitType traitType, string target, GoogleType googleType)
         {
             // Arrange
@@ -40,7 +42,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
             var schema = schemas.FirstOrDefault(x => x.Trait == traitType);
 
             // Act
-            var result = schema.StateSchema.Validator.ValidateFlattenedPath(target);
+            var result = schema.StateSchema.Validator.FlattenedPathExists(target);
 
             // Assert
             Assert.True(result);
@@ -58,7 +60,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
             var schema = schemas.FirstOrDefault(x => x.Trait == traitType);
 
             // Act
-            var result = schema.StateSchema.Validator.ValidateFlattenedPath(target);
+            var result = schema.StateSchema.Validator.FlattenedPathExists(target);
 
             // Assert
             Assert.False(result);

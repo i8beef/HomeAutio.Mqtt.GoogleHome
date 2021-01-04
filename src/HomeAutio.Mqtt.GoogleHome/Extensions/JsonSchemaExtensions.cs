@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 
@@ -17,13 +18,18 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         /// <returns>The <see cref="GoogleType"/> for the specified path.</returns>
         public static ICollection<object> GetEnumValuesForFlattenedPath(this NJsonSchema.JsonSchema schema, string flattenedPath)
         {
-            var foundSchema = schema.GetByFlattenedPath(flattenedPath);
-            if (foundSchema != null && foundSchema.IsEnumeration)
+            var foundSchemas = schema.GetByFlattenedPath(flattenedPath);
+
+            var result = new List<object>();
+            foreach (var foundSchema in foundSchemas)
             {
-                return foundSchema.Enumeration;
+                if (foundSchema.IsEnumeration)
+                {
+                    result.AddRange(foundSchema.Enumeration);
+                }
             }
 
-            return null;
+            return result.Any() ? result : null;
         }
 
         /// <summary>
@@ -34,13 +40,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         /// <returns>The <see cref="GoogleType"/> for the specified path.</returns>
         public static GoogleType GetGoogleTypeForFlattenedPath(this NJsonSchema.JsonSchema schema, string flattenedPath)
         {
-            var foundSchema = schema.GetByFlattenedPath(flattenedPath);
-            if (foundSchema == null)
+            var foundSchemas = schema.GetByFlattenedPath(flattenedPath);
+            if (!foundSchemas.Any())
             {
                 return GoogleType.Unknown;
             }
 
-            switch (foundSchema.Type)
+            switch (foundSchemas[0].Type)
             {
                 case NJsonSchema.JsonObjectType.Integer:
                 case NJsonSchema.JsonObjectType.Number:
@@ -60,9 +66,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         /// <param name="schema">JSON Schema.</param>
         /// <param name="flattenedPath">Flattened state path.</param>
         /// <returns><c>true</c> if path is valid for schema, otherwise <c>false</c>.</returns>
-        public static bool ValidateFlattenedPath(this NJsonSchema.JsonSchema schema, string flattenedPath)
+        public static bool FlattenedPathExists(this NJsonSchema.JsonSchema schema, string flattenedPath)
         {
-            return schema.GetByFlattenedPath(flattenedPath) != null;
+            return schema.GetByFlattenedPath(flattenedPath).Any();
         }
 
         /// <summary>
@@ -70,8 +76,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         /// </summary>
         /// <param name="schema">JSON Schema.</param>
         /// <param name="flattenedPath">Flattened state path.</param>
-        /// <returns>The <see cref="NJsonSchema.JsonSchema"/> for the specified path.</returns>
-        public static NJsonSchema.JsonSchema GetByFlattenedPath(this NJsonSchema.JsonSchema schema, string flattenedPath)
+        /// <returns>A list of matching <see cref="NJsonSchema.JsonSchema"/> for the specified path.</returns>
+        public static IList<NJsonSchema.JsonSchema> GetByFlattenedPath(this NJsonSchema.JsonSchema schema, string flattenedPath)
         {
             const string delimiter = ".";
             var paths = flattenedPath?.Split(delimiter, 2);
@@ -84,12 +90,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                 case NJsonSchema.JsonObjectType.None:
                     // Treat unspecified types as possible subschemas
                     if (currentPathFragment == null)
-                        return null;
+                        return new List<NJsonSchema.JsonSchema>();
 
+                    var objectResults = new List<NJsonSchema.JsonSchema>();
                     if (schema.Properties != null && schema.Properties.ContainsKey(currentPathFragment))
                     {
                         // Recursive traversal of objects
-                        return GetByFlattenedPath(schema.Properties[currentPathFragment], remainingPathFragment);
+                        objectResults.AddRange(GetByFlattenedPath(schema.Properties[currentPathFragment], remainingPathFragment));
                     }
 
                     if (schema.AnyOf != null)
@@ -97,11 +104,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                         foreach (var propertySchema in schema.AnyOf)
                         {
                             // Unwrap and validate each as a possibility
-                            var anyOfResult = GetByFlattenedPath(propertySchema, flattenedPath);
-                            if (anyOfResult != null)
-                            {
-                                return anyOfResult;
-                            }
+                            objectResults.AddRange(GetByFlattenedPath(propertySchema, flattenedPath));
                         }
                     }
 
@@ -110,51 +113,46 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                         foreach (var propertySchema in schema.OneOf)
                         {
                             // Unwrap and validate each as a possibility
-                            var oneOfResult = GetByFlattenedPath(propertySchema, flattenedPath);
-                            if (oneOfResult != null)
-                            {
-                                return oneOfResult;
-                            }
+                            objectResults.AddRange(GetByFlattenedPath(propertySchema, flattenedPath));
                         }
                     }
 
-                    if (schema.AllowAdditionalProperties)
+                    if (schema.AdditionalPropertiesSchema != null)
                     {
                         // Use the additional property schema, if available
-                        return schema.AdditionalPropertiesSchema;
+                        objectResults.AddRange(GetByFlattenedPath(schema.AdditionalPropertiesSchema, flattenedPath));
                     }
+
+                    if (objectResults.Any())
+                        return objectResults;
 
                     break;
                 case NJsonSchema.JsonObjectType.Array:
                     if (currentPathFragment == null)
-                        return null;
+                        return new List<NJsonSchema.JsonSchema>();
 
                     if (schema.Item != null)
                     {
                         if (Regex.IsMatch(currentPathFragment, @"^\[\d+\]$"))
                         {
                             // Unwrap array item
-                            var itemResult = GetByFlattenedPath(schema.Item, remainingPathFragment);
-                            if (itemResult != null)
-                            {
-                                return itemResult;
-                            }
+                            return GetByFlattenedPath(schema.Item, remainingPathFragment);
                         }
                     }
                     else
                     {
+                        var arrayItemResult = new List<NJsonSchema.JsonSchema>();
                         foreach (var branch in schema.Items)
                         {
                             if (Regex.IsMatch(currentPathFragment, @"^\[\d+\]$"))
                             {
                                 // Unwrap array item
-                                var breanchItemResult = GetByFlattenedPath(branch, remainingPathFragment);
-                                if (breanchItemResult != null)
-                                {
-                                    return breanchItemResult;
-                                }
+                                arrayItemResult.AddRange(GetByFlattenedPath(branch, remainingPathFragment));
                             }
                         }
+
+                        if (arrayItemResult.Any())
+                            return arrayItemResult;
                     }
 
                     break;
@@ -163,10 +161,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                 case NJsonSchema.JsonObjectType.Boolean:
                 case NJsonSchema.JsonObjectType.String:
                     // Matching leaf node found
-                    return schema;
+                    return new List<NJsonSchema.JsonSchema> { schema };
             }
 
-            return null;
+            return new List<NJsonSchema.JsonSchema>();
         }
     }
 }

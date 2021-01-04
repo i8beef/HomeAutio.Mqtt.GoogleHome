@@ -73,7 +73,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
                     continue;
 
                 var validState = trait.GetGoogleStateFlattened(stateCache, schema)
-                    .Where(kvp => schema.StateSchema.Validator.ValidateFlattenedPath(kvp.Key))
+                    .Where(kvp => schema.StateSchema.Validator.FlattenedPathExists(kvp.Key))
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
                 foreach (var googleState in validState.ToNestedDictionary())

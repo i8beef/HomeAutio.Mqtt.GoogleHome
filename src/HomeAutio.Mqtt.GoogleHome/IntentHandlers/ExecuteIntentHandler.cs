@@ -146,9 +146,9 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                             var googleState = trait.GetGoogleStateFlattened(_stateCache, traitSchema);
 
                             // Map incoming params to "fake" state changes to override existing state value
-                            var replacedParams = execution.Params
-                                .ToFlatDictionary()
-                                .ToDictionary(kvp => CommandToStateKeyMapper.Map(kvp.Key), kvp => kvp.Value);
+                            var replacedParams = execution.Params != null
+                                ? execution.Params.ToFlatDictionary().ToDictionary(kvp => CommandToStateKeyMapper.Map(kvp.Key), kvp => kvp.Value)
+                                : new Dictionary<string, object>();
 
                             foreach (var state in googleState)
                             {
@@ -160,14 +160,14 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                                 // Only add to state response if specified in the command result schema, or fallback state schema
                                 if (commandSchema.ResultsValidator != null)
                                 {
-                                    if (commandSchema.ResultsValidator.ValidateFlattenedPath(state.Key))
+                                    if (commandSchema.ResultsValidator.FlattenedPathExists(state.Key))
                                     {
                                         states.Add(state.Key, value);
                                     }
                                 }
                                 else if (traitSchema.StateSchema != null)
                                 {
-                                    if (traitSchema.StateSchema.Validator.ValidateFlattenedPath(state.Key))
+                                    if (traitSchema.StateSchema.Validator.FlattenedPathExists(state.Key))
                                     {
                                         states.Add(state.Key, value);
                                     }
