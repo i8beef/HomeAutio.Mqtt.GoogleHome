@@ -46,15 +46,18 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                 return GoogleType.Unknown;
             }
 
-            switch (foundSchemas[0].Type)
+            foreach (var foundSchema in foundSchemas)
             {
-                case NJsonSchema.JsonObjectType.Integer:
-                case NJsonSchema.JsonObjectType.Number:
-                    return GoogleType.Numeric;
-                case NJsonSchema.JsonObjectType.Boolean:
-                    return GoogleType.Bool;
-                case NJsonSchema.JsonObjectType.String:
-                    return GoogleType.String;
+                switch (foundSchema.Type)
+                {
+                    case NJsonSchema.JsonObjectType.Integer:
+                    case NJsonSchema.JsonObjectType.Number:
+                        return GoogleType.Numeric;
+                    case NJsonSchema.JsonObjectType.Boolean:
+                        return GoogleType.Bool;
+                    case NJsonSchema.JsonObjectType.String:
+                        return GoogleType.String;
+                }
             }
 
             return GoogleType.Unknown;
