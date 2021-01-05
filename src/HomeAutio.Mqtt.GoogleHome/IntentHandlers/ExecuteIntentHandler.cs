@@ -131,7 +131,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                 {
                     foreach (var execution in command.Execution)
                     {
-                        // Convert command to a event to publish now that its passed all verifications
+                        // Convert command to an event to publish now that its passed all verifications
                         var commandEvent = new DeviceCommandExecutionEvent { DeviceId = deviceId, Execution = execution };
                         _messageHub.Publish(commandEvent);
 

@@ -61,6 +61,10 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                     .Select(group => group.First())
                     .Select(device => device.Id);
 
+            // Convert to an event to publish
+            var commandEvent = new QueryIntentReceivedEvent { Devices = intent.Payload.Devices, Time = DateTimeOffset.Now };
+            _messageHub.Publish(commandEvent);
+
             var devices = _deviceRepository.GetAll()
                 .Where(device => !device.Disabled)
                 .Where(device => distinctRequestDeviceIds.Contains(device.Id))

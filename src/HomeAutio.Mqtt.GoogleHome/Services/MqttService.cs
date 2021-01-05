@@ -69,8 +69,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         protected override Task StartServiceAsync(CancellationToken cancellationToken)
         {
             // Subscribe to event aggregator
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<DeviceCommandExecutionEvent>((e) => HandleGoogleHomeCommand(e)));
             _messageHubSubscriptions.Add(_messageHub.Subscribe<ConfigSubscriptionChangeEvent>((e) => HandleConfigSubscriptionChange(e)));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<DeviceCommandExecutionEvent>((e) => HandleGoogleHomeCommand(e)));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<SyncIntentReceivedEvent>((e) => HandleGoogleHomeSyncIntent(e)));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<QueryIntentReceivedEvent>((e) => HandleGoogleHomeQueryIntent(e)));
 
             return Task.CompletedTask;
         }
@@ -174,7 +176,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         }
 
         /// <summary>
-        /// Hanlder for Google Home commands.
+        /// Handler for Google Home commands.
         /// </summary>
         /// <param name="deviceCommandExecutionEvent">The device command to handle.</param>
         private async void HandleGoogleHomeCommand(DeviceCommandExecutionEvent deviceCommandExecutionEvent)
@@ -260,6 +262,40 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Handler for Google Home SYNC intent.
+        /// </summary>
+        /// <param name="syncIntentReceivedEvent">The SYNC intent to handle.</param>
+        private async void HandleGoogleHomeSyncIntent(SyncIntentReceivedEvent syncIntentReceivedEvent)
+        {
+            var delegateTopic = $"{TopicRoot}/sync/lastRequest";
+            var delegatePayload = syncIntentReceivedEvent.Time.ToString();
+
+            await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                .WithTopic(delegateTopic)
+                .WithPayload(delegatePayload)
+                .WithAtLeastOnceQoS()
+                .Build())
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Handler for Google Home QUERY intent.
+        /// </summary>
+        /// <param name="queryIntentReceivedEvent">The QUERY intent to handle.</param>
+        private async void HandleGoogleHomeQueryIntent(QueryIntentReceivedEvent queryIntentReceivedEvent)
+        {
+            var delegateTopic = $"{TopicRoot}/query/lastRequest";
+            var delegatePayload = JsonConvert.SerializeObject(queryIntentReceivedEvent);
+
+            await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                .WithTopic(delegateTopic)
+                .WithPayload(delegatePayload)
+                .WithAtLeastOnceQoS()
+                .Build())
+                .ConfigureAwait(false);
         }
 
         #endregion
