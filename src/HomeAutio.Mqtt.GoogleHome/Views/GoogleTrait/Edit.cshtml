@@ -47,8 +47,9 @@
             var cardHeaderNode = document.createElement("div");
             cardHeaderNode.className = "card-header";
 
-            var cardHeaderButtonNode = document.createElement("a");
-            cardHeaderButtonNode.className = "btn btn-link btn-primary";
+            var cardHeaderButtonNode = document.createElement("button");
+            cardHeaderButtonNode.className = "btn btn-primary";
+            cardHeaderButtonNode.style = "width: 100%";
             cardHeaderButtonNode.dataset.toggle = "collapse";
             cardHeaderButtonNode.dataset.target = "#" + collapseId;
             cardHeaderButtonNode.innerHTML = comment;
@@ -227,7 +228,7 @@
         <div class="col-sm-6">
             <div class="card">
                 <div class="card-header">
-                    <h2>Examples <a onclick="openDocumentation()" class="btn btn-warning">Trait documentation</a></h2>
+                    <h2>Examples <button onclick="openDocumentation()" class="btn btn-warning">Trait documentation</button></h2>
                 </div>
                 <div class="card-body">
                     <h6>Attribute Examples</h6>
