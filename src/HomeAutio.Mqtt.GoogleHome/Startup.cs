@@ -244,7 +244,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 identityServerBuilder.AddSigningCredential(cert);
 
                 // Add any verification certs
-                for (var i = 1; i < signingCerts.Count(); i++)
+                for (var i = 1; i < signingCerts.Count; i++)
                 {
                     var oldSigningCert = signingCerts[i];
                     if (!File.Exists(oldSigningCert.File))

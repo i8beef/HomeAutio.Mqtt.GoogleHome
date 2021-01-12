@@ -9,15 +9,12 @@
   "type": "object",
   "properties": {
     "temperatureSetpointCelsius": {
-      "description": "The current temperature setpoint, in degrees Celsius. Must fall within <code>temperatureRange</code>.",
+      "description": "The current temperature setpoint, in degrees Celsius. Must fall within <code>temperatureRange</code>. Required if <code>queryOnlyTemperatureControl</code> set to <code>false</code>",
       "type": "number"
     },
     "temperatureAmbientCelsius": {
       "description": "The currently observed temperature, in degrees Celsius. Must fall within <code>temperatureRange</code>.",
       "type": "number"
     }
-  },
-  "required": [
-    "temperatureSetpointCelsius"
-  ]
+  }
 }

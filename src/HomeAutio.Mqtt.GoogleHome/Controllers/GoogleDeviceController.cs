@@ -33,8 +33,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             IGoogleDeviceRepository deviceRepository,
             SyncIntentHandler syncIntentHandler)
         {
-            _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
-            _syncIntentHandler = syncIntentHandler ?? throw new ArgumentException(nameof(syncIntentHandler));
+            _deviceRepository = deviceRepository ?? throw new ArgumentNullException(nameof(deviceRepository));
+            _syncIntentHandler = syncIntentHandler ?? throw new ArgumentNullException(nameof(syncIntentHandler));
         }
 
         /// <summary>

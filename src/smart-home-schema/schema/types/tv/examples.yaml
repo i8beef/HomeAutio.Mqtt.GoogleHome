@@ -96,17 +96,17 @@ states:
     "playbackState": "PAUSED"
   }
 commands:
-  action.devices.commands.SelectChannel:
+  action.devices.commands.selectChannel:
     params:
       {
         "channelCode": "ktvu2"
       }
-  action.devices.commands.RelativeChannel:
+  action.devices.commands.relativeChannel:
     params:
       {
         "relativeChannelChange": 1
       }
-  action.devices.commands.ReturnChannel: {}
+  action.devices.commands.returnChannel: {}
   action.devices.commands.appInstall:
     params:
       {

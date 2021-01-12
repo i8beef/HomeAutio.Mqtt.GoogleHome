@@ -16,415 +16,415 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// action.devices.types.AC_UNIT.
         /// </summary>
         [EnumMember(Value = "action.devices.types.AC_UNIT")]
-        ACUnit,
+        AC_UNIT,
 
         /// <summary>
         /// action.devices.types.AIRCOOLER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.AIRCOOLER")]
-        AirCooler,
+        AIRCOOLER,
 
         /// <summary>
         /// action.devices.types.AIRFRESHENER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.AIRFRESHENER")]
-        AirFreshener,
+        AIRFRESHENER,
 
         /// <summary>
         /// action.devices.types.AIRPURIFIER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.AIRPURIFIER")]
-        AirPurifier,
+        AIRPURIFIER,
 
         /// <summary>
         /// action.devices.types.AUDIO_VIDEO_RECEIVER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.AUDIO_VIDEO_RECEIVER")]
-        AudioVideoReceiver,
+        AUDIO_VIDEO_RECEIVER,
 
         /// <summary>
         /// action.devices.types.AWNING.
         /// </summary>
         [EnumMember(Value = "action.devices.types.AWNING")]
-        Awning,
+        AWNING,
 
         /// <summary>
         /// action.devices.types.BATHTUB.
         /// </summary>
         [EnumMember(Value = "action.devices.types.BATHTUB")]
-        Bathtub,
+        BATHTUB,
 
         /// <summary>
         /// action.devices.types.BED.
         /// </summary>
         [EnumMember(Value = "action.devices.types.BED")]
-        Bed,
+        BED,
 
         /// <summary>
         /// action.devices.types.BLENDER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.BLENDER")]
-        Blender,
+        BLENDER,
 
         /// <summary>
         /// action.devices.types.BLINDS.
         /// </summary>
         [EnumMember(Value = "action.devices.types.BLINDS")]
-        Blinds,
+        BLINDS,
 
         /// <summary>
         /// action.devices.types.BOILER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.BOILER")]
-        Boiler,
+        BOILER,
 
         /// <summary>
         /// action.devices.types.CAMERA.
         /// </summary>
         [EnumMember(Value = "action.devices.types.CAMERA")]
-        Camera,
+        CAMERA,
 
         /// <summary>
         /// action.devices.types.CARBON_MONOXIDE_DETECTOR.
         /// </summary>
         [EnumMember(Value = "action.devices.types.CARBON_MONOXIDE_DETECTOR")]
-        CarbonMonoxideDetector,
+        CARBON_MONOXIDE_DETECTOR,
 
         /// <summary>
         /// action.devices.types.CHARGER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.CHARGER")]
-        Charger,
+        CHARGER,
 
         /// <summary>
         /// action.devices.types.CLOSET.
         /// </summary>
         [EnumMember(Value = "action.devices.types.CLOSET")]
-        Closet,
+        CLOSET,
 
         /// <summary>
         /// action.devices.types.COFFEE_MAKER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.COFFEE_MAKER")]
-        CoffeeMaker,
+        COFFEE_MAKER,
 
         /// <summary>
         /// action.devices.types.COOKTOP.
         /// </summary>
         [EnumMember(Value = "action.devices.types.COOKTOP")]
-        Cooktop,
+        COOKTOP,
 
         /// <summary>
         /// action.devices.types.CURTAIN.
         /// </summary>
         [EnumMember(Value = "action.devices.types.CURTAIN")]
-        Curtain,
+        CURTAIN,
 
         /// <summary>
         /// action.devices.types.DEHUMIDIFIER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.DEHUMIDIFIER")]
-        Dehumidifier,
+        DEHUMIDIFIER,
 
         /// <summary>
         /// action.devices.types.DEHYDRATOR.
         /// </summary>
         [EnumMember(Value = "action.devices.types.DEHYDRATOR")]
-        Dehydrator,
+        DEHYDRATOR,
 
         /// <summary>
         /// action.devices.types.DISHWASHER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.DISHWASHER")]
-        Dishwasher,
+        DISHWASHER,
 
         /// <summary>
         /// action.devices.types.DOOR.
         /// </summary>
         [EnumMember(Value = "action.devices.types.DOOR")]
-        Door,
+        DOOR,
 
         /// <summary>
         /// action.devices.types.DRAWER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.DRAWER")]
-        Drawer,
+        DRAWER,
 
         /// <summary>
         /// action.devices.types.DRYER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.DRYER")]
-        Dryer,
+        DRYER,
 
         /// <summary>
         /// action.devices.types.FAN.
         /// </summary>
         [EnumMember(Value = "action.devices.types.FAN")]
-        Fan,
+        FAN,
 
         /// <summary>
         /// action.devices.types.FAUCET.
         /// </summary>
         [EnumMember(Value = "action.devices.types.FAUCET")]
-        Faucet,
+        FAUCET,
 
         /// <summary>
         /// action.devices.types.FIREPLACE.
         /// </summary>
         [EnumMember(Value = "action.devices.types.FIREPLACE")]
-        Fireplace,
+        FIREPLACE,
 
         /// <summary>
         /// action.devices.types.FREEZER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.FREEZER")]
-        Freezer,
+        FREEZER,
 
         /// <summary>
         /// action.devices.types.FRYER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.FRYER")]
-        Fryer,
+        FRYER,
 
         /// <summary>
         /// action.devices.types.GARAGE.
         /// </summary>
         [EnumMember(Value = "action.devices.types.GARAGE")]
-        Garage,
+        GARAGE,
 
         /// <summary>
         /// action.devices.types.GATE.
         /// </summary>
         [EnumMember(Value = "action.devices.types.GATE")]
-        Gate,
+        GATE,
 
         /// <summary>
         /// action.devices.types.GRILL.
         /// </summary>
         [EnumMember(Value = "action.devices.types.GRILL")]
-        Grill,
+        GRILL,
 
         /// <summary>
         /// action.devices.types.HEATER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.HEATER")]
-        Heater,
+        HEATER,
 
         /// <summary>
         /// action.devices.types.HOOD.
         /// </summary>
         [EnumMember(Value = "action.devices.types.HOOD")]
-        Hood,
+        HOOD,
 
         /// <summary>
         /// action.devices.types.HUMIDIFIER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.HUMIDIFIER")]
-        Humidifier,
+        HUMIDIFIER,
 
         /// <summary>
         /// action.devices.types.KETTLE.
         /// </summary>
         [EnumMember(Value = "action.devices.types.KETTLE")]
-        Kettle,
+        KETTLE,
 
         /// <summary>
         /// action.devices.types.LIGHT.
         /// </summary>
         [EnumMember(Value = "action.devices.types.LIGHT")]
-        Light,
+        LIGHT,
 
         /// <summary>
         /// action.devices.types.LOCK.
         /// </summary>
         [EnumMember(Value = "action.devices.types.LOCK")]
-        Lock,
-
-        /// <summary>
-        /// action.devices.types.REMOTECONTROL.
-        /// </summary>
-        [EnumMember(Value = "action.devices.types.REMOTECONTROL")]
-        MediaRemote,
+        LOCK,
 
         /// <summary>
         /// action.devices.types.MICROWAVE.
         /// </summary>
         [EnumMember(Value = "action.devices.types.MICROWAVE")]
-        Microwave,
+        MICROWAVE,
 
         /// <summary>
         /// action.devices.types.MOP.
         /// </summary>
         [EnumMember(Value = "action.devices.types.MOP")]
-        Mop,
+        MOP,
 
         /// <summary>
         /// action.devices.types.MOWER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.MOWER")]
-        Mower,
+        MOWER,
 
         /// <summary>
         /// action.devices.types.MULTICOOKER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.MULTICOOKER")]
-        Multicooker,
+        MULTICOOKER,
 
         /// <summary>
         /// action.devices.types.NETWORK.
         /// </summary>
         [EnumMember(Value = "action.devices.types.NETWORK")]
-        Network,
+        NETWORK,
 
         /// <summary>
         /// action.devices.types.OUTLET.
         /// </summary>
         [EnumMember(Value = "action.devices.types.OUTLET")]
-        Outlet,
+        OUTLET,
 
         /// <summary>
         /// action.devices.types.OVEN.
         /// </summary>
         [EnumMember(Value = "action.devices.types.OVEN")]
-        Oven,
+        OVEN,
 
         /// <summary>
         /// action.devices.types.PERGOLA.
         /// </summary>
         [EnumMember(Value = "action.devices.types.PERGOLA")]
-        Pergola,
+        PERGOLA,
 
         /// <summary>
         /// action.devices.types.PETFEEDER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.PETFEEDER")]
-        PetFeeder,
+        PETFEEDER,
 
         /// <summary>
         /// action.devices.types.PRESSURECOOKER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.PRESSURECOOKER")]
-        PressureCooker,
+        PRESSURECOOKER,
 
         /// <summary>
         /// action.devices.types.RADIATOR.
         /// </summary>
         [EnumMember(Value = "action.devices.types.RADIATOR")]
-        Radiator,
+        RADIATOR,
 
         /// <summary>
         /// action.devices.types.REFRIGERATOR.
         /// </summary>
         [EnumMember(Value = "action.devices.types.REFRIGERATOR")]
-        Refrigerator,
+        REFRIGERATOR,
+
+        /// <summary>
+        /// action.devices.types.REMOTECONTROL.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.REMOTECONTROL")]
+        REMOTECONTROL,
 
         /// <summary>
         /// action.devices.types.ROUTER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.ROUTER")]
-        Router,
+        ROUTER,
 
         /// <summary>
         /// action.devices.types.SCENE.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SCENE")]
-        Scene,
+        SCENE,
 
         /// <summary>
         /// action.devices.types.SECURITYSYSTEM.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SECURITYSYSTEM")]
-        SecuritySystem,
+        SECURITYSYSTEM,
 
         /// <summary>
         /// action.devices.types.SENSOR.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SENSOR")]
-        Sensor,
+        SENSOR,
 
         /// <summary>
         /// action.devices.types.SETTOP.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SETTOP")]
-        SetTopBox,
+        SETTOP,
 
         /// <summary>
         /// action.devices.types.SHOWER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SHOWER")]
-        Shower,
+        SHOWER,
 
         /// <summary>
         /// action.devices.types.SHUTTER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SHUTTER")]
-        Shutter,
+        SHUTTER,
 
         /// <summary>
         /// action.devices.types.SMOKE_DETECTOR.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SMOKE_DETECTOR")]
-        SmokeDetector,
+        SMOKE_DETECTOR,
 
         /// <summary>
         /// action.devices.types.SOUNDBAR.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SOUNDBAR")]
-        Soundbar,
+        SOUNDBAR,
 
         /// <summary>
         /// action.devices.types.SOUSVIDE.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SOUSVIDE")]
-        SousVide,
+        SOUSVIDE,
 
         /// <summary>
         /// action.devices.types.SPEAKER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SPEAKER")]
-        Speaker,
+        SPEAKER,
 
         /// <summary>
         /// action.devices.types.SPRINKLER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SPRINKLER")]
-        Sprinkler,
+        SPRINKLER,
 
         /// <summary>
         /// action.devices.types.STANDMIXER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.STANDMIXER")]
-        StandMixer,
+        STANDMIXER,
 
         /// <summary>
         /// action.devices.types.STREAMING_BOX.
         /// </summary>
         [EnumMember(Value = "action.devices.types.STREAMING_BOX")]
-        StreamingBox,
+        STREAMING_BOX,
 
         /// <summary>
         /// action.devices.types.STREAMING_SOUNDBAR.
         /// </summary>
         [EnumMember(Value = "action.devices.types.STREAMING_SOUNDBAR")]
-        StreamingSoundbar,
+        STREAMING_SOUNDBAR,
 
         /// <summary>
         /// action.devices.types.STREAMING_STICK.
         /// </summary>
         [EnumMember(Value = "action.devices.types.STREAMING_STICK")]
-        StreamingStick,
+        STREAMING_STICK,
 
         /// <summary>
         /// action.devices.types.SWITCH.
         /// </summary>
         [EnumMember(Value = "action.devices.types.SWITCH")]
-        Switch,
+        SWITCH,
 
         /// <summary>
         /// action.devices.types.THERMOSTAT.
         /// </summary>
         [EnumMember(Value = "action.devices.types.THERMOSTAT")]
-        Thermostat,
+        THERMOSTAT,
 
         /// <summary>
         /// action.devices.types.TV.
@@ -436,48 +436,48 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// action.devices.types.VACUUM.
         /// </summary>
         [EnumMember(Value = "action.devices.types.VACUUM")]
-        Vacuum,
+        VACUUM,
 
         /// <summary>
         /// action.devices.types.VALVE.
         /// </summary>
         [EnumMember(Value = "action.devices.types.VALVE")]
-        Valve,
+        VALVE,
 
         /// <summary>
         /// action.devices.types.WASHER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.WASHER")]
-        Washer,
+        WASHER,
 
         /// <summary>
         /// action.devices.types.WATERHEATER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.WATERHEATER")]
-        WaterHeater,
+        WATERHEATER,
 
         /// <summary>
         /// action.devices.types.WATERPURIFIER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.WATERPURIFIER")]
-        WaterPurifier,
+        WATERPURIFIER,
 
         /// <summary>
         /// action.devices.types.WATERSOFTENER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.WATERSOFTENER")]
-        WaterSoftener,
+        WATERSOFTENER,
 
         /// <summary>
         /// action.devices.types.WINDOW.
         /// </summary>
         [EnumMember(Value = "action.devices.types.WINDOW")]
-        Window,
+        WINDOW,
 
         /// <summary>
         /// action.devices.types.YOGURTMAKER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.YOGURTMAKER")]
-        YogurtMaker
+        YOGURTMAKER
     }
 }

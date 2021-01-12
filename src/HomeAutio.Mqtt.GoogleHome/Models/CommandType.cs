@@ -254,15 +254,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         Reboot,
 
         /// <summary>
-        /// action.devices.commands.RelativeChannel
+        /// action.devices.commands.relativeChannel
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.RelativeChannel")]
+        [EnumMember(Value = "action.devices.commands.relativeChannel")]
         RelativeChannel,
 
         /// <summary>
-        /// action.devices.commands.ReturnChannel
+        /// action.devices.commands.returnChannel
         /// </summary>
-        [EnumMember(Value = "action.devices.commands.ReturnChannel")]
+        [EnumMember(Value = "action.devices.commands.returnChannel")]
         ReturnChannel,
 
         /// <summary>

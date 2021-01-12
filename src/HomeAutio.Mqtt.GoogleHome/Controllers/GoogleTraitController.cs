@@ -31,7 +31,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <param name="deviceRepository">Device repository.</param>
         public GoogleTraitController(IGoogleDeviceRepository deviceRepository)
         {
-            _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
+            _deviceRepository = deviceRepository ?? throw new ArgumentNullException(nameof(deviceRepository));
         }
 
         /// <summary>
@@ -289,7 +289,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 }
             }
 
-
             var examples = new
             {
                 AttributeExamples = targetSchema.AttributeSchema?.Examples,
@@ -306,7 +305,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <param name="commandName">Command name.</param>
         /// <param name="example">Example.</param>
         /// <returns>Command delegation example string.</returns>
-        private string GetWrappedCommandExample(string commandName, string example = null)
+        private static string GetWrappedCommandExample(string commandName, string example = null)
         {
             var sb = new StringBuilder();
 

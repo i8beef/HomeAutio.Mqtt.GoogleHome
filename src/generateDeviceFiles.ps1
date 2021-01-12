@@ -1,129 +1,17 @@
-﻿Install-Module powershell-yaml -Scope CurrentUser
+﻿$commandSchemaFile = $PSScriptRoot + "\smart-home-schema\schema\platform\commands.schema.json"
+$deviceSchemaFile = $PSScriptRoot + "\smart-home-schema\schema\platform\types.schema.json"
+$triatSchemaFile = $PSScriptRoot + "\smart-home-schema\schema\platform\traits.schema.json"
 
-$yamlRoot = $PSScriptRoot + "\smart-home-schema\schema\types"
-$yamlDeviceFiles = Get-ChildItem -Path $yamlRoot -Recurse -Filter "examples.yaml"
-
-$devices = @()
-$traits = @()
-$commands = @()
-foreach ($file in $yamlDeviceFiles) {
-    Write-Host $file.FullName
-    $yaml = Get-Content -Path $file.FullName | Out-String
-    $obj = ConvertFrom-Yaml -Yaml $yaml
-
-    $devices += $obj
-    $traits += $obj.traits
-    if ($null -ne $obj.commands) {
-        $commands += $obj.commands.Keys
-    }
-}
-
-$devices = $devices | Sort-Object { $_.name }, { $_.name }
-
-$traits = $traits | Select -Unique | Sort
-
-$commands = $commands | Select -Unique | Sort
+$commandJson = Get-Content -Path $commandSchemaFile | Out-String
+$commandSchema = ConvertFrom-Json -InputObject $commandJson
+$deviceJson = Get-Content -Path $deviceSchemaFile | Out-String
+$deviceSchema = ConvertFrom-Json -InputObject $deviceJson
+$traitJson = Get-Content -Path $triatSchemaFile | Out-String
+$traitSchema = ConvertFrom-Json -InputObject $traitJson
 
 ## File generation
-# Generate DeviceTypes
-$deviceTypeFilePath = ".\HomeAutio.Mqtt.GoogleHome\Models\DeviceType.cs"
-
-$deviceTypesHeader = @"
-using System.Runtime.Serialization;
-
-namespace HomeAutio.Mqtt.GoogleHome.Models
-{
-    /// <summary>
-    /// Device type enumeration.
-    /// </summary>
-    public enum DeviceType
-    {
-        /// <summary>
-        /// Unknown device type.
-        /// </summary>
-        Unknown
-"@
-
-$deviceTypesFooter = @"
-    }
-}
-"@
-
-$sb = [System.Text.StringBuilder]::new()
-$sb.Append($deviceTypesHeader)
-
-foreach ($device in $devices) {
-    $deviceName = (Get-Culture).TextInfo.ToTitleCase($device.name)
-    $deviceName = $deviceName -Replace "Simple ", "" 
-    $deviceName = $deviceName -Replace " ", ""
-    $deviceName = $deviceName -Replace "-", ""
-    $deviceTypeString = @"
-,
-
-        /// <summary>
-        /// $($device.type).
-        /// </summary>
-        [EnumMember(Value = "$($device.type)")]
-        $($deviceName)
-"@
-
-    $sb.Append($deviceTypeString)
-}
-
-$sb.AppendLine()
-$sb.AppendLine($deviceTypesFooter)
-
-$deviceTypesContent = $sb.ToString()
-Set-Content -Path $deviceTypeFilePath -Value $deviceTypesContent.Trim()
-
-# Generate TraitTypes
-$traitTypeFilePath = ".\HomeAutio.Mqtt.GoogleHome\Models\TraitType.cs"
-
-$traitTypesHeader = @"
-using System.Runtime.Serialization;
-
-namespace HomeAutio.Mqtt.GoogleHome.Models
-{
-    /// <summary>
-    /// Trait type enumeration.
-    /// </summary>
-    public enum TraitType
-    {
-        /// <summary>
-        /// Unknown trait type.
-        /// </summary>
-        Unknown
-"@
-
-$traitTypesFooter = @"
-    }
-}
-"@
-
-$sb = [System.Text.StringBuilder]::new()
-$sb.Append($traitTypesHeader)
-
-foreach ($trait in $traits) {
-    $traitName = $trait -Replace "action.devices.traits.", ""
-    $traitTypeString = @"
-,
-
-        /// <summary>
-        /// $($trait).
-        /// </summary>
-        [EnumMember(Value = "$($trait)")]
-        $($traitName)
-"@
-
-    $sb.Append($traitTypeString)
-}
-
-$sb.AppendLine()
-$sb.AppendLine($traitTypesFooter)
-$traitTypesContent = $sb.ToString()
-Set-Content -Path $traitTypeFilePath -Value $traitTypesContent.Trim()
-
 # Generate CommandTypes
+$commands = $commandSchema.enum
 $commandTypeFilePath = ".\HomeAutio.Mqtt.GoogleHome\Models\CommandType.cs"
 
 $commandTypesHeader = @"
@@ -172,3 +60,102 @@ $sb.AppendLine()
 $sb.AppendLine($commandTypesFooter)
 $commandTypesContent = $sb.ToString()
 Set-Content -Path $commandTypeFilePath -Value $commandTypesContent.Trim()
+
+# Generate DeviceTypes
+$devices = $deviceSchema.enum
+$deviceTypeFilePath = ".\HomeAutio.Mqtt.GoogleHome\Models\DeviceType.cs"
+
+$deviceTypesHeader = @"
+using System.Runtime.Serialization;
+
+namespace HomeAutio.Mqtt.GoogleHome.Models
+{
+    /// <summary>
+    /// Device type enumeration.
+    /// </summary>
+    public enum DeviceType
+    {
+        /// <summary>
+        /// Unknown device type.
+        /// </summary>
+        Unknown
+"@
+
+$deviceTypesFooter = @"
+    }
+}
+"@
+
+$sb = [System.Text.StringBuilder]::new()
+$sb.Append($deviceTypesHeader)
+
+$devices = $devices | Sort-Object
+foreach ($device in $devices) {
+    $deviceName = $device.Substring($device.LastIndexOf('.') + 1)
+    $deviceTypeString = @"
+,
+
+        /// <summary>
+        /// $($device).
+        /// </summary>
+        [EnumMember(Value = "$($device)")]
+        $($deviceName)
+"@
+
+    $sb.Append($deviceTypeString)
+}
+
+$sb.AppendLine()
+$sb.AppendLine($deviceTypesFooter)
+
+$deviceTypesContent = $sb.ToString()
+Set-Content -Path $deviceTypeFilePath -Value $deviceTypesContent.Trim()
+
+# Generate TraitTypes
+$traits = $traitSchema.enum
+$traitTypeFilePath = ".\HomeAutio.Mqtt.GoogleHome\Models\TraitType.cs"
+
+$traitTypesHeader = @"
+using System.Runtime.Serialization;
+
+namespace HomeAutio.Mqtt.GoogleHome.Models
+{
+    /// <summary>
+    /// Trait type enumeration.
+    /// </summary>
+    public enum TraitType
+    {
+        /// <summary>
+        /// Unknown trait type.
+        /// </summary>
+        Unknown
+"@
+
+$traitTypesFooter = @"
+    }
+}
+"@
+
+$sb = [System.Text.StringBuilder]::new()
+$sb.Append($traitTypesHeader)
+
+$traits = $traits | Sort-Object
+foreach ($trait in $traits) {
+    $traitName = $trait -Replace "action.devices.traits.", ""
+    $traitTypeString = @"
+,
+
+        /// <summary>
+        /// $($trait).
+        /// </summary>
+        [EnumMember(Value = "$($trait)")]
+        $($traitName)
+"@
+
+    $sb.Append($traitTypeString)
+}
+
+$sb.AppendLine()
+$sb.AppendLine($traitTypesFooter)
+$traitTypesContent = $sb.ToString()
+Set-Content -Path $traitTypeFilePath -Value $traitTypesContent.Trim()

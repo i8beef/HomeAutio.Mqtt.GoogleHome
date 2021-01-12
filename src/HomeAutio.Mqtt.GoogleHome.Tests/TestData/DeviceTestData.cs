@@ -10,7 +10,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.TestData
             return new Device
             {
                 Id = "test/device",
-                Type = GoogleHome.Models.DeviceType.Light,
+                Type = GoogleHome.Models.DeviceType.LIGHT,
                 Disabled = false,
                 WillReportState = false,
                 RoomHint = "Test",

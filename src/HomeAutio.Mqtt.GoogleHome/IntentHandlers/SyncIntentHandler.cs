@@ -31,10 +31,10 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
             IConfiguration configuration,
             IGoogleDeviceRepository deviceRepository)
         {
-            _log = logger ?? throw new ArgumentException(nameof(logger));
-            _messageHub = messageHub ?? throw new ArgumentException(nameof(messageHub));
-            _config = configuration ?? throw new ArgumentException(nameof(configuration));
-            _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
+            _log = logger ?? throw new ArgumentNullException(nameof(logger));
+            _messageHub = messageHub ?? throw new ArgumentNullException(nameof(messageHub));
+            _config = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _deviceRepository = deviceRepository ?? throw new ArgumentNullException(nameof(deviceRepository));
         }
 
         /// <summary>

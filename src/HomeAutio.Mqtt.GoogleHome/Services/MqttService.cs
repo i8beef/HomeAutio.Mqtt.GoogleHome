@@ -50,10 +50,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
             string topicRoot = "google/home")
             : base(logger, brokerSettings, topicRoot)
         {
-            _log = logger ?? throw new ArgumentException(nameof(logger));
-            _messageHub = messageHub ?? throw new ArgumentException(nameof(messageHub));
-            _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
-            _stateCache = stateCache ?? throw new ArgumentException(nameof(stateCache));
+            _log = logger ?? throw new ArgumentNullException(nameof(logger));
+            _messageHub = messageHub ?? throw new ArgumentNullException(nameof(messageHub));
+            _deviceRepository = deviceRepository ?? throw new ArgumentNullException(nameof(deviceRepository));
+            _stateCache = stateCache ?? throw new ArgumentNullException(nameof(stateCache));
 
             // Subscribe to google home based topics
             SubscribedTopics.Add(TopicRoot + "/commands/+/set");
