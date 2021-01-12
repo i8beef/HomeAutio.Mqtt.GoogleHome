@@ -72,7 +72,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             {
                 Trait = viewModel.Trait,
                 Attributes = !string.IsNullOrEmpty(viewModel.Attributes) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(viewModel.Attributes, new ObjectDictionaryConverter()) : null,
-                Commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : null,
+                Commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : new Dictionary<string, IDictionary<string, string>>(),
                 State = !string.IsNullOrEmpty(viewModel.State) ? JsonConvert.DeserializeObject<Dictionary<string, DeviceState>>(viewModel.State) : null
             };
 
@@ -205,7 +205,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             // Set new values
             var trait = device.Traits.FirstOrDefault(x => x.Trait == traitEnumId);
             trait.Attributes = !string.IsNullOrEmpty(viewModel.Attributes) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(viewModel.Attributes, new ObjectDictionaryConverter()) : null;
-            trait.Commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : null;
+            trait.Commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : new Dictionary<string, IDictionary<string, string>>();
             trait.State = !string.IsNullOrEmpty(viewModel.State) ? JsonConvert.DeserializeObject<Dictionary<string, DeviceState>>(viewModel.State) : null;
 
             // Handle any challenges
@@ -253,6 +253,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 return NotFound();
             }
 
+            var stateExamples = new List<SchemaExample>();
+            if (targetSchema.StateSchema != null)
+            {
+                stateExamples.AddRange(targetSchema.StateSchema.Examples);
+            }
+
             // Flatten out command examples
             var commandExamples = new List<SchemaExample>();
             foreach (var commandSchema in targetSchema.CommandSchemas)
@@ -275,12 +281,19 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                         Example = GetWrappedCommandExample(commandName, commandExample.Example)
                     });
                 }
+
+                // Add result examples to states
+                if (commandSchema.ResultsExamples != null)
+                {
+                    stateExamples.AddRange(commandSchema.ResultsExamples);
+                }
             }
+
 
             var examples = new
             {
                 AttributeExamples = targetSchema.AttributeSchema?.Examples,
-                StateExamples = targetSchema.StateSchema?.Examples,
+                StateExamples = stateExamples.Any() ? stateExamples : null,
                 CommandExamples = commandExamples
             };
 

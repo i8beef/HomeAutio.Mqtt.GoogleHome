@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.Extensions;
+using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Newtonsoft.Json;
 using NJsonSchema;
 
@@ -49,6 +50,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         public JsonSchema ResultsValidator { get; private set; }
 
         /// <summary>
+        /// Results examples.
+        /// </summary>
+        public IList<SchemaExample> ResultsExamples { get; private set; }
+
+        /// <summary>
         /// Validator instance.
         /// </summary>
         public JsonSchema Validator { get; private set; }
@@ -73,14 +79,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                 return null;
 
             var resultValidator = resultsJson != null ? await JsonSchema.FromJsonAsync(resultsJson, cancellationToken) : null;
-            var validator = await JsonSchema.FromJsonAsync(paramJson, cancellationToken);
-
             if (resultValidator != null)
             {
                 // Convert to be used for validation
                 ChangeOneOfsToAnyOfs(resultValidator);
             }
 
+            var validator = await JsonSchema.FromJsonAsync(paramJson, cancellationToken);
             if (validator != null)
             {
                 // Convert to be used for validation
@@ -96,6 +101,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                 ErrorJson = errorJson,
                 Examples = ExtractExamples(paramJson),
                 ParamJson = paramJson,
+                ResultsExamples = resultsJson != null ? ExtractResultExamples(resultsJson) : null,
                 ResultsJson = resultsJson,
                 ResultsValidator = resultValidator,
                 Validator = validator
@@ -264,6 +270,46 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                         .ToDictionary(kv => kv.Key, kv => kv.Value)
                         .ToFlatDictionary()
                         .ToDictionary(kv => kv.Key, kv => "MQTT_COMMAND_TOPIC");
+
+                    var traitExample = new SchemaExample
+                    {
+                        Comment = example["$comment"] as string,
+                        Example = JsonConvert.SerializeObject(exampleWithoutComment, Formatting.Indented)
+                    };
+
+                    // Eliminate duplicates
+                    if (!seenAttributeExamples.Contains(traitExample.Example))
+                    {
+                        seenAttributeExamples.Add(traitExample.Example);
+                        examples.Add(traitExample);
+                    }
+                }
+            }
+
+            return examples;
+        }
+
+        /// <summary>
+        /// Extract example JSON from a schema.
+        /// </summary>
+        /// <param name="json">Schema JSON to parse.</param>
+        /// <returns>A list of <see cref="SchemaExample"/>.</returns>
+        private static IList<SchemaExample> ExtractResultExamples(string json)
+        {
+            var examples = new List<SchemaExample>();
+            var parsed = JsonConvert.DeserializeObject<Dictionary<string, object>>(json, new ObjectDictionaryConverter());
+            if (parsed.ContainsKey("examples") && parsed["examples"] is List<object> exampleNodes)
+            {
+                // Get distinct examples
+                var seenAttributeExamples = new List<string>();
+                foreach (Dictionary<string, object> example in exampleNodes)
+                {
+                    // Strip comments
+                    var exampleWithoutComment = example
+                        .Where(x => x.Key != "$comment")
+                        .ToDictionary(kv => kv.Key, kv => kv.Value)
+                        .ToFlatDictionary()
+                        .ToDictionary(kv => kv.Key, kv => new DeviceState { Topic = "MQTT_STATE_TOPIC" });
 
                     var traitExample = new SchemaExample
                     {
