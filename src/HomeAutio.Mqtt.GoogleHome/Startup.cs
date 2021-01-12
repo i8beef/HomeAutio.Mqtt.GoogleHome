@@ -80,6 +80,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 var topics = serviceProvider.GetService<IGoogleDeviceRepository>().GetAll()
                     .Where(device => !device.Disabled)
                     .SelectMany(device => device.Traits)
+                    .Where(trait => trait.State != null)
                     .SelectMany(trait => trait.State.Values)
                     .Select(state => state.Topic)
                     .Distinct()

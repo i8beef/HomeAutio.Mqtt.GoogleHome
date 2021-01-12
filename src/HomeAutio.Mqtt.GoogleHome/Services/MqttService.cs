@@ -108,7 +108,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                     var devices = _deviceRepository.GetAll()
                         .Where(device => !device.Disabled)
                         .Where(device => device.WillReportState)
-                        .Where(device => device.Traits.Any(trait => trait.State.Values.Any(state => state.Topic == topic)))
+                        .Where(device => device.Traits.Any(trait => trait.State != null && trait.State.Values.Any(state => state.Topic == topic)))
                         .ToList();
 
                     // Trigger reportState
@@ -231,6 +231,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                             // Find the DeviceState object that provides configuration for mapping state/command values
                             var deviceState = device.Traits
                                 .Where(x => x.Commands.ContainsKey(execution.Command))
+                                .Where(x => x.State != null)
                                 .SelectMany(x => x.State)
                                 .Where(x => x.Key == stateKey)
                                 .Select(x => x.Value)
