@@ -66,6 +66,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         }
 
         /// <summary>
+        /// Gets a device json for external validation.
+        /// </summary>
+        /// <returns>Response.</returns>
+        public IActionResult Json()
+        {
+            return Json(_deviceRepository.GetAll().ToDictionary(device => device.Id, device => device));
+        }
+
+        /// <summary>
         /// Create device.
         /// </summary>
         /// <returns>Response.</returns>
