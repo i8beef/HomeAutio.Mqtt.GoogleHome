@@ -35,8 +35,8 @@ namespace HomeAutio.Mqtt.GoogleHome
             IMessageHub messageHub,
             string path)
         {
-            _logger = logger ?? throw new ArgumentException(nameof(logger));
-            _messageHub = messageHub ?? throw new ArgumentException(nameof(messageHub));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _messageHub = messageHub ?? throw new ArgumentNullException(nameof(messageHub));
             _deviceConfigFile = path;
 
             Refresh();
@@ -129,7 +129,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     foreach (var device in _devices)
                     {
                         var errors = DeviceValidator.Validate(device.Value);
-                        if (errors.Count() > 0)
+                        if (errors.Any())
                         {
                             _logger.LogWarning("GoogleDevices.json issues detected for device {Device}: {DeviceConfigIssues}", device.Key, errors);
                         }

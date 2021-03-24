@@ -30,10 +30,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             ExecuteIntentHandler executeIntentHandler,
             DisconnectIntentHandler disconnectIntentHandler)
         {
-            _disconnectIntentHandler = disconnectIntentHandler ?? throw new ArgumentException(nameof(disconnectIntentHandler));
-            _syncIntentHandler = syncIntentHandler ?? throw new ArgumentException(nameof(syncIntentHandler));
-            _queryIntentHandler = queryIntentHandler ?? throw new ArgumentException(nameof(queryIntentHandler));
-            _executeIntentHandler = executeIntentHandler ?? throw new ArgumentException(nameof(executeIntentHandler));
+            _disconnectIntentHandler = disconnectIntentHandler ?? throw new ArgumentNullException(nameof(disconnectIntentHandler));
+            _syncIntentHandler = syncIntentHandler ?? throw new ArgumentNullException(nameof(syncIntentHandler));
+            _queryIntentHandler = queryIntentHandler ?? throw new ArgumentNullException(nameof(queryIntentHandler));
+            _executeIntentHandler = executeIntentHandler ?? throw new ArgumentNullException(nameof(executeIntentHandler));
         }
 
         /// <summary>

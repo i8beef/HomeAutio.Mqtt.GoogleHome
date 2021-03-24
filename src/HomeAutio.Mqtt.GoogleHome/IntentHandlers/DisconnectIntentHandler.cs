@@ -16,7 +16,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         /// <param name="logger">Logging instance.</param>
         public DisconnectIntentHandler(ILogger<DisconnectIntentHandler> logger)
         {
-            _log = logger ?? throw new ArgumentException(nameof(logger));
+            _log = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>

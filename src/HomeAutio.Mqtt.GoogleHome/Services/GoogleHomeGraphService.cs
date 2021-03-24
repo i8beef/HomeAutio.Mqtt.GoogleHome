@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Easy.MessageHub;
@@ -16,8 +15,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
     /// </summary>
     public class GoogleHomeGraphService : IHostedService
     {
-        private readonly ILogger<GoogleHomeGraphService> _log;
-
         private readonly IMessageHub _messageHub;
         private readonly StateCache _stateCache;
         private readonly GoogleHomeGraphClient _googleHomeGraphClient;
@@ -27,20 +24,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleHomeGraphService"/> class.
         /// </summary>
-        /// <param name="logger">Logging instance.</param>
         /// <param name="messageHub">Message hub.</param>
         /// <param name="googleHomeGraphClient">Google Home Graph API client.</param>
         /// <param name="stateCache">State cache,</param>
         public GoogleHomeGraphService(
-            ILogger<GoogleHomeGraphService> logger,
             IMessageHub messageHub,
             GoogleHomeGraphClient googleHomeGraphClient,
             StateCache stateCache)
         {
-            _log = logger ?? throw new ArgumentException(nameof(logger));
-            _messageHub = messageHub ?? throw new ArgumentException(nameof(messageHub));
-            _googleHomeGraphClient = googleHomeGraphClient ?? throw new ArgumentException(nameof(googleHomeGraphClient));
-            _stateCache = stateCache ?? throw new ArgumentException(nameof(stateCache));
+            _messageHub = messageHub ?? throw new ArgumentNullException(nameof(messageHub));
+            _googleHomeGraphClient = googleHomeGraphClient ?? throw new ArgumentNullException(nameof(googleHomeGraphClient));
+            _stateCache = stateCache ?? throw new ArgumentNullException(nameof(stateCache));
         }
 
         /// <inheritdoc />
@@ -81,7 +75,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         private async void HandleGoogleReportState(ReportStateEvent reportStateEvent)
         {
             // Send updated to Google Home Graph
-            if (reportStateEvent.Devices.Count() > 0)
+            if (reportStateEvent.Devices.Count > 0)
             {
                 await _googleHomeGraphClient.SendUpdatesAsync(reportStateEvent.Devices, _stateCache);
             }

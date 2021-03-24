@@ -35,10 +35,10 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
             IGoogleDeviceRepository deviceRepository,
             StateCache stateCache)
         {
-            _log = logger ?? throw new ArgumentException(nameof(logger));
-            _messageHub = messageHub ?? throw new ArgumentException(nameof(messageHub));
-            _deviceRepository = deviceRepository ?? throw new ArgumentException(nameof(deviceRepository));
-            _stateCache = stateCache ?? throw new ArgumentException(nameof(stateCache));
+            _log = logger ?? throw new ArgumentNullException(nameof(logger));
+            _messageHub = messageHub ?? throw new ArgumentNullException(nameof(messageHub));
+            _deviceRepository = deviceRepository ?? throw new ArgumentNullException(nameof(deviceRepository));
+            _stateCache = stateCache ?? throw new ArgumentNullException(nameof(stateCache));
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         /// <param name="device">Device to check.</param>
         /// <param name="execution">Command execution to check.</param>
         /// <returns><c>true</c> if command is handled as a delegated command, otherwise <c>false</c>.</returns>
-        private string ValidateChallenges(Models.State.Device device, Execution execution)
+        private static string ValidateChallenges(Models.State.Device device, Execution execution)
         {
             if (device != null && !device.Disabled)
             {
