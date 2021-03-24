@@ -1,0 +1,13 @@
+name: action.devices.types.LIGHT
+shortname: Light
+description: >
+  Light devices can be turned on and off.
+  They may have additional features, such as dimming and the ability to change color.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - ColorSetting
+  - Brightness
+  required:
+  - OnOff

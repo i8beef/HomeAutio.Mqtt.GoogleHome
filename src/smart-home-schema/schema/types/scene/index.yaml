@@ -1,0 +1,12 @@
+name: action.devices.types.SCENE
+shortname: Scene
+description: >
+  In the case of scenes, the type maps 1:1 to the trait, as scenes don't combine with other traits
+  to form composite devices. Scenes should always have user-provided names.
+  Each scene is its own virtual device, with its own name(s).
+availability: production
+version: '1.0'
+traits:
+  recommended: []
+  required:
+  - Scene

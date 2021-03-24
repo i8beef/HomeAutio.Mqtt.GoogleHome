@@ -1,0 +1,14 @@
+name: action.devices.types.MULTICOOKER
+shortname: Multicooker
+description: >
+  Interactions with multicookers may include starting and stopping, setting a timer,
+  or and adjusting non-cooking modes.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Cook
+  - StartStop
+  - Timer
+  required:
+  - OnOff

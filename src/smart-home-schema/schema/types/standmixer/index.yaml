@@ -1,0 +1,14 @@
+name: action.devices.types.STANDMIXER
+shortname: Stand Mixer
+description: >
+  Interactions with stand mixers may include turning mixers on and off,
+  starting and stopping the mixer, adjusting cooking modes or food presets,
+  or adjusting various non-cooking mode settings.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Cook
+  - StartStop
+  required:
+  - OnOff

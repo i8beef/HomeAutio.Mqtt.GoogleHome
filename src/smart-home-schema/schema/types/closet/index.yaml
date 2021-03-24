@@ -1,0 +1,10 @@
+name: action.devices.types.CLOSET
+shortname: Closet
+description: >
+  Closets can be opened and closed, potentially in more than one direction.
+availability: production
+version: '1.0'
+traits:
+  recommended: []
+  required:
+  - OpenClose

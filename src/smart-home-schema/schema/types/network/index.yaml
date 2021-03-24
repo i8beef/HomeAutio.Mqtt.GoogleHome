@@ -1,0 +1,17 @@
+name: action.devices.types.NETWORK
+shortname: Network
+description: >
+  Represents a group of router nodes or a mesh network controlled as one entity rather than
+  as individual devices. The network device may reboot, update its software, and have modes to
+  handle Quality of Service (QoS) controls and parental restrictions.
+
+  The device can perform operations such as enabling the guest network, and reporting
+  network-specific information such as the current internet throughput rates.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Reboot
+  - SoftwareUpdate
+  required:
+  - NetworkControl

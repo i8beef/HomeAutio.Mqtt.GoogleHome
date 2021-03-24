@@ -1,0 +1,15 @@
+name: action.devices.types.GRILL
+shortname: Grill
+description: >
+  Interactions with grills may include turning them on and off, starting and stopping,
+  setting a timer, adjusting cooking modes and food presets, and adjusting various
+  non-cooking mode settings.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Cook
+  - OnOff
+  - Timer
+  required:
+  - StartStop

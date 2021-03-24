@@ -1,0 +1,11 @@
+name: action.devices.types.CHARGER
+shortname: Charger
+description: >
+  Interactions with chargers may include starting and stopping charging,
+  and checking the current charge level, capacity remaining, and capacity until full values.
+availability: production
+version: '1.0'
+traits:
+  recommended: []
+  required:
+  - EnergyStorage

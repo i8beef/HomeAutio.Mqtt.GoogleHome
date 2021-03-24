@@ -1,0 +1,20 @@
+name: action.devices.traits.StartStop
+shortname: StartStop
+description: This trait belongs to devices that support starting and stopping operations.
+availability: production
+version: '1.0'
+attributes:
+  $ref: startstop.attributes.schema.json
+states:
+  $ref: startstop.states.schema.json
+commands:
+  action.devices.commands.StartStop:
+    shortname: StartStop
+    params:
+      $ref: startstop.params.schema.json
+  action.devices.commands.PauseUnpause:
+    shortname: PauseUnpause
+    params:
+      $ref: pauseunpause.params.schema.json
+    errors:
+      $ref: pauseunpause.errors.schema.json

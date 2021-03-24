@@ -1,0 +1,10 @@
+name: action.devices.types.AWNING
+shortname: Awning
+description: >
+  Awnings are retractable and can opened and closed. They can be installed indoors or outdoors.
+availability: production
+version: '1.0'
+traits:
+  recommended: []
+  required:
+  - OpenClose

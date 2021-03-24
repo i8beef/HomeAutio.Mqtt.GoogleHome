@@ -1,0 +1,14 @@
+name: action.devices.traits.Toggles
+shortname: Toggles
+description: This trait belongs to any devices with settings that can only exist in one of two states.
+availability: production
+version: '1.0'
+attributes:
+  $ref: toggles.attributes.schema.json
+states:
+  $ref: toggles.states.schema.json
+commands:
+  action.devices.commands.SetToggles:
+    shortname: SetToggles
+    params:
+      $ref: settoggles.params.schema.json

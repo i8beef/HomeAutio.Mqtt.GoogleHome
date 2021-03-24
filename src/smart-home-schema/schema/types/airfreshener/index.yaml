@@ -1,0 +1,14 @@
+name: action.devices.types.AIRFRESHENER
+shortname: Air Freshener
+description: >
+  Air fresheners can be turned on and off and may allow adjusting various modes.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  # Options such as output level
+  - Modes
+  # Controls such as ambient light
+  - Toggles
+  required:
+  - OnOff

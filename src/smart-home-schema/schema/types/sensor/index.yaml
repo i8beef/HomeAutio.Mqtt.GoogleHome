@@ -1,0 +1,14 @@
+name: action.devices.types.SENSOR
+shortname: Sensor
+description: >
+  A single sensor can serve multiple functions, such as monitoring both temperature and humidity.
+  Sensors may report either or both quantitative—for example, carbon monoxide and smoke level
+  measured at parts per million—and qualitative measurements (such as whether air quality is
+  healthy or unhealthy).
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - EnergyStorage
+  required:
+  - SensorState

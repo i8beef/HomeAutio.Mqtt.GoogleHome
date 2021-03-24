@@ -1,0 +1,14 @@
+name: action.devices.types.FAUCET
+shortname: Faucet
+description: >
+  Faucets can dispense liquids in various quantities and presets.
+  Faucets may have various modes and each mode has its own related settings.
+  These are specific to the faucet and are interpreted in a generalized form.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Dispense
+  - StartStop
+  - TemperatureControl
+  required: []

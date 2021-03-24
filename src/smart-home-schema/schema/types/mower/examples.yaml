@@ -22,6 +22,7 @@ states:
     "activeZones": [
       "left driveway"
     ],
+    "descriptiveCapacityRemaining": "HIGH",
     "capacityRemaining": [
       {
         "unit": "SECONDS",

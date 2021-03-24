@@ -1,0 +1,17 @@
+name: action.devices.types.REMOTECONTROL
+shortname: Media Remote
+description: >
+  Media remotes are used to control media devices.
+  Examples of this device type include hubs, universal remotes, and media controllers.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - AppSelector
+  - Channel
+  required:
+  - InputSelector
+  - MediaState
+  - OnOff
+  - TransportControl
+  - Volume

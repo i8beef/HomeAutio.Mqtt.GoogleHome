@@ -201,7 +201,7 @@
                 "additionalProperties": true
               },
               "customData": {
-                "description": "This is a special object defined by the developer which will be attached to future QUERY and EXECUTE requests. Developers can use this object to store additional information about the device to improve performance or routing within their cloud, such as the global region of the device. Data in this object has a few constraints: No Personally Identifiable Information. Data should change rarely, akin to other attributes -- so this should not contain real-time state. The total object is limited to 512 bytes per device.",
+                "description": "Object defined by the developer which will be attached to future QUERY and EXECUTE requests, maximum of 512 bytes per device. Use this object to store additional information about the device your cloud service may need, such as the global region of the device. Data in this object has a few constraints: No sensitive information, including but not limited to Personally Identifiable Information.",
                 "type": "object"
               },
               "otherDeviceIds": {

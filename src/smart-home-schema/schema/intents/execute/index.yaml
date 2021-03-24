@@ -1,0 +1,9 @@
+name: action.devices.EXECUTE
+shortname: EXECUTE
+description: This intent sends commands to execute on smart home devices.
+availability: production
+version: '1.0'
+request:
+  $ref: execute.request.schema.json
+response:
+  $ref: execute.response.schema.json

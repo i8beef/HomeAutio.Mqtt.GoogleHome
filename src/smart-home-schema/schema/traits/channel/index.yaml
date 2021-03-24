@@ -1,0 +1,26 @@
+name: action.devices.traits.Channel
+shortname: Channel
+description: This trait belongs to devices that support TV channels on a media device.
+availability: production
+version: '1.0'
+attributes:
+  $ref: channel.attributes.schema.json
+commands:
+  action.devices.commands.selectChannel:
+    shortname: selectChannel
+    params:
+      $ref: selectchannel.params.schema.json
+    errors:
+      $ref: selectchannel.errors.schema.json
+  action.devices.commands.relativeChannel:
+    shortname: relativeChannel
+    params:
+      $ref: relativechannel.params.schema.json
+    errors:
+      $ref: relativechannel.errors.schema.json
+  action.devices.commands.returnChannel:
+    shortname: returnChannel
+    params:
+      $ref: returnchannel.params.schema.json
+    errors:
+      $ref: returnchannel.errors.schema.json

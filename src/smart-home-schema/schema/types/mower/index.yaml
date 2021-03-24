@@ -1,0 +1,17 @@
+name: action.devices.types.MOWER
+shortname: Mower
+description: >
+  Interactions with mowers may include starting, stopping and pausing mowing, docking,
+  checking the current cycle, locating the mower, and adjusting various modes.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Dock
+  # Report battery status
+  - EnergyStorage
+  - Locator
+  - OnOff
+  - RunCycle
+  required:
+  - StartStop

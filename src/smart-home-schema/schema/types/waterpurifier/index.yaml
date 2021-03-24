@@ -1,0 +1,12 @@
+name: action.devices.types.WATERPURIFIER
+shortname: Water Purifier
+description: >
+  Water purifiers are devices that may be turned on and off, report water filter cleanliness
+  and filter lifetime, and be adjusted to various mode settings.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - OnOff
+  - SensorState
+  required: []

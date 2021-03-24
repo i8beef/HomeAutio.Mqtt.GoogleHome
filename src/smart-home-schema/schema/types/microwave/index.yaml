@@ -1,0 +1,13 @@
+name: action.devices.types.MICROWAVE
+shortname: Microwave
+description: >
+  Interactions with microwaves may include starting and stopping, setting a timer,
+  adjusting cooking modes and food presets, and adjusting non-cooking modes.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Cook
+  - Timer
+  required:
+  - StartStop

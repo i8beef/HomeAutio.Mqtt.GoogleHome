@@ -1,0 +1,14 @@
+name: action.devices.traits.EnergyStorage
+shortname: EnergyStorage
+description: This trait belongs to devices that can store energy in a battery and potentially recharge, or devices that can charge another device.
+availability: production
+version: '2.0'
+attributes:
+  $ref: energystorage.attributes.schema.json
+states:
+  $ref: energystorage.states.schema.json
+commands:
+  action.devices.commands.Charge:
+    shortname: Charge
+    params:
+      $ref: charge.params.schema.json

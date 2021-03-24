@@ -1,0 +1,9 @@
+name: action.devices.DISCONNECT
+shortname: DISCONNECT
+description: This intent is triggered to inform you when a user has unlinked their device account from Google Assistant.
+availability: production
+version: '1.0'
+request:
+  $ref: disconnect.request.schema.json
+response:
+  $ref: disconnect.response.schema.json

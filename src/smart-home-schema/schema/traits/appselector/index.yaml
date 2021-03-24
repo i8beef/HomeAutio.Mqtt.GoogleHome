@@ -1,0 +1,22 @@
+name: action.devices.traits.AppSelector
+shortname: AppSelector
+description: This trait is used for devices which are able to switch inputs.
+availability: production
+version: '1.0'
+attributes:
+  $ref: appselector.attributes.schema.json
+states:
+  $ref: appselector.states.schema.json
+commands:
+  action.devices.commands.appInstall:
+    shortname: appInstall
+    params:
+      $ref: appinstall.params.schema.json
+  action.devices.commands.appSearch:
+    shortname: appSearch
+    params:
+      $ref: appsearch.params.schema.json
+  action.devices.commands.appSelect:
+    shortname: appSelect
+    params:
+      $ref: appselect.params.schema.json

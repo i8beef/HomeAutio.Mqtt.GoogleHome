@@ -1,0 +1,11 @@
+name: action.devices.types.BOILER
+shortname: Boiler
+description: >
+  Boilers can be turned on and off, and may support adjusting temperature.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - TemperatureControl
+  required:
+  - OnOff

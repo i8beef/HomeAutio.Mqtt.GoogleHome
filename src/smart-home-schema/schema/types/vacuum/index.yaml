@@ -1,0 +1,18 @@
+name: action.devices.types.VACUUM
+shortname: Vacuum
+description: >
+  Vacuums may have functions such as starting, stopping, and pausing cleaning, docking,
+  checking the current cleaning cycle, locating the vacuum, or adjusting various modes.
+  Some vacuums may support cleaning specific zones in the home.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Dock
+  # Report battery status
+  - EnergyStorage
+  - Locator
+  - OnOff
+  - RunCycle
+  required:
+  - StartStop

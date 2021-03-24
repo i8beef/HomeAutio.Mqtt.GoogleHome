@@ -1,0 +1,7 @@
+name: action.devices.traits.StatusReport
+shortname: StatusReport
+description:  This trait reports the current status of a specific device or a connected group of devices.
+availability: production
+version: '1.0'
+states:
+  $ref: statusreport.states.schema.json

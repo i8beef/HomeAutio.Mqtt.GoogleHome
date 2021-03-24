@@ -1,0 +1,12 @@
+name: action.devices.types.BATHTUB
+shortname: Bathtub
+description: >
+  Bathtubs can be filled and drained, possibly to particular levels if the bathtub supports it.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Fill
+  - TemperatureControl
+  - StartStop
+  required: []

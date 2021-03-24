@@ -1,0 +1,12 @@
+name: action.devices.types.AC_UNIT
+shortname: Air Conditioning Unit
+description: >
+  Air conditioning units are similar to thermostats, but do not support heating and may not
+  support setting temperature targets.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - FanSpeed
+  required:
+  - TemperatureSetting

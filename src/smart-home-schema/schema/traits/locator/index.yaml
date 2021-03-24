@@ -1,0 +1,10 @@
+name: action.devices.traits.Locator
+shortname: Locator
+description: This trait is used for devices that can be found.
+availability: production
+version: '1.0'
+commands:
+  action.devices.commands.Locate:
+    shortname: Locate
+    params:
+      $ref: locate.params.schema.json

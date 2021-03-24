@@ -1,0 +1,15 @@
+name: action.devices.types.AIRCOOLER
+shortname: Air Cooler
+description: >
+  Air coolers are devices that allow temperature cooling and humidity control.
+  These devices are typically more lightweight and portable than air conditioners, and have a
+  water tank attached. Air coolers may not support heating or setting exact temperatures.
+  Interactions with air coolers may include changing the fan speed and humidity setting.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - FanSpeed
+  - HumiditySetting
+  required:
+  - TemperatureSetting

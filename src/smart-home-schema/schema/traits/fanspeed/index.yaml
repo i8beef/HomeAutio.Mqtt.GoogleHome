@@ -1,0 +1,22 @@
+name: action.devices.traits.FanSpeed
+shortname: FanSpeed
+description: This trait belongs to devices that support setting the speed of a fan.
+availability: production
+version: '1.0'
+attributes:
+  $ref: fanspeed.attributes.schema.json
+states:
+  $ref: fanspeed.states.schema.json
+commands:
+  action.devices.commands.SetFanSpeed:
+    shortname: SetFanSpeed
+    params:
+      $ref: setfanspeed.params.schema.json
+  action.devices.commands.SetFanSpeedRelative:
+    shortname: SetFanSpeedRelative
+    params:
+      $ref: setfanspeedrelative.params.schema.json
+  action.devices.commands.Reverse:
+    shortname: Reverse
+    params:
+      $ref: reverse.params.schema.json

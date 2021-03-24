@@ -22,7 +22,7 @@
   "type": "object",
   "properties": {
     "cameraStreamSupportedProtocols": {
-      "description": "Supported media types, according to preference, for the real-time stream.",
+      "description": "Supported media types for the camera stream, ordered by preference. Typically, the first protocol in this array that is compatible with the target surface is requested.",
       "type": "array",
       "items": {
         "description": "Media type.",

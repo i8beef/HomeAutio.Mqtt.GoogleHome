@@ -1,0 +1,13 @@
+name: action.devices.types.KETTLE
+shortname: Kettle
+description: >
+  Kettles are devices that boil water.
+  Interactions with kettles may include turning them on and off, adjusting the target temperature,
+  and perhaps adjusting various mode settings.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - TemperatureControl
+  required:
+  - OnOff

@@ -1,0 +1,11 @@
+name: action.devices.types.GATE
+shortname: Gate
+description: >
+  Gates can be opened and closed, potentially in more than on direction.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - LockUnlock
+  required:
+  - OpenClose

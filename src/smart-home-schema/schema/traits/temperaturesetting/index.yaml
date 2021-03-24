@@ -1,0 +1,34 @@
+name: action.devices.traits.TemperatureSetting
+shortname: TemperatureSetting
+description: This trait covers handling both temperature point and modes.
+availability: production
+version: '1.0'
+attributes:
+  $ref: temperaturesetting.attributes.schema.json
+states:
+  $ref: temperaturesetting.states.schema.json
+commands:
+  action.devices.commands.ThermostatTemperatureSetpoint:
+    shortname: ThermostatTemperatureSetpoint
+    params:
+      $ref: thermostattemperaturesetpoint.params.schema.json
+    errors:
+      $ref: thermostattemperaturesetpoint.errors.schema.json
+  action.devices.commands.ThermostatTemperatureSetRange:
+    shortname: ThermostatTemperatureSetRange
+    params:
+      $ref: thermostattemperaturesetrange.params.schema.json
+    errors:
+      $ref: thermostattemperaturesetrange.errors.schema.json
+  action.devices.commands.ThermostatSetMode:
+    shortname: ThermostatSetMode
+    params:
+      $ref: thermostatsetmode.params.schema.json
+    errors:
+      $ref: thermostatsetmode.errors.schema.json
+  action.devices.commands.TemperatureRelative:
+    shortname: TemperatureRelative
+    params:
+      $ref: temperaturerelative.params.schema.json
+    errors:
+      $ref: temperaturerelative.errors.schema.json

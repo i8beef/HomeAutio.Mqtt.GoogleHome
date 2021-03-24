@@ -1,0 +1,15 @@
+name: action.devices.types.HUMIDIFIER
+shortname: Humidifier
+description: >
+  Humidifiers are devices that add moisture to the air.
+  They can be turned on and off, report and adjust target humidity, and may have various
+  adjustable modes or fan speed settings.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - FanSpeed
+  - HumiditySetting
+  - StartStop
+  required:
+  - OnOff

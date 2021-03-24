@@ -1,0 +1,23 @@
+name: action.devices.traits.Volume
+shortname: Volume
+description: This trait belongs to devices which are able to change volume (for example,
+  setting the volume to a certain level, mute, or unmute).
+availability: production
+version: '1.0'
+attributes:
+  $ref: volume.attributes.schema.json
+states:
+  $ref: volume.states.schema.json
+commands:
+  action.devices.commands.mute:
+    shortname: mute
+    params:
+      $ref: mute.params.schema.json
+  action.devices.commands.setVolume:
+    shortname: setVolume
+    params:
+      $ref: setvolume.params.schema.json
+  action.devices.commands.volumeRelative:
+    shortname: volumeRelative
+    params:
+      $ref: volumerelative.params.schema.json

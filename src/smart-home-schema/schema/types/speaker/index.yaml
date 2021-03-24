@@ -1,0 +1,16 @@
+name: action.devices.types.SPEAKER
+shortname: Speaker
+description: >
+  This device is a connected speaker that does not split audio into separate channels
+  (for example, between two left and right devices).
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - AppSelector
+  - InputSelector
+  - MediaState
+  - OnOff
+  - TransportControl
+  required:
+  - Volume

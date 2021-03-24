@@ -1,0 +1,13 @@
+name: action.devices.types.FAN
+shortname: Fan
+description: >
+  Fans can typically be turned on and off and have speed settings.
+  Some fans may also have additional supported modes, such as fan direction/orientation
+  (for example, a wall unit may have settings to adjust whether it blows up or down).
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - FanSpeed
+  required:
+  - OnOff

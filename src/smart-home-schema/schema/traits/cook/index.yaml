@@ -1,0 +1,14 @@
+name: action.devices.traits.Cook
+shortname: Cook
+description: This trait belongs to devices that can cook food according to various food presets and supported cooking modes.
+availability: production
+version: '1.0'
+attributes:
+  $ref: cook.attributes.schema.json
+states:
+  $ref: cook.states.schema.json
+commands:
+  action.devices.commands.Cook:
+    shortname: Cook
+    params:
+      $ref: cook.params.schema.json

@@ -1,0 +1,13 @@
+name: action.devices.types.PETFEEDER
+shortname: Pet Feeder
+description: >
+  Interactions with pet feeders may include dispensing pet food or water in various
+  quantities and presets.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - OnOff
+  - StartStop
+  required:
+  - Dispense

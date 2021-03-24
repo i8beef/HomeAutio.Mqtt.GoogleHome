@@ -1,0 +1,40 @@
+name: action.devices.traits.Timer
+shortname: Timer
+description: The Timer trait represents a timer on a device.
+availability: production
+version: '1.0'
+attributes:
+  $ref: timer.attributes.schema.json
+states:
+  $ref: timer.states.schema.json
+commands:
+  action.devices.commands.TimerStart:
+    shortname: TimerStart
+    params:
+      $ref: timerstart.params.schema.json
+    errors:
+      $ref: timerstart.errors.schema.json
+  action.devices.commands.TimerAdjust:
+    shortname: TimerAdjust
+    params:
+      $ref: timeradjust.params.schema.json
+    errors:
+      $ref: timeradjust.errors.schema.json
+  action.devices.commands.TimerPause:
+    shortname: TimerPause
+    params:
+      $ref: timerpause.params.schema.json
+    errors:
+      $ref: timerpause.errors.schema.json
+  action.devices.commands.TimerResume:
+    shortname: TimerResume
+    params:
+      $ref: timerresume.params.schema.json
+    errors:
+      $ref: timerresume.errors.schema.json
+  action.devices.commands.TimerCancel:
+    shortname: TimerCancel
+    params:
+      $ref: timercancel.params.schema.json
+    errors:
+      $ref: timercancel.errors.schema.json

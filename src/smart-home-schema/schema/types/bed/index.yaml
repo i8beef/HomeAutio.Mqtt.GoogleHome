@@ -1,0 +1,11 @@
+name: action.devices.types.BED
+shortname: Bed
+description: >
+  Interactions with beds may include adjusting various modes and setting scenes.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Scene
+  required:
+  - Modes

@@ -1,0 +1,10 @@
+name: action.devices.types.OUTLET
+shortname: Outlet
+description: >
+  Outlet, a basic device in Smart Home, has binary modes on/off only.
+availability: production
+version: '1.0'
+traits:
+  recommended: []
+  required:
+  - OnOff

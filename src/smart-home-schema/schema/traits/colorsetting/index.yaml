@@ -1,0 +1,14 @@
+name: action.devices.traits.ColorSetting
+shortname: ColorSetting
+description: This trait applies to devices, such as smart lights, that can change color or color temperature.
+availability: production
+version: '1.0'
+attributes:
+  $ref: colorsetting.attributes.schema.json
+states:
+  $ref: colorsetting.states.schema.json
+commands:
+  action.devices.commands.ColorAbsolute:
+    shortname: ColorAbsolute
+    params:
+      $ref: colorabsolute.params.schema.json

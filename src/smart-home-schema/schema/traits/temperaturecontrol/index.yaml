@@ -1,0 +1,16 @@
+name: action.devices.traits.TemperatureControl
+shortname: TemperatureControl
+description: Trait for devices (other than thermostats) that support controlling temperature, either within or around the device.
+availability: production
+version: '1.0'
+attributes:
+  $ref: temperaturecontrol.attributes.schema.json
+states:
+  $ref: temperaturecontrol.states.schema.json
+commands:
+  action.devices.commands.SetTemperature:
+    shortname: SetTempereature
+    params:
+      $ref: settemperature.params.schema.json
+    errors:
+      $ref: settemperature.errors.schema.json

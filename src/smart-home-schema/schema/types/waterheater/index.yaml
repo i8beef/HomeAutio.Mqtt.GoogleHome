@@ -1,0 +1,12 @@
+name: action.devices.types.WATERHEATER
+shortname: Water Heater
+description: >
+  Water heaters are devices used to heat water.
+  They may turn on and off and adjust water temperature.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - TemperatureControl
+  required:
+  - OnOff

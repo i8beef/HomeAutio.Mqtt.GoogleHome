@@ -1,0 +1,16 @@
+name: action.devices.types.AUDIO_VIDEO_RECEIVER
+shortname: AV Receiver
+description: >
+  Device that takes audio input (for example, HDMI, optical, and RCA) and outputs sound to
+  one or more speakers.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - AppSelector
+  - MediaState
+  - TransportControl
+  required:
+  - InputSelector
+  - OnOff
+  - Volume

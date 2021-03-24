@@ -1,0 +1,11 @@
+name: action.devices.types.CURTAIN
+shortname: Curtain
+description: >
+  Curtains can be opened and closed, potentially in more than one direction.
+  For example, curtains with two sections may open either to the left or to the right.
+availability: production
+version: '1.0'
+traits:
+  recommended: []
+  required:
+  - OpenClose

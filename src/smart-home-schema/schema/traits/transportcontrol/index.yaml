@@ -1,0 +1,53 @@
+name: action.devices.traits.TransportControl
+shortname: TransportControl
+description: This trait is used for devices which are able to control media playback
+  (for example, resuming music while it is paused).
+availability: production
+version: '1.0'
+attributes:
+  $ref: transportcontrol.attributes.schema.json
+commands:
+  action.devices.commands.mediaClosedCaptioningOff:
+    shortname: mediaClosedCaptioningOff
+    params:
+      $ref: mediaclosedcaptioningoff.params.schema.json
+  action.devices.commands.mediaClosedCaptioningOn:
+    shortname: mediaClosedCaptioningOn
+    params:
+      $ref: mediaclosedcaptioningon.params.schema.json
+  action.devices.commands.mediaNext:
+    shortname: mediaNext
+    params:
+      $ref: medianext.params.schema.json
+  action.devices.commands.mediaPause:
+    shortname: mediaPause
+    params:
+      $ref: mediapause.params.schema.json
+  action.devices.commands.mediaPrevious:
+    shortname: mediaPrevious
+    params:
+      $ref: mediaprevious.params.schema.json
+  action.devices.commands.mediaResume:
+    shortname: mediaResume
+    params:
+      $ref: mediaresume.params.schema.json
+  action.devices.commands.mediaRepeatMode:
+    shortname: mediaRepeatMode
+    params:
+      $ref: mediarepeatmode.params.schema.json
+  action.devices.commands.mediaSeekRelative:
+    shortname: mediaSeekRelative
+    params:
+      $ref: mediaseekrelative.params.schema.json
+  action.devices.commands.mediaSeekToPosition:
+    shortname: mediaSeekToPosition
+    params:
+      $ref: mediaseektoposition.params.schema.json
+  action.devices.commands.mediaShuffle:
+    shortname: mediaShuffle
+    params:
+      $ref: mediashuffle.params.schema.json
+  action.devices.commands.mediaStop:
+    shortname: mediaStop
+    params:
+      $ref: mediastop.params.schema.json

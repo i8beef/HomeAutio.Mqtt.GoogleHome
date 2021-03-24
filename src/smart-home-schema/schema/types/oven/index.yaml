@@ -1,0 +1,15 @@
+name: action.devices.types.OVEN
+shortname: Oven
+description: >
+  Interaction with ovens involves the ability to bake or broil at certain temperatures.
+  The physical temperature inside the oven differs as the oven is heating, so this may also
+  be monitored. The oven has a cook time that limits the duration of baking.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Cook
+  - TemperatureControl
+  - Timer
+  required:
+  - OnOff

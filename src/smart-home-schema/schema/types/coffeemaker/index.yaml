@@ -1,0 +1,14 @@
+name: action.devices.types.COFFEE_MAKER
+shortname: Coffee Maker
+description: >
+  Interactions with coffee makers may include turning them on and off,
+  adjusting cooking modes and food presets, adjusting the target temperature,
+  and adjusting various non-cooking mode settings.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Cook
+  - TemperatureControl
+  required:
+  - OnOff

@@ -1,0 +1,26 @@
+name: action.devices.traits.LightEffects
+shortname: LightEffects
+description: This trait belongs to devices that can support complex lighting commands to change state, such as looping through various colors.
+availability: production
+version: '1.0'
+attributes:
+  $ref: lighteffects.attributes.schema.json
+states:
+  $ref: lighteffects.states.schema.json
+commands:
+  action.devices.commands.ColorLoop:
+    shortname: ColorLoop
+    params:
+      $ref: colorloop.params.schema.json
+  action.devices.commands.StopEffect:
+    shortname: StopEffect
+    params:
+      $ref: stopeffect.params.schema.json
+  action.devices.commands.Sleep:
+    shortname: Sleep
+    params:
+      $ref: sleep.params.schema.json
+  action.devices.commands.Wake:
+    shortname: Wake
+    params:
+      $ref: wake.params.schema.json

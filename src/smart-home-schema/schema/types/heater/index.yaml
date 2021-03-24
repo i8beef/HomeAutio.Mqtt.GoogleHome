@@ -1,0 +1,12 @@
+name: action.devices.types.HEATER
+shortname: Heater
+description: >
+  Heaters are similar to thermostats but do not support cooling and may not support setting
+  temperature targets.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - FanSpeed
+  required:
+  - TemperatureSetting

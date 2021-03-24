@@ -1,0 +1,12 @@
+name: action.devices.traits.Dock
+shortname: Dock
+description: This trait is designed for self-mobile devices that can be commanded to return for charging.
+availability: production
+version: '1.0'
+states:
+  $ref: dock.states.schema.json
+commands:
+  action.devices.commands.Dock:
+    shortname: Dock
+    params:
+      $ref: dock.params.schema.json

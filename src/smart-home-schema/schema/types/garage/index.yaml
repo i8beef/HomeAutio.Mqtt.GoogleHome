@@ -1,0 +1,12 @@
+name: action.devices.types.GARAGE
+shortname: Garage
+description: >
+  Garage doors can open, close, and detect an open state.
+  They can also indicate if an object has obstructed the path of the door while closing or
+  if the door is locked and therefore cannot be controlled.
+availability: production
+version: '1.0'
+traits:
+  recommended: []
+  required:
+  - OpenClose

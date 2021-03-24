@@ -1,0 +1,13 @@
+name: action.devices.types.AIRPURIFIER
+shortname: Air purifier
+description: >
+  Air purifiers are devices that may be turned on and off, report air filter cleanliness and
+  air filter lifetime, and be adjusted to various mode settings.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - FanSpeed
+  - SensorState
+  required:
+  - OnOff

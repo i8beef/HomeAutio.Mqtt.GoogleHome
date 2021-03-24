@@ -1,0 +1,14 @@
+name: action.devices.types.HOOD
+shortname: Hood
+description: >
+  Oven and range hoods can be turned on and off, may have adjustable modes,
+  and may have adjustable fan speeds.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  # Adjustment of an overhead light
+  - Brightness
+  - FanSpeed
+  required:
+  - OnOff

@@ -1,0 +1,14 @@
+name: action.devices.types.SOUSVIDE
+shortname: Sous Vide
+description: >
+  Interactions with sous vides may include starting and stopping, setting a timer,
+  adjusting cooking modes or food presets, or adjusting other various settings.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Cook
+  - StartStop
+  - Timer
+  required:
+  - OnOff

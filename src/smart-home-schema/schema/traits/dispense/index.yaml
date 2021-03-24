@@ -1,0 +1,14 @@
+name: action.devices.traits.Dispense
+shortname: Dispense
+description: This trait belongs to devices that support dispensing a specified amount of one or more physical items.
+availability: production
+version: '1.0'
+attributes:
+  $ref: dispense.attributes.schema.json
+states:
+  $ref: dispense.states.schema.json
+commands:
+  action.devices.commands.Dispense:
+    shortname: Dispense
+    params:
+      $ref: dispense.params.schema.json

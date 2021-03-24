@@ -44,7 +44,7 @@
     "action.devices.commands.RotateAbsolute",
     "action.devices.commands.ActivateScene",
     "action.devices.commands.SoftwareUpdate",
-    "action.devices.commands.PauseUnPause",
+    "action.devices.commands.PauseUnpause",
     "action.devices.commands.StartStop",
     "action.devices.commands.SetTemperature",
     "action.devices.commands.TemperatureRelative",

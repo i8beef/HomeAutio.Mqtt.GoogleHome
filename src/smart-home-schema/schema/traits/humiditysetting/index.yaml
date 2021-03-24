@@ -1,0 +1,22 @@
+name: action.devices.traits.HumiditySetting
+shortname: HumiditySetting
+description: This trait belongs to devices that support humidity settings such as humidifiers and dehumidifiers.
+availability: production
+version: '1.0'
+attributes:
+  $ref: humiditysetting.attributes.schema.json
+states:
+  $ref: humiditysetting.states.schema.json
+commands:
+  action.devices.commands.SetHumidity:
+    shortname: SetHumidity
+    params:
+      $ref: sethumidity.params.schema.json
+    errors:
+      $ref: sethumidity.errors.schema.json
+  action.devices.commands.HumidityRelative:
+    shortname: HumidityRelative
+    params:
+      $ref: humidityrelative.params.schema.json
+    errors:
+      $ref: humidityrelative.errors.schema.json

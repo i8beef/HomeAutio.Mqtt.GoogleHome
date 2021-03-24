@@ -1,0 +1,32 @@
+name: action.devices.traits.NetworkControl
+shortname: NetworkControl
+description: This trait belongs to devices that support reporting network data and performing network specific operations.
+availability: production
+version: '1.0'
+attributes:
+  $ref: networkcontrol.attributes.schema.json
+states:
+  $ref: networkcontrol.states.schema.json
+commands:
+  action.devices.commands.EnableDisableGuestNetwork:
+    shortname: EnableDisableGuestNetwork
+    params:
+      $ref: enabledisableguestnetwork.params.schema.json
+  action.devices.commands.EnableDisableNetworkProfile:
+    shortname: EnableDisableNetworkProfile
+    params:
+      $ref: enabledisablenetworkprofile.params.schema.json
+    errors:
+      $ref: enabledisablenetworkprofile.errors.schema.json
+  action.devices.commands.GetGuestNetworkPassword:
+    shortname: GetGuestNetworkPassword
+    params:
+      $ref: getguestnetworkpassword.params.schema.json
+    results:
+      $ref: getguestnetworkpassword.results.schema.json
+  action.devices.commands.TestNetworkSpeed:
+    shortname: TestNetworkSpeed
+    params:
+      $ref: testnetworkspeed.params.schema.json
+    errors:
+      $ref: testnetworkspeed.errors.schema.json

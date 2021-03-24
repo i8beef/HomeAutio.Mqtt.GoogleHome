@@ -9,6 +9,7 @@ attributes:
   }
 states:
   {
+    "descriptiveCapacityRemaining": "MEDIUM",
     "capacityRemaining": [{
       "unit": "PERCENTAGE",
       "rawValue": 50

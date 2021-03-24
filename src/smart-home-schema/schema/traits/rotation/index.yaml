@@ -1,0 +1,16 @@
+name: action.devices.traits.Rotation
+shortname: Rotation
+description: This trait belongs to devices that support rotation.
+availability: production
+version: '1.0'
+attributes:
+  $ref: rotation.attributes.schema.json
+states:
+  $ref: rotation.states.schema.json
+commands:
+  action.devices.commands.RotateAbsolute:
+    shortname: RotateAbsolute
+    params:
+      $ref: rotateabsolute.params.schema.json
+    errors:
+      $ref: rotateabsolute.errors.schema.json

@@ -3,6 +3,7 @@
   "examples": [
     {
       "$comment": "Rechargeable device",
+      "descriptiveCapacityRemaining": "HIGH",
       "capacityRemaining": [
         {
           "rawValue": 36000,
@@ -24,6 +25,7 @@
     },
     {
       "$comment": "Rechargeable device that displays current charge level in miles",
+      "descriptiveCapacityRemaining": "CRITICALLY_LOW",
       "capacityRemaining": [
         {
           "rawValue": 12,
@@ -40,12 +42,52 @@
       "isPluggedIn": true
     },
     {
-      "$comment": "Non-rechargable device that only support reporting current charge level",
+      "$comment": "Non-rechargable device that only supports reporting the current charge level",
       "descriptiveCapacityRemaining": "LOW"
     }
   ],
   "type": "object",
   "properties": {
+    "descriptiveCapacityRemaining": {
+      "description": "A qualitative description of the energy capacity level. Note this is for when there's no numeric capacity data. If numeric capacity data is also available, it will be preferred over descriptive when possible.",
+      "type": "string",
+      "enum": [
+        "CRITICALLY_LOW",
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "FULL"
+      ]
+    },
+    "capacityRemaining": {
+      "description": "Array of unit/value pairs that hold information on the energy capacity the device currently holds. For example: <i>How many miles does my &lt;device&gt; currently have</i> or <i>What percentage charge does my &lt;device&gt; have</i>",
+      "type": "array",
+      "items": {
+        "description": "Remaining capacity in unit and value pair.",
+        "type": "object",
+        "properties": {
+          "rawValue": {
+            "description": "The capacity value.",
+            "type": "integer"
+          },
+          "unit": {
+            "description": "The capacity unit.",
+            "type": "string",
+            "enum": [
+              "SECONDS",
+              "MILES",
+              "KILOMETERS",
+              "PERCENTAGE",
+              "KILOWATT_HOURS"
+            ]
+          }
+        },
+        "required": [
+          "rawValue",
+          "unit"
+        ]
+      }
+    },
     "capacityUntilFull": {
       "description": "Array of unit/value pairs that hold information on the capacity until the device is fully charged. For example: <i>How much time until &lt;device&gt; is fully charged</i>.",
       "type": "array",
@@ -84,64 +126,7 @@
       "type": "boolean"
     }
   },
-  "anyOf": [
-    {
-      "description": "Supports unit remaining capacity.",
-      "type": "object",
-      "properties": {
-        "capacityRemaining": {
-          "description": "Array of unit/value pairs that hold information on the energy capacity the device currently holds. For example: <i>How many miles does my &lt;device&gt; currently have</i> or <i>What percentage charge does my &lt;device&gt; have</i>",
-          "type": "array",
-          "items": {
-            "description": "Remaining capacity in unit and value pair.",
-            "type": "object",
-            "properties": {
-              "rawValue": {
-                "description": "The capacity value.",
-                "type": "integer"
-              },
-              "unit": {
-                "description": "The capacity unit.",
-                "type": "string",
-                "enum": [
-                  "SECONDS",
-                  "MILES",
-                  "KILOMETERS",
-                  "PERCENTAGE",
-                  "KILOWATT_HOURS"
-                ]
-              }
-            },
-            "required": [
-              "rawValue",
-              "unit"
-            ]
-          }
-        }
-      },
-      "required": [
-        "capacityRemaining"
-      ]
-    },
-    {
-      "description": "Supports descriptive remaining capacity.",
-      "type": "object",
-      "properties": {
-        "descriptiveCapacityRemaining": {
-          "description": "A qualitative description of the energy capacity level. Note this is for when there's no numeric capacity data. If numeric capacity data is available, it will be preferred over descriptive.",
-          "type": "string",
-          "enum": [
-            "CRITICALLY_LOW",
-            "LOW",
-            "MEDIUM",
-            "HIGH",
-            "FULL"
-          ]
-        }
-      },
-      "required": [
-        "descriptiveCapacityRemaining"
-      ]
-    }
+  "required": [
+    "descriptiveCapacityRemaining"
   ]
 }

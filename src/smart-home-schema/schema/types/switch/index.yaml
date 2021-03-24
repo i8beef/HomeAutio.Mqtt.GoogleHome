@@ -1,0 +1,11 @@
+name: action.devices.types.SWITCH
+shortname: Switch
+description: >
+  Switch, a basic device in Smart Home, can be turned on and off.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Brightness
+  required:
+  - OnOff

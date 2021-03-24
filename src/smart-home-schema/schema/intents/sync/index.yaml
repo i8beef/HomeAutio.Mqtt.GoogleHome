@@ -1,0 +1,9 @@
+name: action.devices.SYNC
+shortname: SYNC
+description: This intent requests the list of devices associated with the given user and their capabilities.
+availability: production
+version: '1.0'
+request:
+  $ref: sync.request.schema.json
+response:
+  $ref: sync.response.schema.json

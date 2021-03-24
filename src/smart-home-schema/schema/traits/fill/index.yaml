@@ -1,0 +1,14 @@
+name: action.devices.traits.Fill
+shortname: Fill
+description: This trait applies to devices that support being filled such as a bathtub.
+availability: production
+version: '1.0'
+attributes:
+  $ref: fill.attributes.schema.json
+states:
+  $ref: fill.states.schema.json
+commands:
+  action.devices.commands.Fill:
+    shortname: Fill
+    params:
+      $ref: fill.params.schema.json

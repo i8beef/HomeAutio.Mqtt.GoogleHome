@@ -1,0 +1,10 @@
+name: action.devices.types.REFRIGERATOR
+shortname: Refrigerator
+description: >
+  Refrigerators are temperature-managing devices which may have various modes/settings.
+availability: production
+version: '1.0'
+traits:
+  recommended: []
+  required:
+  - TemperatureControl

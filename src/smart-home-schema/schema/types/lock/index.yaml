@@ -1,0 +1,10 @@
+name: action.devices.types.LOCK
+shortname: Lock
+description: >
+  Locks can lock, unlock, and report a locked state.
+availability: production
+version: '1.0'
+traits:
+  recommended: []
+  required:
+  - LockUnlock

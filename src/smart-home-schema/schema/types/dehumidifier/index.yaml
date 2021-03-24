@@ -1,0 +1,15 @@
+name: action.devices.types.DEHUMIDIFIER
+shortname: Dehumidifier
+description: >
+  Dehumidifiers are devices that remove moisture from the air.
+  They can be turned on and off, report and adjust target humidity, and may have various
+  adjustables modes or fan speed settings.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - FanSpeed
+  - HumiditySetting
+  - StartStop
+  required:
+  - OnOff

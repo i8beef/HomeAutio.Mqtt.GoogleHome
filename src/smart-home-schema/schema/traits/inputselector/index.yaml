@@ -1,0 +1,22 @@
+name: action.devices.traits.InputSelector
+shortname: InputSelector
+description: This trait is used for devices which are able to switch inputs.
+availability: production
+version: '1.0'
+attributes:
+  $ref: inputselector.attributes.schema.json
+states:
+  $ref: inputselector.states.schema.json
+commands:
+  action.devices.commands.SetInput:
+    shortname: SetInput
+    params:
+      $ref: setinput.params.schema.json
+  action.devices.commands.PreviousInput:
+    shortname: PreviousInput
+    params:
+      $ref: previousinput.params.schema.json
+  action.devices.commands.NextInput:
+    shortname: NextInput
+    params:
+      $ref: nextinput.params.schema.json

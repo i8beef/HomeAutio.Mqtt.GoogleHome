@@ -1,0 +1,16 @@
+name: action.devices.traits.ArmDisarm
+shortname: ArmDisarm
+description: This trait supports arming and disarming as used in, for example, security systems.
+availability: production
+version: '1.0'
+attributes:
+  $ref: armdisarm.attributes.schema.json
+states:
+  $ref: armdisarm.states.schema.json
+commands:
+  action.devices.commands.ArmDisarm:
+    shortname: ArmDisarm
+    params:
+      $ref: armdisarm.params.schema.json
+    errors:
+      $ref: armdisarm.errors.schema.json

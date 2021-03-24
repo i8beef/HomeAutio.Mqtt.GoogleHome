@@ -1,0 +1,21 @@
+name: action.devices.types.WASHER
+shortname: Washer
+description: >
+  Washers can have start and stop functionality independent from being on or off
+  (some washers have separate power buttons, and some do not).
+  Some can be paused and resumed while washing.
+
+  Washers also have various modes and each mode has its own related settings.
+  These are specific to the washer and are interpreted in a generalized form.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  # Common options such as load size
+  - Modes
+  - OnOff
+  - RunCycle
+  # Common controls such as door lock
+  - Toggles
+  required:
+  - StartStop

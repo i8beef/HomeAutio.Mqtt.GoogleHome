@@ -1,0 +1,16 @@
+name: action.devices.types.STREAMING_SOUNDBAR
+shortname: Streaming Soundbar
+description: >
+  This device is a combination of speaker and streaming stick or box.
+  This device provides a streaming experience in addition to soundbar capabilities.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - InputSelector
+  - OnOff
+  required:
+  - AppSelector
+  - MediaState
+  - TransportControl
+  - Volume

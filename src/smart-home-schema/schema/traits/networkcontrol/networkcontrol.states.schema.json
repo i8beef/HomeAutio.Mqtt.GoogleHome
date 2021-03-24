@@ -12,6 +12,41 @@
       },
       "numConnectedDevices": 4,
       "networkUsageMB": 100.8
+    },
+    {
+      "$comment": "Device with an active network and speed test results.",
+      "networkEnabled": true,
+      "networkSettings": {
+        "ssid": "home-network-123"
+      },
+      "guestNetworkSettings": {
+        "ssid": "home-network-123-guest"
+      },
+      "numConnectedDevices": 4,
+      "networkUsageMB": 100.8,
+      "lastNetworkDownloadSpeedTest": {
+        "downloadSpeedMbps": 159.8,
+        "unixTimestampSec": 1563215576,
+        "status": "SUCCESS"
+      },
+      "lastNetworkUploadSpeedTest": {
+        "uploadSpeedMbps": 64.1,
+        "unixTimestampSec": 1563215576,
+        "status": "SUCCESS"
+      }
+    },
+    {
+      "$comment": "Device with an active network and speed test in progress.",
+      "networkEnabled": true,
+      "networkSettings": {
+        "ssid": "home-network-123"
+      },
+      "guestNetworkSettings": {
+        "ssid": "home-network-123-guest"
+      },
+      "numConnectedDevices": 4,
+      "networkUsageMB": 100.8,
+      "networkSpeedTestInProgress": true
     }
   ],
   "type": "object",
@@ -65,6 +100,55 @@
     "networkUsageUnlimited": {
       "description": "Whether the network usage is unlimited. The device state networkUsageLimitMB will be ignored if this is set to true.",
       "type": "boolean"
+    },
+    "lastNetworkDownloadSpeedTest": {
+      "description": "Contains the results of the most recent network download speed test.",
+      "type": "object",
+      "properties": {
+        "downloadSpeedMbps": {
+          "description": "The download speed in Mbps (megabits per second) of the last network speed test.",
+          "type": "number"
+        },
+        "unixTimestampSec": {
+          "description": "The Unix timestamp (number of seconds since the Unix Epoch) of when the last network download speed test was run.",
+          "type": "integer"
+        },
+        "status": {
+          "description": "Indicates whether the last network download speed test succeeded or failed.",
+          "type": "string",
+          "enum": [
+            "SUCCESS",
+            "FAILURE"
+          ]
+        }
+      }
+    },
+    "lastNetworkUploadSpeedTest": {
+      "description": "Contains the results of the most recent network upload speed test.",
+      "type": "object",
+      "properties": {
+        "uploadSpeedMbps": {
+          "description": "The upload speed in Mbps (megabits per second) of the last network speed test.",
+          "type": "number"
+        },
+        "unixTimestampSec": {
+          "description": "The Unix timestamp (number of seconds since the Unix Epoch) of when the last network upload speed test was run.",
+          "type": "integer"
+        },
+        "status": {
+          "description": "Indicates whether the last network upload speed test succeeded or failed.",
+          "type": "string",
+          "enum": [
+            "SUCCESS",
+            "FAILURE"
+          ]
+        }
+      }
+    },
+    "networkSpeedTestInProgress": {
+      "description": "Whether a speed test is currently being run.",
+      "type": "boolean",
+      "default": false
     }
   }
 }

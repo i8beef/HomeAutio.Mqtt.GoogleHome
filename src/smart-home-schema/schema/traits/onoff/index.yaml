@@ -1,0 +1,14 @@
+name: action.devices.traits.OnOff
+shortname: OnOff
+description: The basic on and off functionality for any device that has binary on and off, including plugs and switches as well as many future devices.
+availability: production
+version: '1.0'
+attributes:
+  $ref: onoff.attributes.schema.json
+states:
+  $ref: onoff.states.schema.json
+commands:
+  action.devices.commands.OnOff:
+    shortname: OnOff
+    params:
+      $ref: onoff.params.schema.json

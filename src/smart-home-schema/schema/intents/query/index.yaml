@@ -1,0 +1,9 @@
+name: action.devices.QUERY
+shortname: QUERY
+description: This intent queries your fulfillment for the current states of devices, including whether the device is online and reachable.
+availability: production
+version: '1.0'
+request:
+  $ref: query.request.schema.json
+response:
+  $ref: query.response.schema.json

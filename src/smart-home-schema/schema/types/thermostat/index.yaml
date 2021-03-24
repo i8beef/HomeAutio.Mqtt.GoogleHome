@@ -1,0 +1,12 @@
+name: action.devices.types.THERMOSTAT
+shortname: Thermostat
+description: >
+  Thermostats are temperature-managing devices, with set points and modes.
+  This separates them from heaters and AC units which may only have modes and settings
+  (for example, high/low) vs a temperature target.
+availability: production
+version: '1.0'
+traits:
+  recommended: []
+  required:
+  - TemperatureSetting

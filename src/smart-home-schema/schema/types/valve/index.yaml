@@ -1,0 +1,10 @@
+name: action.devices.types.VALVE
+shortname: Valve
+description: >
+  Valves can be opened and closed.
+availability: production
+version: '1.0'
+traits:
+  recommended: []
+  required:
+  - OpenClose

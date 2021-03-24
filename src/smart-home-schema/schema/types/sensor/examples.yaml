@@ -28,6 +28,7 @@ states:
         "currentSensorState": "healthy"
       }
     ],
+    "descriptiveCapacityRemaining": "HIGH",
     "capacityRemaining": [
       {
         "unit": "PERCENTAGE",

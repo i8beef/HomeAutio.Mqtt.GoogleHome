@@ -1,0 +1,11 @@
+name: action.devices.types.DOOR
+shortname: Door
+description: >
+  Door can be opened and closed, potentially in more than one direction.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - LockUnlock
+  required:
+  - OpenClose

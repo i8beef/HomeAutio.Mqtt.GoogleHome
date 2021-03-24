@@ -1,0 +1,15 @@
+name: action.devices.types.STREAMING_STICK
+shortname: Streaming Stick
+description: >
+  This device has a small stick-like form factor that is usually powered by a USB or
+  HDMI cable connected to a display such as a TV.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - OnOff
+  required:
+  - AppSelector
+  - MediaState
+  - TransportControl
+  - Volume

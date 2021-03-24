@@ -1,0 +1,12 @@
+name: action.devices.traits.SoftwareUpdate
+shortname: SoftwareUpdate
+description: This trait belongs to devices that support software updates such as a router. Optionally, these devices may report the time of the last successful update.
+availability: production
+version: '1.0'
+states:
+  $ref: softwareupdate.states.schema.json
+commands:
+  action.devices.commands.SoftwareUpdate:
+    shortname: SoftwareUpdate
+    params:
+      $ref: softwareupdate.params.schema.json

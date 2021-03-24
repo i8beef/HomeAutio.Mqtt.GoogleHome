@@ -1,0 +1,9 @@
+name: action.devices.traits.MediaState
+shortname: MediaState
+description: This trait is used for devices which are able to report media states.
+availability: production
+version: '1.0'
+attributes:
+  $ref: mediastate.attributes.schema.json
+states:
+  $ref: mediastate.states.schema.json

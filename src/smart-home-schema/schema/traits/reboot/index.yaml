@@ -1,0 +1,10 @@
+name: action.devices.traits.Reboot
+shortname: Reboot
+description: This trait belongs to devices that support rebooting, such as routers. The device needs to support rebooting as a single action.
+availability: production
+version: '1.0'
+commands:
+  action.devices.commands.Reboot:
+    shortname: Reboot
+    params:
+      $ref: reboot.params.schema.json

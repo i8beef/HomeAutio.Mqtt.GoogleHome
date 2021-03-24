@@ -1,0 +1,14 @@
+name: action.devices.traits.Modes
+shortname: Modes
+description: This trait covers all available modes and mode-specific settings for a device.
+availability: production
+version: '1.0'
+attributes:
+  $ref: modes.attributes.schema.json
+states:
+  $ref: modes.states.schema.json
+commands:
+  action.devices.commands.SetModes:
+    shortname: SetModes
+    params:
+      $ref: setmodes.params.schema.json

@@ -1,0 +1,15 @@
+name: action.devices.types.SOUNDBAR
+shortname: Soundbar
+description: >
+  An all-in-one audio device that is often used in conjunction with a TV and has a bar form factor.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - AppSelector
+  - InputSelector
+  - MediaState
+  - OnOff
+  - TransportControl
+  required:
+  - Volume

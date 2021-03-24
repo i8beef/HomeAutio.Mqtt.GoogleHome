@@ -1,0 +1,9 @@
+name: action.devices.traits.SensorState
+shortname: SensorState
+description:  This trait covers both quantitative measurement and qualitative state.
+availability: production
+version: '2.0'
+attributes:
+  $ref: sensorstate.attributes.schema.json
+states:
+  $ref: sensorstate.states.schema.json

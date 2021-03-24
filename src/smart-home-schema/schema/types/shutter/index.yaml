@@ -1,0 +1,12 @@
+name: action.devices.types.SHUTTER
+shortname: Shutter
+description: >
+  Shutters can be opened and closed, potentially in more than one direction.
+  Some shutters may have slats that can be rotated.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - Rotation
+  required:
+  - OpenClose

@@ -1,0 +1,12 @@
+name: action.devices.traits.Scene
+shortname: Scene
+description:  This trait is used to implement virtual devices together with the SCENE device type.
+availability: production
+version: '1.0'
+attributes:
+  $ref: scene.attributes.schema.json
+commands:
+  action.devices.commands.ActivateScene:
+    shortname: ActivateScene
+    params:
+      $ref: activatescene.params.schema.json
