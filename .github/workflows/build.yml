@@ -1,0 +1,47 @@
+name: build
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+
+env:
+  DOTNETVERSION: "5.0.x"
+  APP: "HomeAutio.Mqtt.GoogleHome"
+  SOLUTION: "./src/HomeAutio.Mqtt.GoogleHome.sln"
+  BUILDOUTPUTPATH: "./src/HomeAutio.Mqtt.GoogleHome/bin/Release/net5.0"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET Core SDK ${{ env.DOTNETVERSION }}
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: ${{ env.DOTNETVERSION }}
+
+      - name: Install dependencies
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      - name: Build
+        run: dotnet build ${{ env.SOLUTION }} --configuration Release --no-restore
+
+      - name: Upload app build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.APP }}
+          path: ${{ env.BUILDOUTPUTPATH }}
+
+      - name: Test
+        run: dotnet test ${{ env.SOLUTION }} --no-restore --verbosity normal --logger trx --results-directory "TestResults"
+
+      - name: Upload TestResults build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: TestResults
+          path: TestResults

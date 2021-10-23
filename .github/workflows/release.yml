@@ -1,0 +1,191 @@
+name: release
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+.[0-9]+"
+
+env:
+  DOTNETVERSION: "5.0.x"
+  APP: "HomeAutio.Mqtt.GoogleHome"
+  SOLUTION: "./src/HomeAutio.Mqtt.GoogleHome.sln"
+  BUILDOUTPUTPATH: "./src/HomeAutio.Mqtt.GoogleHome/bin/Release/net5.0"
+  REGISTRY: ghcr.io
+  DOCKER_NAME: "i8beef/homeautio.mqtt.googlehome"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Setup .NET Core SDK ${{ env.DOTNETVERSION }}
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: ${{ env.DOTNETVERSION }}
+
+      - name: Get version
+        id: version
+        uses: battila7/get-version-action@v2
+
+      - name: Get previous release tag
+        id: previousTag
+        uses: sammcoe/get-previous-release-action@v1.0.3
+
+      - name: Install dependencies
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      - name: Build
+        run: dotnet build ${{ env.SOLUTION }} --configuration Release --no-restore /p:Version=${{ steps.version.outputs.version-without-v }}
+
+      - name: Test
+        run: dotnet test ${{ env.SOLUTION }} --no-restore --verbosity normal --logger trx --results-directory "TestResults"
+
+      - name: Upload app build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.APP }}-${{ steps.version.outputs.version-without-v }}
+          path: ${{ env.BUILDOUTPUTPATH }}
+
+      - name: Upload TestResults build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: TestResults
+          path: TestResults
+
+      - name: Build changelog
+        id: gitLog
+        uses: jarrodparkes/git-log-action@1.0.0
+        with:
+          start: ${{ steps.previousTag.outputs.tag }}
+          end: ${{ github.ref }}
+
+      - name: GitHub release
+        uses: actions/create-release@v1
+        id: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_name: ${{ steps.version.outputs.version-without-v }}
+          tag_name: ${{ github.ref }}
+          body: ${{ env.LOG }}
+          draft: false
+          prerelease: false
+
+      - name: ZIP release artifact
+        run: zip -r ${{ env.APP }}-${{ steps.version.outputs.version-without-v }}.zip ${{ env.BUILDOUTPUTPATH }}
+
+      - name: GitHub release assets
+        uses: actions/upload-release-asset@v1
+        id: release_assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release.outputs.upload_url }}
+          asset_path: ${{ env.APP }}-${{ steps.version.outputs.version-without-v }}.zip
+          asset_name: ${{ env.APP }}-${{ steps.version.outputs.version-without-v }}.zip
+          asset_content_type: application/zip
+
+  docker-build:
+    needs: release
+    strategy:
+      matrix:
+        include:
+          -
+            docker-file: "./src/Dockerfile"
+            docker-tag: "amd64"
+          -
+            docker-file: "./src/Dockerfile.arm64"
+            docker-tag: "arm64"
+          -
+            docker-file: "./src/Dockerfile.arm32"
+            docker-tag: "arm32"
+    runs-on: ubuntu-latest    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Get version
+        id: version
+        uses: battila7/get-version-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Setup Docker metadata
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}
+          tags: |
+            type=raw,value=${{ steps.version.outputs.version-without-v }}-${{ matrix.docker-tag }}
+            type=raw,value=latest-${{ matrix.docker-tag }}
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./src
+          file: ${{ matrix.docker-file }}
+          build-args: VERSION=${{ steps.version.outputs.version-without-v }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  docker-publish:
+    needs: docker-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get version
+        id: version
+        uses: battila7/get-version-action@v2
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Docker images
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:${{ steps.version.outputs.version-without-v }}-amd64
+          docker pull ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:${{ steps.version.outputs.version-without-v }}-arm32
+          docker pull ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:${{ steps.version.outputs.version-without-v }}-arm64
+          docker pull ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:latest-amd64
+          docker pull ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:latest-arm32
+          docker pull ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:latest-arm64
+
+      - name: Build Docker latest image manifest
+        run: |
+          docker manifest create \
+            ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:${{ steps.version.outputs.version-without-v }} \
+            --amend ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:${{ steps.version.outputs.version-without-v }}-amd64 \
+            --amend ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:${{ steps.version.outputs.version-without-v }}-arm32 \
+            --amend ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:${{ steps.version.outputs.version-without-v }}-arm64
+
+      - name: Push Docker version image manifest
+        run: docker manifest push --purge ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:${{ steps.version.outputs.version-without-v }}
+
+      - name: Build Docker latest image manifest
+        run: |
+          docker manifest create \
+            ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:latest \
+            --amend ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:latest-amd64 \
+            --amend ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:latest-arm32 \
+            --amend ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:latest-arm64
+
+      - name: Push Docker latest image manifest
+        run: docker manifest push --purge ${{ env.REGISTRY }}/${{ env.DOCKER_NAME }}:latest
