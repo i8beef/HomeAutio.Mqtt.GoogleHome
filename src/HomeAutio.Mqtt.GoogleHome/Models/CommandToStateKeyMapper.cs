@@ -30,6 +30,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
                 { "fanSpeed", "currentFanSpeedSetting" },
                 { "fanSpeedPercent", "currentFanSpeedPercent" },
                 { "lock", "isLocked" },
+                { "mute", "isMuted" },
                 { "newApplication", "currentApplication" },
                 { "newApplicationName", "currentApplication" },
                 { "pause", "isPaused" },
