@@ -1,5 +1,5 @@
 ARG VERSION=1.0.0.0
-FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
 ARG VERSION
 WORKDIR /app
 
@@ -22,7 +22,7 @@ WORKDIR /app/HomeAutio.Mqtt.GoogleHome
 RUN dotnet publish -o out
 
 # build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine-arm64v8 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine-arm64v8 AS runtime
 WORKDIR /app
 COPY --from=publish /app/HomeAutio.Mqtt.GoogleHome/out ./
 

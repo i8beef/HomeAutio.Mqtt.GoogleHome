@@ -8,10 +8,10 @@ on:
       - "**"
 
 env:
-  DOTNETVERSION: "5.0.x"
+  DOTNETVERSION: "7.0.x"
   APP: "HomeAutio.Mqtt.GoogleHome"
   SOLUTION: "./src/HomeAutio.Mqtt.GoogleHome.sln"
-  BUILDOUTPUTPATH: "./src/HomeAutio.Mqtt.GoogleHome/bin/Release/net5.0"
+  BUILDOUTPUTPATH: "./src/HomeAutio.Mqtt.GoogleHome/bin/Release/net7.0"
 
 jobs:
   build:
@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup .NET Core SDK ${{ env.DOTNETVERSION }}
-        uses: actions/setup-dotnet@v1.7.2
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNETVERSION }}
 
