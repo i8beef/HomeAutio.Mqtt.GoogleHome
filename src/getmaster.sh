@@ -7,11 +7,10 @@ curl -L -o ui.zip "$SOURCE"
 
 unzip -d ui ui.zip
 
-[[ -d HomeAutio.Mqtt.GoogleHome/Quickstart ]] || mkdir HomeAutio.Mqtt.GoogleHome/Quickstart
 [[ -d HomeAutio.Mqtt.GoogleHome/Views ]] || mkdir HomeAutio.Mqtt.GoogleHome/Views
 [[ -d HomeAutio.Mqtt.GoogleHome/wwwroot ]] || mkdir HomeAutio.Mqtt.GoogleHome/wwwroot
 
-cp -r ./ui/IdentityServer4.Quickstart.UI-main/Quickstart/* HomeAutio.Mqtt.GoogleHome/Quickstart
+cp -r ./ui/IdentityServer4.Quickstart.UI-main/Quickstart/* IdentityServer4.Quickstart.UI
 cp -r ./ui/IdentityServer4.Quickstart.UI-main/Views/* HomeAutio.Mqtt.GoogleHome/Views
 cp -r ./ui/IdentityServer4.Quickstart.UI-main/wwwroot/* HomeAutio.Mqtt.GoogleHome/wwwroot
 

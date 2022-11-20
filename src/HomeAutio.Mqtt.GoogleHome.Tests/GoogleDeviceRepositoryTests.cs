@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using Easy.MessageHub;
-using HomeAutio.Mqtt.GoogleHome.App_Start;
+using HomeAutio.Mqtt.GoogleHome.AppStart;
 using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using HomeAutio.Mqtt.GoogleHome.Tests.TestData;

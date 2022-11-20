@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
-namespace HomeAutio.Mqtt.GoogleHome.App_Start
+namespace HomeAutio.Mqtt.GoogleHome.AppStart
 {
     /// <summary>
     /// JSON Serializer configuration.

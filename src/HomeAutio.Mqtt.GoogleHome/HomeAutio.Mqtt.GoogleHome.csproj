@@ -66,4 +66,8 @@
     <EmbeddedResource Include="..\smart-home-schema\**\*.yaml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IdentityServerHost.Quickstart.UI\IdentityServerHost.Quickstart.UI.csproj" />
+  </ItemGroup>
+
 </Project>

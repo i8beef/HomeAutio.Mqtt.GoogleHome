@@ -1,4 +1,3 @@
-using HomeAutio.Mqtt.GoogleHome.Identity;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Events;
@@ -39,7 +38,7 @@ namespace IdentityServerHost.Quickstart.UI
         {
             // if the TestUserStore is not in DI, then we'll just use the global users collection
             // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-            _users = users ?? new TestUserStore(Users.Get(configuration));
+            _users = users ?? new TestUserStore(new List<TestUser>());
 
             _interaction = interaction;
             _clientStore = clientStore;
