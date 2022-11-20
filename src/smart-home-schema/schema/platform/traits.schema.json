@@ -22,6 +22,7 @@
     "action.devices.traits.MediaState",
     "action.devices.traits.Modes",
     "action.devices.traits.NetworkControl",
+    "action.devices.traits.ObjectDetection",
     "action.devices.traits.OnOff",
     "action.devices.traits.OpenClose",
     "action.devices.traits.Reboot",

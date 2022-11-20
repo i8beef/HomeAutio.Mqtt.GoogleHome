@@ -39,5 +39,6 @@ commands:
       params:
         {
           "testDownloadSpeed": true,
-          "testUploadSpeed": true
+          "testUploadSpeed": true,
+          "followUpToken": "123"
         }

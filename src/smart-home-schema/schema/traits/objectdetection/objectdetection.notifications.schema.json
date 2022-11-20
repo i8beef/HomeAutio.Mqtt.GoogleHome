@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Detected two unknown objects on January 1, 2000.",
+      "ObjectDetection": {
+        "objects": {
+          "unclassified": 2
+        },
+        "priority": 0,
+        "detectionTimestamp": 946684800000
+      }
+    },
+    {
+      "$comment": "Detected someone you know on January 1, 2000.",
+      "ObjectDetection": {
+        "objects": {
+          "familiar": 1
+        },
+        "priority": 0,
+        "detectionTimestamp": 946684800000
+      }
+    },
+    {
+      "$comment": "Detected Alice on January 1, 2000.",
+      "ObjectDetection": {
+        "objects": {
+          "named": [
+            "Alice"
+          ]
+        },
+        "priority": 0,
+        "detectionTimestamp": 946684800000
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "ObjectDetection": {
+      "description": "Notification payload.",
+      "type": "object",
+      "properties": {
+        "priority": {
+          "description": "Represents the notification level. The currently supported value is 0, which indicates that the notification should be spoken aloud.",
+          "type": "integer"
+        },
+        "detectionTimestamp": {
+          "description": "The epoch timestamp in milliseconds at which the object was detected.",
+          "type": "integer"
+        },
+        "objects": {
+          "description": "Collection of the objects detected by category.",
+          "type": "object",
+          "minProperties": 1,
+          "properties": {
+            "named": {
+              "description": "List of objects recognized by the user that have been tagged with a label.",
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "description": "Object label.",
+                "type": "string"
+              }
+            },
+            "familiar": {
+              "description": "Count of objects recognized by the user that have no label.",
+              "type": "integer"
+            },
+            "unfamiliar": {
+              "description": "Count of objects detected by the device that the user may not recognize.",
+              "type": "integer"
+            },
+            "unclassified": {
+              "description": "Count of objects detected that the device was unable to classify.",
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "priority",
+        "detectionTimestamp",
+        "objects"
+      ]
+    }
+  },
+  "required": [
+    "ObjectDetection"
+  ]
+}

@@ -1,7 +1,8 @@
 name: action.devices.types.WINDOW
 shortname: Window
 description: >
-  Windows can be opened and closed, optionally with sections that open in different directions,
+  Windows can be opened and closed, optionally with sections that open in different
+  directions,
   and may also be locked and unlocked.
 availability: production
 version: '1.0'

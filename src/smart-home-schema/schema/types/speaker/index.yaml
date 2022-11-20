@@ -9,8 +9,8 @@ traits:
   recommended:
   - AppSelector
   - InputSelector
+  required:
   - MediaState
   - OnOff
   - TransportControl
-  required:
   - Volume

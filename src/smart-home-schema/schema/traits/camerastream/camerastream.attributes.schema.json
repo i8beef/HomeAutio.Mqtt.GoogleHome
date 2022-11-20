@@ -4,6 +4,7 @@
     {
       "$comment": "Camera with multiple protocols support, not requiring an auth token.",
       "cameraStreamSupportedProtocols": [
+        "webrtc",
         "hls",
         "dash",
         "smooth_stream",
@@ -27,23 +28,43 @@
       "items": {
         "description": "Media type.",
         "type": "string",
-        "enum": [
-          "hls",
-          "dash",
-          "smooth_stream",
-          "progressive_mp4"
+        "oneOf": [
+          {
+            "enum": [
+              "hls"
+            ],
+            "description": "HTTP Live Streaming"
+          },
+          {
+            "enum": [
+              "dash"
+            ],
+            "description": " Dynamic Adaptive Streaming over HTTP"
+          },
+          {
+            "enum": [
+              "smooth_stream"
+            ],
+            "description": "Smooth Streaming"
+          },
+          {
+            "enum": [
+              "progressive_mp4"
+            ],
+            "description": "Progressive MP4 (mostly used for clips)"
+          },
+          {
+            "enum": [
+              "webrtc"
+            ],
+            "description": "WebRTC"
+          }
         ]
       }
     },
     "cameraStreamNeedAuthToken": {
-      "description": "Whether an auth token will be provided via <code>cameraStreamAuthToken</code> for your custom Cast receiver to stream the camera feed.",
+      "description": "Whether an auth token will be provided via <code>cameraStreamAuthToken</code> for the target surface to stream the camera feed.",
       "type": "boolean"
-    },
-    "cameraStreamNeedDrmEncryption": {
-      "description": "Whether the stream content requires DRM encryption.",
-      "type": "boolean",
-      "default": false,
-      "deprecated": true
     }
   },
   "required": [

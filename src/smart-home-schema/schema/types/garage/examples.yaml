@@ -2,11 +2,24 @@ name: Simple garage
 type: action.devices.types.GARAGE
 traits:
   - action.devices.traits.OpenClose
+  - action.devices.traits.LockUnlock
 states:
   {
-    "openPercent": 50
+    "openPercent": 50,
+    "isLocked": false,
+    "isJammed": false
   }
 commands:
+  action.devices.commands.LockUnlock:
+    params:
+      {
+        "lock": true
+      }
+    results:
+      {
+        "isLocked": true,
+        "isJammed": false
+      }
   action.devices.commands.OpenClose:
     params:
       {

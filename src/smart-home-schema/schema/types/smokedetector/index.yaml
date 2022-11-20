@@ -1,7 +1,8 @@
 name: action.devices.types.SMOKE_DETECTOR
 shortname: Smoke Detector
 description: >
-  Smoke detectors can report whether smoke is currently detected, whether the smoke level is high,
+  Smoke detectors can report whether smoke is currently detected, whether the smoke
+  level is high,
   and the current smoke level in parts per million.
 availability: production
 version: '1.0'

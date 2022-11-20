@@ -146,6 +146,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         DOOR,
 
         /// <summary>
+        /// action.devices.types.DOORBELL.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.DOORBELL")]
+        DOORBELL,
+
+        /// <summary>
         /// action.devices.types.DRAWER.
         /// </summary>
         [EnumMember(Value = "action.devices.types.DRAWER")]

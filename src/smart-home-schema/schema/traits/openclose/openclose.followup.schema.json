@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Open the garage door. (follow-up response for success case)",
+      "OpenClose": {
+        "priority": 0,
+        "followUpResponse": {
+          "openPercent": 100,
+          "status": "SUCCESS",
+          "followUpToken": "1234"
+        }
+      }
+    },
+    {
+      "$comment": "Open the garage door. (follow-up response for failure case)",
+      "OpenClose": {
+        "priority": 0,
+        "followUpResponse": {
+          "errorCode": "lockedState",
+          "status": "FAILURE",
+          "followUpToken": "1234"
+        }
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "OpenClose": {
+      "description": "Follow-up response payload.",
+      "type": "object",
+      "properties": {
+        "priority": {
+          "description": "Represents the notification level. The currently supported value is 0, which indicates that the notification should be spoken aloud.",
+          "type": "integer"
+        },
+        "followUpResponse": {
+          "description": "Asynchronous notification response indicating the status of a device command request.",
+          "oneOf": [
+            {
+              "description": "Success",
+              "type": "object",
+              "properties": {
+                "followUpToken": {
+                  "description": "Token provided in the original EXECUTE request.",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "Result of the request.",
+                  "type": "string",
+                  "enum": [
+                    "SUCCESS"
+                  ]
+                },
+                "openPercent": {
+                  "description": "Indicates the percentage that a device is opened where 0 is closed and 100 is fully open.",
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "followUpToken",
+                "openPercent"
+              ]
+            },
+            {
+              "description": "Failure",
+              "type": "object",
+              "properties": {
+                "followUpToken": {
+                  "description": "Token provided in the original EXECUTE request.",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "Result of the request.",
+                  "type": "string",
+                  "enum": [
+                    "FAILURE"
+                  ]
+                },
+                "errorCode": {
+                  "description": "The value can be any <a href=\"https://developers.google.com/assistant/smarthome/reference/errors-exceptions#error_list\">error code</a> for this trait, for example, <code>lockedState</code>.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "followUpToken",
+                "errorCode"
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "priority",
+        "followUpResponse"
+      ]
+    }
+  },
+  "required": [
+    "OpenClose"
+  ]
+}

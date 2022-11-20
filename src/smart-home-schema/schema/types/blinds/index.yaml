@@ -1,7 +1,8 @@
 name: action.devices.types.BLINDS
 shortname: Blinds
 description: >
-  Blinds can be opened and closed, and various types of blinds are supported such as venetian
+  Blinds can be opened and closed, and various types of blinds are supported such
+  as venetian
   (opens in one direction), panel or vertical (may open either left or right),
   and top-down bottom-up (may open either up or down).
   Some blinds may have slats that can be rotated.

@@ -2,7 +2,8 @@ name: action.devices.types.PERGOLA
 shortname: Pergola
 description: >
   Pergolas (an outdoor garden structure) can be opened and closed,
-  potentially in more than one direction. For example, some pergolas with a canvas may open
+  potentially in more than one direction. For example, some pergolas with a canvas
+  may open
   either to the LEFT or RIGHT.
 availability: production
 version: '1.0'

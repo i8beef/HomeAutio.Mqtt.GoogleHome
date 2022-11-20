@@ -1,0 +1,185 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "The <notifying device> detects smoke.",
+      "SensorState": {
+        "priority": 0,
+        "name": "SmokeLevel",
+        "currentSensorState": "high"
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "SensorState": {
+      "description": "Notification payload.",
+      "type": "object",
+      "properties": {
+        "priority": {
+          "description": "Represents the notification level. The currently supported value is 0, which indicates that the notification should be spoken aloud.",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Sensor state name. See list of supported sensor types for notifications.",
+          "type": "string"
+        },
+        "currentSensorState": {
+          "description": "Current descriptive state value. See list of supported sensor types for notifications.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "priority",
+        "name",
+        "currentSensorState"
+      ],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "description": "Current air quality.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "enum": [
+                "AirQuality"
+              ]
+            },
+            "currentSensorState": {
+              "enum": [
+                "healthy",
+                "moderate",
+                "unhealthy",
+                "unhealthy for sensitive groups",
+                "very unhealthy",
+                "hazardous",
+                "good",
+                "fair",
+                "poor",
+                "very poor",
+                "severe",
+                "unknown"
+              ]
+            }
+          }
+        },
+        {
+          "description": "Current carbon monoxide level.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "enum": [
+                "CarbonMonoxideLevel"
+              ]
+            },
+            "currentSensorState": {
+              "enum": [
+                "carbon monoxide detected",
+                "high",
+                "no carbon monoxide detected",
+                "unknown"
+              ]
+            }
+          }
+        },
+        {
+          "description": "Current smoke level.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "enum": [
+                "SmokeLevel"
+              ]
+            },
+            "currentSensorState": {
+              "enum": [
+                "smoke detected",
+                "high",
+                "no smoke detected",
+                "unknown"
+              ]
+            }
+          }
+        },
+        {
+          "description": "Current filter cleanliness.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "enum": [
+                "FilterCleanliness"
+              ]
+            },
+            "currentSensorState": {
+              "enum": [
+                "clean",
+                "dirty",
+                "needs replacement",
+                "unknown"
+              ]
+            }
+          }
+        },
+        {
+          "description": "Current water leak.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "enum": [
+                "WaterLeak"
+              ]
+            },
+            "currentSensorState": {
+              "enum": [
+                "leak",
+                "no leak",
+                "unknown"
+              ]
+            }
+          }
+        },
+        {
+          "description": "Rain detection state.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "enum": [
+                "RainDetection"
+              ]
+            },
+            "currentSensorState": {
+              "enum": [
+                "rain detected",
+                "no rain detected",
+                "unknown"
+              ]
+            }
+          }
+        },
+        {
+          "description": "Current filter lifetime.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "enum": [
+                "FilterLifeTime"
+              ]
+            },
+            "currentSensorState": {
+              "enum": [
+                "new",
+                "good",
+                "replace soon",
+                "replace now",
+                "unknown"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "SensorState"
+  ]
+}

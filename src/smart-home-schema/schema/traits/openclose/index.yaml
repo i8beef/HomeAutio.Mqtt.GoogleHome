@@ -2,7 +2,7 @@ name: action.devices.traits.OpenClose
 shortname: OpenClose
 description: This trait belongs to devices that support opening and closing, and in some cases opening and closing partially or potentially in more than one direction.
 availability: production
-version: '1.0'
+version: '1.1'
 attributes:
   $ref: openclose.attributes.schema.json
 states:
@@ -14,6 +14,8 @@ commands:
       $ref: openclose.params.schema.json
     errors:
       $ref: openclose.errors.schema.json
+    followup:
+      $ref: openclose.followup.schema.json
   action.devices.commands.OpenCloseRelative:
     shortname: OpenCloseRelative
     params:

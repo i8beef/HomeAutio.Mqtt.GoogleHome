@@ -3,10 +3,20 @@ type: action.devices.types.AUDIO_VIDEO_RECEIVER
 traits:
   - action.devices.traits.AppSelector
   - action.devices.traits.InputSelector
+  - action.devices.traits.MediaState
   - action.devices.traits.OnOff
+  - action.devices.traits.TransportControl
   - action.devices.traits.Volume
 attributes:
   {
+   "transportControlSupportedCommands": [
+      "NEXT",
+      "PREVIOUS",
+      "PAUSE",
+      "STOP",
+      "RESUME",
+      "CAPTION_CONTROL"
+    ],
     "volumeMaxLevel": 11,
     "volumeCanMuteAndUnmute": true,
     "availableApplications": [
@@ -56,7 +66,9 @@ states:
     "currentApplication": "youtube",
     "currentInput": "hdmi_1",
     "currentVolume": 10,
-    "isMuted": false
+    "isMuted": false,
+    "activityState": "ACTIVE",
+    "playbackState": "PAUSED"
   }
 commands:
   action.devices.commands.appInstall:
@@ -133,4 +145,43 @@ commands:
       {
         "currentVolume": 10,
         "isMuted": true
+      }
+  action.devices.commands.mediaClosedCaptioningOff:
+    results:
+      {
+        "playbackState": "PLAYING"
+      }
+  action.devices.commands.mediaClosedCaptioningOn:
+    params:
+      {
+        "closedCaptioningLanguage": "en"
+      }
+    results:
+      {
+        "playbackState": "PLAYING"
+      }
+  action.devices.commands.mediaNext:
+    results:
+      {
+        "playbackState": "FAST_FORWARDING"
+      }
+  action.devices.commands.mediaPause:
+    results:
+      {
+        "playbackState": "PAUSED"
+      }
+  action.devices.commands.mediaPrevious:
+    results:
+      {
+        "playbackState": "REWINDING"
+      }
+  action.devices.commands.mediaResume:
+    results:
+      {
+        "playbackState": "PLAYING"
+      }
+  action.devices.commands.mediaStop:
+    results:
+      {
+        "playbackState": "STOPPED"
       }

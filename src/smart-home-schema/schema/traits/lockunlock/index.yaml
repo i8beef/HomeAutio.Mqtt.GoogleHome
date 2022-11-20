@@ -2,7 +2,7 @@ name: action.devices.traits.LockUnlock
 shortname: LockUnlock
 description: This trait belongs to any devices that support locking and unlocking, and/or reporting a locked state.
 availability: production
-version: '1.0'
+version: '1.1'
 states:
   $ref: lockunlock.states.schema.json
 commands:
@@ -12,3 +12,5 @@ commands:
       $ref: lockunlock.params.schema.json
     errors:
       $ref: lockunlock.errors.schema.json
+    followup:
+      $ref: lockunlock.followup.schema.json

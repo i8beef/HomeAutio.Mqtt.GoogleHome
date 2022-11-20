@@ -7,8 +7,8 @@ version: '1.0'
 traits:
   recommended:
     # Options such as discrete heat levels
-    - Modes
+  - Modes
     # Controls such as opening a vent
-    - Toggles
+  - Toggles
   required:
   - OnOff

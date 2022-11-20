@@ -1,16 +1,17 @@
 name: action.devices.types.SETTOP
 shortname: Set-top Box
 description: >
-  Interactions with Multichannel Video Programming Distributor (MVPD) and set-top-box devices
+  Interactions with Multichannel Video Programming Distributor (MVPD) and set-top-box
+  devices
   may include controlling media playback.
 availability: production
 version: '1.0'
 traits:
   recommended:
   - Volume
-  - OnOff
   required:
   - AppSelector
   - MediaState
   - Channel
+  - OnOff
   - TransportControl

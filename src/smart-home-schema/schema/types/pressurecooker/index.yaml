@@ -1,7 +1,8 @@
 name: action.devices.types.PRESSURECOOKER
 shortname: Pressure Cooker
 description: >
-  Interactions with pressure cookers may include starting and stopping, setting a timer,
+  Interactions with pressure cookers may include starting and stopping, setting a
+  timer,
   adjusting cooking modes or food presets, or adjusting other various settings.
 availability: production
 version: '1.0'

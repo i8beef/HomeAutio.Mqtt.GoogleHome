@@ -1,7 +1,8 @@
 name: action.devices.types.FREEZER
 shortname: Freezer
 description: >
-  Freezers are temperature-managing devices which may be adjusted to various mode settings,
+  Freezers are temperature-managing devices which may be adjusted to various mode
+  settings,
   and may allow temperature monitoring.
 availability: production
 version: '1.0'

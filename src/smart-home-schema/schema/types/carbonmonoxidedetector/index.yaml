@@ -1,8 +1,10 @@
 name: action.devices.types.CARBON_MONOXIDE_DETECTOR
 shortname: Carbon Monoxide Detector
 description: >
-  Carbon monoxide detectors may report whether carbon monoxide is currently detected, whether
-  the carbon monoxide level is high, and the current carbon monoxide level in parts per million.
+  Carbon monoxide detectors may report whether carbon monoxide is currently detected,
+  whether
+  the carbon monoxide level is high, and the current carbon monoxide level in parts
+  per million.
 availability: production
 version: '1.0'
 traits:

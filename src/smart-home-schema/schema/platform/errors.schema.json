@@ -87,6 +87,7 @@
     "maxSpeedReached",
     "minSettingReached",
     "minSpeedReached",
+    "monitoringServiceConnectionLost",
     "motionDetected",
     "needsAttachment",
     "needsBin",

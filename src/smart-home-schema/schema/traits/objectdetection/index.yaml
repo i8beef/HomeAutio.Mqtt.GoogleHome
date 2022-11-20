@@ -1,0 +1,7 @@
+name: action.devices.traits.ObjectDetection
+shortname: ObjectDetection
+description: This trait belongs to devices that can detect objects or people and send a notification to the user. By default, all ObjectDetection notifications are announced on smart displays and speakers with Google Assistant after a doorbell ring chime.
+availability: production
+version: '1.0'
+notifications:
+  $ref: objectdetection.notifications.schema.json

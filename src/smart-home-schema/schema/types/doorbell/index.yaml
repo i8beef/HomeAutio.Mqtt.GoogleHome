@@ -1,0 +1,13 @@
+name: action.devices.types.DOORBELL
+shortname: Doorbell
+description: >
+  Doorbells can let people know someone is at the door.
+
+  This device can send notifications and stream video if it has the
+  corresponding capability.
+availability: production
+version: '1.0'
+traits:
+  recommended:
+  - ObjectDetection
+  - CameraStream
