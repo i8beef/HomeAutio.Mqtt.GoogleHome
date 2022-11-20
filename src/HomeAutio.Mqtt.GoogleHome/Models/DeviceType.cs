@@ -1,5 +1,6 @@
 using System.Runtime.Serialization;
 
+#pragma warning disable CA1707 // Identifiers should not contain underscores
 namespace HomeAutio.Mqtt.GoogleHome.Models
 {
     /// <summary>
@@ -481,3 +482,4 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         YOGURTMAKER
     }
 }
+#pragma warning restore CA1707 // Identifiers should not contain underscores

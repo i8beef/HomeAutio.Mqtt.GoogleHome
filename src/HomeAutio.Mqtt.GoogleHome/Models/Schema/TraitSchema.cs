@@ -59,7 +59,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
 
             // If no resources match, dont instantiate
             if (!resources.Any(x => x.StartsWith(traitResourceBase)))
+            {
                 return null;
+            }
 
             var traitSchema = new TraitSchema { Trait = traitType };
 

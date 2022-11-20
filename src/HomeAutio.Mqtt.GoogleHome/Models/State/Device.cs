@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.Extensions;
 using Newtonsoft.Json;
@@ -70,7 +70,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
                 // Dont include "stateless" traits
                 var schema = schemas.FirstOrDefault(x => x.Trait == trait.Trait);
                 if (schema?.StateSchema == null)
+                {
                     continue;
+                }
 
                 var validState = trait.GetGoogleStateFlattened(stateCache, schema)
                     .Where(kvp => schema.StateSchema.Validator.FlattenedPathExists(kvp.Key))
@@ -103,8 +105,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
                 .SelectMany(trait => trait.State)
                 .Where(state => state.Value.Topic != null)
                 .Where(state => stateCache.ContainsKey(state.Value.Topic))
-                .Where(state => stateCache[state.Value.Topic] == null)
-                .Any();
+                .Any(state => stateCache[state.Value.Topic] == null);
         }
     }
 }

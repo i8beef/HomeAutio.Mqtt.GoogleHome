@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +20,9 @@ namespace HomeAutio.Mqtt.GoogleHome
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             if (string.IsNullOrEmpty(environmentName))
+            {
                 environmentName = "Development";
+            }
 
             // Setup config
             var config = new ConfigurationBuilder()
@@ -38,7 +40,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             Log.Logger.Information($"Loaded with configuration from: appsettings.json, {Path.Combine(Environment.CurrentDirectory, "config", $"appsettings.{environmentName}.json")}");
 
             // Turn on or off PII data from Microsoft Identity stuff
-            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = config.GetValue<bool>("logPII", false);
+            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = config.GetValue("logPII", false);
 
             try
             {
@@ -61,10 +63,12 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <param name="config">Configuration.</param>
         /// <param name="args">Arguments.</param>
         /// <returns>A configured <see cref="IWebHostBuilder"/>.</returns>
-        public static IWebHostBuilder CreateWebHostBuilder(IConfigurationRoot config, string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IWebHostBuilder CreateWebHostBuilder(IConfigurationRoot config, string[] args)
+        {
+            return WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(configBuilder => configBuilder.AddConfiguration(config))
                 .UseStartup<Startup>()
                 .UseSerilog();
+        }
     }
 }

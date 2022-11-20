@@ -1,4 +1,4 @@
-﻿namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
+namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
 {
     /// <summary>
     /// Range based value mapper.
@@ -35,8 +35,10 @@
         /// <inheritdoc />
         public override bool MatchesMqtt(string value)
         {
-            if (decimal.TryParse(value, out decimal decimalValue))
+            if (decimal.TryParse(value, out var decimalValue))
+            {
                 return decimalValue >= MqttMin && decimalValue <= MqttMax;
+            }
 
             return false;
         }

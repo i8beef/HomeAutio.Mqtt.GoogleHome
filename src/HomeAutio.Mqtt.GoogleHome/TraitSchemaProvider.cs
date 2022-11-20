@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,7 +13,7 @@ namespace HomeAutio.Mqtt.GoogleHome
     /// </summary>
     public static class TraitSchemaProvider
     {
-        private static IList<TraitSchema> _traitSchemaCache = null;
+        private static IList<TraitSchema> _traitSchemaCache;
 
         /// <summary>
         /// Get trait schemas for validation.

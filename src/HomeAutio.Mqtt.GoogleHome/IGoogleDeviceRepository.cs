@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 
 namespace HomeAutio.Mqtt.GoogleHome
@@ -28,11 +28,11 @@ namespace HomeAutio.Mqtt.GoogleHome
         void Delete(string deviceId);
 
         /// <summary>
-        /// Gets a device.
+        /// Gets a device by id.
         /// </summary>
         /// <param name="deviceId">Device Id to get.</param>
         /// <returns>The <see cref="Device"/>.</returns>
-        Device Get(string deviceId);
+        Device FindById(string deviceId);
 
         /// <summary>
         /// Gets all devices.

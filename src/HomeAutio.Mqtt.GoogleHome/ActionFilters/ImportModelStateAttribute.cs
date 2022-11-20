@@ -9,18 +9,17 @@ namespace HomeAutio.Mqtt.GoogleHome.ActionFilters
     public class ImportModelStateAttribute : ModelStateTransfer
     {
         /// <inheritdoc />
-        public override void OnActionExecuted(ActionExecutedContext filterContext)
+        public override void OnActionExecuted(ActionExecutedContext context)
         {
-            var controller = filterContext.Controller as Controller;
-            var serialisedModelState = controller?.TempData[Key] as string;
+            var controller = context.Controller as Controller;
 
-            if (serialisedModelState != null)
+            if (controller?.TempData[Key] is string serialisedModelState)
             {
                 // Only Import if we are viewing
-                if (filterContext.Result is ViewResult)
+                if (context.Result is ViewResult)
                 {
                     var modelState = DeserialiseModelState(serialisedModelState);
-                    filterContext.ModelState.Merge(modelState);
+                    context.ModelState.Merge(modelState);
                 }
                 else
                 {
@@ -29,7 +28,7 @@ namespace HomeAutio.Mqtt.GoogleHome.ActionFilters
                 }
             }
 
-            base.OnActionExecuted(filterContext);
+            base.OnActionExecuted(context);
         }
     }
 }

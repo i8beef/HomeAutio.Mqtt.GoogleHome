@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Easy.MessageHub;
@@ -42,11 +42,11 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         }
 
         /// <summary>
-        /// Handles a <see cref="Models.Request.ExecuteIntent"/>.
+        /// Handles a <see cref="ExecuteIntent"/>.
         /// </summary>
         /// <param name="intent">Intent to process.</param>
         /// <returns>A <see cref="Models.Response.ExecutionResponsePayload"/>.</returns>
-        public Models.Response.ExecutionResponsePayload Handle(Models.Request.ExecuteIntent intent)
+        public Models.Response.ExecutionResponsePayload Handle(ExecuteIntent intent)
         {
             _log.LogInformation(string.Format(
                 "Received EXECUTE intent for commands: {0}",
@@ -63,7 +63,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
 
             foreach (var deviceId in deviceIds)
             {
-                var device = _deviceRepository.Get(deviceId);
+                var device = _deviceRepository.FindById(deviceId);
                 if (device == null)
                 {
                     // Device not found
@@ -153,9 +153,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                             foreach (var state in googleState)
                             {
                                 // Decide to use existing state cache value, or attempt to take from transformed execution params
-                                var value = replacedParams.ContainsKey(state.Key)
-                                    ? replacedParams[state.Key]
-                                    : state.Value;
+                                var value = replacedParams.TryGetValue(state.Key, out var stateValue) ? stateValue : state.Value;
 
                                 // Only add to state response if specified in the command result schema, or fallback state schema
                                 if (commandSchema.ResultsValidator != null)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -43,7 +43,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>Response.</returns>
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult Post([FromBody]Models.Request.Request request)
+        public IActionResult Post([FromBody] Models.Request.Request request)
         {
             // Begin building Response
             var response = new Models.Response.Response { RequestId = request.RequestId };

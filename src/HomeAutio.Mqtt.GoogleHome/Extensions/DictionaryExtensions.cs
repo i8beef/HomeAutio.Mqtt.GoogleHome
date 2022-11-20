@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -7,7 +7,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
     /// <summary>
     /// Dictionary extensions.
     /// </summary>
-    public static class DictionaryExtensions
+    public static partial class DictionaryExtensions
     {
         /// <summary>
         /// Flattens a nested dictionary with keys joined by the specified delimiter.
@@ -70,7 +70,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
             {
                 if (kvp.Value is IDictionary<string, object>)
                 {
-                    throw new System.Exception("Cannot convert a non-flat Dictionary to a nested dictionary.");
+                    throw new System.FormatException("Cannot convert a non-flat Dictionary to a nested dictionary.");
                 }
 
                 if (kvp.Key.Contains(delimiter))
@@ -87,7 +87,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                         {
                             // Branch node
                             if (!parent.ContainsKey(part))
+                            {
                                 parent.Add(part, new Dictionary<string, object>());
+                            }
 
                             // Grab the next parent
                             parent = (Dictionary<string, object>)parent[part];
@@ -123,7 +125,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
             {
                 if (kvp.Value is Dictionary<string, object> valueAsDictionary)
                 {
-                    if (valueAsDictionary.Keys.All(x => Regex.IsMatch(x, @"^\[\d+\]$")))
+                    if (valueAsDictionary.Keys.All(x => ArrayRegex().IsMatch(x)))
                     {
                         var list = valueAsDictionary.Values.ToList();
 
@@ -144,5 +146,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
 
             return result;
         }
+
+        [GeneratedRegex(@"^\[\d+\]$")]
+        private static partial Regex ArrayRegex();
     }
 }

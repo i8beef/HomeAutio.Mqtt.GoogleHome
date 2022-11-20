@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models
 {
@@ -18,7 +18,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         public static string Map(string commandParameterKey)
         {
             if (string.IsNullOrEmpty(commandParameterKey))
+            {
                 return commandParameterKey;
+            }
 
             var replacements = new Dictionary<string, string>
             {
@@ -49,7 +51,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
                     var replacementBase = replacement.Key.TrimEnd('*');
                     if (commandParameterKey.StartsWith(replacementBase))
                     {
-                        return replacement.Value + commandParameterKey.Substring(replacementBase.Length);
+                        return $"{replacement.Value}{commandParameterKey.Substring(replacementBase.Length)}";
                     }
                 }
                 else
@@ -57,7 +59,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
                     // Handle regular equality replacements
                     if (commandParameterKey == replacement.Key)
                     {
-                        return replacement.Value + commandParameterKey.Substring(replacement.Key.Length);
+                        return $"{replacement.Value}{commandParameterKey.Substring(replacement.Key.Length)}";
                     }
                 }
             }

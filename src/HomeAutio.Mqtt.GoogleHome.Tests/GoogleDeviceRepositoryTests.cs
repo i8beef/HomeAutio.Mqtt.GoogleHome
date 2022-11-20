@@ -158,7 +158,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
         {
             // Arrange
             var repository = new GoogleDeviceRepository(_logMock.Object, _messageHubMock.Object, _testFilePath);
-            var device = repository.Get(DeviceTestData.FullDevice().Id);
+            var device = repository.FindById(DeviceTestData.FullDevice().Id);
             var expectedDeletedTopics = device.Traits
                 .SelectMany(trait => trait.State)
                 .Where(x => x.Value.Topic != null)

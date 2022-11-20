@@ -123,7 +123,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                 }
             };
 
-            _deviceRepositoryMock.Setup(x => x.Get(It.IsAny<string>()))
+            _deviceRepositoryMock.Setup(x => x.FindById(It.IsAny<string>()))
                 .Returns(device);
 
             _stateCache.TryAdd("color.temperatureK", "75");
@@ -242,7 +242,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
             };
 
             // Camera state
-            _deviceRepositoryMock.Setup(x => x.Get(It.IsAny<string>()))
+            _deviceRepositoryMock.Setup(x => x.FindById(It.IsAny<string>()))
                 .Returns(device);
 
             var handler = new ExecuteIntentHandler(_logMock.Object, _messageHubMock.Object, _deviceRepositoryMock.Object, _stateCache);

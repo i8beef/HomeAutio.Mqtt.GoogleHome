@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.Models;
 
@@ -19,21 +19,29 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
             var validationErrors = new List<string>();
 
             if (nameInfo == null)
+            {
                 validationErrors.Add("NameInfo is missing");
+            }
 
             if (string.IsNullOrEmpty(nameInfo.Name))
+            {
                 validationErrors.Add("NameInfo Name is missing");
+            }
 
             if (nameInfo.DefaultNames != null)
             {
-                if (nameInfo.DefaultNames.Any(x => string.IsNullOrEmpty(x)))
+                if (nameInfo.DefaultNames.Any(string.IsNullOrEmpty))
+                {
                     validationErrors.Add("NameInfo DefaultNames cannot contain empty values");
+                }
             }
 
             if (nameInfo.Nicknames != null)
             {
-                if (nameInfo.Nicknames.Any(x => string.IsNullOrEmpty(x)))
+                if (nameInfo.Nicknames.Any(string.IsNullOrEmpty))
+                {
                     validationErrors.Add("NameInfo Nicknames cannot contain empty values");
+                }
             }
 
             return validationErrors;

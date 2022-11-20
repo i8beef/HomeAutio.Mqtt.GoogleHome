@@ -95,7 +95,9 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
             var reportStateDevices = devices.Where(device => device.WillReportState).ToList();
             var shouldTriggerReportState = false;
             if (reportStateDevices.Any() && shouldTriggerReportState)
+            {
                 _messageHub.Publish(new ReportStateEvent { Devices = reportStateDevices });
+            }
 
             return queryResponsePayload;
         }

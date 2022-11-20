@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -29,7 +29,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         private readonly HttpClient _httpClient;
         private readonly string _agentUserId;
         private readonly ServiceAccount _serviceAccount;
-        private readonly object _tokenRefreshLock = new object();
+        private readonly object _tokenRefreshLock = new();
 
         private AccessTokenResponse _accessToken;
 
@@ -46,8 +46,8 @@ namespace HomeAutio.Mqtt.GoogleHome
             ServiceAccount serviceAccount,
             string agentUserId)
         {
-            _log = logger ?? throw new ArgumentException(nameof(logger));
-            _httpClient = httpClient ?? throw new ArgumentException(nameof(httpClient));
+            _log = logger ?? throw new ArgumentNullException(nameof(logger));
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
             _agentUserId = agentUserId;
             _serviceAccount = serviceAccount;
@@ -219,7 +219,9 @@ namespace HomeAutio.Mqtt.GoogleHome
         private RsaSecurityKey GetGoogleHomeGraphApiSigningKey()
         {
             if (_serviceAccount == null)
+            {
                 throw new ArgumentException("Google Home Graph serviceAccountFile blank or missing");
+            }
 
             using (var stringReader = new StringReader(_serviceAccount.PrivateKey))
             {

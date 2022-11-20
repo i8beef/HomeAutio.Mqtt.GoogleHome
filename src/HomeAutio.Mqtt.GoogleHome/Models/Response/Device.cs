@@ -24,7 +24,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Response
         /// <summary>
         /// Device type.
         /// </summary>
-        public DeviceType Type { get; set;  }
+        public DeviceType Type { get; set; }
 
         /// <summary>
         /// Device name information.

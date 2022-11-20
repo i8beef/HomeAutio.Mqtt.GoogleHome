@@ -37,7 +37,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
             foreach (var name in Enum.GetNames(enumType))
             {
                 var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).SingleOrDefault();
-                if (enumMemberAttribute != null && enumMemberAttribute.Value == str) return (T)Enum.Parse(enumType, name);
+                if (enumMemberAttribute != null && enumMemberAttribute.Value == str)
+                {
+                    return (T)Enum.Parse(enumType, name);
+                }
             }
 
             return default;

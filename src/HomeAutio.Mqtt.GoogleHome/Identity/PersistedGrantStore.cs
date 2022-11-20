@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -19,16 +19,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
     /// </summary>
     public class PersistedGrantStore : IPersistedGrantStoreWithExpiration
     {
-        private static readonly object _readLock = new object();
-        private static readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+        private static readonly object _readLock = new();
+        private static readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         private readonly ILogger<PersistedGrantStore> _log;
-        private readonly ConcurrentDictionary<string, PersistedGrant> _repository = new ConcurrentDictionary<string, PersistedGrant>();
+        private readonly ConcurrentDictionary<string, PersistedGrant> _repository = new();
         private readonly string _file;
         private readonly int _refreshTokenGracePeriod;
 
         // Explicitly use the default contract resolver to force exact property serialization Base64 keys as they are case sensitive
-        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() };
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new() { ContractResolver = new DefaultContractResolver() };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PersistedGrantStore"/> class.
@@ -37,9 +37,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <param name="configuration">Conffguration.</param>
         public PersistedGrantStore(ILogger<PersistedGrantStore> logger, IConfiguration configuration)
         {
-            _log = logger ?? throw new ArgumentException(nameof(logger));
+            _log = logger ?? throw new ArgumentNullException(nameof(logger));
             if (configuration == null)
-                throw new ArgumentException(nameof(configuration));
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
 
             _file = configuration.GetValue<string>("oauth:tokenStoreFile");
             _refreshTokenGracePeriod = configuration.GetValue("oauth:refreshTokenGracePeriod", 0);
@@ -57,12 +59,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <inheritdoc />
         public Task<PersistedGrant> GetAsync(string key)
         {
-            if (_repository.TryGetValue(key, out PersistedGrant token))
+            if (_repository.TryGetValue(key, out var token))
             {
                 return Task.FromResult(token);
             }
 
-            _log.LogWarning("Failed to find token with key {key}", key);
+            _log.LogWarning("Failed to find token with key {Key}", key);
 
             return Task.FromResult<PersistedGrant>(null);
         }
@@ -73,13 +75,19 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
             var query = _repository.AsEnumerable();
 
             if (!string.IsNullOrEmpty(filter.ClientId))
+            {
                 query = query.Where(x => x.Value.ClientId == filter.ClientId);
+            }
 
             if (!string.IsNullOrEmpty(filter.SubjectId))
+            {
                 query = query.Where(x => x.Value.SubjectId == filter.SubjectId);
+            }
 
             if (!string.IsNullOrEmpty(filter.SessionId))
+            {
                 query = query.Where(x => x.Value.SessionId == filter.SessionId);
+            }
 
             var items = query.Select(x => x.Value).AsEnumerable();
             return Task.FromResult(items);
@@ -94,7 +102,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
             }
             else
             {
-                _log.LogWarning("Failed to remove token with key {key}", key);
+                _log.LogWarning("Failed to remove token with key {Key}", key);
             }
         }
 
@@ -104,26 +112,38 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
             var query = _repository.AsEnumerable();
 
             if (!string.IsNullOrEmpty(filter.ClientId))
+            {
                 query = query.Where(x => x.Value.ClientId == filter.ClientId);
+            }
 
             if (!string.IsNullOrEmpty(filter.SubjectId))
+            {
                 query = query.Where(x => x.Value.SubjectId == filter.SubjectId);
+            }
 
             if (!string.IsNullOrEmpty(filter.SessionId))
+            {
                 query = query.Where(x => x.Value.SessionId == filter.SessionId);
+            }
 
             var keys = query.Select(x => x.Key).ToArray();
             var numKeysRemoved = 0;
             foreach (var key in keys)
             {
                 if (_repository.TryRemove(key, out _))
+                {
                     numKeysRemoved++;
+                }
                 else
-                    _log.LogWarning("Failed to remove token with key {key}", key);
+                {
+                    _log.LogWarning("Failed to remove token with key {Key}", key);
+                }
             }
 
             if (numKeysRemoved > 0)
+            {
                 await WriteToFileAsync();
+            }
         }
 
         /// <inheritdoc />
@@ -138,13 +158,19 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
             foreach (var key in keys)
             {
                 if (_repository.TryRemove(key, out _))
+                {
                     numKeysRemoved++;
+                }
                 else
-                    _log.LogWarning("Failed to remove token with key {key}", key);
+                {
+                    _log.LogWarning("Failed to remove token with key {Key}", key);
+                }
             }
 
             if (numKeysRemoved > 0)
+            {
                 await WriteToFileAsync();
+            }
         }
 
         /// <summary>
@@ -159,7 +185,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                     var fileContents = File.ReadAllText(_file);
                     if (string.IsNullOrEmpty(fileContents))
                     {
-                        _log.LogWarning("Token file {file} already exists but is empty", _file);
+                        _log.LogWarning("Token file {File} already exists but is empty", _file);
                         return;
                     }
 
@@ -170,11 +196,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                     {
                         if (!_repository.TryAdd(record.Key, record.Value))
                         {
-                            _log.LogWarning("Failed to restore token with key {key}", record.Key);
+                            _log.LogWarning("Failed to restore token with key {Key}", record.Key);
                         }
                     }
 
-                    _log.LogInformation("Restored tokens from {file}", _file);
+                    _log.LogInformation("Restored tokens from {File}", _file);
                 }
             }
         }
@@ -185,7 +211,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <returns>An awaitable <see cref="Task"/>.</returns>
         private async Task WriteToFileAsync()
         {
-            _log.LogInformation("Writing tokens to {file}", _file);
+            _log.LogInformation("Writing tokens to {File}", _file);
 
             await _semaphoreSlim.WaitAsync();
 
@@ -194,7 +220,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                 var contents = JsonConvert.SerializeObject(_repository, _jsonSerializerSettings);
                 await File.WriteAllTextAsync(_file, contents);
 
-                _log.LogInformation("Wrote tokens to {file}", _file);
+                _log.LogInformation("Wrote tokens to {File}", _file);
             }
             finally
             {

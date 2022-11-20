@@ -96,7 +96,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         public IActionResult Create(DeviceViewModel viewModel)
         {
             if (_deviceRepository.Contains(viewModel.Id))
+            {
                 ModelState.AddModelError("Id", "Device Id already exists");
+            }
 
             // Set new values
             var device = new Models.State.Device
@@ -115,15 +117,23 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             // Default names
             if (!string.IsNullOrEmpty(viewModel.DefaultNames))
+            {
                 device.Name.DefaultNames = viewModel.DefaultNames.Split(',').Select(x => x.Trim()).ToList();
+            }
             else
+            {
                 device.Name.DefaultNames = new List<string>();
+            }
 
             // Nicknames
             if (!string.IsNullOrEmpty(viewModel.Nicknames))
+            {
                 device.Name.Nicknames = viewModel.Nicknames.Split(',').Select(x => x.Trim()).ToList();
+            }
             else
+            {
                 device.Name.Nicknames = new List<string>();
+            }
 
             // Device Info
             if (!string.IsNullOrEmpty(viewModel.Manufacturer) ||
@@ -132,7 +142,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 !string.IsNullOrEmpty(viewModel.SwVersion))
             {
                 if (device.DeviceInfo == null)
+                {
                     device.DeviceInfo = new DeviceInfo();
+                }
 
                 device.DeviceInfo.Manufacturer = !string.IsNullOrEmpty(viewModel.Manufacturer) ? viewModel.Manufacturer : null;
                 device.DeviceInfo.Model = !string.IsNullOrEmpty(viewModel.Model) ? viewModel.Model : null;
@@ -146,10 +158,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             // Final validation
             foreach (var error in DeviceValidator.Validate(device))
+            {
                 ModelState.AddModelError(string.Empty, error);
+            }
 
             if (!ModelState.IsValid)
+            {
                 return RedirectToAction("Create");
+            }
 
             // Save changes
             _deviceRepository.Add(device);
@@ -166,7 +182,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         public IActionResult Delete([Required] string deviceId)
         {
             if (!_deviceRepository.Contains(deviceId))
+            {
                 return NotFound();
+            }
 
             // Save changes
             _deviceRepository.Delete(deviceId);
@@ -183,9 +201,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         public IActionResult Edit([Required] string deviceId)
         {
             if (!_deviceRepository.Contains(deviceId))
+            {
                 return NotFound();
+            }
 
-            var device = _deviceRepository.Get(deviceId);
+            var device = _deviceRepository.FindById(deviceId);
             var model = new DeviceViewModel
             {
                 Id = device.Id,
@@ -229,7 +249,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         public IActionResult Edit([Required] string deviceId, DeviceViewModel viewModel)
         {
             if (!_deviceRepository.Contains(deviceId))
+            {
                 return NotFound();
+            }
 
             // Set new values
             var device = _deviceRepository.GetDetached(deviceId);
@@ -242,15 +264,23 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             // Default names
             if (!string.IsNullOrEmpty(viewModel.DefaultNames))
+            {
                 device.Name.DefaultNames = viewModel.DefaultNames.Split(',').Select(x => x.Trim()).ToList();
+            }
             else
+            {
                 device.Name.DefaultNames = new List<string>();
+            }
 
             // Nicknames
             if (!string.IsNullOrEmpty(viewModel.Nicknames))
+            {
                 device.Name.Nicknames = viewModel.Nicknames.Split(',').Select(x => x.Trim()).ToList();
+            }
             else
+            {
                 device.Name.Nicknames = new List<string>();
+            }
 
             // Device Info
             if (!string.IsNullOrEmpty(viewModel.Manufacturer) ||
@@ -259,7 +289,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 !string.IsNullOrEmpty(viewModel.SwVersion))
             {
                 if (device.DeviceInfo == null)
+                {
                     device.DeviceInfo = new DeviceInfo();
+                }
 
                 device.DeviceInfo.Manufacturer = !string.IsNullOrEmpty(viewModel.Manufacturer) ? viewModel.Manufacturer : null;
                 device.DeviceInfo.Model = !string.IsNullOrEmpty(viewModel.Model) ? viewModel.Model : null;
@@ -273,10 +305,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             // Final validation
             foreach (var error in DeviceValidator.Validate(device))
+            {
                 ModelState.AddModelError(string.Empty, error);
+            }
 
             if (!ModelState.IsValid)
+            {
                 return RedirectToAction("Edit", new { deviceId });
+            }
 
             // Save changes
             _deviceRepository.Update(deviceId, device);

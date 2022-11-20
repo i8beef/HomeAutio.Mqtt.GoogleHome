@@ -31,7 +31,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         public override bool MatchesGoogle(object value)
         {
             if (GoogleSearch == null)
+            {
                 return false;
+            }
 
             return Regex.IsMatch(value.ToString(), GoogleSearch);
         }
@@ -40,7 +42,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         public override string ConvertToGoogle(string value)
         {
             if (MqttSearch == null || GoogleReplace == null)
+            {
                 return value;
+            }
 
             return Regex.Replace(value, MqttSearch, GoogleReplace);
         }
@@ -49,7 +53,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         public override bool MatchesMqtt(string value)
         {
             if (MqttSearch == null)
+            {
                 return false;
+            }
 
             return Regex.IsMatch(value, MqttSearch);
         }
@@ -58,10 +64,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         public override string ConvertToMqtt(object value)
         {
             if (value == null)
+            {
                 return null;
+            }
 
             if (GoogleSearch == null || MqttReplace == null)
+            {
                 return value.ToString();
+            }
 
             return Regex.Replace(value.ToString(), GoogleSearch, MqttReplace);
         }

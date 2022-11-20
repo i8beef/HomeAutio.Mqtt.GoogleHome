@@ -28,7 +28,10 @@ namespace HomeAutio.Mqtt.GoogleHome
         {
             while (reader.TokenType == JsonToken.Comment)
             {
-                if (!reader.Read()) throw new JsonSerializationException("Unexpected Token when converting IDictionary<string, object>");
+                if (!reader.Read())
+                {
+                    throw new JsonSerializationException("Unexpected Token when converting IDictionary<string, object>");
+                }
             }
 
             switch (reader.TokenType)

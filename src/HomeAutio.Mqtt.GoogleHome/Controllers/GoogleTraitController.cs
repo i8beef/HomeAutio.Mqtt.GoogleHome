@@ -43,7 +43,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         public IActionResult Create([Required] string deviceId)
         {
             if (!_deviceRepository.Contains(deviceId))
+            {
                 return NotFound();
+            }
 
             var model = new TraitViewModel();
 
@@ -61,11 +63,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         public IActionResult Create([Required] string deviceId, TraitViewModel viewModel)
         {
             if (!_deviceRepository.Contains(deviceId))
+            {
                 return NotFound();
+            }
 
             var device = _deviceRepository.GetDetached(deviceId);
             if (device.Traits.Any(x => x.Trait == viewModel.Trait))
+            {
                 ModelState.AddModelError("Trait", "Device already contains trait");
+            }
 
             // Set values
             var trait = new DeviceTrait
@@ -96,10 +102,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             // Final validation
             foreach (var error in DeviceTraitValidator.Validate(trait))
+            {
                 ModelState.AddModelError(string.Empty, error);
+            }
 
             if (!ModelState.IsValid)
+            {
                 return RedirectToAction("Create", new { deviceId });
+            }
 
             // Save changes
             device.Traits.Add(trait);
@@ -118,13 +128,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         public IActionResult Delete([Required] string deviceId, [Required] string traitId)
         {
             if (!_deviceRepository.Contains(deviceId))
+            {
                 return NotFound();
+            }
 
             var device = _deviceRepository.GetDetached(deviceId);
 
             var traitEnumId = traitId.ToEnum<TraitType>();
             if (!device.Traits.Any(x => x.Trait == traitEnumId))
+            {
                 return NotFound();
+            }
 
             // Save changes
             device.Traits.Remove(device.Traits.First(x => x.Trait == traitEnumId));
@@ -143,13 +157,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         public IActionResult Edit([Required] string deviceId, [Required] string traitId)
         {
             if (!_deviceRepository.Contains(deviceId))
+            {
                 return NotFound();
+            }
 
-            var device = _deviceRepository.Get(deviceId);
+            var device = _deviceRepository.FindById(deviceId);
 
             var traitEnumId = traitId.ToEnum<TraitType>();
             if (!device.Traits.Any(x => x.Trait == traitEnumId))
+            {
                 return NotFound();
+            }
 
             // Get trait
             var trait = device.Traits.First(x => x.Trait == traitEnumId);
@@ -191,13 +209,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         public IActionResult Edit([Required] string deviceId, [Required] string traitId, TraitViewModel viewModel)
         {
             if (!_deviceRepository.Contains(deviceId))
+            {
                 return NotFound();
+            }
 
             var device = _deviceRepository.GetDetached(deviceId);
 
             var traitEnumId = traitId.ToEnum<TraitType>();
             if (!device.Traits.Any(x => x.Trait == traitEnumId))
+            {
                 return NotFound();
+            }
 
             // Lock the trait type just in case
             viewModel.Trait = traitEnumId;
@@ -228,10 +250,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
 
             // Final validation
             foreach (var error in DeviceTraitValidator.Validate(trait))
+            {
                 ModelState.AddModelError(string.Empty, error);
+            }
 
             if (!ModelState.IsValid)
+            {
                 return RedirectToAction("Edit", new { deviceId, traitId });
+            }
 
             // Save changes
             _deviceRepository.Update(deviceId, device);
@@ -323,7 +349,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 {
                     // Handle indent modification
                     if (i != 0)
+                    {
                         sb.Append("  ");
+                    }
 
                     sb.AppendLine(exampleLines[i]);
                 }

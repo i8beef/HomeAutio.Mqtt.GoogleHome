@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using HomeAutio.Mqtt.GoogleHome.Models.Schema;
@@ -63,10 +63,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
             {
                 foreach (var state in State)
                 {
-                    if (state.Value.Topic != null && stateCache.ContainsKey(state.Value.Topic))
+                    if (state.Value.Topic != null && stateCache.TryGetValue(state.Value.Topic, out var stateValue))
                     {
                         var googleType = traitSchema.GetGoogleTypeForFlattenedPath(state.Key);
-                        result.Add(state.Key, state.Value.MapValueToGoogle(stateCache[state.Value.Topic], googleType));
+                        result.Add(state.Key, state.Value.MapValueToGoogle(stateValue, googleType));
                     }
                     else if (state.Value.Topic == null && state.Value.ValueMap != null && state.Value.ValueMap.Any(x => x is StaticMap))
                     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -20,7 +20,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
     /// <summary>
     /// MQTT Service.
     /// </summary>
-    public class MqttService : ServiceBase
+    public partial class MqttService : ServiceBase
     {
         private readonly ILogger<MqttService> _log;
 
@@ -30,7 +30,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
 
         private readonly IList<Guid> _messageHubSubscriptions = new List<Guid>();
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MqttService"/> class.
@@ -69,10 +69,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         protected override Task StartServiceAsync(CancellationToken cancellationToken)
         {
             // Subscribe to event aggregator
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<ConfigSubscriptionChangeEvent>((e) => HandleConfigSubscriptionChange(e)));
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<DeviceCommandExecutionEvent>((e) => HandleGoogleHomeCommand(e)));
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<SyncIntentReceivedEvent>((e) => HandleGoogleHomeSyncIntent(e)));
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<QueryIntentReceivedEvent>((e) => HandleGoogleHomeQueryIntent(e)));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<ConfigSubscriptionChangeEvent>(HandleConfigSubscriptionChange));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<DeviceCommandExecutionEvent>(HandleGoogleHomeCommand));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<SyncIntentReceivedEvent>(HandleGoogleHomeSyncIntent));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<QueryIntentReceivedEvent>(HandleGoogleHomeQueryIntent));
 
             return Task.CompletedTask;
         }
@@ -100,7 +100,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
             {
                 _messageHub.Publish(new RequestSyncEvent());
             }
-            else if (_stateCache.TryGetValue(topic, out string currentState))
+            else if (_stateCache.TryGetValue(topic, out var currentState))
             {
                 if (_stateCache.TryUpdate(topic, message, currentState))
                 {
@@ -139,10 +139,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                 // Check that state cache actually contains topic
                 if (_stateCache.ContainsKey(topic))
                 {
-                    if (_stateCache.TryRemove(topic, out string _))
+                    if (_stateCache.TryRemove(topic, out var _))
+                    {
                         _log.LogInformation("Successfully removed topic {Topic} from internal state cache", topic);
+                    }
                     else
+                    {
                         _log.LogWarning("Failed to remove topic {Topic} from internal state cache", topic);
+                    }
                 }
             }
 
@@ -153,9 +157,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                 if (!_stateCache.ContainsKey(topic))
                 {
                     if (_stateCache.TryAdd(topic, string.Empty))
+                    {
                         _log.LogInformation("Successfully added topic {Topic} to internal state cache", topic);
+                    }
                     else
+                    {
                         _log.LogWarning("Failed to add topic {Topic} to internal state cache", topic);
+                    }
                 }
 
                 // Check if already subscribed and subscribe to MQTT topic
@@ -181,9 +189,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         /// <param name="deviceCommandExecutionEvent">The device command to handle.</param>
         private async void HandleGoogleHomeCommand(DeviceCommandExecutionEvent deviceCommandExecutionEvent)
         {
-            var device = _deviceRepository.Get(deviceCommandExecutionEvent.DeviceId);
+            var device = _deviceRepository.FindById(deviceCommandExecutionEvent.DeviceId);
             if (device.Disabled)
+            {
                 return;
+            }
 
             // Find all supported commands for the device
             var deviceSupportedCommands = device.Traits
@@ -192,11 +202,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
 
             // Check if device supports the requested command class
             var execution = deviceCommandExecutionEvent.Execution;
-            if (deviceSupportedCommands.ContainsKey(execution.Command))
+            if (deviceSupportedCommands.TryGetValue(execution.Command, out var deviceSupportedCommand))
             {
                 // Handle command delegation
                 var shortCommandName = execution.Command.Substring(execution.Command.LastIndexOf('.') + 1);
-                var deviceTopicName = Regex.Replace(deviceCommandExecutionEvent.DeviceId, @"\s", string.Empty);
+                var deviceTopicName = WhiteSpaceRegex().Replace(deviceCommandExecutionEvent.DeviceId, string.Empty);
                 var delegateTopic = $"{TopicRoot}/execution/{deviceTopicName}/{shortCommandName}";
                 var delegatePayload = execution.Params != null ? JsonConvert.SerializeObject(execution.Params) : "{}";
 
@@ -208,7 +218,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                     .ConfigureAwait(false);
 
                 // Find the specific commands supported parameters it can handle
-                var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command] ?? new Dictionary<string, string>();
+                var deviceSupportedCommandParams = deviceSupportedCommand ?? new Dictionary<string, string>();
 
                 // Handle remaining command state param negotiation
                 if (execution.Params != null)
@@ -223,7 +233,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                     foreach (var parameter in flattenedParams)
                     {
                         // Check if device supports the requested parameter
-                        if (deviceSupportedCommandParams.ContainsKey(parameter.Key))
+                        if (deviceSupportedCommandParams.TryGetValue(parameter.Key, out var topic))
                         {
                             // Handle remapping of command param to state key
                             var stateKey = CommandToStateKeyMapper.Map(parameter.Key);
@@ -238,7 +248,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                                 .FirstOrDefault();
 
                             // Build the MQTT message
-                            var topic = deviceSupportedCommandParams[parameter.Key];
                             if (!string.IsNullOrEmpty(topic))
                             {
                                 string payload = null;
@@ -310,7 +319,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         protected override void Dispose(bool disposing)
         {
             if (_disposed)
+            {
                 return;
+            }
 
             if (disposing)
             {
@@ -319,6 +330,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
             _disposed = true;
             base.Dispose(disposing);
         }
+
+        [GeneratedRegex(@"\s")]
+        private static partial Regex WhiteSpaceRegex();
 
         #endregion
     }

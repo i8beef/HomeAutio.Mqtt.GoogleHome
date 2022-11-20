@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,7 +43,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         public static async Task<StateSchema> FromJson(string json, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(json))
+            {
                 return null;
+            }
 
             var stateValidator = await JsonSchema.FromJsonAsync(json, cancellationToken);
             var stateSchema = new StateSchema
@@ -65,11 +67,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         {
             var examples = new List<SchemaExample>();
             var parsed = JsonConvert.DeserializeObject<Dictionary<string, object>>(json, new ObjectDictionaryConverter());
-            if (parsed.ContainsKey("examples") && parsed["examples"] is List<object> exampleNodes)
+            if (parsed.TryGetValue("examples", out var parsedExamples) && parsedExamples is List<object> exampleNodes)
             {
                 // Get distinct examples
                 var seenAttributeExamples = new List<string>();
-                foreach (Dictionary<string, object> example in exampleNodes)
+                foreach (var example in exampleNodes.Cast<Dictionary<string, object>>())
                 {
                     // Strip comments
                     var exampleWithoutComment = example

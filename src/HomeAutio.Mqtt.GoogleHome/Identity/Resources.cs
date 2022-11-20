@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using IdentityServer4.Models;
 
 namespace HomeAutio.Mqtt.GoogleHome.Identity
@@ -6,7 +6,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
     /// <summary>
     /// Identity in memory resources.
     /// </summary>
-    internal class Resources
+    public class Resources
     {
         /// <summary>
         /// Gets static list of identity resources based on configuration.

@@ -13,7 +13,7 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
         protected override IntentBase Create(Type objectType, JObject jsonObject)
         {
             // Examine the intent value
-            string typeName = jsonObject["intent"].ToString();
+            var typeName = jsonObject["intent"].ToString();
 
             // Based on the intent, instantiate and return a new object
             switch (typeName)

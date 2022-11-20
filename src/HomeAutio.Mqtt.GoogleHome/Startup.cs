@@ -123,7 +123,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     BrokerPort = Configuration.GetValue<int>("mqtt:brokerPort"),
                     BrokerUsername = Configuration.GetValue<string>("mqtt:brokerUsername"),
                     BrokerPassword = Configuration.GetValue<string>("mqtt:brokerPassword"),
-                    BrokerUseTls = Configuration.GetValue<bool>("mqtt:brokerUseTls", false)
+                    BrokerUseTls = Configuration.GetValue("mqtt:brokerUseTls", false)
                 };
 
                 // TLS settings
@@ -131,19 +131,17 @@ namespace HomeAutio.Mqtt.GoogleHome
                 {
                     var brokerTlsSettings = new Core.BrokerTlsSettings
                     {
-                        AllowUntrustedCertificates = Configuration.GetValue<bool>("mqtt:brokerTlsSettings:allowUntrustedCertificates", false),
-                        IgnoreCertificateChainErrors = Configuration.GetValue<bool>("mqtt:brokerTlsSettings:ignoreCertificateChainErrors", false),
-                        IgnoreCertificateRevocationErrors = Configuration.GetValue<bool>("mqtt:brokerTlsSettings:ignoreCertificateRevocationErrors", false)
+                        AllowUntrustedCertificates = Configuration.GetValue("mqtt:brokerTlsSettings:allowUntrustedCertificates", false),
+                        IgnoreCertificateChainErrors = Configuration.GetValue("mqtt:brokerTlsSettings:ignoreCertificateChainErrors", false),
+                        IgnoreCertificateRevocationErrors = Configuration.GetValue("mqtt:brokerTlsSettings:ignoreCertificateRevocationErrors", false)
                     };
 
-                    switch (Configuration.GetValue<string>("mqtt:brokerTlsSettings:protocol", "1.2"))
+                    switch (Configuration.GetValue("mqtt:brokerTlsSettings:protocol", "1.2"))
                     {
                         case "1.0":
-                            brokerTlsSettings.SslProtocol = System.Security.Authentication.SslProtocols.Tls;
-                            break;
+                            throw new NotSupportedException($"Only TLS 1.2 is supported");
                         case "1.1":
-                            brokerTlsSettings.SslProtocol = System.Security.Authentication.SslProtocols.Tls11;
-                            break;
+                            throw new NotSupportedException($"Only TLS 1.2 is supported");
                         case "1.2":
                         default:
                             brokerTlsSettings.SslProtocol = System.Security.Authentication.SslProtocols.Tls12;
@@ -158,7 +156,9 @@ namespace HomeAutio.Mqtt.GoogleHome
                             var passPhrase = x.GetValue<string>("passPhrase");
 
                             if (!File.Exists(file))
+                            {
                                 throw new FileNotFoundException($"Broker Certificate '{file}' is missing!");
+                            }
 
                             return !string.IsNullOrEmpty(passPhrase) ?
                                 new X509Certificate2(file, passPhrase) :
@@ -174,7 +174,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     brokerSettings,
                     serviceProvider.GetRequiredService<IGoogleDeviceRepository>(),
                     serviceProvider.GetRequiredService<StateCache>(),
-                    Configuration.GetValue<string>("mqtt:topicRoot", "google/home"));
+                    Configuration.GetValue("mqtt:topicRoot", "google/home"));
             });
 
             // Setup token cleanup hosted service
@@ -212,10 +212,7 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             var authority = Configuration.GetValue<string>("oauth:authority");
             var identityServerBuilder = services
-                .AddIdentityServer(options =>
-                {
-                    options.IssuerUri = authority;
-                })
+                .AddIdentityServer(options => options.IssuerUri = authority)
                 .AddInMemoryClients(Clients.Get(Configuration))
                 .AddInMemoryIdentityResources(Resources.GetIdentityResources())
                 .AddInMemoryApiScopes(Resources.GetApiScopes())
@@ -235,7 +232,9 @@ namespace HomeAutio.Mqtt.GoogleHome
                 // Add primary cert
                 var primarySigningCert = signingCerts.First();
                 if (!File.Exists(primarySigningCert.File))
+                {
                     throw new FileNotFoundException($"Signing Certificate '{primarySigningCert.File}' is missing!");
+                }
 
                 var cert = !string.IsNullOrEmpty(primarySigningCert.PassPhrase) ?
                     new X509Certificate2(primarySigningCert.File, primarySigningCert.PassPhrase) :
@@ -248,7 +247,9 @@ namespace HomeAutio.Mqtt.GoogleHome
                 {
                     var oldSigningCert = signingCerts[i];
                     if (!File.Exists(oldSigningCert.File))
+                    {
                         throw new FileNotFoundException($"Signing Certificate '{oldSigningCert.File}' is missing!");
+                    }
 
                     var oldCert = !string.IsNullOrEmpty(oldSigningCert.PassPhrase) ?
                         new X509Certificate2(oldSigningCert.File, oldSigningCert.PassPhrase) :
@@ -324,10 +325,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute("default", "{controller=GoogleDevice}/{action=Index}/{id?}");
-            });
+            app.UseEndpoints(endpoints => endpoints.MapControllerRoute("default", "{controller=GoogleDevice}/{action=Index}/{id?}"));
 
             // Add identity server implementations
             app.UseIdentityServer();

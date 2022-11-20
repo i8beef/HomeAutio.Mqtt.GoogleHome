@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +20,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         private readonly ILogger<GoogleDeviceRepository> _logger;
         private readonly string _deviceConfigFile;
         private readonly IMessageHub _messageHub;
-        private readonly object _writeLock = new object();
+        private readonly object _writeLock = new();
 
         private ConcurrentDictionary<string, Device> _devices;
 
@@ -74,7 +74,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <inheritdoc />
         public void Delete(string deviceId)
         {
-            if (_devices.TryRemove(deviceId, out Device device))
+            if (_devices.TryRemove(deviceId, out var device))
             {
                 // Save changes
                 Persist();
@@ -93,9 +93,9 @@ namespace HomeAutio.Mqtt.GoogleHome
         }
 
         /// <inheritdoc />
-        public Device Get(string deviceId)
+        public Device FindById(string deviceId)
         {
-            if (_devices.TryGetValue(deviceId, out Device value))
+            if (_devices.TryGetValue(deviceId, out var value))
             {
                 return value;
             }
@@ -112,7 +112,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <inheritdoc />
         public Device GetDetached(string deviceId)
         {
-            return JsonConvert.DeserializeObject<Device>(JsonConvert.SerializeObject(Get(deviceId)));
+            return JsonConvert.DeserializeObject<Device>(JsonConvert.SerializeObject(FindById(deviceId)));
         }
 
         /// <inheritdoc />
@@ -152,9 +152,11 @@ namespace HomeAutio.Mqtt.GoogleHome
             {
                 // Handle device id change
                 if (deviceId != device.Id)
+                {
                     ChangeDeviceId(deviceId, device.Id);
+                }
 
-                var currentDevice = Get(device.Id);
+                var currentDevice = FindById(device.Id);
                 if (currentDevice != null)
                 {
                     // Only publish subscriptions if disabled state changes
@@ -211,7 +213,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <param name="newId">New ID.</param>
         private void ChangeDeviceId(string originalId, string newId)
         {
-            var device = Get(originalId);
+            var device = FindById(originalId);
             if (device != null)
             {
                 // Ensure internal ID changed and matches.
@@ -222,7 +224,7 @@ namespace HomeAutio.Mqtt.GoogleHome
 
                 if (_devices.TryAdd(newId, device))
                 {
-                    if (_devices.TryRemove(originalId, out Device _))
+                    if (_devices.TryRemove(originalId, out var _))
                     {
                         Persist();
                     }

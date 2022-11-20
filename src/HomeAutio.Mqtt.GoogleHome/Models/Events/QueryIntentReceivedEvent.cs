@@ -11,7 +11,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Events
         /// <summary>
         /// Devices.
         /// </summary>
-        public IList<Models.Request.Device> Devices { get; set; }
+        public IList<Request.Device> Devices { get; set; }
 
         /// <summary>
         /// Time of event.

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,7 +6,6 @@ using Easy.MessageHub;
 using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace HomeAutio.Mqtt.GoogleHome.Services
 {
@@ -41,8 +40,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         public Task StartAsync(CancellationToken cancellationToken)
         {
             // Subscribe to event aggregator
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<RequestSyncEvent>((e) => HandleGoogleRequestSync(e)));
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<ReportStateEvent>((e) => HandleGoogleReportState(e)));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<RequestSyncEvent>(HandleGoogleRequestSync));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<ReportStateEvent>(HandleGoogleReportState));
 
             return Task.CompletedTask;
         }

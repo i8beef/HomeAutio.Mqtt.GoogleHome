@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -11,7 +11,7 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
     public abstract class CustomJsonConverter<T> : JsonConverter
     {
         /// <inheritdoc />
-        public override bool CanWrite { get { return false; } }
+        public override bool CanWrite => false;
 
         /// <summary>
         /// Abstract method which implements the appropriate create method
@@ -44,7 +44,9 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
             var target = Create(objectType, jsonObject);
 
             if (target == null)
+            {
                 return null;
+            }
 
             // Populate the properties of the object
             serializer.Populate(jsonObject.CreateReader(), target);
