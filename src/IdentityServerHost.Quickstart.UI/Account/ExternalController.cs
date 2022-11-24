@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -29,7 +28,6 @@ namespace IdentityServerHost.Quickstart.UI
         private readonly IEventService _events;
 
         public ExternalController(
-            IConfiguration configuration,
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IEventService events,
