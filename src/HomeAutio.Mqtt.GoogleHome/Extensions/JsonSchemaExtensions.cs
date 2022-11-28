@@ -128,6 +128,20 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                         objectResults.AddRange(schema.AdditionalPropertiesSchema.GetByFlattenedPath(flattenedPath));
                     }
 
+                    if (schema.ExtensionData != null && schema.ExtensionData.Any(x => x.Key == "if"))
+                    {
+                        // Use extension data if present
+                        var conditionalKeys = new List<string> { "then", "else" };
+                        foreach (var conditionalPropertySchema in schema.ExtensionData.Where(x => conditionalKeys.Contains(x.Key)))
+                        {
+                            if (conditionalPropertySchema.Value is NJsonSchema.JsonSchema jsonSchema)
+                            {
+                                // Unwrap and validate each as a possibility
+                                objectResults.AddRange(jsonSchema.GetByFlattenedPath(flattenedPath));
+                            }
+                        }
+                    }
+
                     if (objectResults.Any())
                     {
                         return objectResults;
