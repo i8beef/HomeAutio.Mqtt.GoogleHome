@@ -12,7 +12,8 @@ using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
-using MQTTnet.Extensions.ManagedClient;
+using MQTTnet.Client;
+using MQTTnet.Packets;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Services
@@ -90,7 +91,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         }
 
         /// <inheritdoc />
-        protected override void Mqtt_MqttMsgPublishReceived(MqttApplicationMessageReceivedEventArgs e)
+        protected override Task MqttMsgPublishReceived(MqttApplicationMessageReceivedEventArgs e)
         {
             var topic = e.ApplicationMessage.Topic;
             var message = e.ApplicationMessage.ConvertPayloadToString();
@@ -115,6 +116,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                     _messageHub.Publish(new ReportStateEvent { Devices = devices });
                 }
             }
+
+            return Task.CompletedTask;
         }
 
         #region Google Home Handlers
@@ -210,10 +213,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                 var delegateTopic = $"{TopicRoot}/execution/{deviceTopicName}/{shortCommandName}";
                 var delegatePayload = execution.Params != null ? JsonConvert.SerializeObject(execution.Params) : "{}";
 
-                await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                await MqttClient.EnqueueAsync(new MqttApplicationMessageBuilder()
                     .WithTopic(delegateTopic)
                     .WithPayload(delegatePayload)
-                    .WithAtLeastOnceQoS()
+                    .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                     .Build())
                     .ConfigureAwait(false);
 
@@ -261,10 +264,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                                     _log.LogWarning("Received supported command '{Command}' but cannot find matched state config, sending command value '{Payload}' without ValueMap", execution.Command, payload);
                                 }
 
-                                await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                                await MqttClient.EnqueueAsync(new MqttApplicationMessageBuilder()
                                     .WithTopic(topic)
                                     .WithPayload(payload)
-                                    .WithAtLeastOnceQoS()
+                                    .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                                     .Build())
                                     .ConfigureAwait(false);
                             }
@@ -283,10 +286,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
             var delegateTopic = $"{TopicRoot}/sync/lastRequest";
             var delegatePayload = syncIntentReceivedEvent.Time.ToString();
 
-            await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            await MqttClient.EnqueueAsync(new MqttApplicationMessageBuilder()
                 .WithTopic(delegateTopic)
                 .WithPayload(delegatePayload)
-                .WithAtLeastOnceQoS()
+                .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                 .Build())
                 .ConfigureAwait(false);
         }
@@ -300,10 +303,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
             var delegateTopic = $"{TopicRoot}/query/lastRequest";
             var delegatePayload = JsonConvert.SerializeObject(queryIntentReceivedEvent);
 
-            await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            await MqttClient.EnqueueAsync(new MqttApplicationMessageBuilder()
                 .WithTopic(delegateTopic)
                 .WithPayload(delegatePayload)
-                .WithAtLeastOnceQoS()
+                .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                 .Build())
                 .ConfigureAwait(false);
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using Easy.MessageHub;
+using HomeAutio.Mqtt.Core;
 using HomeAutio.Mqtt.GoogleHome.AppStart;
 using HomeAutio.Mqtt.GoogleHome.Identity;
 using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
@@ -117,39 +118,18 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Setup MQTT hosted service
             services.AddSingleton<IHostedService, MqttService>(serviceProvider =>
             {
-                var brokerSettings = new Core.BrokerSettings
-                {
-                    BrokerIp = Configuration.GetValue<string>("mqtt:brokerIp"),
-                    BrokerPort = Configuration.GetValue<int>("mqtt:brokerPort"),
-                    BrokerUsername = Configuration.GetValue<string>("mqtt:brokerUsername"),
-                    BrokerPassword = Configuration.GetValue<string>("mqtt:brokerPassword"),
-                    BrokerUseTls = Configuration.GetValue("mqtt:brokerUseTls", false)
-                };
-
                 // TLS settings
-                if (brokerSettings.BrokerUseTls)
+                var brokerUseTls = Configuration.GetValue("mqtt:brokerUseTls", false);
+                BrokerTlsSettings brokerTlsSettings = null;
+                if (brokerUseTls)
                 {
-                    var brokerTlsSettings = new Core.BrokerTlsSettings
+                    if (Configuration.GetValue("mqtt:brokerTlsSettings:protocol", "1.2") != "1.2")
                     {
-                        AllowUntrustedCertificates = Configuration.GetValue("mqtt:brokerTlsSettings:allowUntrustedCertificates", false),
-                        IgnoreCertificateChainErrors = Configuration.GetValue("mqtt:brokerTlsSettings:ignoreCertificateChainErrors", false),
-                        IgnoreCertificateRevocationErrors = Configuration.GetValue("mqtt:brokerTlsSettings:ignoreCertificateRevocationErrors", false)
-                    };
-
-                    switch (Configuration.GetValue("mqtt:brokerTlsSettings:protocol", "1.2"))
-                    {
-                        case "1.0":
-                            throw new NotSupportedException($"Only TLS 1.2 is supported");
-                        case "1.1":
-                            throw new NotSupportedException($"Only TLS 1.2 is supported");
-                        case "1.2":
-                        default:
-                            brokerTlsSettings.SslProtocol = System.Security.Authentication.SslProtocols.Tls12;
-                            break;
+                        throw new NotSupportedException($"Only TLS 1.2 is supported");
                     }
 
                     var brokerTlsCertificatesSection = Configuration.GetSection("mqtt:brokerTlsSettings:certificates");
-                    brokerTlsSettings.Certificates = brokerTlsCertificatesSection.GetChildren()
+                    var brokerTlsCertificates = brokerTlsCertificatesSection.GetChildren()
                         .Select(x =>
                         {
                             var file = x.GetValue<string>("file");
@@ -165,8 +145,25 @@ namespace HomeAutio.Mqtt.GoogleHome
                                 new X509Certificate2(file);
                         }).ToList();
 
-                    brokerSettings.BrokerTlsSettings = brokerTlsSettings;
+                    brokerTlsSettings = new BrokerTlsSettings
+                    {
+                        AllowUntrustedCertificates = Configuration.GetValue("mqtt:brokerTlsSettings:allowUntrustedCertificates", false),
+                        IgnoreCertificateChainErrors = Configuration.GetValue("mqtt:brokerTlsSettings:ignoreCertificateChainErrors", false),
+                        IgnoreCertificateRevocationErrors = Configuration.GetValue("mqtt:brokerTlsSettings:ignoreCertificateRevocationErrors", false),
+                        SslProtocol = System.Security.Authentication.SslProtocols.Tls12,
+                        Certificates = brokerTlsCertificates
+                    };
                 }
+
+                var brokerSettings = new BrokerSettings
+                {
+                    BrokerIp = Configuration.GetValue<string>("mqtt:brokerIp"),
+                    BrokerPort = Configuration.GetValue<int>("mqtt:brokerPort"),
+                    BrokerUsername = Configuration.GetValue<string>("mqtt:brokerUsername"),
+                    BrokerPassword = Configuration.GetValue<string>("mqtt:brokerPassword"),
+                    BrokerUseTls = brokerUseTls,
+                    BrokerTlsSettings = brokerTlsSettings
+                };
 
                 return new MqttService(
                     serviceProvider.GetRequiredService<ILogger<MqttService>>(),

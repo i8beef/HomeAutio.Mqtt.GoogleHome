@@ -1,7 +1,6 @@
 using System;
 using System.IO;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
@@ -44,7 +43,18 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             try
             {
-                CreateWebHostBuilder(config, args).Build().Run();
+                // Create host builder
+                var builder = WebApplication.CreateBuilder(args);
+                builder.Host.UseSerilog();
+
+                // Configure host
+                var startup = new Startup(builder.Configuration);
+                startup.ConfigureServices(builder.Services);
+                var app = builder.Build();
+                startup.Configure(app, builder.Environment);
+
+                // Run
+                app.Run();
             }
             catch (Exception ex)
             {
@@ -55,20 +65,6 @@ namespace HomeAutio.Mqtt.GoogleHome
             {
                 Log.CloseAndFlush();
             }
-        }
-
-        /// <summary>
-        /// Creates a <see cref="IWebHostBuilder"/>.
-        /// </summary>
-        /// <param name="config">Configuration.</param>
-        /// <param name="args">Arguments.</param>
-        /// <returns>A configured <see cref="IWebHostBuilder"/>.</returns>
-        public static IWebHostBuilder CreateWebHostBuilder(IConfigurationRoot config, string[] args)
-        {
-            return WebHost.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration(configBuilder => configBuilder.AddConfiguration(config))
-                .UseStartup<Startup>()
-                .UseSerilog();
         }
     }
 }
