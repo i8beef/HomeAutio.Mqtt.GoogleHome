@@ -102,6 +102,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         public bool IsStateFullyInitialized(IDictionary<string, string> stateCache)
         {
             return !Traits
+                .Where(trait => trait.State != null)
                 .SelectMany(trait => trait.State)
                 .Where(state => state.Value.Topic != null)
                 .Where(state => stateCache.ContainsKey(state.Value.Topic))
