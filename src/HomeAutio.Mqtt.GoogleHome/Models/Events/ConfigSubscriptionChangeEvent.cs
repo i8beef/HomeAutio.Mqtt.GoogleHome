@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Events
 {
@@ -8,22 +8,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Events
     public class ConfigSubscriptionChangeEvent
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigSubscriptionChangeEvent"/> class.
-        /// </summary>
-        public ConfigSubscriptionChangeEvent()
-        {
-            AddedSubscriptions = new List<string>();
-            DeletedSubscriptions = new List<string>();
-        }
-
-        /// <summary>
         /// Added subscriptions.
         /// </summary>
-        public IEnumerable<string> AddedSubscriptions { get; set; }
+        public IEnumerable<string> AddedSubscriptions { get; set; } = new List<string>();
 
         /// <summary>
         /// Deleted subscriptions.
         /// </summary>
-        public IEnumerable<string> DeletedSubscriptions { get; set; }
+        public IEnumerable<string> DeletedSubscriptions { get; set; } = new List<string>();
     }
 }

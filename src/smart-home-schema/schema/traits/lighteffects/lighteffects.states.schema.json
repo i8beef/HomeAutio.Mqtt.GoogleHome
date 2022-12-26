@@ -4,6 +4,11 @@
     {
       "$comment": "What is the current effect on my device?",
       "activeLightEffect": "colorLoop"
+    },
+    {
+      "$comment": "What is the current effect on my device?",
+      "activeLightEffect": "sleep",
+      "lightEffectEndUnixTimestampSec": 1595286869
     }
   ],
   "type": "object",
@@ -16,6 +21,10 @@
         "sleep",
         "wake"
       ]
+    },
+    "lightEffectEndUnixTimestampSec": {
+      "description": "Unix timestamp when the effect is expected to end, if the effect ends on its own.",
+      "type": "integer"
     }
   },
   "required": [

@@ -1,5 +1,6 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
+#pragma warning disable CA1720 // Identifier contains type name
 namespace HomeAutio.Mqtt.GoogleHome.Models.State
 {
     /// <summary>
@@ -31,3 +32,4 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         Bool
     }
 }
+#pragma warning restore CA1720 // Identifier contains type name

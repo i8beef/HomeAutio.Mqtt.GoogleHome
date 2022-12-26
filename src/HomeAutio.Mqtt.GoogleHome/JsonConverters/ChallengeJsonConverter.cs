@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using HomeAutio.Mqtt.GoogleHome.Models.State.Challenges;
 using Newtonsoft.Json.Linq;
 
@@ -10,22 +10,23 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
     public class ChallengeJsonConverter : CustomJsonConverter<ChallengeBase>
     {
         /// <inheritdoc />
-        protected override ChallengeBase Create(Type objectType, JObject jsonObject)
+        protected override Type? GetTargetType(Type objectType, JObject jsonObject)
         {
             // Examine the intent value
-            string typeName = jsonObject["type"].ToString();
+            var typeName = jsonObject["type"]?.ToString();
 
             // Based on the intent, instantiate and return a new object
             switch (typeName)
             {
                 case "ack":
-                    return new AcknowledgeChallenge();
+                    return typeof(AcknowledgeChallenge);
                 case "pin":
-                    return new PinChallenge();
+                    return typeof(PinChallenge);
                 case "none":
                 default:
                     return null;
             }
+
         }
     }
 }

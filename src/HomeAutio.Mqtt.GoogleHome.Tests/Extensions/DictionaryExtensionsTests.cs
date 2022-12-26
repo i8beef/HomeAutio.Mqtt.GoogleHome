@@ -10,7 +10,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
         public void CanFlattenDictionary()
         {
             // Arrange
-            var nestedDictionary = new Dictionary<string, object>
+            var nestedDictionary = new Dictionary<string, object?>
             {
                 {
                     "color",
@@ -46,7 +46,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
         public void CanNestDictionary()
         {
             // Arrange
-            var flattenedDictionary = new Dictionary<string, object>
+            var flattenedDictionary = new Dictionary<string, object?>
             {
                 { "color.spectrumHsv.hue", 123 },
                 { "color.spectrumHsv.saturation", 456 },
@@ -59,10 +59,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
             // Assert
             Assert.True(result.ContainsKey("color"));
 
-            var colorResult = (IDictionary<string, object>)result["color"];
+            var colorResult = (IDictionary<string, object?>)result["color"]!;
             Assert.True(colorResult.ContainsKey("spectrumHsv"));
 
-            var spectrumHSVResult = (IDictionary<string, object>)colorResult["spectrumHsv"];
+            var spectrumHSVResult = (IDictionary<string, object?>)colorResult["spectrumHsv"]!;
             Assert.True(spectrumHSVResult.ContainsKey("hue"));
             Assert.Equal(123, spectrumHSVResult["hue"]);
 
@@ -77,7 +77,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
         public void CanConvertArrays()
         {
             // Arrange
-            var flattenedDictionary = new Dictionary<string, object>
+            var flattenedDictionary = new Dictionary<string, object?>
             {
                 { "currentSensorStateData.[0].name", "name1" },
                 { "currentSensorStateData.[0].currentSensorState", "sensorState1" },
@@ -95,20 +95,20 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
             Assert.True(result.ContainsKey("currentSensorStateData"));
             Assert.True(result.ContainsKey("deepvalue"));
 
-            var currentSensorStateDataResult = (IList<object>)result["currentSensorStateData"];
+            var currentSensorStateDataResult = (IList<object?>)result["currentSensorStateData"]!;
 
-            var firstResult = (IDictionary<string, object>)currentSensorStateDataResult[0];
+            var firstResult = (IDictionary<string, object?>)currentSensorStateDataResult[0]!;
             Assert.Equal(flattenedDictionary["currentSensorStateData.[0].name"], firstResult["name"]);
             Assert.Equal(flattenedDictionary["currentSensorStateData.[0].currentSensorState"], firstResult["currentSensorState"]);
             Assert.Equal(flattenedDictionary["currentSensorStateData.[0].rawValue"], firstResult["rawValue"]);
 
-            var secondResult = (IDictionary<string, object>)currentSensorStateDataResult[1];
+            var secondResult = (IDictionary<string, object?>)currentSensorStateDataResult[1]!;
             Assert.Equal(flattenedDictionary["currentSensorStateData.[1].name"], secondResult["name"]);
             Assert.Equal(flattenedDictionary["currentSensorStateData.[1].currentSensorState"], secondResult["currentSensorState"]);
             Assert.Equal(flattenedDictionary["currentSensorStateData.[1].rawValue"], secondResult["rawValue"]);
 
-            var deepvalueResult = (Dictionary<string, object>)result["deepvalue"];
-            var level2Result = (IList<object>)deepvalueResult["level2"];
+            var deepvalueResult = (Dictionary<string, object?>)result["deepvalue"]!;
+            var level2Result = (IList<object>)deepvalueResult["level2"]!;
             var deepResult = (IDictionary<string, object>)level2Result[0];
             Assert.Equal(flattenedDictionary["deepvalue.level2.[0].name"], deepResult["name"]);
         }

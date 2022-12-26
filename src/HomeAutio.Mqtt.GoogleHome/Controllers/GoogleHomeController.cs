@@ -1,5 +1,7 @@
-﻿using System;
+using System;
+using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
+using HomeAutio.Mqtt.GoogleHome.Models.Request;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,38 +45,50 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <returns>Response.</returns>
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult Post([FromBody]Models.Request.Request request)
+        public IActionResult Post([FromBody] Request request)
         {
-            // Begin building Response
-            var response = new Models.Response.Response { RequestId = request.RequestId };
-
             // Smart Home Intents use a single object in inputs, containing the intent value, and a payload object with automation-specific objects.
-            if (request.Inputs == null || request.Inputs.Count != 1)
+            if (request.Inputs.Count != 1)
             {
-                response.Payload = new Models.Response.ErrorResponsePayload { ErrorCode = "protocolError" };
-                return BadRequest(response);
+                return BadRequest(new Models.Response.Response
+                {
+                    RequestId = request.RequestId,
+                    Payload = new Models.Response.ErrorResponsePayload { ErrorCode = "protocolError" }
+                });
             }
 
-            var input = request.Inputs[0];
+            var input = request.Inputs.First();
             switch (input)
             {
-                case Models.Request.SyncIntent syncIntent:
-                    response.Payload = _syncIntentHandler.Handle(syncIntent);
-                    return Ok(response);
-                case Models.Request.QueryIntent queryIntent:
-                    response.Payload = _queryIntentHandler.Handle(queryIntent);
-                    return Ok(response);
-                case Models.Request.ExecuteIntent executeIntent:
-                    response.Payload = _executeIntentHandler.Handle(executeIntent);
-                    return Ok(response);
-                case Models.Request.DisconnectIntent disconnectIntent:
+                case SyncIntent syncIntent:
+                    return Ok(new Models.Response.Response
+                    {
+                        RequestId = request.RequestId,
+                        Payload = _syncIntentHandler.Handle(syncIntent)
+                    });
+                case QueryIntent queryIntent:
+                    return Ok(new Models.Response.Response
+                    {
+                        RequestId = request.RequestId,
+                        Payload = _queryIntentHandler.Handle(queryIntent)
+                    });
+                case ExecuteIntent executeIntent:
+                    return Ok(new Models.Response.Response
+                    {
+                        RequestId = request.RequestId,
+                        Payload = _executeIntentHandler.Handle(executeIntent)
+                    });
+                case DisconnectIntent disconnectIntent:
                     _disconnectIntentHandler.Handle(disconnectIntent);
                     return Ok();
             }
 
             // No valid intents found, return error
-            response.Payload = new Models.Response.ErrorResponsePayload { ErrorCode = "protocolError" };
-            return BadRequest(response);
+            return BadRequest(new Models.Response.Response
+            {
+                RequestId = request.RequestId,
+                Payload = new Models.Response.ErrorResponsePayload { ErrorCode = "protocolError" }
+            });
         }
     }
 }

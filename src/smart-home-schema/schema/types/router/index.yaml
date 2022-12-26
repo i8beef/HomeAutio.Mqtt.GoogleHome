@@ -1,9 +1,12 @@
 name: action.devices.types.ROUTER
 shortname: Router
 description: >
-  Routers can reboot, update their software, have modes to handle Quality of Service (QoS)
-  controls and parental restrictions, and perform network specific operations (such as enabling
-  the guest network and reporting network specific information such as the current internet
+  Routers can reboot, update their software, have modes to handle Quality of Service
+  (QoS)
+  controls and parental restrictions, and perform network specific operations (such
+  as enabling
+  the guest network and reporting network specific information such as the current
+  internet
   throughput rates).
 availability: production
 version: '1.0'

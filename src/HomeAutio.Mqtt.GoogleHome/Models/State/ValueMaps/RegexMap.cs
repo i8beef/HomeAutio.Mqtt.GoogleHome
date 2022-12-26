@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
 {
@@ -10,60 +10,69 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         /// <summary>
         /// Regex to use when converting from MQTT to Google.
         /// </summary>
-        public string GoogleSearch { get; set; }
+        public required string GoogleSearch { get; init; }
 
         /// <summary>
         /// Replacement string to use when converting from MQTT to Google.
         /// </summary>
-        public string GoogleReplace { get; set; }
+        public required string GoogleReplace { get; init; }
 
         /// <summary>
         /// Regex to use when converting from Google to MQTT.
         /// </summary>
-        public string MqttSearch { get; set; }
+        public required string MqttSearch { get; init; }
 
         /// <summary>
         /// Replacement string to use when converting from Google to MQTT.
         /// </summary>
-        public string MqttReplace { get; set; }
+        public required string MqttReplace { get; init; }
 
         /// <inheritdoc />
-        public override bool MatchesGoogle(object value)
+        public override bool MatchesGoogle(object? value)
         {
-            if (GoogleSearch == null)
-                return false;
+            if (!string.IsNullOrWhiteSpace(GoogleSearch) && value is not null)
+            {
+                var stringValue = value.ToString();
+                return Regex.IsMatch(stringValue!, GoogleSearch);
+            }
 
-            return Regex.IsMatch(value.ToString(), GoogleSearch);
+            return false;
         }
 
         /// <inheritdoc />
-        public override string ConvertToGoogle(string value)
+        public override string? ConvertToGoogle(string? value)
         {
-            if (MqttSearch == null || GoogleReplace == null)
-                return value;
+            if (!string.IsNullOrWhiteSpace(MqttSearch)
+                && value is not null)
+            {
+                return Regex.Replace(value, MqttSearch, GoogleReplace);
+            }
 
-            return Regex.Replace(value, MqttSearch, GoogleReplace);
+            return value;
         }
 
         /// <inheritdoc />
-        public override bool MatchesMqtt(string value)
+        public override bool MatchesMqtt(string? value)
         {
-            if (MqttSearch == null)
-                return false;
+            if (!string.IsNullOrWhiteSpace(MqttSearch) && value is not null)
+            {
+                return Regex.IsMatch(value, MqttSearch);
+            }
 
-            return Regex.IsMatch(value, MqttSearch);
+            return false;
         }
 
         /// <inheritdoc />
-        public override string ConvertToMqtt(object value)
+        public override string? ConvertToMqtt(object? value)
         {
-            if (value == null)
-                return null;
+            if (!string.IsNullOrWhiteSpace(GoogleSearch)
+                && value is not null)
+            {
+                var stringValue = value.ToString();
+                return Regex.Replace(stringValue!, GoogleSearch, MqttReplace);
+            }
 
-            if (GoogleSearch == null || MqttReplace == null)
-                return value.ToString();
-
-            return Regex.Replace(value.ToString(), GoogleSearch, MqttReplace);
+            return value?.ToString();
         }
     }
 }

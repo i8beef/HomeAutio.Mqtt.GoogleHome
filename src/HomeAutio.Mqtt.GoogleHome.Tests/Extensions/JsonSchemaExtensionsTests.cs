@@ -21,10 +21,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
         {
             // Arrange
             var schemas = TraitSchemaProvider.GetTraitSchemas();
-            var schema = schemas.FirstOrDefault(x => x.Trait == traitType);
+            var schema = schemas.First(x => x.Trait == traitType);
 
             // Act
-            var result = schema.StateSchema.Validator.GetGoogleTypeForFlattenedPath(target);
+            var result = schema.StateSchema!.Validator.GetGoogleTypeForFlattenedPath(target);
 
             // Assert
             Assert.Equal(googleType, result);
@@ -39,10 +39,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
         {
             // Arrange
             var schemas = TraitSchemaProvider.GetTraitSchemas();
-            var schema = schemas.FirstOrDefault(x => x.Trait == traitType);
+            var schema = schemas.First(x => x.Trait == traitType);
 
             // Act
-            var result = schema.StateSchema.Validator.FlattenedPathExists(target);
+            var result = schema.StateSchema!.Validator.FlattenedPathExists(target);
 
             // Assert
             Assert.True(result);
@@ -57,10 +57,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Extensions
         {
             // Arrange
             var schemas = TraitSchemaProvider.GetTraitSchemas();
-            var schema = schemas.FirstOrDefault(x => x.Trait == traitType);
+            var schema = schemas.First(x => x.Trait == traitType);
 
             // Act
-            var result = schema.StateSchema.Validator.FlattenedPathExists(target);
+            var result = schema.StateSchema!.Validator.FlattenedPathExists(target);
 
             // Assert
             Assert.False(result);

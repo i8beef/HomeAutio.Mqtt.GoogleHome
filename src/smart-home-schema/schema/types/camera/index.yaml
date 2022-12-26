@@ -3,7 +3,8 @@ shortname: Camera
 description: >
   Cameras are complex and features will vary significantly between vendors.
   Over time, cameras will acquire many traits and attributes describing specific capabilities,
-  many of which may interact with the video/audio stream in special ways, such as sending a stream
+  many of which may interact with the video/audio stream in special ways, such as
+  sending a stream
   to another device, identifying what's in the stream, replaying feeds, etc.
 availability: production
 version: '1.0'

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Request
 {
@@ -10,6 +10,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Request
         /// <summary>
         /// Commands to execute.
         /// </summary>
-        public IList<Command> Commands { get; set; }
+        public required IList<Command> Commands { get; init; }
     }
 }

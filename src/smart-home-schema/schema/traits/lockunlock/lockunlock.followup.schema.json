@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "Lock the front door. (follow-up response for success case)",
+      "LockUnlock": {
+        "priority": 0,
+        "followUpResponse": {
+          "status": "SUCCESS",
+          "isLocked": true,
+          "followUpToken": "1234"
+        }
+      }
+    },
+    {
+      "$comment": "Unlock the front door. (follow-up response for success case)",
+      "LockUnlock": {
+        "priority": 0,
+        "followUpResponse": {
+          "status": "SUCCESS",
+          "isLocked": false,
+          "followUpToken": "1234"
+        }
+      }
+    },
+    {
+      "$comment": "Lock the front door. (follow-up response for failure case)",
+      "LockUnlock": {
+        "priority": 0,
+        "followUpResponse": {
+          "status": "FAILURE",
+          "errorCode": "deviceJammingDetected",
+          "followUpToken": "1234"
+        }
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "LockUnlock": {
+      "description": "Follow-up response payload.",
+      "type": "object",
+      "properties": {
+        "priority": {
+          "description": "Represents the notification level. The currently supported value is 0, which indicates that the notification should be spoken aloud.",
+          "type": "integer"
+        },
+        "followUpResponse": {
+          "description": "Asynchronous notification response indicating the status of a device command request.",
+          "oneOf": [
+            {
+              "description": "Success: Locked",
+              "type": "object",
+              "properties": {
+                "followUpToken": {
+                  "description": "Token provided in the original EXECUTE request.",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "Result of the request.",
+                  "type": "string",
+                  "enum": [
+                    "SUCCESS"
+                  ]
+                },
+                "isLocked": {
+                  "description": "Indicates whether the device is locked.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "status",
+                "followUpToken",
+                "isLocked"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "description": "Failure",
+              "type": "object",
+              "properties": {
+                "followUpToken": {
+                  "description": "Token provided in the original EXECUTE request.",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "Result of the request.",
+                  "type": "string",
+                  "enum": [
+                    "FAILURE"
+                  ]
+                },
+                "errorCode": {
+                  "description": "The value can be any <a href=\"https://developers.google.com/assistant/smarthome/reference/errors-exceptions#error_list\">error code</a> for this trait, for example, <code>deviceJammingDetected</code>.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "status",
+                "followUpToken",
+                "errorCode"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "priority",
+        "followUpResponse"
+      ]
+    }
+  },
+  "required": [
+    "LockUnlock"
+  ]
+}

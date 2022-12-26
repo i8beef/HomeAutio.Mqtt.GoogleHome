@@ -17,7 +17,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
                 int priority = 0;
 
                 foreach (IAttributeInfo attr in testCase.TestMethod.Method.GetCustomAttributes((typeof(TestPriorityAttribute).AssemblyQualifiedName)))
+                {
                     priority = attr.GetNamedArgument<int>("Priority");
+                }
 
                 GetOrCreate(sortedMethods, priority).Add(testCase);
             }
@@ -32,11 +34,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
 
         static TValue GetOrCreate<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key) where TValue : new()
         {
-            TValue result;
+            if (dictionary.TryGetValue(key, out var foundResult))
+            {
+                if (foundResult is not null)
+                {
+                    return foundResult;
+                }
+            }
 
-            if (dictionary.TryGetValue(key, out result)) return result;
-
-            result = new TValue();
+            var result = new TValue();
             dictionary[key] = result;
 
             return result;

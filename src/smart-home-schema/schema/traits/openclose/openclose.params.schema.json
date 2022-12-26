@@ -4,12 +4,14 @@
   "examples": [
     {
       "$comment": "Open the device.",
-      "openPercent": 100
+      "openPercent": 100,
+      "followUpToken": "123"
     },
     {
       "$comment": "Open device 50 percent down.",
       "openPercent": 50,
-      "openDirection": "DOWN"
+      "openDirection": "DOWN",
+      "followUpToken": "456"
     }
   ],
   "type": "object",
@@ -31,6 +33,10 @@
         "IN",
         "OUT"
       ]
+    },
+    "followUpToken": {
+      "description": "Google-provided token for follow-up response.",
+      "type": "string"
     }
   },
   "required": [

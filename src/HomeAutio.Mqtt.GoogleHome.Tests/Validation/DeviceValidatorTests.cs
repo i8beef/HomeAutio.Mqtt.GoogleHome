@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using HomeAutio.Mqtt.GoogleHome.App_Start;
+using HomeAutio.Mqtt.GoogleHome.AppStart;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using HomeAutio.Mqtt.GoogleHome.Validation;
 using Newtonsoft.Json;
@@ -31,7 +31,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Validation
             if (File.Exists(_testFilePath))
             {
                 var deviceConfigurationString = File.ReadAllText(_testFilePath);
-                var devices = new ConcurrentDictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString));
+                var devices = new ConcurrentDictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString)!);
 
                 // Act
                 var errors = devices.Select(x => DeviceValidator.Validate(x.Value));

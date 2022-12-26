@@ -4,7 +4,8 @@
     {
       "$comment": "What's the Wi-Fi speed?",
       "testDownloadSpeed": true,
-      "testUploadSpeed": true
+      "testUploadSpeed": true,
+      "followUpToken": "123"
     }
   ],
   "description": "Test the network download and upload speed.",
@@ -17,11 +18,16 @@
     "testUploadSpeed": {
       "description": "Indicates whether the upload speed should be tested.",
       "type": "boolean"
+    },
+    "followUpToken": {
+      "description": "Google-provided token for follow-up response.",
+      "type": "string"
     }
   },
   "required": [
     "testDownloadSpeed",
-    "testUploadSpeed"
+    "testUploadSpeed",
+    "followUpToken"
   ],
   "additionalProperties": false
 }

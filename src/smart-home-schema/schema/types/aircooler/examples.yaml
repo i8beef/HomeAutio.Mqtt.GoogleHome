@@ -3,6 +3,7 @@ type: action.devices.types.AIRCOOLER
 traits:
   - action.devices.traits.FanSpeed
   - action.devices.traits.HumiditySetting
+  - action.devices.traits.OnOff
   - action.devices.traits.TemperatureSetting
 attributes:
   {
@@ -74,6 +75,7 @@ attributes:
   }
 states:
   {
+    "on": true,
     "currentFanSpeedSetting": "low_key",
     "thermostatMode": "cool",
     "thermostatTemperatureAmbient": 25,
@@ -82,6 +84,15 @@ states:
     "humidityAmbientPercent": 10
   }
 commands:
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }
   action.devices.commands.SetFanSpeed:
     params:
       {

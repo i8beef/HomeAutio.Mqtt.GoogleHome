@@ -23,14 +23,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
             _messageHubMock = new Mock<IMessageHub>();
 
             _deviceRepositoryMock = new Mock<IGoogleDeviceRepository>();
-            _stateCache = new GoogleHome.Models.State.StateCache(new Dictionary<string, string>());
+            _stateCache = new GoogleHome.Models.State.StateCache(new Dictionary<string, string?>());
         }
 
         [Fact]
         public void ReturnsTransformedStateOnSuccess()
         {
             // Arrange
-            var commandParams = new Dictionary<string, object>
+            var commandParams = new Dictionary<string, object?>
             {
                 {
                     "color",
@@ -78,6 +78,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
             var device = new GoogleHome.Models.State.Device
             {
                 Id = "test/device",
+                Type = GoogleHome.Models.DeviceType.Unknown,
+                Name = new GoogleHome.Models.NameInfo { Name = "test" },
                 Traits = new List<GoogleHome.Models.State.DeviceTrait>
                 {
                     new GoogleHome.Models.State.DeviceTrait
@@ -91,28 +93,32 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                        {
                            {
                                "color.temperatureK",
-                               new GoogleHome.Models.State.DeviceState {
+                               new GoogleHome.Models.State.DeviceState
+                               {
                                    Topic = "color.temperatureK",
                                    ValueMap = null
                                }
                            },
                            {
                                "color.spectrumHsv.hue",
-                               new GoogleHome.Models.State.DeviceState {
+                               new GoogleHome.Models.State.DeviceState
+                               {
                                    Topic = "color.spectrumHsv.hue",
                                    ValueMap = null
                                }
                            },
                            {
                                "color.spectrumHsv.saturation",
-                               new GoogleHome.Models.State.DeviceState {
+                               new GoogleHome.Models.State.DeviceState
+                               {
                                    Topic = "color.spectrumHsv.saturation",
                                    ValueMap = null
                                }
                            },
                            {
                                "color.spectrumHsv.value",
-                               new GoogleHome.Models.State.DeviceState {
+                               new GoogleHome.Models.State.DeviceState
+                               {
                                    Topic = "color.spectrumHsv.value",
                                    ValueMap = null
                                }
@@ -123,7 +129,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                 }
             };
 
-            _deviceRepositoryMock.Setup(x => x.Get(It.IsAny<string>()))
+            _deviceRepositoryMock.Setup(x => x.FindById(It.IsAny<string>()))
                 .Returns(device);
 
             _stateCache.TryAdd("color.temperatureK", "75");
@@ -138,14 +144,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
 
             //Assert
             var commandResult = result.Commands.First();
-            var colorState = (IDictionary<string, object>)commandResult.States["color"];
+            var colorState = (IDictionary<string, object?>)commandResult.States!["color"]!;
 
             // Transformed temperature
             Assert.True(colorState.ContainsKey("temperatureK"));
             Assert.Equal(85, colorState["temperatureK"]);
 
             // Tertiary level items
-            var spectrumHSVState = (IDictionary<string, object>)colorState["spectrumHsv"];
+            var spectrumHSVState = (IDictionary<string, object?>)colorState["spectrumHsv"]!;
             Assert.Equal(123, spectrumHSVState["hue"]);
             Assert.Equal(456, spectrumHSVState["saturation"]);
             Assert.Equal(789, spectrumHSVState["value"]);
@@ -155,7 +161,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
         public void ReturnsCameraStreamStateOnSuccess()
         {
             // Arrange
-            var commandParams = new Dictionary<string, object>
+            var commandParams = new Dictionary<string, object?>
             {
                 { "StreamToChromecast", true },
                 { "SupportedStreamProtocols", new List<string> { "hls" } }
@@ -189,6 +195,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
             var device = new GoogleHome.Models.State.Device
             {
                 Id = "test/camera",
+                Type = GoogleHome.Models.DeviceType.CAMERA,
+                Name = new GoogleHome.Models.NameInfo { Name = "camera" },
                 Traits = new List<GoogleHome.Models.State.DeviceTrait>
                 {
                     new GoogleHome.Models.State.DeviceTrait
@@ -202,7 +210,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                        {
                            {
                                "cameraStreamAccessUrl",
-                               new GoogleHome.Models.State.DeviceState { 
+                               new GoogleHome.Models.State.DeviceState
+                               {
                                    ValueMap = new List<MapBase>
                                    {
                                        new StaticMap { Google = "https://fluffysheep.com/baaaaa.mp4", Type = MapType.Static }
@@ -211,7 +220,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                            },
                            {
                                "cameraStreamReceiverAppId",
-                               new GoogleHome.Models.State.DeviceState {
+                               new GoogleHome.Models.State.DeviceState
+                               {
                                    ValueMap = new List<MapBase>
                                    {
                                        new StaticMap { Google = "1g2f89213hg", Type = MapType.Static }
@@ -220,7 +230,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                            },
                            {
                                "cameraStreamAuthToken",
-                               new GoogleHome.Models.State.DeviceState {
+                               new GoogleHome.Models.State.DeviceState
+                               {
                                    ValueMap = new List<MapBase>
                                    {
                                        new StaticMap { Google = "12657342190192783", Type = MapType.Static }
@@ -229,7 +240,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
                            },
                            {
                                "cameraStreamProtocol",
-                               new GoogleHome.Models.State.DeviceState {
+                               new GoogleHome.Models.State.DeviceState
+                               {
                                    ValueMap = new List<MapBase>
                                    {
                                        new StaticMap { Google = "progressive_mp4", Type = MapType.Static }
@@ -242,7 +254,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
             };
 
             // Camera state
-            _deviceRepositoryMock.Setup(x => x.Get(It.IsAny<string>()))
+            _deviceRepositoryMock.Setup(x => x.FindById(It.IsAny<string>()))
                 .Returns(device);
 
             var handler = new ExecuteIntentHandler(_logMock.Object, _messageHubMock.Object, _deviceRepositoryMock.Object, _stateCache);
@@ -252,7 +264,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.IntentHandlers
 
             //Assert            
             var commandResult = result.Commands.First();
-            Assert.Equal("https://fluffysheep.com/baaaaa.mp4", commandResult.States["cameraStreamAccessUrl"]);
+            Assert.Equal("https://fluffysheep.com/baaaaa.mp4", commandResult.States!["cameraStreamAccessUrl"]);
             Assert.Equal("1g2f89213hg", commandResult.States["cameraStreamReceiverAppId"]);
             Assert.Equal("12657342190192783", commandResult.States["cameraStreamAuthToken"]);
             Assert.Equal("progressive_mp4", commandResult.States["cameraStreamProtocol"]);

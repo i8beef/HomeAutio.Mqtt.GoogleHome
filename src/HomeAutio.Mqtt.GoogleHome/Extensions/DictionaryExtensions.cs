@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -7,7 +7,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
     /// <summary>
     /// Dictionary extensions.
     /// </summary>
-    public static class DictionaryExtensions
+    public static partial class DictionaryExtensions
     {
         /// <summary>
         /// Flattens a nested dictionary with keys joined by the specified delimiter.
@@ -15,12 +15,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         /// <param name="source">Source dictionary.</param>
         /// <param name="delimiter">Delimiter.</param>
         /// <returns>A flattened Dictionary.</returns>
-        public static IDictionary<string, object> ToFlatDictionary(this IDictionary<string, object> source, string delimiter = ".")
+        public static IDictionary<string, object?> ToFlatDictionary(this IDictionary<string, object?> source, string delimiter = ".")
         {
-            var result = new Dictionary<string, object>();
+            var result = new Dictionary<string, object?>();
             foreach (var kvp in source)
             {
-                if (kvp.Value is IDictionary<string, object> dictionary)
+                if (kvp.Value is IDictionary<string, object?> dictionary)
                 {
                     // Objects
                     var flattenedValueDictionary = dictionary.ToFlatDictionary(delimiter);
@@ -34,7 +34,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                     // Arrays
                     for (var i = 0; i < list.Count; i++)
                     {
-                        if (list[i] is IDictionary<string, object> itemDictionary)
+                        if (list[i] is IDictionary<string, object?> itemDictionary)
                         {
                             var flattenedValueDictionary = itemDictionary.ToFlatDictionary(delimiter);
                             foreach (var subKvp in flattenedValueDictionary)
@@ -63,14 +63,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         /// <param name="source">Source dictionary.</param>
         /// <param name="delimiter">Delimiter.</param>
         /// <returns>A flattened Dictionary.</returns>
-        public static IDictionary<string, object> ToNestedDictionary(this IDictionary<string, object> source, string delimiter = ".")
+        public static IDictionary<string, object?> ToNestedDictionary(this IDictionary<string, object?> source, string delimiter = ".")
         {
-            var result = new Dictionary<string, object>();
+            var result = new Dictionary<string, object?>();
             foreach (var kvp in source)
             {
-                if (kvp.Value is IDictionary<string, object>)
+                if (kvp.Value is IDictionary<string, object?>)
                 {
-                    throw new System.Exception("Cannot convert a non-flat Dictionary to a nested dictionary.");
+                    throw new System.FormatException("Cannot convert a non-flat Dictionary to a nested dictionary.");
                 }
 
                 if (kvp.Key.Contains(delimiter))
@@ -79,23 +79,25 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                     var parts = new Queue<string>(kvp.Key.Split(delimiter));
 
                     // Start with the root result object
-                    var parent = result;
+                    var currentContainerNode = result;
                     while (parts.Count > 0)
                     {
                         var part = parts.Dequeue();
                         if (parts.Count > 0)
                         {
-                            // Branch node
-                            if (!parent.ContainsKey(part))
-                                parent.Add(part, new Dictionary<string, object>());
+                            // Branch node exists check
+                            if (!currentContainerNode.ContainsKey(part))
+                            {
+                                currentContainerNode.Add(part, new Dictionary<string, object?>());
+                            }
 
-                            // Grab the next parent
-                            parent = (Dictionary<string, object>)parent[part];
+                            // Traverse to the next level container node
+                            currentContainerNode = (Dictionary<string, object?>)currentContainerNode[part]!;
                         }
                         else
                         {
                             // Leaf node
-                            parent.Add(part, kvp.Value);
+                            currentContainerNode.Add(part, kvp.Value);
                         }
                     }
                 }
@@ -106,7 +108,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                 }
             }
 
-            // Convert  arrays
+            // Convert arrays
             return result.ConvertArrayKeys();
         }
 
@@ -115,15 +117,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         /// </summary>
         /// <param name="source">Source dictionary.</param>
         /// <returns>A flattened Dictionary.</returns>
-        public static IDictionary<string, object> ConvertArrayKeys(this IDictionary<string, object> source)
+        public static IDictionary<string, object?> ConvertArrayKeys(this IDictionary<string, object?> source)
         {
-            var result = new Dictionary<string, object>();
+            var result = new Dictionary<string, object?>();
 
             foreach (var kvp in source)
             {
-                if (kvp.Value is Dictionary<string, object> valueAsDictionary)
+                if (kvp.Value is Dictionary<string, object?> valueAsDictionary)
                 {
-                    if (valueAsDictionary.Keys.All(x => Regex.IsMatch(x, @"^\[\d+\]$")))
+                    if (valueAsDictionary.Keys.All(x => ArrayRegex().IsMatch(x)))
                     {
                         var list = valueAsDictionary.Values.ToList();
 
@@ -144,5 +146,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
 
             return result;
         }
+
+        [GeneratedRegex(@"^\[\d+\]$")]
+        private static partial Regex ArrayRegex();
     }
 }

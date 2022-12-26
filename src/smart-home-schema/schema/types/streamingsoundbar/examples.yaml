@@ -3,6 +3,7 @@ type: action.devices.types.STREAMING_SOUNDBAR
 traits:
   - action.devices.traits.AppSelector
   - action.devices.traits.MediaState
+  - action.devices.traits.OnOff
   - action.devices.traits.TransportControl
   - action.devices.traits.Volume
 attributes:
@@ -34,6 +35,7 @@ attributes:
   }
 states:
   {
+    "on": true,
     "currentApplication": "youtube",
     "currentVolume": 10,
     "isMuted": false,
@@ -41,6 +43,15 @@ states:
     "playbackState": "PAUSED"
   }
 commands:
+  action.devices.commands.OnOff:
+    params:
+      {
+        "on": true
+      }
+    results:
+      {
+        "on": true
+      }
   action.devices.commands.appInstall:
     params:
       {

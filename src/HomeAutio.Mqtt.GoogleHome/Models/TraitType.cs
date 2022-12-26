@@ -133,6 +133,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         NetworkControl,
 
         /// <summary>
+        /// action.devices.traits.ObjectDetection.
+        /// </summary>
+        [EnumMember(Value = "action.devices.traits.ObjectDetection")]
+        ObjectDetection,
+
+        /// <summary>
         /// action.devices.traits.OnOff.
         /// </summary>
         [EnumMember(Value = "action.devices.traits.OnOff")]

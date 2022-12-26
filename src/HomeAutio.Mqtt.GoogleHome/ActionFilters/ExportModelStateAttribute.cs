@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HomeAutio.Mqtt.GoogleHome.ActionFilters
@@ -9,26 +9,25 @@ namespace HomeAutio.Mqtt.GoogleHome.ActionFilters
     public class ExportModelStateAttribute : ModelStateTransfer
     {
         /// <inheritdoc />
-        public override void OnActionExecuted(ActionExecutedContext filterContext)
+        public override void OnActionExecuted(ActionExecutedContext context)
         {
             // Only export when ModelState is not valid
-            if (!filterContext.ModelState.IsValid)
+            if (!context.ModelState.IsValid)
             {
                 // Export if we are redirecting
-                if (filterContext.Result is RedirectResult
-                    || filterContext.Result is RedirectToRouteResult
-                    || filterContext.Result is RedirectToActionResult)
+                if (context.Result is RedirectResult
+                    or RedirectToRouteResult
+                    or RedirectToActionResult)
                 {
-                    var controller = filterContext.Controller as Controller;
-                    if (controller != null && filterContext.ModelState != null)
+                    if (context.Controller is Controller controller && context.ModelState != null)
                     {
-                        var modelState = SerialiseModelState(filterContext.ModelState);
+                        var modelState = SerialiseModelState(context.ModelState);
                         controller.TempData[Key] = modelState;
                     }
                 }
             }
 
-            base.OnActionExecuted(filterContext);
+            base.OnActionExecuted(context);
         }
     }
 }

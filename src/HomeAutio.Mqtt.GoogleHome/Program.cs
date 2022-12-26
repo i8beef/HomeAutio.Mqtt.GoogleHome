@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.IO;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
@@ -20,7 +19,9 @@ namespace HomeAutio.Mqtt.GoogleHome
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             if (string.IsNullOrEmpty(environmentName))
+            {
                 environmentName = "Development";
+            }
 
             // Setup config
             var config = new ConfigurationBuilder()
@@ -38,11 +39,22 @@ namespace HomeAutio.Mqtt.GoogleHome
             Log.Logger.Information($"Loaded with configuration from: appsettings.json, {Path.Combine(Environment.CurrentDirectory, "config", $"appsettings.{environmentName}.json")}");
 
             // Turn on or off PII data from Microsoft Identity stuff
-            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = config.GetValue<bool>("logPII", false);
+            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = config.GetValue("logPII", false);
 
             try
             {
-                CreateWebHostBuilder(config, args).Build().Run();
+                // Create host builder
+                var builder = WebApplication.CreateBuilder(args);
+                builder.Host.UseSerilog();
+
+                // Configure host
+                var startup = new Startup(builder.Configuration);
+                startup.ConfigureServices(builder.Services);
+                var app = builder.Build();
+                startup.Configure(app, builder.Environment);
+
+                // Run
+                app.Run();
             }
             catch (Exception ex)
             {
@@ -54,17 +66,5 @@ namespace HomeAutio.Mqtt.GoogleHome
                 Log.CloseAndFlush();
             }
         }
-
-        /// <summary>
-        /// Creates a <see cref="IWebHostBuilder"/>.
-        /// </summary>
-        /// <param name="config">Configuration.</param>
-        /// <param name="args">Arguments.</param>
-        /// <returns>A configured <see cref="IWebHostBuilder"/>.</returns>
-        public static IWebHostBuilder CreateWebHostBuilder(IConfigurationRoot config, string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration(configBuilder => configBuilder.AddConfiguration(config))
-                .UseStartup<Startup>()
-                .UseSerilog();
     }
 }

@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Linq;
 using Easy.MessageHub;
+using HomeAutio.Mqtt.GoogleHome.Extensions;
 using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -52,7 +53,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
 
             var syncResponsePayload = new Models.Response.SyncResponsePayload
             {
-                AgentUserId = _config.GetValue<string>("googleHomeGraph:agentUserId"),
+                AgentUserId = _config.GetRequiredValue<string>("googleHomeGraph:agentUserId"),
                 Devices = _deviceRepository.GetAll()
                     .Where(device => !device.Disabled)
                     .Select(x => new Models.Response.Device
@@ -64,7 +65,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                         Traits = x.Traits.Select(trait => trait.Trait).ToList(),
                         Attributes = x.Traits
                             .Where(trait => trait.Attributes != null)
-                            .SelectMany(trait => trait.Attributes)
+                            .SelectMany(trait => trait.Attributes!)
                             .ToDictionary(kv => kv.Key, kv => kv.Value),
                         Name = x.Name,
                         DeviceInfo = x.DeviceInfo,

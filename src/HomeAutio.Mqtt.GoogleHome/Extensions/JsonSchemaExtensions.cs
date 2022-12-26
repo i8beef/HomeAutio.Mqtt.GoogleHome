@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
@@ -8,7 +8,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
     /// <summary>
     /// JSON schema extensions.
     /// </summary>
-    public static class JsonSchemaExtensions
+    public static partial class JsonSchemaExtensions
     {
         /// <summary>
         /// Gets the Google type for the specified path is valid for this schema.
@@ -16,7 +16,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         /// <param name="schema">JSON Schema.</param>
         /// <param name="flattenedPath">Flattened state path.</param>
         /// <returns>The <see cref="GoogleType"/> for the specified path.</returns>
-        public static ICollection<object> GetEnumValuesForFlattenedPath(this NJsonSchema.JsonSchema schema, string flattenedPath)
+        public static ICollection<object>? GetEnumValuesForFlattenedPath(this NJsonSchema.JsonSchema schema, string flattenedPath)
         {
             var foundSchemas = schema.GetByFlattenedPath(flattenedPath);
 
@@ -80,7 +80,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         /// <param name="schema">JSON Schema.</param>
         /// <param name="flattenedPath">Flattened state path.</param>
         /// <returns>A list of matching <see cref="NJsonSchema.JsonSchema"/> for the specified path.</returns>
-        public static IList<NJsonSchema.JsonSchema> GetByFlattenedPath(this NJsonSchema.JsonSchema schema, string flattenedPath)
+        public static IList<NJsonSchema.JsonSchema> GetByFlattenedPath(this NJsonSchema.JsonSchema schema, string? flattenedPath)
         {
             const string delimiter = ".";
             var paths = flattenedPath?.Split(delimiter, 2);
@@ -93,13 +93,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                 case NJsonSchema.JsonObjectType.None:
                     // Treat unspecified types as possible subschemas
                     if (currentPathFragment == null)
+                    {
                         return new List<NJsonSchema.JsonSchema>();
+                    }
 
                     var objectResults = new List<NJsonSchema.JsonSchema>();
-                    if (schema.Properties != null && schema.Properties.ContainsKey(currentPathFragment))
+                    if (schema.Properties != null && schema.Properties.TryGetValue(currentPathFragment, out var foundPropertySchema))
                     {
                         // Recursive traversal of objects
-                        objectResults.AddRange(GetByFlattenedPath(schema.Properties[currentPathFragment], remainingPathFragment));
+                        objectResults.AddRange(foundPropertySchema.GetByFlattenedPath(remainingPathFragment));
                     }
 
                     if (schema.AnyOf != null)
@@ -107,7 +109,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                         foreach (var propertySchema in schema.AnyOf)
                         {
                             // Unwrap and validate each as a possibility
-                            objectResults.AddRange(GetByFlattenedPath(propertySchema, flattenedPath));
+                            objectResults.AddRange(propertySchema.GetByFlattenedPath(flattenedPath));
                         }
                     }
 
@@ -116,30 +118,48 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                         foreach (var propertySchema in schema.OneOf)
                         {
                             // Unwrap and validate each as a possibility
-                            objectResults.AddRange(GetByFlattenedPath(propertySchema, flattenedPath));
+                            objectResults.AddRange(propertySchema.GetByFlattenedPath(flattenedPath));
                         }
                     }
 
                     if (schema.AdditionalPropertiesSchema != null)
                     {
                         // Use the additional property schema, if available
-                        objectResults.AddRange(GetByFlattenedPath(schema.AdditionalPropertiesSchema, flattenedPath));
+                        objectResults.AddRange(schema.AdditionalPropertiesSchema.GetByFlattenedPath(flattenedPath));
+                    }
+
+                    if (schema.ExtensionData != null && schema.ExtensionData.Any(x => x.Key == "if"))
+                    {
+                        // Use extension data if present
+                        var conditionalKeys = new List<string> { "then", "else" };
+                        foreach (var conditionalPropertySchema in schema.ExtensionData.Where(x => conditionalKeys.Contains(x.Key)))
+                        {
+                            if (conditionalPropertySchema.Value is NJsonSchema.JsonSchema jsonSchema)
+                            {
+                                // Unwrap and validate each as a possibility
+                                objectResults.AddRange(jsonSchema.GetByFlattenedPath(flattenedPath));
+                            }
+                        }
                     }
 
                     if (objectResults.Any())
+                    {
                         return objectResults;
+                    }
 
                     break;
                 case NJsonSchema.JsonObjectType.Array:
                     if (currentPathFragment == null)
+                    {
                         return new List<NJsonSchema.JsonSchema>();
+                    }
 
                     if (schema.Item != null)
                     {
-                        if (Regex.IsMatch(currentPathFragment, @"^\[\d+\]$"))
+                        if (ArrayRegex().IsMatch(currentPathFragment))
                         {
                             // Unwrap array item
-                            return GetByFlattenedPath(schema.Item, remainingPathFragment);
+                            return schema.Item.GetByFlattenedPath(remainingPathFragment);
                         }
                     }
                     else
@@ -147,15 +167,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
                         var arrayItemResult = new List<NJsonSchema.JsonSchema>();
                         foreach (var branch in schema.Items)
                         {
-                            if (Regex.IsMatch(currentPathFragment, @"^\[\d+\]$"))
+                            if (ArrayRegex().IsMatch(currentPathFragment))
                             {
                                 // Unwrap array item
-                                arrayItemResult.AddRange(GetByFlattenedPath(branch, remainingPathFragment));
+                                arrayItemResult.AddRange(branch.GetByFlattenedPath(remainingPathFragment));
                             }
                         }
 
                         if (arrayItemResult.Any())
+                        {
                             return arrayItemResult;
+                        }
                     }
 
                     break;
@@ -169,5 +191,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
 
             return new List<NJsonSchema.JsonSchema>();
         }
+
+        [GeneratedRegex(@"^\[\d+\]$")]
+        private static partial Regex ArrayRegex();
     }
 }

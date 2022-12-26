@@ -2,6 +2,8 @@ name: action.devices.traits.RunCycle
 shortname: RunCycle
 description: This trait represents any device that has an ongoing duration for its operation which can be queried.
 availability: production
-version: '1.0'
+version: '1.1'
 states:
   $ref: runcycle.states.schema.json
+notifications:
+  $ref: runcycle.notifications.schema.json

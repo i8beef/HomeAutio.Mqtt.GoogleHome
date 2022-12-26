@@ -1,0 +1,38 @@
+name: Simple doorbell
+type: action.devices.types.DOORBELL
+traits:
+  - action.devices.traits.CameraStream
+  - action.devices.traits.ObjectDetection
+attributes:
+  {
+    "cameraStreamSupportedProtocols": [
+      "hls"
+    ],
+    "cameraStreamNeedAuthToken": true
+  }
+commands:
+  action.devices.commands.GetCameraStream:
+    params:
+      {
+        "StreamToChromecast": true,
+        "SupportedStreamProtocols": [
+          "hls"
+        ]
+      }
+    results:
+      {
+        "cameraStreamAccessUrl": "https://example.com/stream.mp4",
+        "cameraStreamProtocol": "hls"
+      }
+notifications:
+  {
+    "ObjectDetection": {
+      "objects": {
+        "named": [
+          "Alice"
+        ]
+      },
+      "priority": 0,
+      "detectionTimestamp": 946684800000
+    }
+  }

@@ -168,6 +168,11 @@
                 "description": "Indicates whether this device will have its states updated by the Real Time Feed. (true to use the Real Time Feed for reporting state, and false to use the polling model.)",
                 "type": "boolean"
               },
+              "notificationSupportedByAgent": {
+                "description": "Indicates whether notifications are enabled for the device.",
+                "type": "boolean",
+                "default": false
+              },
               "roomHint": {
                 "description": "Provides the current room of the device in the user's home to simplify setup.",
                 "type": "string"

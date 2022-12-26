@@ -1,4 +1,4 @@
-﻿using HomeAutio.Mqtt.GoogleHome.Models.Request;
+using HomeAutio.Mqtt.GoogleHome.Models.Request;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Events
 {
@@ -10,11 +10,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Events
         /// <summary>
         /// Device id.
         /// </summary>
-        public string DeviceId { get; set; }
+        public required string DeviceId { get; init; }
 
         /// <summary>
         /// Execution.
         /// </summary>
-        public Execution Execution { get; set; }
+        public required Execution Execution { get; init; }
     }
 }

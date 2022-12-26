@@ -1,4 +1,4 @@
-﻿namespace HomeAutio.Mqtt.GoogleHome.Models.Response
+namespace HomeAutio.Mqtt.GoogleHome.Models.Response
 {
     /// <summary>
     /// Error response payload reponse object.
@@ -8,11 +8,11 @@
         /// <summary>
         /// Debug string.
         /// </summary>
-        public string DebugString { get; set; }
+        public string? DebugString { get; init; }
 
         /// <summary>
         /// Error code.
         /// </summary>
-        public string ErrorCode { get; set; }
+        public string? ErrorCode { get; init; }
     }
 }

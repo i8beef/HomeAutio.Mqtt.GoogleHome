@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Events
 {
@@ -10,6 +10,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Events
         /// <summary>
         /// Time of event.
         /// </summary>
-        public DateTimeOffset Time { get; set; }
+        public required DateTimeOffset Time { get; init; }
     }
 }

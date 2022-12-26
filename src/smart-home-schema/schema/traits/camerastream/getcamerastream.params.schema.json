@@ -2,13 +2,14 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "examples": [
     {
-      "$comment": "Show the front door.",
-      "StreamToChromecast": true,
+      "$comment": "Show the front door camera.",
+      "StreamToChromecast": false,
       "SupportedStreamProtocols": [
         "progressive_mp4",
         "hls",
         "dash",
-        "smooth_stream"
+        "smooth_stream",
+        "webrtc"
       ]
     },
     {
@@ -23,7 +24,7 @@
   "type": "object",
   "properties": {
     "StreamToChromecast": {
-      "description": "Whether the stream will be played on a Chromecast device. Currently, this is always true.",
+      "description": "Whether the stream will be played on a Chromecast device.",
       "type": "boolean"
     },
     "SupportedStreamProtocols": {
@@ -32,11 +33,37 @@
       "items": {
         "description": "Media type.",
         "type": "string",
-        "enum": [
-          "hls",
-          "dash",
-          "smooth_stream",
-          "progressive_mp4"
+        "oneOf": [
+          {
+            "enum": [
+              "hls"
+            ],
+            "description": "HTTP Live Streaming"
+          },
+          {
+            "enum": [
+              "dash"
+            ],
+            "description": " Dynamic Adaptive Streaming over HTTP"
+          },
+          {
+            "enum": [
+              "smooth_stream"
+            ],
+            "description": "Smooth Streaming"
+          },
+          {
+            "enum": [
+              "progressive_mp4"
+            ],
+            "description": "Progressive MP4 (mostly used for clips)"
+          },
+          {
+            "enum": [
+              "webrtc"
+            ],
+            "description": "WebRTC"
+          }
         ]
       }
     }

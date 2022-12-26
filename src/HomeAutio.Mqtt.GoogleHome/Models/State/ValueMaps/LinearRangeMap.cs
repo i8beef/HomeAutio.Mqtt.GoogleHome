@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
 {
@@ -10,45 +10,59 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         /// <summary>
         /// Google min value.
         /// </summary>
-        public decimal GoogleMin { get; set; }
+        public required decimal GoogleMin { get; init; }
 
         /// <summary>
         /// Google max value.
         /// </summary>
-        public decimal GoogleMax { get; set; }
+        public required decimal GoogleMax { get; init; }
 
         /// <summary>
         /// MQTT min value.
         /// </summary>
-        public decimal MqttMin { get; set; }
+        public required decimal MqttMin { get; init; }
 
         /// <summary>
         /// MQTT max value.
         /// </summary>
-        public decimal MqttMax { get; set; }
+        public required decimal MqttMax { get; init; }
 
         /// <inheritdoc />
-        public override bool MatchesGoogle(object value)
+        public override bool MatchesGoogle(object? value)
         {
-            if (decimal.TryParse(value.ToString(), out decimal decimalValue))
+            if (value is null)
+            {
+                return false;
+            }
+
+            if (decimal.TryParse(value.ToString(), out var decimalValue))
+            {
                 return decimalValue >= GoogleMin && decimalValue <= GoogleMax;
+            }
 
             return false;
         }
 
         /// <inheritdoc />
-        public override string ConvertToGoogle(string value)
+        public override string? ConvertToGoogle(string? value)
         {
-            if (MqttMax - MqttMin == 0)
+            if (value is null)
+            {
                 return value;
+            }
 
-            if (int.TryParse(value.ToString(), out int intValue))
+            if (MqttMax - MqttMin == 0)
+            {
+                return value;
+            }
+
+            if (int.TryParse(value.ToString(), out var intValue))
             {
                 // Integer mode
                 var newValue = ((intValue - MqttMin) / (MqttMax - MqttMin) * (GoogleMax - GoogleMin)) + GoogleMin;
                 return Math.Round(newValue, MidpointRounding.AwayFromZero).ToString();
             }
-            else if (decimal.TryParse(value.ToString(), out decimal decimalValue))
+            else if (decimal.TryParse(value.ToString(), out var decimalValue))
             {
                 // Decimal mode
                 var newValue = ((decimalValue - MqttMin) / (MqttMax - MqttMin) * (GoogleMax - GoogleMin)) + GoogleMin;
@@ -59,27 +73,36 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         }
 
         /// <inheritdoc />
-        public override bool MatchesMqtt(string value)
+        public override bool MatchesMqtt(string? value)
         {
-            if (decimal.TryParse(value, out decimal decimalValue))
+            if (decimal.TryParse(value, out var decimalValue))
+            {
                 return decimalValue >= MqttMin && decimalValue <= MqttMax;
+            }
 
             return false;
         }
 
         /// <inheritdoc />
-        public override string ConvertToMqtt(object value)
+        public override string? ConvertToMqtt(object? value)
         {
-            if (GoogleMax - GoogleMin == 0)
-                return value.ToString();
+            if (value is null)
+            {
+                return null;
+            }
 
-            if (int.TryParse(value.ToString(), out int intValue))
+            if (GoogleMax - GoogleMin == 0)
+            {
+                return value.ToString();
+            }
+
+            if (int.TryParse(value.ToString(), out var intValue))
             {
                 // Integer mode
                 var newValue = ((intValue - GoogleMin) / (GoogleMax - GoogleMin) * (MqttMax - MqttMin)) + MqttMin;
                 return Math.Round(newValue, MidpointRounding.AwayFromZero).ToString();
             }
-            else if (decimal.TryParse(value.ToString(), out decimal decimalValue))
+            else if (decimal.TryParse(value.ToString(), out var decimalValue))
             {
                 // Decimal mode
                 var newValue = ((decimalValue - GoogleMin) / (GoogleMax - GoogleMin) * (MqttMax - MqttMin)) + MqttMin;

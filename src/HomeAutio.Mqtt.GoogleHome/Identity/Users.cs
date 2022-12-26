@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using IdentityServer4.Test;
@@ -9,7 +9,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
     /// <summary>
     /// Identity in memory users.
     /// </summary>
-    internal class Users
+    public class Users
     {
         /// <summary>
         /// Gets static list of in memory users based on configuration.

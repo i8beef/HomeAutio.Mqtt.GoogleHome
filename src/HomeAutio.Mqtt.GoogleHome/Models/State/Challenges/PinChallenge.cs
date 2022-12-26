@@ -1,4 +1,4 @@
-﻿using HomeAutio.Mqtt.GoogleHome.Models.Request;
+using HomeAutio.Mqtt.GoogleHome.Models.Request;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.State.Challenges
 {
@@ -13,7 +13,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.Challenges
         /// <summary>
         /// Pin.
         /// </summary>
-        public string Pin { get; set; }
+        public required string Pin { get; init; }
 
         /// <inheritdoc />
         public override string ChallengeNeededPhrase => "pinNeeded";
@@ -24,7 +24,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.Challenges
         /// <inheritdoc />
         public override bool Validate(Challenge challenge)
         {
-            return challenge?.Pin == Pin;
+            return challenge.Pin is not null && challenge.Pin == Pin;
         }
     }
 }

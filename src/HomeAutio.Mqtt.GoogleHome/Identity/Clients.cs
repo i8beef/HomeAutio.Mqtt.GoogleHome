@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using IdentityServer4.Models;
 using Microsoft.Extensions.Configuration;
@@ -8,7 +8,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
     /// <summary>
     /// Identity in memory clients.
     /// </summary>
-    internal class Clients
+    public class Clients
     {
         /// <summary>
         /// Gets static in memory clients based on configuration.
@@ -33,7 +33,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                         ? TokenUsage.ReUse
                         : TokenUsage.OneTimeOnly,
                     RefreshTokenExpiration = TokenExpiration.Sliding,
-                    SlidingRefreshTokenLifetime = x.GetValue<int>("refreshTokenLifetime", 30) * 86400,
+                    SlidingRefreshTokenLifetime = x.GetValue("refreshTokenLifetime", 30) * 86400,
                     AbsoluteRefreshTokenLifetime = 0
                 });
 

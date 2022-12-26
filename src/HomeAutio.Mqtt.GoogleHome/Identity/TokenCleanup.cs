@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -14,7 +14,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         private readonly TimeSpan _cleanupInterval;
         private readonly IPersistedGrantStoreWithExpiration _grantStore;
 
-        private CancellationTokenSource _source;
+        private CancellationTokenSource? _source;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TokenCleanup"/> class.
@@ -24,7 +24,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <param name="interval">Interval.</param>
         public TokenCleanup(ILogger<TokenCleanup> logger, IPersistedGrantStoreWithExpiration grantStore, int interval = 60)
         {
-            if (interval < 1) throw new ArgumentException("Token cleanup interval must be at least 1 second");
+            if (interval < 1)
+            {
+                throw new ArgumentException("Token cleanup interval must be at least 1 second");
+            }
 
             _log = logger ?? throw new ArgumentNullException(nameof(logger));
             _grantStore = grantStore ?? throw new ArgumentNullException(nameof(grantStore));
@@ -37,7 +40,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// <param name="cancellationToken">Cancellation token.</param>
         public void Start(CancellationToken cancellationToken)
         {
-            if (_source != null) throw new InvalidOperationException("Token cleanup already started. Call Stop first.");
+            if (_source != null)
+            {
+                throw new InvalidOperationException("Token cleanup already started. Call Stop first.");
+            }
 
             _log.LogDebug("Starting grant removal");
 
@@ -51,7 +57,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         /// </summary>
         public void Stop()
         {
-            if (_source == null) throw new InvalidOperationException("Token cleanup not started. Call Start first.");
+            if (_source == null)
+            {
+                throw new InvalidOperationException("Token cleanup not started. Call Start first.");
+            }
 
             _log.LogDebug("Stopping grant removal");
 
@@ -80,7 +89,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                 }
                 catch (Exception ex)
                 {
-                    _log.LogError("Task.Delay exception: {0}. Exiting.", ex.Message);
+                    _log.LogError("Task.Delay exception: {Message}. Exiting.", ex.Message);
                     break;
                 }
 
@@ -108,7 +117,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
             }
             catch (Exception ex)
             {
-                _log.LogError("Exception removing expired grants: {exception}", ex.Message);
+                _log.LogError("Exception removing expired grants: {Exception}", ex.Message);
             }
         }
     }

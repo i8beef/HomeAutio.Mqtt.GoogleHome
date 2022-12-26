@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Easy.MessageHub;
@@ -48,7 +48,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
             _log.LogInformation("Received QUERY intent for devices: " + string.Join(", ", intent.Payload.Devices.Select(x => x.Id)));
 
             // Payload for disabled a or missing device
-            var offlineDeviceState = new Dictionary<string, object>
+            var offlineDeviceState = new Dictionary<string, object?>
             {
                 { "errorCode", "deviceNotFound" },
                 { "online", false },
@@ -79,7 +79,9 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                         queryDeviceId =>
                         {
                             var device = devices.FirstOrDefault(x => x.Id == queryDeviceId);
-                            var results = device != null ? device.GetGoogleState(_stateCache) : offlineDeviceState;
+                            var results = device is not null
+                                ? device.GetGoogleState(_stateCache)
+                                : offlineDeviceState;
 
                             // Add explicit status if not specified by state mappings
                             if (!results.ContainsKey("status"))
@@ -95,7 +97,9 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
             var reportStateDevices = devices.Where(device => device.WillReportState).ToList();
             var shouldTriggerReportState = false;
             if (reportStateDevices.Any() && shouldTriggerReportState)
+            {
                 _messageHub.Publish(new ReportStateEvent { Devices = reportStateDevices });
+            }
 
             return queryResponsePayload;
         }

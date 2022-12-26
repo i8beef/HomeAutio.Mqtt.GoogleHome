@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps;
 using Newtonsoft.Json.Linq;
 
@@ -10,26 +10,26 @@ namespace HomeAutio.Mqtt.GoogleHome.JsonConverters
     public class ValueMapJsonConverter : CustomJsonConverter<MapBase>
     {
         /// <inheritdoc />
-        protected override MapBase Create(Type objectType, JObject jsonObject)
+        protected override Type? GetTargetType(Type objectType, JObject jsonObject)
         {
             // Examine the intent value
-            string typeName = jsonObject["type"].ToString();
+            var typeName = jsonObject["type"]?.ToString();
 
             // Based on the intent, instantiate and return a new object
             switch (typeName)
             {
                 case "celsius":
-                    return new TemperatureMap();
+                    return typeof(TemperatureMap);
                 case "linearRange":
-                    return new LinearRangeMap();
+                    return typeof(LinearRangeMap);
                 case "range":
-                    return new RangeMap();
+                    return typeof(RangeMap);
                 case "regex":
-                    return new RegexMap();
+                    return typeof(RegexMap);
                 case "static":
-                    return new StaticMap();
+                    return typeof(StaticMap);
                 case "value":
-                    return new ValueMap();
+                    return typeof(ValueMap);
                 default:
                     return null;
             }

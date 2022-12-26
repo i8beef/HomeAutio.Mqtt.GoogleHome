@@ -1,17 +1,20 @@
 name: action.devices.types.STREAMING_BOX
 shortname: Streaming Box
 description: >
-  This device enables streaming services for media and music, often used in conjunction with a
-  display such as a TV. This devices is powered from a constant source, separate from the
+  This device enables streaming services for media and music, often used in conjunction
+  with a
+  display such as a TV. This devices is powered from a constant source, separate from
+  the
   display device itself.
 availability: production
 version: '1.0'
 traits:
   recommended:
+  - Channel
   - InputSelector
-  - OnOff
   required:
   - AppSelector
   - MediaState
+  - OnOff
   - TransportControl
   - Volume

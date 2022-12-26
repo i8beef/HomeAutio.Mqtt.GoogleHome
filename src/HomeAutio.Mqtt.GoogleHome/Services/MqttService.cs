@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -12,7 +12,8 @@ using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
-using MQTTnet.Extensions.ManagedClient;
+using MQTTnet.Client;
+using MQTTnet.Packets;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Services
@@ -20,7 +21,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
     /// <summary>
     /// MQTT Service.
     /// </summary>
-    public class MqttService : ServiceBase
+    public partial class MqttService : ServiceBase
     {
         private readonly ILogger<MqttService> _log;
 
@@ -30,7 +31,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
 
         private readonly IList<Guid> _messageHubSubscriptions = new List<Guid>();
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MqttService"/> class.
@@ -69,10 +70,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         protected override Task StartServiceAsync(CancellationToken cancellationToken)
         {
             // Subscribe to event aggregator
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<ConfigSubscriptionChangeEvent>((e) => HandleConfigSubscriptionChange(e)));
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<DeviceCommandExecutionEvent>((e) => HandleGoogleHomeCommand(e)));
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<SyncIntentReceivedEvent>((e) => HandleGoogleHomeSyncIntent(e)));
-            _messageHubSubscriptions.Add(_messageHub.Subscribe<QueryIntentReceivedEvent>((e) => HandleGoogleHomeQueryIntent(e)));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<ConfigSubscriptionChangeEvent>(HandleConfigSubscriptionChange));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<DeviceCommandExecutionEvent>(HandleGoogleHomeCommand));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<SyncIntentReceivedEvent>(HandleGoogleHomeSyncIntent));
+            _messageHubSubscriptions.Add(_messageHub.Subscribe<QueryIntentReceivedEvent>(HandleGoogleHomeQueryIntent));
 
             return Task.CompletedTask;
         }
@@ -90,7 +91,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         }
 
         /// <inheritdoc />
-        protected override void Mqtt_MqttMsgPublishReceived(MqttApplicationMessageReceivedEventArgs e)
+        protected override Task MqttMsgPublishReceived(MqttApplicationMessageReceivedEventArgs e)
         {
             var topic = e.ApplicationMessage.Topic;
             var message = e.ApplicationMessage.ConvertPayloadToString();
@@ -100,7 +101,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
             {
                 _messageHub.Publish(new RequestSyncEvent());
             }
-            else if (_stateCache.TryGetValue(topic, out string currentState))
+            else if (_stateCache.TryGetValue(topic, out var currentState))
             {
                 if (_stateCache.TryUpdate(topic, message, currentState))
                 {
@@ -115,6 +116,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                     _messageHub.Publish(new ReportStateEvent { Devices = devices });
                 }
             }
+
+            return Task.CompletedTask;
         }
 
         #region Google Home Handlers
@@ -139,10 +142,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                 // Check that state cache actually contains topic
                 if (_stateCache.ContainsKey(topic))
                 {
-                    if (_stateCache.TryRemove(topic, out string _))
+                    if (_stateCache.TryRemove(topic, out var _))
+                    {
                         _log.LogInformation("Successfully removed topic {Topic} from internal state cache", topic);
+                    }
                     else
+                    {
                         _log.LogWarning("Failed to remove topic {Topic} from internal state cache", topic);
+                    }
                 }
             }
 
@@ -153,9 +160,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                 if (!_stateCache.ContainsKey(topic))
                 {
                     if (_stateCache.TryAdd(topic, string.Empty))
+                    {
                         _log.LogInformation("Successfully added topic {Topic} to internal state cache", topic);
+                    }
                     else
+                    {
                         _log.LogWarning("Failed to add topic {Topic} to internal state cache", topic);
+                    }
                 }
 
                 // Check if already subscribed and subscribe to MQTT topic
@@ -181,9 +192,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         /// <param name="deviceCommandExecutionEvent">The device command to handle.</param>
         private async void HandleGoogleHomeCommand(DeviceCommandExecutionEvent deviceCommandExecutionEvent)
         {
-            var device = _deviceRepository.Get(deviceCommandExecutionEvent.DeviceId);
-            if (device.Disabled)
+            var device = _deviceRepository.FindById(deviceCommandExecutionEvent.DeviceId);
+            if (device is null || device.Disabled)
+            {
                 return;
+            }
 
             // Find all supported commands for the device
             var deviceSupportedCommands = device.Traits
@@ -192,23 +205,23 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
 
             // Check if device supports the requested command class
             var execution = deviceCommandExecutionEvent.Execution;
-            if (deviceSupportedCommands.ContainsKey(execution.Command))
+            if (deviceSupportedCommands.TryGetValue(execution.Command, out var deviceSupportedCommand))
             {
                 // Handle command delegation
                 var shortCommandName = execution.Command.Substring(execution.Command.LastIndexOf('.') + 1);
-                var deviceTopicName = Regex.Replace(deviceCommandExecutionEvent.DeviceId, @"\s", string.Empty);
+                var deviceTopicName = WhiteSpaceRegex().Replace(deviceCommandExecutionEvent.DeviceId, string.Empty);
                 var delegateTopic = $"{TopicRoot}/execution/{deviceTopicName}/{shortCommandName}";
                 var delegatePayload = execution.Params != null ? JsonConvert.SerializeObject(execution.Params) : "{}";
 
-                await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                await MqttClient.EnqueueAsync(new MqttApplicationMessageBuilder()
                     .WithTopic(delegateTopic)
                     .WithPayload(delegatePayload)
-                    .WithAtLeastOnceQoS()
+                    .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                     .Build())
                     .ConfigureAwait(false);
 
                 // Find the specific commands supported parameters it can handle
-                var deviceSupportedCommandParams = deviceSupportedCommands[execution.Command] ?? new Dictionary<string, string>();
+                var deviceSupportedCommandParams = deviceSupportedCommand ?? new Dictionary<string, string>();
 
                 // Handle remaining command state param negotiation
                 if (execution.Params != null)
@@ -223,39 +236,37 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                     foreach (var parameter in flattenedParams)
                     {
                         // Check if device supports the requested parameter
-                        if (deviceSupportedCommandParams.ContainsKey(parameter.Key))
+                        if (deviceSupportedCommandParams.TryGetValue(parameter.Key, out var topic))
                         {
                             // Handle remapping of command param to state key
                             var stateKey = CommandToStateKeyMapper.Map(parameter.Key);
 
                             // Find the DeviceState object that provides configuration for mapping state/command values
                             var deviceState = device.Traits
-                                .Where(x => x.Commands.ContainsKey(execution.Command))
-                                .Where(x => x.State != null)
-                                .SelectMany(x => x.State)
+                                .Where(x => x.Commands.ContainsKey(execution.Command) && x.State is not null)
+                                .SelectMany(y => y.State!)
                                 .Where(x => x.Key == stateKey)
                                 .Select(x => x.Value)
                                 .FirstOrDefault();
 
                             // Build the MQTT message
-                            var topic = deviceSupportedCommandParams[parameter.Key];
                             if (!string.IsNullOrEmpty(topic))
                             {
-                                string payload = null;
+                                string? payload = null;
                                 if (deviceState != null)
                                 {
                                     payload = deviceState.MapValueToMqtt(parameter.Value);
                                 }
                                 else
                                 {
-                                    payload = parameter.Value.ToString();
+                                    payload = parameter.Value?.ToString();
                                     _log.LogWarning("Received supported command '{Command}' but cannot find matched state config, sending command value '{Payload}' without ValueMap", execution.Command, payload);
                                 }
 
-                                await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                                await MqttClient.EnqueueAsync(new MqttApplicationMessageBuilder()
                                     .WithTopic(topic)
                                     .WithPayload(payload)
-                                    .WithAtLeastOnceQoS()
+                                    .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                                     .Build())
                                     .ConfigureAwait(false);
                             }
@@ -274,10 +285,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
             var delegateTopic = $"{TopicRoot}/sync/lastRequest";
             var delegatePayload = syncIntentReceivedEvent.Time.ToString();
 
-            await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            await MqttClient.EnqueueAsync(new MqttApplicationMessageBuilder()
                 .WithTopic(delegateTopic)
                 .WithPayload(delegatePayload)
-                .WithAtLeastOnceQoS()
+                .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                 .Build())
                 .ConfigureAwait(false);
         }
@@ -291,10 +302,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
             var delegateTopic = $"{TopicRoot}/query/lastRequest";
             var delegatePayload = JsonConvert.SerializeObject(queryIntentReceivedEvent);
 
-            await MqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            await MqttClient.EnqueueAsync(new MqttApplicationMessageBuilder()
                 .WithTopic(delegateTopic)
                 .WithPayload(delegatePayload)
-                .WithAtLeastOnceQoS()
+                .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                 .Build())
                 .ConfigureAwait(false);
         }
@@ -310,7 +321,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         protected override void Dispose(bool disposing)
         {
             if (_disposed)
+            {
                 return;
+            }
 
             if (disposing)
             {
@@ -319,6 +332,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
             _disposed = true;
             base.Dispose(disposing);
         }
+
+        [GeneratedRegex(@"\s")]
+        private static partial Regex WhiteSpaceRegex();
 
         #endregion
     }

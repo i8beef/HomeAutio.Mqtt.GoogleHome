@@ -24,6 +24,7 @@
     "action.devices.types.DEHYDRATOR",
     "action.devices.types.DISHWASHER",
     "action.devices.types.DOOR",
+    "action.devices.types.DOORBELL",
     "action.devices.types.DRAWER",
     "action.devices.types.DRYER",
     "action.devices.types.FAN",

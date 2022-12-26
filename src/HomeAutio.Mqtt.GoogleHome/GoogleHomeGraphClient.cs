@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using HomeAutio.Mqtt.GoogleHome.Exceptions;
 using HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -28,10 +29,10 @@ namespace HomeAutio.Mqtt.GoogleHome
         private readonly ILogger<GoogleHomeGraphClient> _log;
         private readonly HttpClient _httpClient;
         private readonly string _agentUserId;
-        private readonly ServiceAccount _serviceAccount;
-        private readonly object _tokenRefreshLock = new object();
+        private readonly ServiceAccount? _serviceAccount;
+        private readonly object _tokenRefreshLock = new();
 
-        private AccessTokenResponse _accessToken;
+        private AccessTokenResponse? _accessToken;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GoogleHomeGraphClient"/> class.
@@ -43,11 +44,11 @@ namespace HomeAutio.Mqtt.GoogleHome
         public GoogleHomeGraphClient(
             ILogger<GoogleHomeGraphClient> logger,
             HttpClient httpClient,
-            ServiceAccount serviceAccount,
+            ServiceAccount? serviceAccount,
             string agentUserId)
         {
-            _log = logger ?? throw new ArgumentException(nameof(logger));
-            _httpClient = httpClient ?? throw new ArgumentException(nameof(httpClient));
+            _log = logger ?? throw new ArgumentNullException(nameof(logger));
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
             _agentUserId = agentUserId;
             _serviceAccount = serviceAccount;
@@ -98,7 +99,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <param name="devices">Devices updated.</param>
         /// <param name="stateCache">Current state cache.</param>
         /// <returns>An awaitable <see cref="Task"/>.</returns>
-        public async Task SendUpdatesAsync(IList<Models.State.Device> devices, IDictionary<string, string> stateCache)
+        public async Task SendUpdatesAsync(IList<Models.State.Device> devices, IDictionary<string, string?> stateCache)
         {
             // If no service account has been provided, don't attempt to call
             if (_serviceAccount == null)
@@ -156,6 +157,11 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <returns>A JWT token.</returns>
         private string CreateJwt()
         {
+            if (_serviceAccount == null)
+            {
+                throw new InvalidOperationException("Google Home Graph serviceAccountFile blank or missing");
+            }
+
             // Get signing key
             var rsaSecurityKey = GetGoogleHomeGraphApiSigningKey();
             var signingCredentials = new SigningCredentials(rsaSecurityKey, SecurityAlgorithms.RsaSha256);
@@ -188,6 +194,11 @@ namespace HomeAutio.Mqtt.GoogleHome
         {
             _log.LogDebug("Get/Refresh access token");
 
+            if (_serviceAccount == null)
+            {
+                throw new InvalidOperationException("Google Home Graph serviceAccountFile blank or missing");
+            }
+
             var paramaters = new Dictionary<string, string>
             {
                 { "grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer" },
@@ -206,8 +217,12 @@ namespace HomeAutio.Mqtt.GoogleHome
 
             var content = await response.Content.ReadAsStringAsync();
             var accessToken = JsonConvert.DeserializeObject<AccessTokenResponse>(content);
+            if (accessToken is null)
+            {
+                throw new GoogleHomeGraphAuthException($"Received malformed access token");
+            }
 
-            _log.LogDebug("Received access token: " + accessToken);
+            _log.LogDebug("Received access token");
 
             return accessToken;
         }
@@ -219,7 +234,9 @@ namespace HomeAutio.Mqtt.GoogleHome
         private RsaSecurityKey GetGoogleHomeGraphApiSigningKey()
         {
             if (_serviceAccount == null)
-                throw new ArgumentException("Google Home Graph serviceAccountFile blank or missing");
+            {
+                throw new InvalidOperationException("Google Home Graph serviceAccountFile blank or missing");
+            }
 
             using (var stringReader = new StringReader(_serviceAccount.PrivateKey))
             {

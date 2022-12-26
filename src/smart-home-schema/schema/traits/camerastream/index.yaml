@@ -2,7 +2,7 @@ name: action.devices.traits.CameraStream
 shortname: CameraStream
 description: This trait covers how to control the camerastream of a device.
 availability: production
-version: '1.0'
+version: '2.0'
 attributes:
   $ref: camerastream.attributes.schema.json
 commands:

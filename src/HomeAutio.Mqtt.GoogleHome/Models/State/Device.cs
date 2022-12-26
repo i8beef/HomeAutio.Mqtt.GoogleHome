@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using HomeAutio.Mqtt.GoogleHome.Extensions;
+using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.State
@@ -13,64 +14,66 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <summary>
         /// Device id.
         /// </summary>
-        public string Id { get; set; }
+        public required string Id { get; init; }
 
         /// <summary>
         /// Device type.
         /// </summary>
-        public DeviceType Type { get; set; }
+        public required DeviceType Type { get; init; }
 
         /// <summary>
         /// Indicates if device is disabled or not.
         /// </summary>
-        public bool Disabled { get; set; }
+        public bool Disabled { get; init; }
 
         /// <summary>
         /// Indicates if the device will report state.
         /// </summary>
-        public bool WillReportState { get; set; }
+        public bool WillReportState { get; init; }
 
         /// <summary>
         /// Room hint.
         /// </summary>
-        public string RoomHint { get; set; }
+        public string? RoomHint { get; init; }
 
         /// <summary>
         /// Device name information.
         /// </summary>
-        public NameInfo Name { get; set; }
+        public required NameInfo Name { get; init; }
 
         /// <summary>
         /// Device information.
         /// </summary>
-        public DeviceInfo DeviceInfo { get; set; }
+        public DeviceInfo? DeviceInfo { get; init; }
 
         /// <summary>
         /// Trait configurations.
         /// </summary>
-        public IList<DeviceTrait> Traits { get; set; }
+        public required IList<DeviceTrait> Traits { get; init; }
 
         /// <summary>
         /// Custom data.
         /// </summary>
         [JsonConverter(typeof(ObjectDictionaryConverter))]
-        public IDictionary<string, object> CustomData { get; set; }
+        public IDictionary<string, object>? CustomData { get; init; }
 
         /// <summary>
         /// Gets device state as a Google device state object.
         /// </summary>
         /// <param name="stateCache">Current state cache.</param>
         /// <returns>A Google device state object.</returns>
-        public IDictionary<string, object> GetGoogleState(IDictionary<string, string> stateCache)
+        public IDictionary<string, object?> GetGoogleState(IDictionary<string, string?> stateCache)
         {
-            var results = new Dictionary<string, object>();
+            var results = new Dictionary<string, object?>();
             var schemas = TraitSchemaProvider.GetTraitSchemas();
             foreach (var trait in Traits)
             {
                 // Dont include "stateless" traits
                 var schema = schemas.FirstOrDefault(x => x.Trait == trait.Trait);
                 if (schema?.StateSchema == null)
+                {
                     continue;
+                }
 
                 var validState = trait.GetGoogleStateFlattened(stateCache, schema)
                     .Where(kvp => schema.StateSchema.Validator.FlattenedPathExists(kvp.Key))
@@ -97,14 +100,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// </summary>
         /// <param name="stateCache">Current state cache.</param>
         /// <returns><c>true</c> if fully initialized, else <c>false</c>.</returns>
-        public bool IsStateFullyInitialized(IDictionary<string, string> stateCache)
+        public bool IsStateFullyInitialized(IDictionary<string, string?> stateCache)
         {
             return !Traits
-                .SelectMany(trait => trait.State)
+                .Where(trait => trait.State is not null)
+                .SelectMany(trait => trait.State!)
                 .Where(state => state.Value.Topic != null)
-                .Where(state => stateCache.ContainsKey(state.Value.Topic))
-                .Where(state => stateCache[state.Value.Topic] == null)
-                .Any();
+                .Where(state => stateCache.ContainsKey(state.Value.Topic!))
+                .Any(state => stateCache[state.Value.Topic!] == null);
         }
     }
 }

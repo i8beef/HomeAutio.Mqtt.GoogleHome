@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -18,11 +18,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         {
             var enumMemberAttribute = enumValue
                 .GetType()
-                .GetField(enumValue.ToString())
+                .GetField(enumValue.ToString())?
                 .GetCustomAttributes(typeof(EnumMemberAttribute), true)
                 .Single() as EnumMemberAttribute;
 
-            return enumMemberAttribute.Value;
+            return enumMemberAttribute?.Value ?? string.Empty;
         }
 
         /// <summary>
@@ -31,13 +31,23 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         /// <typeparam name="T">Type of enum.</typeparam>
         /// <param name="str">String to convert.</param>
         /// <returns>The enum value.</returns>
-        public static T ToEnum<T>(this string str)
+        public static T? ToEnum<T>(this string str)
         {
             var enumType = typeof(T);
             foreach (var name in Enum.GetNames(enumType))
             {
-                var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).SingleOrDefault();
-                if (enumMemberAttribute != null && enumMemberAttribute.Value == str) return (T)Enum.Parse(enumType, name);
+                var enumFieldInfo = enumType.GetField(name);
+                if (enumFieldInfo is not null)
+                {
+                    var enumMemberAttribute = enumFieldInfo.GetCustomAttributes(typeof(EnumMemberAttribute), true)
+                        .Cast<EnumMemberAttribute>()
+                        .SingleOrDefault();
+
+                    if (enumMemberAttribute is not null && enumMemberAttribute.Value == str)
+                    {
+                        return (T)Enum.Parse(enumType, name);
+                    }
+                }
             }
 
             return default;

@@ -7,7 +7,6 @@ description: >
 availability: production
 version: '1.0'
 traits:
-  recommended:
-  - FanSpeed
   required:
+  - FanSpeed
   - OnOff

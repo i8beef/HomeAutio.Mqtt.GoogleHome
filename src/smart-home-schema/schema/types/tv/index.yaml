@@ -1,16 +1,17 @@
 name: action.devices.types.TV
 shortname: Television
 description: >
-  Television devices combine a tuner, display, and loudspeakers for the purpose of viewing and
+  Television devices combine a tuner, display, and loudspeakers for the purpose of
+  viewing and
   hearing media. Examples include smart TV devices.
 availability: production
 version: '1.0'
 traits:
   recommended:
   - Channel
-  - InputSelector
   required:
   - AppSelector
+  - InputSelector
   - MediaState
   - OnOff
   - TransportControl

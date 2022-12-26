@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "examples": [
+    {
+      "$comment": "The device has finished running.",
+      "RunCycle": {
+        "priority": 0,
+        "status": "SUCCESS",
+        "currentCycleRemainingTime": 0
+      }
+    },
+    {
+      "$comment": "An error occurred completing the current cycle.",
+      "RunCycle": {
+        "priority": 0,
+        "status": "FAILURE",
+        "errorCode": "deviceStuck"
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "RunCycle": {
+      "description": "Notification payload.",
+      "oneOf": [
+        {
+          "description": "Success",
+          "type": "object",
+          "properties": {
+            "priority": {
+              "description": "Represents the notification level. The currently supported value is 0, which indicates that the notification should be spoken aloud.",
+              "type": "integer"
+            },
+            "status": {
+              "description": "Result of the operation.",
+              "type": "string",
+              "enum": [
+                "SUCCESS"
+              ]
+            },
+            "currentCycleRemainingTime": {
+              "description": "Time remaining on current cycle, in seconds.",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "priority",
+            "status",
+            "currentCycleRemainingTime"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "description": "Failure",
+          "type": "object",
+          "properties": {
+            "priority": {
+              "description": "Represents the notification level. The currently supported value is 0, which indicates that the notification should be spoken aloud.",
+              "type": "integer"
+            },
+            "status": {
+              "description": "Result of the operation.",
+              "type": "string",
+              "enum": [
+                "FAILURE"
+              ]
+            },
+            "errorCode": {
+              "description": "The value can be any <a href=\"https://developers.google.com/assistant/smarthome/reference/errors-exceptions#error_list\">error code</a> for this trait, for example, <code>deviceStuck</code>.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "priority",
+            "status",
+            "errorCode"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": [
+    "RunCycle"
+  ]
+}

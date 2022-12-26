@@ -8,20 +8,20 @@ on:
       - "**"
 
 env:
-  DOTNETVERSION: "5.0.x"
+  DOTNETVERSION: "7.0.x"
   APP: "HomeAutio.Mqtt.GoogleHome"
   SOLUTION: "./src/HomeAutio.Mqtt.GoogleHome.sln"
-  BUILDOUTPUTPATH: "./src/HomeAutio.Mqtt.GoogleHome/bin/Release/net5.0"
+  BUILDOUTPUTPATH: "./src/HomeAutio.Mqtt.GoogleHome/bin/Release/net7.0"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup .NET Core SDK ${{ env.DOTNETVERSION }}
-        uses: actions/setup-dotnet@v1.7.2
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNETVERSION }}
 
@@ -32,7 +32,7 @@ jobs:
         run: dotnet build ${{ env.SOLUTION }} --configuration Release --no-restore
 
       - name: Upload app build artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ env.APP }}
           path: ${{ env.BUILDOUTPUTPATH }}
@@ -41,7 +41,7 @@ jobs:
         run: dotnet test ${{ env.SOLUTION }} --no-restore --verbosity normal --logger trx --results-directory "TestResults"
 
       - name: Upload TestResults build artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: TestResults
           path: TestResults

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Response
@@ -9,58 +10,50 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Response
     public class Device
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Device"/> class.
-        /// </summary>
-        public Device()
-        {
-            Traits = new List<TraitType>();
-        }
-
-        /// <summary>
         /// Device id..
         /// </summary>
-        public string Id { get; set; }
+        public required string Id { get; init; }
 
         /// <summary>
         /// Device type.
         /// </summary>
-        public DeviceType Type { get; set;  }
+        public required DeviceType Type { get; init; }
 
         /// <summary>
         /// Device name information.
         /// </summary>
-        public NameInfo Name { get; set; }
+        public required NameInfo Name { get; init; }
 
         /// <summary>
         /// Whether device will report state.
         /// </summary>
-        public bool WillReportState { get; set; }
+        public required bool WillReportState { get; init; }
 
         /// <summary>
         /// Room hint.
         /// </summary>
-        public string RoomHint { get; set; }
+        public string? RoomHint { get; init; }
 
         /// <summary>
         /// Device information.
         /// </summary>
-        public DeviceInfo DeviceInfo { get; set; }
+        public DeviceInfo? DeviceInfo { get; init; }
 
         /// <summary>
         /// Supported traits.
         /// </summary>
-        public IList<TraitType> Traits { get; set; }
+        public required IList<TraitType> Traits { get; init; }
 
         /// <summary>
         /// Attributes.
         /// </summary>
         [JsonConverter(typeof(ObjectDictionaryConverter))]
-        public IDictionary<string, object> Attributes { get; set; }
+        public IDictionary<string, object>? Attributes { get; init; }
 
         /// <summary>
         /// Custom data.
         /// </summary>
         [JsonConverter(typeof(ObjectDictionaryConverter))]
-        public IDictionary<string, object> CustomData { get; set; }
+        public IDictionary<string, object>? CustomData { get; init; }
     }
 }

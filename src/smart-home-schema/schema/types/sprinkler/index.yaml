@@ -1,7 +1,8 @@
 name: action.devices.types.SPRINKLER
 shortname: Sprinkler
 description: >
-  Sprinklers can start and stop (or turn on and off). They may also support timers and/or schedules.
+  Sprinklers can start and stop (or turn on and off). They may also support timers
+  and/or schedules.
 availability: production
 version: '1.0'
 traits:

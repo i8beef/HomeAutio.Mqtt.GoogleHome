@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using Newtonsoft.Json;
 
@@ -12,12 +12,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Request
         /// <summary>
         /// Request id.
         /// </summary>
-        public string RequestId { get; set; }
+        public required string RequestId { get; init; }
 
         /// <summary>
         /// Inputs.
         /// </summary>
         [JsonProperty(ItemConverterType = typeof(IntentJsonConverter))]
-        public IList<IntentBase> Inputs { get; set; }
+        public required IList<IntentBase> Inputs { get; init; }
     }
 }

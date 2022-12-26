@@ -16,7 +16,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Models.State
         public void MapValueToGoogleConvertsTypes(GoogleType googleType, string value, object expected, Type expectedType)
         {
             // Arrange
-            var deviceState = new DeviceState();
+            var deviceState = new DeviceState { Topic = "test" };
 
             // Hack for decimal constant values for InlineData
             if (expected is double)
@@ -25,7 +25,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Models.State
             }
 
             // Act
-            var result = deviceState.MapValueToGoogle(value, googleType);
+            var result = deviceState.MapValueToGoogle(value, googleType)!;
 
             // Assert
             Assert.Equal(expected, result);

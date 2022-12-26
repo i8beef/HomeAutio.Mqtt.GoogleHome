@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using Easy.MessageHub;
-using HomeAutio.Mqtt.GoogleHome.App_Start;
+using HomeAutio.Mqtt.GoogleHome.AppStart;
 using HomeAutio.Mqtt.GoogleHome.Models.Events;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using HomeAutio.Mqtt.GoogleHome.Tests.TestData;
@@ -40,7 +40,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
             var testString = File.ReadAllText("TestData/valueTypeTestData.json");
 
             // Act
-            var result = new Dictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(testString));
+            var result = new Dictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(testString)!);
 
             // Assert
             Assert.NotNull(result);
@@ -53,7 +53,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
         {
             // Arrange
             var device = DeviceTestData.FullDevice();
-            device.Id = device.Id + "1";
 
             var expectedAddedTopics = device.Traits
                 .SelectMany(trait => trait.State)
@@ -65,7 +64,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
             // Act
             repository.Add(device);
             var deviceConfigurationString = File.ReadAllText(_testFilePath);
-            var result = new Dictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString));
+            var result = new Dictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString)!);
 
             // Assert
             Assert.True(repository.Contains(device.Id));            
@@ -83,61 +82,32 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
         public void CanUpdateItem()
         {
             // Arrange
-            var device = DeviceTestData.FullDevice();
-            var oldDeviceId = device.Id + "1";
+            var oldDevice = DeviceTestData.FullDevice();
+            var device = DeviceTestData.FullDevice2();
 
-            var expectedDeletedTopics = device.Traits
+            var expectedDeletedTopics = oldDevice.Traits
                 .SelectMany(trait => trait.State)
                 .Where(x => x.Value.Topic != null)
                 .Select(x => x.Value.Topic)
                 .ToList();
 
-            device.Traits.Clear();
-            device.Traits.Add(new DeviceTrait {
-                Trait = GoogleHome.Models.TraitType.Brightness,
-                Commands = new Dictionary<string, IDictionary<string, string>>
-                {
-                    {
-                        "action.devices.commands.BrightnessAbsolute",
-                        new Dictionary<string, string>
-                        {
-                            {
-                                "brightness",
-                                "test/device/brightness/set"
-                            }
-                        }
-                    }
-                },
-                State = new Dictionary<string, DeviceState>
-                {
-                    {
-                        "brightness",
-                        new DeviceState
-                        {
-                            Topic = "/test/device/brightness",
-                            ValueMap = null
-                        }
-                    }
-                }
-            });
-
             var expectedAddedTopics = device.Traits
                 .SelectMany(trait => trait.State)
-                .Where(x => x.Value.Topic != null)
+                .Where(x => x.Value.Topic is not null)
                 .Select(x => x.Value.Topic);
 
             var repository = new GoogleDeviceRepository(_logMock.Object, _messageHubMock.Object, _testFilePath);
 
             // Act
-            repository.Update(oldDeviceId, device);
+            repository.Update(oldDevice.Id, device);
             var deviceConfigurationString = File.ReadAllText(_testFilePath);
-            var result = new Dictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString));
+            var result = new Dictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString)!);
 
             // Assert
-            Assert.True(!repository.Contains(oldDeviceId));
+            Assert.True(!repository.Contains(oldDevice.Id));
             Assert.True(repository.Contains(device.Id));
 
-            Assert.True(!result.ContainsKey(oldDeviceId));
+            Assert.True(!result.ContainsKey(oldDevice.Id));
             Assert.True(result.ContainsKey(device.Id));
 
             foreach (var expectedTopic in expectedAddedTopics)
@@ -158,8 +128,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
         {
             // Arrange
             var repository = new GoogleDeviceRepository(_logMock.Object, _messageHubMock.Object, _testFilePath);
-            var device = repository.Get(DeviceTestData.FullDevice().Id);
-            var expectedDeletedTopics = device.Traits
+            var device = repository.FindById(DeviceTestData.FullDevice2().Id);
+            var expectedDeletedTopics = device!.Traits
                 .SelectMany(trait => trait.State)
                 .Where(x => x.Value.Topic != null)
                 .Select(x => x.Value.Topic);
@@ -167,7 +137,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
             // Act
             repository.Delete(device.Id);
             var deviceConfigurationString = File.ReadAllText(_testFilePath);
-            var result = new Dictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString));
+            var result = new Dictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString)!);
 
             // Assert
             Assert.True(!repository.Contains(device.Id));

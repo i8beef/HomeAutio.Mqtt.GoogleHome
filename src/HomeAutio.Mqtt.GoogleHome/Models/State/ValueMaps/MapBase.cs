@@ -1,4 +1,4 @@
-﻿namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
+namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
 {
     /// <summary>
     /// Value map base class.
@@ -15,27 +15,27 @@
         /// </summary>
         /// <param name="value">MQTT value.</param>
         /// <returns><c>true</c> if it should be applied, else <c>false</c>.</returns>
-        public abstract bool MatchesMqtt(string value);
+        public abstract bool MatchesMqtt(string? value);
 
         /// <summary>
         /// Indicates if map should be applied to the passed Google value.
         /// </summary>
         /// <param name="value">Google value.</param>
         /// <returns><c>true</c> if it should be applied, else <c>false</c>.</returns>
-        public abstract bool MatchesGoogle(object value);
+        public abstract bool MatchesGoogle(object? value);
 
         /// <summary>
         /// Converts the passed value to a valid MQTT value.
         /// </summary>
         /// <param name="value">The Google value to convert.</param>
         /// <returns>The transformed MQTT value.</returns>
-        public abstract string ConvertToMqtt(object value);
+        public abstract string? ConvertToMqtt(object? value);
 
         /// <summary>
         /// Converts the passed value to a valid Google value.
         /// </summary>
         /// <param name="value">The MQTT value to convert.</param>
         /// <returns>The transformed Google value.</returns>
-        public abstract string ConvertToGoogle(string value);
+        public abstract string? ConvertToGoogle(string? value);
     }
 }

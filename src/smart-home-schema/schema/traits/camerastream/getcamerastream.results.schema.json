@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "examples": [
     {
-      "$comment": "Show the front door (default Cast receiver).",
+      "$comment": "Show the front door camera (default Cast receiver).",
       "cameraStreamAccessUrl": "https://fluffysheep.com/baaaaa.mp4",
       "cameraStreamProtocol": "progressive_mp4"
     },
@@ -12,36 +12,101 @@
       "cameraStreamReceiverAppId": "1g2f89213hg",
       "cameraStreamAuthToken": "12657342190192783",
       "cameraStreamProtocol": "progressive_mp4"
+    },
+    {
+      "$comment": "Show front door camera (WebRTC stream).",
+      "cameraStreamIceServers": "[{\"urls\": \"stun:stun.l.partner.com:19302\"},{\"urls\":\"turn:192.158.29.39:3478?transport=udp\",\"credential\": \"JZEOEt2V3Qb0y27GRntt2u2PAYA=\",\"username\": \"28224511:1379330808\"},{\"urls\": \"turn:192.158.29.39:3478?transport=tcp\",\"credential\": \"JZEOEt2V3Qb0y27GRntt2u2PAYA=\",\"username\": \"28224511:1379330808\"}]",
+      "cameraStreamSignalingUrl": "https://example.com/signaling/answer",
+      "cameraStreamOffer": "o=- 4611731400430051336 2 IN IP4 127.0.0.1...",
+      "cameraStreamProtocol": "webrtc"
     }
   ],
   "description": "<code>GetCameraStream</code> command results.",
   "type": "object",
   "properties": {
-    "cameraStreamAccessUrl": {
-      "description": "URL endpoint for retrieving the real-time stream in the format specified by <code>cameraStreamProtocol</code>.",
-      "type": "string"
-    },
-    "cameraStreamReceiverAppId": {
-      "description": "Cast receiver ID to process the camera stream; default receiver will be used if not provided.",
-      "type": "string"
-    },
     "cameraStreamAuthToken": {
       "description": "An auth token for the specific receiver to authorize access to the stream. If <code>cameraStreamNeedAuthToken</code> is true and this value is not provided, the user's OAuth credentials will be used as the auth token.",
       "type": "string"
     },
     "cameraStreamProtocol": {
-      "description": "The media format that the stream url points to. It should be one of the protocol listed in the <code>SupportedStreamProtocols</code> command parameter.",
+      "description": "The media format that the stream url points to. It should be one of the protocols listed in the <code>SupportedStreamProtocols</code> command parameter.",
       "type": "string",
-      "enum": [
-        "hls",
-        "dash",
-        "smooth_stream",
-        "progressive_mp4"
+      "oneOf": [
+        {
+          "enum": [
+            "hls"
+          ],
+          "description": "HTTP Live Streaming"
+        },
+        {
+          "enum": [
+            "dash"
+          ],
+          "description": "Dynamic Adaptive Streaming over HTTP"
+        },
+        {
+          "enum": [
+            "smooth_stream"
+          ],
+          "description": "Smooth Streaming"
+        },
+        {
+          "enum": [
+            "progressive_mp4"
+          ],
+          "description": "Progressive MP4 (mostly used for clips)"
+        },
+        {
+          "enum": [
+            "webrtc"
+          ],
+          "description": "WebRTC"
+        }
       ]
     }
   },
   "required": [
-    "cameraStreamAccessUrl",
     "cameraStreamProtocol"
-  ]
+  ],
+  "if": {
+    "properties": {
+      "cameraStreamProtocol": {
+        "const": "webrtc"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "cameraStreamSignalingUrl": {
+        "description": "URL endpoint for retrieving and exchanging camera and client <a href=\"https://en.wikipedia.org/wiki/Session_Description_Protocol\">session description protocols</a> (SDPs). The client should return the signaling URL which uses the <code>cameraStreamAuthToken</code> as the authentication token in the request header.",
+        "type": "string"
+      },
+      "cameraStreamOffer": {
+        "description": "Offer session description protocol (SDP).",
+        "type": "string"
+      },
+      "cameraStreamIceServers": {
+        "description": "Represents the Interactive Connectivity Establishment (ICE) servers using an encoded JSON string with the description of a <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/RTCIceServer\">RTCIceServer</a>. If you do not specify STUN (Session Traversal Utilities for NAT) servers, the platform defaults to Google's public STUN servers. TURN (Traversal Using Relays around NAT) servers are only required if you cannot guarantee the IPs / ICE candidates provided will be publicly accessible (e.g. via a media server, public host ICE candidate, relay ICE candidate, etc).",
+        "type": "string"
+      }
+    },
+    "required": [
+      "cameraStreamSignalingUrl"
+    ]
+  },
+  "else": {
+    "properties": {
+      "cameraStreamAccessUrl": {
+        "description": "URL endpoint for retrieving the real-time stream in the format specified by <code>cameraStreamProtocol</code>.",
+        "type": "string"
+      },
+      "cameraStreamReceiverAppId": {
+        "description": "Cast receiver ID to process the camera stream when the <code>StreamToChromecast</code> parameter is true; default receiver will be used if not provided.",
+        "type": "string"
+      }
+    },
+    "required": [
+      "cameraStreamAccessUrl"
+    ]
+  }
 }

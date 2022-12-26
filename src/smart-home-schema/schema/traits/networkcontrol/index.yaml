@@ -2,7 +2,7 @@ name: action.devices.traits.NetworkControl
 shortname: NetworkControl
 description: This trait belongs to devices that support reporting network data and performing network specific operations.
 availability: production
-version: '1.0'
+version: '1.1'
 attributes:
   $ref: networkcontrol.attributes.schema.json
 states:
@@ -30,3 +30,5 @@ commands:
       $ref: testnetworkspeed.params.schema.json
     errors:
       $ref: testnetworkspeed.errors.schema.json
+    followup:
+      $ref: testnetworkspeed.followup.schema.json

@@ -54,5 +54,54 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.TestData
                 }
             };
         }
+
+        public static Device FullDevice2()
+        {
+            return new Device
+            {
+                Id = "test/device2",
+                Type = GoogleHome.Models.DeviceType.LIGHT,
+                Disabled = false,
+                WillReportState = false,
+                RoomHint = "Test",
+                DeviceInfo = null,
+                Name = new GoogleHome.Models.NameInfo
+                {
+                    DefaultNames = new List<string>(),
+                    Name = "Test Device",
+                    Nicknames = new List<string>()
+                },
+                Traits = new List<DeviceTrait>
+                {
+                    new DeviceTrait {
+                        Trait = GoogleHome.Models.TraitType.Brightness,
+                        Commands = new Dictionary<string, IDictionary<string, string>>
+                        {
+                            {
+                                "action.devices.commands.BrightnessAbsolute",
+                                new Dictionary<string, string>
+                                {
+                                    {
+                                        "brightness",
+                                        "test/device/brightness/set"
+                                    }
+                                }
+                            }
+                        },
+                        State = new Dictionary<string, DeviceState>
+                        {
+                            {
+                                "brightness",
+                                new DeviceState
+                                {
+                                    Topic = "/test/device/brightness",
+                                    ValueMap = null
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        }
     }
 }

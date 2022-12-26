@@ -1,5 +1,6 @@
 using System.Runtime.Serialization;
 
+#pragma warning disable CA1707 // Identifiers should not contain underscores
 namespace HomeAutio.Mqtt.GoogleHome.Models
 {
     /// <summary>
@@ -143,6 +144,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         /// </summary>
         [EnumMember(Value = "action.devices.types.DOOR")]
         DOOR,
+
+        /// <summary>
+        /// action.devices.types.DOORBELL.
+        /// </summary>
+        [EnumMember(Value = "action.devices.types.DOORBELL")]
+        DOORBELL,
 
         /// <summary>
         /// action.devices.types.DRAWER.
@@ -481,3 +488,4 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
         YOGURTMAKER
     }
 }
+#pragma warning restore CA1707 // Identifiers should not contain underscores

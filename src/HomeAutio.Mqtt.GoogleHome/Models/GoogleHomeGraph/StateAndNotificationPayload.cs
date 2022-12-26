@@ -1,4 +1,4 @@
-﻿namespace HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph
+namespace HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph
 {
     /// <summary>
     /// State and notification payload request object.
@@ -8,6 +8,6 @@
         /// <summary>
         /// Devices.
         /// </summary>
-        public ReportStateAndNotificationDevice Devices { get; set; }
+        public required ReportStateAndNotificationDevice Devices { get; init; }
     }
 }

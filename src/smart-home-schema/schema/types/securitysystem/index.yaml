@@ -2,8 +2,10 @@ name: action.devices.types.SECURITYSYSTEM
 shortname: Security System
 description: >
   Security systems can be armed and disarmed.
-  They can be armed at multiple security levels (for example, home and away) and they can report
-  information about certain sensors, such as a sensor that detects motion or an open window.
+  They can be armed at multiple security levels (for example, home and away) and they
+  can report
+  information about certain sensors, such as a sensor that detects motion or an open
+  window.
 availability: production
 version: '1.0'
 traits:

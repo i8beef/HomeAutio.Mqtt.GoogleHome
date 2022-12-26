@@ -8,9 +8,9 @@ version: '1.0'
 traits:
   recommended:
   - InputSelector
-  - OnOff
   required:
   - AppSelector
   - MediaState
+  - OnOff
   - TransportControl
   - Volume

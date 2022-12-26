@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Request
 {
@@ -10,6 +10,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Request
         /// <summary>
         /// Devices to query.
         /// </summary>
-        public IList<Device> Devices { get; set; }
+        public required IList<Device> Devices { get; init; }
     }
 }

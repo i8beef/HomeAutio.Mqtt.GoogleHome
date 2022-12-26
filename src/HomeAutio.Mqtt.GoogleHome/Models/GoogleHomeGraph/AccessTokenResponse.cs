@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph
@@ -12,34 +12,34 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph
         /// Access token.
         /// </summary>
         [JsonProperty(PropertyName = "access_token")]
-        public string AccessToken { get; set; }
+        public required string AccessToken { get; init; }
 
         /// <summary>
         /// Expires in.
         /// </summary>
         [JsonProperty(PropertyName = "expires_in")]
-        public int ExpiresIn { get; set; }
+        public required int ExpiresIn { get; init; }
 
         /// <summary>
         /// Expires at.
         /// </summary>
-        public DateTime ExpiresAt { get; set; }
+        public required DateTime ExpiresAt { get; init; }
 
         /// <summary>
         /// Refresh token.
         /// </summary>
         [JsonProperty(PropertyName = "refresh_token")]
-        public string RefreshToken { get; set; }
+        public required string RefreshToken { get; init; }
 
         /// <summary>
         /// Scope.
         /// </summary>
-        public string Scope { get; set; }
+        public required string Scope { get; init; }
 
         /// <summary>
         /// Token type.
         /// </summary>
         [JsonProperty(PropertyName = "token_type")]
-        public string TokenType { get; set; }
+        public required string TokenType { get; init; }
     }
 }

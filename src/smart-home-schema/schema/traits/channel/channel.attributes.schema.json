@@ -65,6 +65,11 @@
           "names"
         ]
       }
+    },
+    "commandOnlyChannels": {
+      "description": "Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.",
+      "type": "boolean",
+      "default": false
     }
   },
   "required": [

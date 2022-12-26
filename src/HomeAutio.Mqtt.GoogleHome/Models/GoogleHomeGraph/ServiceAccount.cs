@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph
 {
@@ -11,60 +11,60 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph
         /// Account type.
         /// </summary>
         [JsonProperty(PropertyName = "type")]
-        public string Type { get; set; }
+        public required string Type { get; init; }
 
         /// <summary>
         /// Project id.
         /// </summary>
         [JsonProperty(PropertyName = "project_id")]
-        public string ProjectId { get; set; }
+        public required string ProjectId { get; init; }
 
         /// <summary>
         /// Private key id.
         /// </summary>
         [JsonProperty(PropertyName = "private_key_id")]
-        public string PrivateKeyId { get; set; }
+        public required string PrivateKeyId { get; init; }
 
         /// <summary>
         /// Private key.
         /// </summary>
         [JsonProperty(PropertyName = "private_key")]
-        public string PrivateKey { get; set; }
+        public required string PrivateKey { get; init; }
 
         /// <summary>
         /// Client email.
         /// </summary>
         [JsonProperty(PropertyName = "client_email")]
-        public string ClientEmail { get; set; }
+        public required string ClientEmail { get; init; }
 
         /// <summary>
         /// Client id.
         /// </summary>
         [JsonProperty(PropertyName = "client_id")]
-        public string ClientId { get; set; }
+        public required string ClientId { get; init; }
 
         /// <summary>
         /// Auth URI.
         /// </summary>
         [JsonProperty(PropertyName = "auth_uri")]
-        public string AuthUri { get; set; }
+        public required string AuthUri { get; init; }
 
         /// <summary>
         /// Token URI.
         /// </summary>
         [JsonProperty(PropertyName = "token_uri")]
-        public string TokenUri { get; set; }
+        public required string TokenUri { get; init; }
 
         /// <summary>
         /// Auth provider X509 cert url.
         /// </summary>
         [JsonProperty(PropertyName = "auth_provider_x509_cert_url")]
-        public string AuthProviderX509CertUrl { get; set; }
+        public required string AuthProviderX509CertUrl { get; init; }
 
         /// <summary>
         /// Client X509 cert url.
         /// </summary>
         [JsonProperty(PropertyName = "client_x509_cert_url")]
-        public string ClientX509CertUrl { get; set; }
+        public required string ClientX509CertUrl { get; init; }
     }
 }
