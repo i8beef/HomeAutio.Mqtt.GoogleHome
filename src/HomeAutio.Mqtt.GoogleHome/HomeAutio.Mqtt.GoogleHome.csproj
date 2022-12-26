@@ -27,7 +27,7 @@
 
   <ItemGroup>
     <PackageReference Include="Easy.MessageHub" Version="5.0.0" />
-    <PackageReference Include="HomeAutio.Mqtt.Core" Version="4.0.0.3" />
+    <PackageReference Include="HomeAutio.Mqtt.Core" Version="4.0.0.4" />
     <PackageReference Include="I8Beef.CodeAnalysis.EditorConfig" Version="1.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
