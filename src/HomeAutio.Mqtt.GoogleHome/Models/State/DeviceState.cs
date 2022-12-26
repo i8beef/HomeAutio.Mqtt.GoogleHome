@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps;
 using Newtonsoft.Json;
@@ -13,13 +13,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <summary>
         /// MQTT topic.
         /// </summary>
-        public string Topic { get; set; }
+        public string? Topic { get; init; }
 
         /// <summary>
         /// Value mappings.
         /// </summary>
         [JsonProperty(ItemConverterType = typeof(ValueMapJsonConverter))]
-        public IList<MapBase> ValueMap { get; set; }
+        public IList<MapBase>? ValueMap { get; init; }
 
         /// <summary>
         /// Handles mapping some common state values to google acceptable state values.
@@ -27,7 +27,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// <param name="stateValue">State value.</param>
         /// <param name="googleType">Google type.</param>
         /// <returns>Remapped value.</returns>
-        public object MapValueToGoogle(string stateValue, GoogleType googleType)
+        public object? MapValueToGoogle(string? stateValue, GoogleType googleType)
         {
             // Run any transforms first
             if (ValueMap != null && ValueMap.Count > 0)
@@ -82,10 +82,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State
         /// </summary>
         /// <param name="stateValue">State value.</param>
         /// <returns>Remapped value.</returns>
-        public string MapValueToMqtt(object stateValue)
+        public string? MapValueToMqtt(object? stateValue)
         {
             // Default to string version of passed parameter value
-            var mappedValue = stateValue.ToString();
+            var mappedValue = stateValue?.ToString() ?? string.Empty;
 
             if (ValueMap != null && ValueMap.Count > 0)
             {

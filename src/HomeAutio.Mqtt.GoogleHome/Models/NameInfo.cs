@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models
 {
@@ -8,27 +8,18 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
     public class NameInfo
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="NameInfo"/> class.
-        /// </summary>
-        public NameInfo()
-        {
-            DefaultNames = new List<string>();
-            Nicknames = new List<string>();
-        }
-
-        /// <summary>
         /// Defaul names.
         /// </summary>
-        public IList<string> DefaultNames { get; set; }
+        public IList<string>? DefaultNames { get; init; }
 
         /// <summary>
         /// Name.
         /// </summary>
-        public string Name { get; set; }
+        public required string Name { get; init; }
 
         /// <summary>
         /// Nicknames.
         /// </summary>
-        public IList<string> Nicknames { get; set; }
+        public IList<string>? Nicknames { get; init; }
     }
 }

@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using Easy.MessageHub;
 using HomeAutio.Mqtt.Core;
 using HomeAutio.Mqtt.GoogleHome.AppStart;
+using HomeAutio.Mqtt.GoogleHome.Extensions;
 using HomeAutio.Mqtt.GoogleHome.Identity;
 using HomeAutio.Mqtt.GoogleHome.IntentHandlers;
 using HomeAutio.Mqtt.GoogleHome.Models;
@@ -68,7 +69,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Device configuration from file
             services.AddSingleton<IGoogleDeviceRepository>(serviceProvider =>
             {
-                var deviceConfigFile = Configuration.GetValue<string>("deviceConfigFile");
+                var deviceConfigFile = Configuration.GetRequiredValue<string>("deviceConfigFile");
                 return new GoogleDeviceRepository(
                     serviceProvider.GetRequiredService<ILogger<GoogleDeviceRepository>>(),
                     serviceProvider.GetRequiredService<IMessageHub>(),
@@ -78,23 +79,24 @@ namespace HomeAutio.Mqtt.GoogleHome
             // Build state cache from configuration
             services.AddSingleton(serviceProvider =>
             {
-                var topics = serviceProvider.GetService<IGoogleDeviceRepository>().GetAll()
+                var topics = serviceProvider.GetRequiredService<IGoogleDeviceRepository>()
+                    .GetAll()
                     .Where(device => !device.Disabled)
                     .SelectMany(device => device.Traits)
-                    .Where(trait => trait.State != null)
-                    .SelectMany(trait => trait.State.Values)
+                    .Where(trait => trait.State is not null)
+                    .SelectMany(trait => trait.State!.Values)
                     .Select(state => state.Topic)
-                    .Distinct()
-                    .Where(topic => topic != null);
+                    .Where(topic => topic is not null)
+                    .Distinct();
 
-                return new StateCache(topics.ToDictionary(x => x, x => string.Empty));
+                return new StateCache(topics.ToDictionary(topic => topic!, topic => (string?)string.Empty));
             });
 
             // Google Home Graph client
             services.AddSingleton<IHostedService, GoogleHomeGraphService>();
             services.AddSingleton(serviceProvider =>
             {
-                ServiceAccount serviceAccount = null;
+                ServiceAccount? serviceAccount = null;
                 var googleHomeServiceAccountFile = Configuration.GetValue<string>("googleHomeGraph:serviceAccountFile");
                 if (!string.IsNullOrEmpty(googleHomeServiceAccountFile) && File.Exists(googleHomeServiceAccountFile))
                 {
@@ -102,11 +104,13 @@ namespace HomeAutio.Mqtt.GoogleHome
                     serviceAccount = JsonConvert.DeserializeObject<ServiceAccount>(googleHomeServiceAccountFileContents);
                 }
 
+                var agentUserId = Configuration.GetRequiredValue<string>("googleHomeGraph:agentUserId");
+
                 return new GoogleHomeGraphClient(
                     serviceProvider.GetRequiredService<ILogger<GoogleHomeGraphClient>>(),
                     serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient(),
                     serviceAccount,
-                    Configuration.GetValue<string>("googleHomeGraph:agentUserId"));
+                    agentUserId);
             });
 
             // Intent handlers
@@ -120,7 +124,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             {
                 // TLS settings
                 var brokerUseTls = Configuration.GetValue("mqtt:brokerUseTls", false);
-                BrokerTlsSettings brokerTlsSettings = null;
+                BrokerTlsSettings? brokerTlsSettings = null;
                 if (brokerUseTls)
                 {
                     if (Configuration.GetValue("mqtt:brokerTlsSettings:protocol", "1.2") != "1.2")
@@ -157,8 +161,8 @@ namespace HomeAutio.Mqtt.GoogleHome
 
                 var brokerSettings = new BrokerSettings
                 {
-                    BrokerIp = Configuration.GetValue<string>("mqtt:brokerIp"),
-                    BrokerPort = Configuration.GetValue<int>("mqtt:brokerPort"),
+                    BrokerIp = Configuration.GetRequiredValue<string>("mqtt:brokerIp"),
+                    BrokerPort = Configuration.GetValue("mqtt:brokerPort", 1883),
                     BrokerUsername = Configuration.GetValue<string>("mqtt:brokerUsername"),
                     BrokerPassword = Configuration.GetValue<string>("mqtt:brokerPassword"),
                     BrokerUseTls = brokerUseTls,
@@ -171,7 +175,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                     brokerSettings,
                     serviceProvider.GetRequiredService<IGoogleDeviceRepository>(),
                     serviceProvider.GetRequiredService<StateCache>(),
-                    Configuration.GetValue("mqtt:topicRoot", "google/home"));
+                    Configuration.GetValue<string>("mqtt:topicRoot") ?? "google/home");
             });
 
             // Setup token cleanup hosted service
@@ -220,8 +224,8 @@ namespace HomeAutio.Mqtt.GoogleHome
             var signingCerts = signingCertsSection.GetChildren()
                 .Select(x => new SigningCertificate
                 {
-                    File = x.GetValue<string>("file"),
-                    PassPhrase = x.GetValue<string>("passPhrase")
+                    File = x.GetRequiredValue<string>("file"),
+                    PassPhrase = x.GetRequiredValue<string>("passPhrase"),
                 }).ToList();
 
             if (signingCerts.Any())
@@ -296,7 +300,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         {
             // Set the app base path when behind a proxy that changes it
             var pathBaseEnv = Environment.GetEnvironmentVariable("ASPNETCORE_PATHBASE");
-            var pathBaseConfig = Configuration.GetValue<string>("appPathBase", null);
+            var pathBaseConfig = Configuration.GetValue<string?>("appPathBase", null);
             var pathBase = pathBaseEnv ?? pathBaseConfig;
             if (!string.IsNullOrEmpty(pathBase))
             {

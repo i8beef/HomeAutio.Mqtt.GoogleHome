@@ -1,4 +1,4 @@
-﻿namespace HomeAutio.Mqtt.GoogleHome.Models.Request
+namespace HomeAutio.Mqtt.GoogleHome.Models.Request
 {
     /// <summary>
     /// Execute intent request object.
@@ -11,6 +11,6 @@
         /// <summary>
         /// Payload.
         /// </summary>
-        public ExecuteIntentPayload Payload { get; set; }
+        public required ExecuteIntentPayload Payload { get; init; }
     }
 }

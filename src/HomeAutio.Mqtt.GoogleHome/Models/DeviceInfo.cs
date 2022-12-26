@@ -1,4 +1,4 @@
-﻿namespace HomeAutio.Mqtt.GoogleHome.Models
+namespace HomeAutio.Mqtt.GoogleHome.Models
 {
     /// <summary>
     /// Device configuration element.
@@ -8,21 +8,21 @@
         /// <summary>
         /// Manufacturer.
         /// </summary>
-        public string Manufacturer { get; set; }
+        public string? Manufacturer { get; init; }
 
         /// <summary>
         /// Model.
         /// </summary>
-        public string Model { get; set; }
+        public string? Model { get; init; }
 
         /// <summary>
         /// Hardware version.
         /// </summary>
-        public string HwVersion { get; set; }
+        public string? HwVersion { get; init; }
 
         /// <summary>
         /// Software version.
         /// </summary>
-        public string SwVersion { get; set; }
+        public string? SwVersion { get; init; }
     }
 }

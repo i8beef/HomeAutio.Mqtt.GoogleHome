@@ -7,7 +7,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
     /// </summary>
     public static class TestHelper
     {
-        private static IConfigurationRoot _configurationRoot;
+        private static IConfigurationRoot? _configurationRoot;
 
         /// <summary>
         /// Gets configuration from appsettings.json.
@@ -17,7 +17,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
         {
             get
             {
-                if (_configurationRoot == null)
+                if (_configurationRoot is null)
                 {
                     _configurationRoot = new ConfigurationBuilder()
                         .AddJsonFile("appsettings.json", optional: true)

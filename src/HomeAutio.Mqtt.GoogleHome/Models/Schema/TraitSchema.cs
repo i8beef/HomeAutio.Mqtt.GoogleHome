@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,29 +15,24 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
     public class TraitSchema
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TraitSchema"/> class.
-        /// </summary>
-        private TraitSchema() { }
-
-        /// <summary>
         /// Attribute schema.
         /// </summary>
-        public AttributeSchema AttributeSchema { get; private set; }
+        public AttributeSchema? AttributeSchema { get; init; }
 
         /// <summary>
         /// Command schema JSONs.
         /// </summary>
-        public IList<CommandSchema> CommandSchemas { get; private set; } = new List<CommandSchema>();
+        public IList<CommandSchema> CommandSchemas { get; init; } = new List<CommandSchema>();
 
         /// <summary>
         /// State schema.
         /// </summary>
-        public StateSchema StateSchema { get; private set; }
+        public StateSchema? StateSchema { get; init; }
 
         /// <summary>
         /// Trait type.
         /// </summary>
-        public TraitType Trait { get; private set; }
+        public required TraitType Trait { get; init; }
 
         /// <summary>
         /// Instantiates from embedded resources for specified trait type.
@@ -45,7 +40,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// <param name="traitType">Trait type.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>An instantiated <see cref="TraitSchema"/>.</returns>
-        public static async Task<TraitSchema> ForTraitType(TraitType traitType, CancellationToken cancellationToken = default)
+        public static async Task<TraitSchema?> ForTraitType(TraitType traitType, CancellationToken cancellationToken = default)
         {
             // Get resource paths
             var allTraitsResourceBase = "HomeAutio.Mqtt.GoogleHome.schema.traits";
@@ -63,18 +58,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
                 return null;
             }
 
-            var traitSchema = new TraitSchema { Trait = traitType };
-
             // Attributes
             var attributeFile = $"{traitResourceBase}.{traitName}.attributes.schema.json";
-            traitSchema.AttributeSchema = await AttributeSchema.FromJson(GetResourceString(attributeFile, resources), cancellationToken);
+            var attributeSchema = await AttributeSchema.FromJson(GetResourceString(attributeFile, resources) ?? string.Empty, cancellationToken);
 
             // States
             var statesFile = $"{traitResourceBase}.{traitName}.states.schema.json";
-            traitSchema.StateSchema = await StateSchema.FromJson(GetResourceString(statesFile, resources), cancellationToken);
+            var stateSchema = await StateSchema.FromJson(GetResourceString(statesFile, resources) ?? string.Empty, cancellationToken);
 
             // Commands
             var commandParamFiles = resources.Where(x => x.StartsWith($"{traitResourceBase}") && x.EndsWith(".params.schema.json"));
+            var commandSchemas = new List<CommandSchema>();
             foreach (var commandParamFile in commandParamFiles)
             {
                 var commandResourceBase = commandParamFile.Replace(".params.schema.json", string.Empty);
@@ -93,11 +87,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
 
                 if (commandSchema != null)
                 {
-                    traitSchema.CommandSchemas.Add(commandSchema);
+                    commandSchemas.Add(commandSchema);
                 }
             }
 
-            return traitSchema;
+            return new TraitSchema
+            {
+                Trait = traitType,
+                AttributeSchema = attributeSchema,
+                StateSchema = stateSchema,
+                CommandSchemas = commandSchemas
+            };
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
             {
                 foreach (var schema in CommandSchemas.Where(x => x.ResultsValidator != null))
                 {
-                    var result = schema.ResultsValidator.GetGoogleTypeForFlattenedPath(flattenedPath);
+                    var result = schema.ResultsValidator!.GetGoogleTypeForFlattenedPath(flattenedPath);
                     if (result != GoogleType.Unknown)
                     {
                         return result;
@@ -136,7 +136,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// </summary>
         /// <param name="flattenedPath">Flattened state path.</param>
         /// <returns>The enum values, or null if not an enum.</returns>
-        public ICollection<object> GetEnumValuesForFlattenedPath(string flattenedPath)
+        public ICollection<object>? GetEnumValuesForFlattenedPath(string flattenedPath)
         {
             if (StateSchema != null)
             {
@@ -151,7 +151,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
             {
                 foreach (var schema in CommandSchemas.Where(x => x.ResultsValidator != null))
                 {
-                    var result = schema.ResultsValidator.GetEnumValuesForFlattenedPath(flattenedPath);
+                    var result = schema.ResultsValidator!.GetEnumValuesForFlattenedPath(flattenedPath);
                     if (result != null)
                     {
                         return result;
@@ -168,7 +168,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// <param name="resourceName">Resource name to retrieve.</param>
         /// <param name="resources">Available resource files.</param>
         /// <returns>Resource file contents.</returns>
-        private static string GetResourceString(string resourceName, IEnumerable<string> resources)
+        private static string? GetResourceString(string resourceName, IEnumerable<string> resources)
         {
             var assembly = typeof(TraitType).Assembly;
             if (resources.Contains(resourceName))

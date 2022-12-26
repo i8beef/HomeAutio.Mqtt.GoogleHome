@@ -1,4 +1,4 @@
-﻿namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
+namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
 {
     /// <summary>
     /// Celsius to fahrenheit value mapper.
@@ -6,33 +6,46 @@
     public class TemperatureMap : MapBase
     {
         /// <inheritdoc />
-        public override bool MatchesGoogle(object value)
+        public override bool MatchesGoogle(object? value)
         {
             return true;
         }
 
         /// <inheritdoc />
-        public override string ConvertToGoogle(string value)
+        public override string? ConvertToGoogle(string? value)
         {
-            var degrees = decimal.Parse(value);
-            var result = (degrees - 32) * (5 / 9);
+            if (decimal.TryParse(value, out var degrees))
+            {
+                var result = (degrees - 32) * (5 / 9);
 
-            return result.ToString();
+                return result.ToString();
+            }
+
+            return null;
         }
 
         /// <inheritdoc />
-        public override bool MatchesMqtt(string value)
+        public override bool MatchesMqtt(string? value)
         {
             return true;
         }
 
         /// <inheritdoc />
-        public override string ConvertToMqtt(object value)
+        public override string? ConvertToMqtt(object? value)
         {
-            var degrees = decimal.Parse(value.ToString());
-            var result = (degrees * (9 / 5)) + 32;
+            if (value is null)
+            {
+                return null;
+            }
 
-            return result.ToString();
+            if (decimal.TryParse(value.ToString(), out var degrees))
+            {
+                var result = (degrees * (9 / 5)) + 32;
+
+                return result.ToString();
+            }
+
+            return null;
         }
     }
 }

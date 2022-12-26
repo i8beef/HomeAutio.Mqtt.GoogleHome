@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.Extensions;
+using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Newtonsoft.Json;
 using NJsonSchema;
@@ -15,24 +16,19 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
     public class StateSchema
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StateSchema"/> class.
-        /// </summary>
-        private StateSchema() { }
-
-        /// <summary>
         /// JSON.
         /// </summary>
-        public string Json { get; private set; }
+        public required string Json { get; init; }
 
         /// <summary>
         /// Examples.
         /// </summary>
-        public IList<SchemaExample> Examples { get; private set; }
+        public required IList<SchemaExample> Examples { get; init; }
 
         /// <summary>
         /// Validator instance.
         /// </summary>
-        public JsonSchema Validator { get; private set; }
+        public required JsonSchema Validator { get; init; }
 
         /// <summary>
         /// Instantiates from supplied JSON string.
@@ -40,7 +36,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// <param name="json">JSON to parse.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>An instantiated <see cref="StateSchema"/>.</returns>
-        public static async Task<StateSchema> FromJson(string json, CancellationToken cancellationToken = default)
+        public static async Task<StateSchema?> FromJson(string? json, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(json))
             {
@@ -67,11 +63,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         {
             var examples = new List<SchemaExample>();
             var parsed = JsonConvert.DeserializeObject<Dictionary<string, object>>(json, new ObjectDictionaryConverter());
-            if (parsed.TryGetValue("examples", out var parsedExamples) && parsedExamples is List<object> exampleNodes)
+            if (parsed is not null && parsed.TryGetValue("examples", out var parsedExamples) && parsedExamples is List<object> exampleNodes)
             {
                 // Get distinct examples
                 var seenAttributeExamples = new List<string>();
-                foreach (var example in exampleNodes.Cast<Dictionary<string, object>>())
+                foreach (var example in exampleNodes.Cast<Dictionary<string, object?>>())
                 {
                     // Strip comments
                     var exampleWithoutComment = example

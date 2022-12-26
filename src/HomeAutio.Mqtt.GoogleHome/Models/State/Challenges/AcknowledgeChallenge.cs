@@ -1,4 +1,4 @@
-﻿using HomeAutio.Mqtt.GoogleHome.Models.Request;
+using HomeAutio.Mqtt.GoogleHome.Models.Request;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.State.Challenges
 {
@@ -19,7 +19,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.Challenges
         /// <inheritdoc />
         public override bool Validate(Challenge challenge)
         {
-            return challenge?.Ack == true;
+            return challenge.Ack is not null && challenge.Ack.Value;
         }
     }
 }

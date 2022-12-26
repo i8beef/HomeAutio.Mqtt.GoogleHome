@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using HomeAutio.Mqtt.GoogleHome.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.Extensions.Configuration;
@@ -43,7 +44,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            _file = configuration.GetValue<string>("oauth:tokenStoreFile");
+            _file = configuration.GetRequiredValue<string>("oauth:tokenStoreFile");
             _refreshTokenGracePeriod = configuration.GetValue("oauth:refreshTokenGracePeriod", 0);
             RestoreFromFile();
         }
@@ -57,16 +58,16 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         }
 
         /// <inheritdoc />
-        public Task<PersistedGrant> GetAsync(string key)
+        public Task<PersistedGrant?> GetAsync(string key)
         {
             if (_repository.TryGetValue(key, out var token))
             {
-                return Task.FromResult(token);
+                return Task.FromResult<PersistedGrant?>(token);
             }
 
             _log.LogWarning("Failed to find token with key {Key}", key);
 
-            return Task.FromResult<PersistedGrant>(null);
+            return Task.FromResult<PersistedGrant?>(null);
         }
 
         /// <inheritdoc />
@@ -190,17 +191,23 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
                     }
 
                     var deserializedFileContents = JsonConvert.DeserializeObject<Dictionary<string, PersistedGrant>>(fileContents, _jsonSerializerSettings);
-
-                    _repository.Clear();
-                    foreach (var record in deserializedFileContents)
+                    if (deserializedFileContents is not null)
                     {
-                        if (!_repository.TryAdd(record.Key, record.Value))
+                        _repository.Clear();
+                        foreach (var record in deserializedFileContents)
                         {
-                            _log.LogWarning("Failed to restore token with key {Key}", record.Key);
+                            if (!_repository.TryAdd(record.Key, record.Value))
+                            {
+                                _log.LogWarning("Failed to restore token with key {Key}", record.Key);
+                            }
                         }
-                    }
 
-                    _log.LogInformation("Restored tokens from {File}", _file);
+                        _log.LogInformation("Restored tokens from {File}", _file);
+                    }
+                    else
+                    {
+                        throw new ArgumentException($"Token file {_file} contents invalid");
+                    }
                 }
             }
         }

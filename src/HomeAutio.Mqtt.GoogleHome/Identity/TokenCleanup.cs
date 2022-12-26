@@ -14,7 +14,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Identity
         private readonly TimeSpan _cleanupInterval;
         private readonly IPersistedGrantStoreWithExpiration _grantStore;
 
-        private CancellationTokenSource _source;
+        private CancellationTokenSource? _source;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TokenCleanup"/> class.

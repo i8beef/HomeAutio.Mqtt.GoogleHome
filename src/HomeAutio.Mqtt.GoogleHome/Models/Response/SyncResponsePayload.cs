@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Response
 {
@@ -10,11 +10,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Response
         /// <summary>
         /// Agent user id.
         /// </summary>
-        public string AgentUserId { get; set; }
+        public required string AgentUserId { get; init; }
 
         /// <summary>
         /// Devices.
         /// </summary>
-        public IList<Device> Devices { get; set; }
+        public required IList<Device> Devices { get; init; }
     }
 }

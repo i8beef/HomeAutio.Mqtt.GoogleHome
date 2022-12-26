@@ -8,32 +8,37 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         /// <summary>
         /// Google value.
         /// </summary>
-        public string Google { get; set; }
+        public required string Google { get; init; }
 
         /// <summary>
         /// MQTT min value.
         /// </summary>
-        public decimal MqttMin { get; set; }
+        public required decimal MqttMin { get; init; }
 
         /// <summary>
         /// MQTT max value.
         /// </summary>
-        public decimal MqttMax { get; set; }
+        public required decimal MqttMax { get; init; }
 
         /// <inheritdoc />
-        public override bool MatchesGoogle(object value)
+        public override bool MatchesGoogle(object? value)
         {
+            if (value is null)
+            {
+                return false;
+            }
+
             return value.ToString() == Google;
         }
 
         /// <inheritdoc />
-        public override string ConvertToGoogle(string value)
+        public override string? ConvertToGoogle(string? value)
         {
             return Google;
         }
 
         /// <inheritdoc />
-        public override bool MatchesMqtt(string value)
+        public override bool MatchesMqtt(string? value)
         {
             if (decimal.TryParse(value, out var decimalValue))
             {
@@ -44,8 +49,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         }
 
         /// <inheritdoc />
-        public override string ConvertToMqtt(object value)
+        public override string? ConvertToMqtt(object? value)
         {
+            if (value is null)
+            {
+                return null;
+            }
+
             return value.ToString();
         }
     }

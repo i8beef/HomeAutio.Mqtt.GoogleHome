@@ -20,7 +20,7 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
 
         private readonly IMessageHub _messageHub;
         private readonly IGoogleDeviceRepository _deviceRepository;
-        private readonly IDictionary<string, string> _stateCache;
+        private readonly IDictionary<string, string?> _stateCache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExecuteIntentHandler"/> class.
@@ -54,20 +54,19 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                     .SelectMany(x => x.Execution)
                     .Select(x => x.Command))));
 
-            var executionResponsePayload = new Models.Response.ExecutionResponsePayload();
-
             // Get all device ids from commands to split into per-device responses
             var deviceIds = intent.Payload.Commands
                 .SelectMany(x => x.Devices.Select(y => y.Id))
                 .Distinct();
 
+            var responseCommands = new List<Models.Response.Command>();
             foreach (var deviceId in deviceIds)
             {
                 var device = _deviceRepository.FindById(deviceId);
                 if (device == null)
                 {
                     // Device not found
-                    executionResponsePayload.Commands.Add(new Models.Response.Command
+                    responseCommands.Add(new Models.Response.Command
                     {
                         Ids = new List<string> { deviceId },
                         ErrorCode = "deviceNotFound",
@@ -80,38 +79,41 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                 var commands = intent.Payload.Commands.Where(x => x.Devices.Any(y => y.Id == deviceId));
                 var executions = commands.SelectMany(x => x.Execution);
 
-                // Prepare device response payload
-                var deviceCommandResponse = new Models.Response.Command
-                {
-                    Ids = new List<string> { deviceId },
-                    Status = Models.Response.CommandStatus.Success
-                };
-
-                // Validate challenge check
+                // Validate all device challenge checks
+                var challengesPassed = true;
                 foreach (var execution in executions)
                 {
                     var challengeResult = ValidateChallenges(device, execution);
                     if (challengeResult != null)
                     {
-                        deviceCommandResponse.Status = Models.Response.CommandStatus.Error;
-
+                        challengesPassed = false;
                         if (execution.Challenge != null)
                         {
                             // Challenge failed
-                            deviceCommandResponse.ErrorCode = challengeResult;
-                            deviceCommandResponse.ChallengeNeeded = new Models.Response.ChallengeResponse
+                            responseCommands.Add(new Models.Response.Command
                             {
-                                Type = challengeResult
-                            };
+                                Ids = new List<string> { deviceId },
+                                ErrorCode = challengeResult,
+                                Status = Models.Response.CommandStatus.Error,
+                                ChallengeNeeded = new Models.Response.ChallengeResponse
+                                {
+                                    Type = challengeResult
+                                }
+                            });
                         }
                         else
                         {
                             // Challenge required
-                            deviceCommandResponse.ErrorCode = "challengeNeeded";
-                            deviceCommandResponse.ChallengeNeeded = new Models.Response.ChallengeResponse
+                            responseCommands.Add(new Models.Response.Command
                             {
-                                Type = challengeResult
-                            };
+                                Ids = new List<string> { deviceId },
+                                ErrorCode = "challengeNeeded",
+                                Status = Models.Response.CommandStatus.Error,
+                                ChallengeNeeded = new Models.Response.ChallengeResponse
+                                {
+                                    Type = challengeResult
+                                }
+                            });
                         }
 
                         break;
@@ -119,13 +121,13 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                 }
 
                 // Challenge missing or failed
-                if (deviceCommandResponse.Status != Models.Response.CommandStatus.Success)
+                if (!challengesPassed)
                 {
-                    executionResponsePayload.Commands.Add(deviceCommandResponse);
                     continue;
                 }
 
                 // Publish command and build state response
+                IDictionary<string, object?>? responseStates = null;
                 var schemas = TraitSchemaProvider.GetTraitSchemas();
                 foreach (var command in commands)
                 {
@@ -136,19 +138,19 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                         _messageHub.Publish(commandEvent);
 
                         // Generate state for response
-                        var states = new Dictionary<string, object>();
+                        var states = new Dictionary<string, object?>();
                         var trait = device.Traits.FirstOrDefault(x => x.Commands.ContainsKey(execution.Command));
                         if (trait != null)
                         {
-                            var traitSchema = schemas.FirstOrDefault(x => x.Trait == trait.Trait);
-                            var commandSchema = traitSchema.CommandSchemas.FirstOrDefault(x => x.Command == execution.Command.ToEnum<CommandType>());
+                            var traitSchema = schemas.First(x => x.Trait == trait.Trait);
+                            var commandSchema = traitSchema.CommandSchemas.First(x => x.Command == execution.Command.ToEnum<CommandType>());
 
                             var googleState = trait.GetGoogleStateFlattened(_stateCache, traitSchema);
 
                             // Map incoming params to "fake" state changes to override existing state value
                             var replacedParams = execution.Params != null
                                 ? execution.Params.ToFlatDictionary().ToDictionary(kvp => CommandToStateKeyMapper.Map(kvp.Key), kvp => kvp.Value)
-                                : new Dictionary<string, object>();
+                                : new Dictionary<string, object?>();
 
                             foreach (var state in googleState)
                             {
@@ -180,12 +182,25 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
                         }
 
                         // Add any processed states
-                        deviceCommandResponse.States = states.ToNestedDictionary();
+                        responseStates = states.ToNestedDictionary();
                     }
                 }
 
-                executionResponsePayload.Commands.Add(deviceCommandResponse);
+                // Prepare device response payload
+                var deviceCommandResponse = new Models.Response.Command
+                {
+                    Ids = new List<string> { deviceId },
+                    Status = Models.Response.CommandStatus.Success,
+                    States = responseStates
+                };
+
+                responseCommands.Add(deviceCommandResponse);
             }
+
+            var executionResponsePayload = new Models.Response.ExecutionResponsePayload
+            {
+                Commands = responseCommands
+            };
 
             return executionResponsePayload;
         }
@@ -196,14 +211,14 @@ namespace HomeAutio.Mqtt.GoogleHome.IntentHandlers
         /// <param name="device">Device to check.</param>
         /// <param name="execution">Command execution to check.</param>
         /// <returns><c>true</c> if command is handled as a delegated command, otherwise <c>false</c>.</returns>
-        private static string ValidateChallenges(Models.State.Device device, Execution execution)
+        private static string? ValidateChallenges(Models.State.Device device, Execution execution)
         {
             if (device != null && !device.Disabled)
             {
                 // Get any challenges
                 var challenges = device.Traits
                     .Where(x => x.Commands.ContainsKey(execution.Command) && x.Challenge != null)
-                    .Select(x => x.Challenge);
+                    .Select(x => x.Challenge!);
 
                 // Evaluate all challenges
                 foreach (var challenge in challenges)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
 {
@@ -10,26 +10,31 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         /// <summary>
         /// Google min value.
         /// </summary>
-        public decimal GoogleMin { get; set; }
+        public required decimal GoogleMin { get; init; }
 
         /// <summary>
         /// Google max value.
         /// </summary>
-        public decimal GoogleMax { get; set; }
+        public required decimal GoogleMax { get; init; }
 
         /// <summary>
         /// MQTT min value.
         /// </summary>
-        public decimal MqttMin { get; set; }
+        public required decimal MqttMin { get; init; }
 
         /// <summary>
         /// MQTT max value.
         /// </summary>
-        public decimal MqttMax { get; set; }
+        public required decimal MqttMax { get; init; }
 
         /// <inheritdoc />
-        public override bool MatchesGoogle(object value)
+        public override bool MatchesGoogle(object? value)
         {
+            if (value is null)
+            {
+                return false;
+            }
+
             if (decimal.TryParse(value.ToString(), out var decimalValue))
             {
                 return decimalValue >= GoogleMin && decimalValue <= GoogleMax;
@@ -39,8 +44,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         }
 
         /// <inheritdoc />
-        public override string ConvertToGoogle(string value)
+        public override string? ConvertToGoogle(string? value)
         {
+            if (value is null)
+            {
+                return value;
+            }
+
             if (MqttMax - MqttMin == 0)
             {
                 return value;
@@ -63,7 +73,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         }
 
         /// <inheritdoc />
-        public override bool MatchesMqtt(string value)
+        public override bool MatchesMqtt(string? value)
         {
             if (decimal.TryParse(value, out var decimalValue))
             {
@@ -74,8 +84,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
         }
 
         /// <inheritdoc />
-        public override string ConvertToMqtt(object value)
+        public override string? ConvertToMqtt(object? value)
         {
+            if (value is null)
+            {
+                return null;
+            }
+
             if (GoogleMax - GoogleMin == 0)
             {
                 return value.ToString();

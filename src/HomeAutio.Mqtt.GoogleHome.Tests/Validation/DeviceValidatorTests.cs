@@ -31,7 +31,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Validation
             if (File.Exists(_testFilePath))
             {
                 var deviceConfigurationString = File.ReadAllText(_testFilePath);
-                var devices = new ConcurrentDictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString));
+                var devices = new ConcurrentDictionary<string, Device>(JsonConvert.DeserializeObject<Dictionary<string, Device>>(deviceConfigurationString)!);
 
                 // Act
                 var errors = devices.Select(x => DeviceValidator.Validate(x.Value));

@@ -32,7 +32,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// </summary>
         /// <param name="deviceId">Device Id to get.</param>
         /// <returns>The <see cref="Device"/>.</returns>
-        Device FindById(string deviceId);
+        Device? FindById(string deviceId);
 
         /// <summary>
         /// Gets all devices.

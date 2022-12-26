@@ -8,38 +8,28 @@
     <partial name="_ValidationSummary" />
 
     <div class="row">
-        @if (Model.Any())
-        {
-            <div class="col-sm-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Edit Devices</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="list-group">
-                            <a asp-controller="GoogleDevice" asp-action="Create" class="list-group-item list-group-item-action active">Add Device</a>
-                            @foreach (var device in Model)
-                            {
-                                <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@device.Id" class="list-group-item list-group-item-action">
-                                    @if (device.Disabled)
-                                    {
-                                        <span class="badge badge-primary">disabled</span>
-                                    }
-                                    @device.Id
-                                </a>
-                            }
-                        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Edit Devices</h2>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a asp-controller="GoogleDevice" asp-action="Create" class="list-group-item list-group-item-action active">Add Device</a>
+                        @foreach (var device in Model)
+                        {
+                            <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@device.Id" class="list-group-item list-group-item-action">
+                                @if (device.Disabled)
+                                {
+                                    <span class="badge badge-primary">disabled</span>
+                                }
+                                @device.Id
+                            </a>
+                        }
                     </div>
                 </div>
             </div>
-        }
-        else
-        {
-            <div class="alert alert-warning">
-                <strong>No Devices</strong>
-                There are no devices configured.
-            </div>
-        }
+        </div>
         <div class="col-sm-6">
             <div class="card">
                 <div class="card-header">

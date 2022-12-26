@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Events
@@ -11,11 +11,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Events
         /// <summary>
         /// Devices.
         /// </summary>
-        public IList<Request.Device> Devices { get; set; }
+        public required IList<Request.Device> Devices { get; init; }
 
         /// <summary>
         /// Time of event.
         /// </summary>
-        public DateTimeOffset Time { get; set; }
+        public required DateTimeOffset Time { get; init; }
     }
 }

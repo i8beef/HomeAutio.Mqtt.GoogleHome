@@ -28,8 +28,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
             JsonSerializerConfig.Configure();
 
             // Service account setup
-            _agentUserId = TestHelper.Configuration["agentUserId"];
-            _serviceAccount = JsonConvert.DeserializeObject<ServiceAccount>(File.ReadAllText(@"TestData/serviceAccount.json"));
+            _agentUserId = TestHelper.Configuration["agentUserId"]!;
+            _serviceAccount = JsonConvert.DeserializeObject<ServiceAccount>(File.ReadAllText(@"TestData/serviceAccount.json"))!;
         }
 
         [Fact]

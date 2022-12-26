@@ -1,4 +1,4 @@
-﻿namespace HomeAutio.Mqtt.GoogleHome.Models
+namespace HomeAutio.Mqtt.GoogleHome.Models
 {
     /// <summary>
     /// Signing certificate.
@@ -8,11 +8,11 @@
         /// <summary>
         /// File path.
         /// </summary>
-        public string File { get; set; }
+        public required string File { get; init; }
 
         /// <summary>
         /// Pass phrase for the certificate.
         /// </summary>
-        public string PassPhrase { get; set; }
+        public string? PassPhrase { get; init; }
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HomeAutio.Mqtt.GoogleHome.Extensions;
+using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
 using Newtonsoft.Json;
 using NJsonSchema;
@@ -15,49 +16,44 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
     public class CommandSchema
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandSchema"/> class.
-        /// </summary>
-        private CommandSchema() { }
-
-        /// <summary>
         /// Command type.
         /// </summary>
-        public CommandType Command { get; private set; }
+        public required CommandType Command { get; init; }
 
         /// <summary>
         /// Error JSON.
         /// </summary>
-        public string ErrorJson { get; private set; }
+        public string? ErrorJson { get; init; }
 
         /// <summary>
         /// Examples.
         /// </summary>
-        public IList<SchemaExample> Examples { get; private set; }
+        public required IList<SchemaExample> Examples { get; init; }
 
         /// <summary>
         /// Param JSON.
         /// </summary>
-        public string ParamJson { get; private set; }
+        public string? ParamJson { get; init; }
 
         /// <summary>
         /// Result JSON.
         /// </summary>
-        public string ResultsJson { get; private set; }
+        public string? ResultsJson { get; init; }
 
         /// <summary>
         /// Results validator instance.
         /// </summary>
-        public JsonSchema ResultsValidator { get; private set; }
+        public JsonSchema? ResultsValidator { get; init; }
 
         /// <summary>
         /// Results examples.
         /// </summary>
-        public IList<SchemaExample> ResultsExamples { get; private set; }
+        public required IList<SchemaExample>? ResultsExamples { get; init; }
 
         /// <summary>
         /// Validator instance.
         /// </summary>
-        public JsonSchema Validator { get; private set; }
+        public JsonSchema? Validator { get; init; }
 
         /// <summary>
         /// Instantiates from supplied JSON string.
@@ -68,11 +64,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         /// <param name="errorJson">Error JSON to parse.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>An instantiated <see cref="CommandSchema"/>.</returns>
-        public static async Task<CommandSchema> FromJson(
+        public static async Task<CommandSchema?> FromJson(
             CommandType commandType,
-            string paramJson,
-            string resultsJson,
-            string errorJson,
+            string? paramJson,
+            string? resultsJson,
+            string? errorJson,
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(paramJson))
@@ -260,11 +256,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
             // Attribute example
             var examples = new List<SchemaExample>();
             var parsed = JsonConvert.DeserializeObject<Dictionary<string, object>>(json, new ObjectDictionaryConverter());
-            if (parsed.TryGetValue("examples", out var parsedExamples) && parsedExamples is List<object> exampleNodes)
+            if (parsed is not null && parsed.TryGetValue("examples", out var parsedExamples) && parsedExamples is List<object> exampleNodes)
             {
                 // Get distinct examples
                 var seenAttributeExamples = new List<string>();
-                foreach (var example in exampleNodes.Cast<Dictionary<string, object>>())
+                foreach (var example in exampleNodes.Cast<Dictionary<string, object?>>())
                 {
                     // Strip comments
                     var exampleWithoutComment = example
@@ -300,11 +296,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
         {
             var examples = new List<SchemaExample>();
             var parsed = JsonConvert.DeserializeObject<Dictionary<string, object>>(json, new ObjectDictionaryConverter());
-            if (parsed.TryGetValue("examples", out var parsedExamples) && parsedExamples is List<object> exampleNodes)
+            if (parsed is not null && parsed.TryGetValue("examples", out var parsedExamples) && parsedExamples is List<object> exampleNodes)
             {
                 // Get distinct examples
                 var seenAttributeExamples = new List<string>();
-                foreach (var example in exampleNodes.Cast<Dictionary<string, object>>())
+                foreach (var example in exampleNodes.Cast<Dictionary<string, object?>>())
                 {
                     // Strip comments
                     var exampleWithoutComment = example

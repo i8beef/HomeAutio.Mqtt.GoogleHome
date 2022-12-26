@@ -12,6 +12,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Models.State
             // Arrange
             var device = new Device
             {
+                Id = "1234",
+                Type = GoogleHome.Models.DeviceType.Unknown,
+                Name = new GoogleHome.Models.NameInfo { Name = "test" },
                 Traits = new List<DeviceTrait>
                 {
                     new DeviceTrait
@@ -78,7 +81,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Models.State
                 }
             };
 
-            var stateCache = new Dictionary<string, string>
+            var stateCache = new Dictionary<string, string?>
             {
                 { "device/color/name", "name" },
                 { "device/color/temperature", "85" },
@@ -94,10 +97,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests.Models.State
             // Assert
             Assert.True(result.ContainsKey("color"));
 
-            var colorResult = (IDictionary<string, object>)result["color"];
+            var colorResult = (IDictionary<string, object?>)result["color"]!;
             Assert.True(colorResult.ContainsKey("spectrumHsv"));
 
-            var spectrumHSVResult = (IDictionary<string, object>)colorResult["spectrumHsv"];
+            var spectrumHSVResult = (IDictionary<string, object?>)colorResult["spectrumHsv"]!;
             Assert.True(spectrumHSVResult.ContainsKey("hue"));
             Assert.Equal(123, spectrumHSVResult["hue"]);
             Assert.True(spectrumHSVResult.ContainsKey("saturation"));

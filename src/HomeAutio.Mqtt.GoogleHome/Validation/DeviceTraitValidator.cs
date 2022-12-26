@@ -75,9 +75,9 @@ namespace HomeAutio.Mqtt.GoogleHome.Validation
         /// <param name="stateConfigs">Current state cache.</param>
         /// <param name="traitSchema">Trait schema.</param>
         /// <returns>A Google device state object in a flattened state.</returns>
-        private static IDictionary<string, object> GetFakeGoogleState(IDictionary<string, DeviceState> stateConfigs, TraitSchema traitSchema)
+        private static IDictionary<string, object?> GetFakeGoogleState(IDictionary<string, DeviceState> stateConfigs, TraitSchema traitSchema)
         {
-            var stateValues = new Dictionary<string, object>();
+            var stateValues = new Dictionary<string, object?>();
             foreach (var state in stateConfigs)
             {
                 var googleType = traitSchema.GetGoogleTypeForFlattenedPath(state.Key);

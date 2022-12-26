@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Request
@@ -11,17 +12,17 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Request
         /// <summary>
         /// Command name.
         /// </summary>
-        public string Command { get; set; }
+        public required string Command { get; init; }
 
         /// <summary>
         /// Parameters.
         /// </summary>
         [JsonConverter(typeof(ObjectDictionaryConverter))]
-        public IDictionary<string, object> Params { get; set; }
+        public IDictionary<string, object?>? Params { get; init; }
 
         /// <summary>
         /// Challenge details.
         /// </summary>
-        public Challenge Challenge { get; set; }
+        public Challenge? Challenge { get; init; }
     }
 }

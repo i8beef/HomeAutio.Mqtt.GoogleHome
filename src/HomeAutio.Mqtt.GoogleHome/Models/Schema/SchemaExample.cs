@@ -1,4 +1,4 @@
-﻿namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
+namespace HomeAutio.Mqtt.GoogleHome.Models.Schema
 {
     /// <summary>
     /// Schema example.
@@ -8,11 +8,11 @@
         /// <summary>
         /// Comment.
         /// </summary>
-        public string Comment { get; set; }
+        public string? Comment { get; init; }
 
         /// <summary>
         /// Example.
         /// </summary>
-        public string Example { get; set; }
+        public required string Example { get; init; }
     }
 }

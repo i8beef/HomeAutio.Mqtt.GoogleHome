@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Response
@@ -12,6 +13,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Response
         /// Devices.
         /// </summary>
         [JsonProperty(ItemConverterType = typeof(ObjectDictionaryConverter))]
-        public IDictionary<string, IDictionary<string, object>> Devices { get; set; }
+        public required IDictionary<string, IDictionary<string, object?>> Devices { get; init; }
     }
 }

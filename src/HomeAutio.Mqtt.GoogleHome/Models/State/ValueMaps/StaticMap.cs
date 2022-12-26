@@ -1,4 +1,4 @@
-﻿namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
+namespace HomeAutio.Mqtt.GoogleHome.Models.State.ValueMaps
 {
     /// <summary>
     /// Static based value map.
@@ -8,28 +8,28 @@
         /// <summary>
         /// Google value.
         /// </summary>
-        public string Google { get; set; }
+        public string? Google { get; init; }
 
         /// <inheritdoc />
-        public override bool MatchesGoogle(object value)
+        public override bool MatchesGoogle(object? value)
         {
-            return value == null || string.Equals(value.ToString(), Google, System.StringComparison.InvariantCultureIgnoreCase);
+            return value is null || string.Equals(value.ToString(), Google, System.StringComparison.InvariantCultureIgnoreCase);
         }
 
         /// <inheritdoc />
-        public override string ConvertToGoogle(string value)
+        public override string? ConvertToGoogle(string? value)
         {
             return Google;
         }
 
         /// <inheritdoc />
-        public override bool MatchesMqtt(string value)
+        public override bool MatchesMqtt(string? value)
         {
             return true;
         }
 
         /// <inheritdoc />
-        public override string ConvertToMqtt(object value)
+        public override string? ConvertToMqtt(object? value)
         {
             return null;
         }

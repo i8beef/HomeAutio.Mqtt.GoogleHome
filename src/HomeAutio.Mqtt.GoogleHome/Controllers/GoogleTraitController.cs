@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using HomeAutio.Mqtt.GoogleHome.ActionFilters;
 using HomeAutio.Mqtt.GoogleHome.Extensions;
+using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using HomeAutio.Mqtt.GoogleHome.Models;
 using HomeAutio.Mqtt.GoogleHome.Models.Schema;
 using HomeAutio.Mqtt.GoogleHome.Models.State;
@@ -47,7 +48,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 return NotFound();
             }
 
-            var model = new TraitViewModel();
+            var model = new TraitViewModel
+            {
+                Trait = TraitType.Unknown
+            };
 
             return View(model);
         }
@@ -74,31 +78,21 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             }
 
             // Set values
+            var commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : null;
             var trait = new DeviceTrait
             {
                 Trait = viewModel.Trait,
                 Attributes = !string.IsNullOrEmpty(viewModel.Attributes) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(viewModel.Attributes, new ObjectDictionaryConverter()) : null,
-                Commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : new Dictionary<string, IDictionary<string, string>>(),
-                State = !string.IsNullOrEmpty(viewModel.State) ? JsonConvert.DeserializeObject<Dictionary<string, DeviceState>>(viewModel.State) : null
+                Commands = commands ?? new Dictionary<string, IDictionary<string, string>>(),
+                State = !string.IsNullOrEmpty(viewModel.State) ? JsonConvert.DeserializeObject<Dictionary<string, DeviceState>>(viewModel.State) : null,
+                Challenge = viewModel.ChallengeType switch
+                {
+                    ChallengeType.Acknowledge => new AcknowledgeChallenge(),
+                    ChallengeType.Pin => new PinChallenge { Pin = viewModel.ChallengePin ?? string.Empty },
+                    ChallengeType.None => null,
+                    _ => null
+                }
             };
-
-            // Handle any challenges
-            switch (viewModel.ChallengeType)
-            {
-                case ChallengeType.Acknowledge:
-                    trait.Challenge = new AcknowledgeChallenge();
-                    break;
-                case ChallengeType.Pin:
-                    trait.Challenge = new PinChallenge
-                    {
-                        Pin = viewModel.ChallengePin
-                    };
-                    break;
-                case ChallengeType.None:
-                default:
-                    trait.Challenge = null;
-                    break;
-            }
 
             // Final validation
             foreach (var error in DeviceTraitValidator.Validate(trait))
@@ -156,12 +150,11 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         [ImportModelState]
         public IActionResult Edit([Required] string deviceId, [Required] string traitId)
         {
-            if (!_deviceRepository.Contains(deviceId))
+            var device = _deviceRepository.FindById(deviceId);
+            if (device is null)
             {
                 return NotFound();
             }
-
-            var device = _deviceRepository.FindById(deviceId);
 
             var traitEnumId = traitId.ToEnum<TraitType>();
             if (!device.Traits.Any(x => x.Trait == traitEnumId))
@@ -176,23 +169,15 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 Trait = trait.Trait,
                 Attributes = trait.Attributes != null ? JsonConvert.SerializeObject(trait.Attributes, Formatting.Indented) : null,
                 Commands = trait.Commands != null ? JsonConvert.SerializeObject(trait.Commands, Formatting.Indented) : null,
-                State = trait.State != null ? JsonConvert.SerializeObject(trait.State, Formatting.Indented) : null
+                State = trait.State != null ? JsonConvert.SerializeObject(trait.State, Formatting.Indented) : null,
+                ChallengeType = trait.Challenge switch
+                {
+                    AcknowledgeChallenge => ChallengeType.Acknowledge,
+                    PinChallenge => ChallengeType.Pin,
+                    _ => ChallengeType.None
+                },
+                ChallengePin = trait.Challenge is PinChallenge pinChallenge ? pinChallenge.Pin : null
             };
-
-            // Handle any challenges
-            switch (trait.Challenge)
-            {
-                case AcknowledgeChallenge ackChallenge:
-                    model.ChallengeType = ChallengeType.Acknowledge;
-                    break;
-                case PinChallenge pinChallenge:
-                    model.ChallengeType = ChallengeType.Pin;
-                    model.ChallengePin = pinChallenge.Pin;
-                    break;
-                default:
-                    model.ChallengeType = ChallengeType.None;
-                    break;
-            }
 
             return View(model);
         }
@@ -221,32 +206,23 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 return NotFound();
             }
 
-            // Lock the trait type just in case
-            viewModel.Trait = traitEnumId;
-
             // Set new values
-            var trait = device.Traits.FirstOrDefault(x => x.Trait == traitEnumId);
-            trait.Attributes = !string.IsNullOrEmpty(viewModel.Attributes) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(viewModel.Attributes, new ObjectDictionaryConverter()) : null;
-            trait.Commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : new Dictionary<string, IDictionary<string, string>>();
-            trait.State = !string.IsNullOrEmpty(viewModel.State) ? JsonConvert.DeserializeObject<Dictionary<string, DeviceState>>(viewModel.State) : null;
-
-            // Handle any challenges
-            switch (viewModel.ChallengeType)
+            var existingtrait = device.Traits.FirstOrDefault(x => x.Trait == traitEnumId);
+            var commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : null;
+            var trait = new DeviceTrait
             {
-                case ChallengeType.Acknowledge:
-                    trait.Challenge = new AcknowledgeChallenge();
-                    break;
-                case ChallengeType.Pin:
-                    trait.Challenge = new PinChallenge
-                    {
-                        Pin = viewModel.ChallengePin
-                    };
-                    break;
-                case ChallengeType.None:
-                default:
-                    trait.Challenge = null;
-                    break;
-            }
+                Trait = traitEnumId,
+                Attributes = !string.IsNullOrEmpty(viewModel.Attributes) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(viewModel.Attributes, new ObjectDictionaryConverter()) : null,
+                Commands = commands ?? new Dictionary<string, IDictionary<string, string>>(),
+                State = !string.IsNullOrEmpty(viewModel.State) ? JsonConvert.DeserializeObject<Dictionary<string, DeviceState>>(viewModel.State) : null,
+                Challenge = viewModel.ChallengeType switch
+                {
+                    ChallengeType.Acknowledge => new AcknowledgeChallenge(),
+                    ChallengeType.Pin => new PinChallenge { Pin = viewModel.ChallengePin ?? string.Empty },
+                    ChallengeType.None => null,
+                    _ => null
+                }
+            };
 
             // Final validation
             foreach (var error in DeviceTraitValidator.Validate(trait))
@@ -331,7 +307,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         /// <param name="commandName">Command name.</param>
         /// <param name="example">Example.</param>
         /// <returns>Command delegation example string.</returns>
-        private static string GetWrappedCommandExample(string commandName, string example = null)
+        private static string GetWrappedCommandExample(string commandName, string? example = null)
         {
             var sb = new StringBuilder();
 

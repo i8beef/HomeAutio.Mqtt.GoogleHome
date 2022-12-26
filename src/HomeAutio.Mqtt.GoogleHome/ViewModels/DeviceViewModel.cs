@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using HomeAutio.Mqtt.GoogleHome.Models;
 
@@ -14,78 +14,78 @@ namespace HomeAutio.Mqtt.GoogleHome.ViewModels
         /// </summary>
         [Required]
         [StringLength(255, MinimumLength = 1)]
-        public string Id { get; set; }
+        public required string Id { get; init; }
 
         /// <summary>
         /// Device type.
         /// </summary>
         [Required]
-        public DeviceType Type { get; set; }
+        public required DeviceType Type { get; init; }
 
         /// <summary>
         /// Indicates if device is disabled or not.
         /// </summary>
         [Required]
-        public bool Disabled { get; set; }
+        public bool Disabled { get; init; }
 
         /// <summary>
         /// Indicates if the device will report state.
         /// </summary>
         [Required]
-        public bool WillReportState { get; set; }
+        public bool WillReportState { get; init; }
 
         /// <summary>
         /// Room hint.
         /// </summary>
         [StringLength(255)]
-        public string RoomHint { get; set; }
+        public string? RoomHint { get; init; }
 
         /// <summary>
         /// Defaul names.
         /// </summary>
         [StringLength(1000)]
-        public string DefaultNames { get; set; }
+        public string? DefaultNames { get; init; }
 
         /// <summary>
         /// Name.
         /// </summary>
         [Required]
         [StringLength(255, MinimumLength = 1)]
-        public string Name { get; set; }
+        public required string Name { get; init; }
 
         /// <summary>
         /// Nicknames.
         /// </summary>
         [StringLength(1000)]
-        public string Nicknames { get; set; }
+        public string? Nicknames { get; init; }
 
         /// <summary>
         /// Manufacturer.
         /// </summary>
         [StringLength(255)]
-        public string Manufacturer { get; set; }
+        public string? Manufacturer { get; init; }
 
         /// <summary>
         /// Model.
         /// </summary>
         [StringLength(255)]
-        public string Model { get; set; }
+        public string? Model { get; init; }
 
         /// <summary>
         /// Hardware version.
         /// </summary>
         [StringLength(255)]
-        public string HwVersion { get; set; }
+        public string? HwVersion { get; init; }
 
         /// <summary>
         /// Software version.
         /// </summary>
         [StringLength(255)]
-        public string SwVersion { get; set; }
+        public string? SwVersion { get; init; }
 
         /// <summary>
         /// Trait configurations.
         /// </summary>
-        public IEnumerable<TraitType> Traits { get; set; }
+        public IEnumerable<TraitType> Traits { get; init; } = new List<TraitType>();
     }
 }

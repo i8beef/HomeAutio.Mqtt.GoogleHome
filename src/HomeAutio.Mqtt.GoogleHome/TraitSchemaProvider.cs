@@ -13,7 +13,7 @@ namespace HomeAutio.Mqtt.GoogleHome
     /// </summary>
     public static class TraitSchemaProvider
     {
-        private static IList<TraitSchema> _traitSchemaCache;
+        private static IList<TraitSchema>? _traitSchemaCache;
 
         /// <summary>
         /// Get trait schemas for validation.
@@ -21,7 +21,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <returns>A dictionary of trait schemas.</returns>
         public static IList<TraitSchema> GetTraitSchemas()
         {
-            if (_traitSchemaCache == null)
+            if (_traitSchemaCache is null)
             {
                 _traitSchemaCache = InitTraitSchemas().GetAwaiter().GetResult();
             }

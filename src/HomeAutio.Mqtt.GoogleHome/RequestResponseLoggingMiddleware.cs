@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -34,7 +34,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <returns>An awaitable <see cref="Task"/>.</returns>
         public async Task Invoke(HttpContext context)
         {
-            var isGoogleRequest = context.Request.Path.Value.EndsWith("/smarthome");
+            var isGoogleRequest = context.Request.Path.HasValue && context.Request.Path.Value.EndsWith("/smarthome");
             var isTraceLoggingEnabled = _logger.IsEnabled(LogLevel.Trace);
             if (isGoogleRequest && isTraceLoggingEnabled)
             {

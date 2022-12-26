@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.Response
@@ -9,42 +10,34 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.Response
     public class Command
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Command"/> class.
-        /// </summary>
-        public Command()
-        {
-            Ids = new List<string>();
-        }
-
-        /// <summary>
         /// Ids executed against.
         /// </summary>
-        public IList<string> Ids { get; set; }
+        public required IList<string> Ids { get; init; }
 
         /// <summary>
         /// Status of command.
         /// </summary>
-        public CommandStatus Status { get; set; }
+        public required CommandStatus Status { get; init; }
 
         /// <summary>
         /// New states of devices.
         /// </summary>
         [JsonConverter(typeof(ObjectDictionaryConverter))]
-        public IDictionary<string, object> States { get; set; }
+        public IDictionary<string, object?>? States { get; init; }
 
         /// <summary>
         /// Debug string.
         /// </summary>
-        public string DebugString { get; set; }
+        public string? DebugString { get; init; }
 
         /// <summary>
         /// Error code.
         /// </summary>
-        public string ErrorCode { get; set; }
+        public string? ErrorCode { get; init; }
 
         /// <summary>
         /// Challenges needed to complete original command.
         /// </summary>
-        public ChallengeResponse ChallengeNeeded { get; set; }
+        public ChallengeResponse? ChallengeNeeded { get; init; }
     }
 }

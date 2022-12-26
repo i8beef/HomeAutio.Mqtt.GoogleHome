@@ -193,7 +193,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
         private async void HandleGoogleHomeCommand(DeviceCommandExecutionEvent deviceCommandExecutionEvent)
         {
             var device = _deviceRepository.FindById(deviceCommandExecutionEvent.DeviceId);
-            if (device.Disabled)
+            if (device is null || device.Disabled)
             {
                 return;
             }
@@ -243,9 +243,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
 
                             // Find the DeviceState object that provides configuration for mapping state/command values
                             var deviceState = device.Traits
-                                .Where(x => x.Commands.ContainsKey(execution.Command))
-                                .Where(x => x.State != null)
-                                .SelectMany(x => x.State)
+                                .Where(x => x.Commands.ContainsKey(execution.Command) && x.State is not null)
+                                .SelectMany(y => y.State!)
                                 .Where(x => x.Key == stateKey)
                                 .Select(x => x.Value)
                                 .FirstOrDefault();
@@ -253,14 +252,14 @@ namespace HomeAutio.Mqtt.GoogleHome.Services
                             // Build the MQTT message
                             if (!string.IsNullOrEmpty(topic))
                             {
-                                string payload = null;
+                                string? payload = null;
                                 if (deviceState != null)
                                 {
                                     payload = deviceState.MapValueToMqtt(parameter.Value);
                                 }
                                 else
                                 {
-                                    payload = parameter.Value.ToString();
+                                    payload = parameter.Value?.ToString();
                                     _log.LogWarning("Received supported command '{Command}' but cannot find matched state config, sending command value '{Payload}' without ValueMap", execution.Command, payload);
                                 }
 

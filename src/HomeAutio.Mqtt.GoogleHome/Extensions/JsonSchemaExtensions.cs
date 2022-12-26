@@ -16,7 +16,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         /// <param name="schema">JSON Schema.</param>
         /// <param name="flattenedPath">Flattened state path.</param>
         /// <returns>The <see cref="GoogleType"/> for the specified path.</returns>
-        public static ICollection<object> GetEnumValuesForFlattenedPath(this NJsonSchema.JsonSchema schema, string flattenedPath)
+        public static ICollection<object>? GetEnumValuesForFlattenedPath(this NJsonSchema.JsonSchema schema, string flattenedPath)
         {
             var foundSchemas = schema.GetByFlattenedPath(flattenedPath);
 
@@ -80,7 +80,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Extensions
         /// <param name="schema">JSON Schema.</param>
         /// <param name="flattenedPath">Flattened state path.</param>
         /// <returns>A list of matching <see cref="NJsonSchema.JsonSchema"/> for the specified path.</returns>
-        public static IList<NJsonSchema.JsonSchema> GetByFlattenedPath(this NJsonSchema.JsonSchema schema, string flattenedPath)
+        public static IList<NJsonSchema.JsonSchema> GetByFlattenedPath(this NJsonSchema.JsonSchema schema, string? flattenedPath)
         {
             const string delimiter = ".";
             var paths = flattenedPath?.Split(delimiter, 2);

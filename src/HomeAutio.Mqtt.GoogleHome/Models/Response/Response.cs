@@ -1,4 +1,4 @@
-﻿namespace HomeAutio.Mqtt.GoogleHome.Models.Response
+namespace HomeAutio.Mqtt.GoogleHome.Models.Response
 {
     /// <summary>
     /// Response envelope.
@@ -8,11 +8,11 @@
         /// <summary>
         /// Request id.
         /// </summary>
-        public string RequestId { get; set; }
+        public required string RequestId { get; init; }
 
         /// <summary>
         /// Payload.
         /// </summary>
-        public object Payload { get; set; }
+        public required object Payload { get; init; }
     }
 }

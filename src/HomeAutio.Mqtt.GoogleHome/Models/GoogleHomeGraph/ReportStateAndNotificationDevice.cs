@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using HomeAutio.Mqtt.GoogleHome.JsonConverters;
 using Newtonsoft.Json;
 
 namespace HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph
@@ -12,12 +13,12 @@ namespace HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph
         /// States of devices to update.
         /// </summary>
         [JsonProperty(ItemConverterType = typeof(ObjectDictionaryConverter))]
-        public IDictionary<string, IDictionary<string, object>> States { get; set; }
+        public IDictionary<string, IDictionary<string, object?>>? States { get; init; }
 
         /// <summary>
         /// Notifications metadata for devices.
         /// </summary>
         [JsonProperty(ItemConverterType = typeof(ObjectDictionaryConverter))]
-        public IDictionary<string, IDictionary<string, object>> Notifications { get; set; }
+        public IDictionary<string, IDictionary<string, object?>>? Notifications { get; init; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph
+namespace HomeAutio.Mqtt.GoogleHome.Models.GoogleHomeGraph
 {
     /// <summary>
     /// Request envelope.
@@ -8,26 +8,26 @@
         /// <summary>
         /// Request ID used for debugging.
         /// </summary>
-        public string RequestId { get; set; }
+        public required string RequestId { get; init; }
 
         /// <summary>
         /// Unique identifier per event (for example, a doorbell press).
         /// </summary>
-        public string EventId { get; set; }
+        public required string EventId { get; init; }
 
         /// <summary>
         /// Agent user id.
         /// </summary>
-        public string AgentUserId { get; set; }
+        public required string AgentUserId { get; init; }
 
         /// <summary>
         /// Token to maintain state in the follow up notification response.
         /// </summary>
-        public string FollowUpToken { get; set; }
+        public string? FollowUpToken { get; init; }
 
         /// <summary>
         /// Payload.
         /// </summary>
-        public StateAndNotificationPayload Payload { get; set; }
+        public required StateAndNotificationPayload Payload { get; init; }
     }
 }
