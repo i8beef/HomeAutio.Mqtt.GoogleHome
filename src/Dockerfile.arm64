@@ -8,12 +8,14 @@ COPY nuget.config .
 COPY *.sln .
 COPY HomeAutio.Mqtt.GoogleHome/*.csproj ./HomeAutio.Mqtt.GoogleHome/
 COPY HomeAutio.Mqtt.GoogleHome.Tests/*.csproj ./HomeAutio.Mqtt.GoogleHome.Tests/
+COPY IdentityServerHost.Quickstart.UI/*.csproj ./IdentityServerHost.Quickstart.UI/
 RUN dotnet restore
 
 # copy and build everything else
 COPY smart-home-schema/. ./smart-home-schema/
 COPY HomeAutio.Mqtt.GoogleHome/. ./HomeAutio.Mqtt.GoogleHome/
 COPY HomeAutio.Mqtt.GoogleHome.Tests/. ./HomeAutio.Mqtt.GoogleHome.Tests/
+COPY IdentityServerHost.Quickstart.UI/. ./IdentityServerHost.Quickstart.UI/
 RUN dotnet build --configuration Release /p:Version=$VERSION
 
 # publish
