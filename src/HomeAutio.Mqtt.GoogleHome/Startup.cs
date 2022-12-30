@@ -29,6 +29,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
@@ -127,10 +128,12 @@ namespace HomeAutio.Mqtt.GoogleHome
                 BrokerTlsSettings? brokerTlsSettings = null;
                 if (brokerUseTls)
                 {
-                    if (Configuration.GetValue("mqtt:brokerTlsSettings:protocol", "1.2") != "1.2")
+                    var sslProtocol = Configuration.GetValue("mqtt:brokerTlsSettings:protocol", "1.2") switch
                     {
-                        throw new NotSupportedException($"Only TLS 1.2 is supported");
-                    }
+                        "1.2" => System.Security.Authentication.SslProtocols.Tls12,
+                        "1.3" => System.Security.Authentication.SslProtocols.Tls13,
+                        _ => throw new NotSupportedException($"Only TLS 1.2 and 1.3 are supported")
+                    };
 
                     var brokerTlsCertificatesSection = Configuration.GetSection("mqtt:brokerTlsSettings:certificates");
                     var brokerTlsCertificates = brokerTlsCertificatesSection.GetChildren()
@@ -154,7 +157,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                         AllowUntrustedCertificates = Configuration.GetValue("mqtt:brokerTlsSettings:allowUntrustedCertificates", false),
                         IgnoreCertificateChainErrors = Configuration.GetValue("mqtt:brokerTlsSettings:ignoreCertificateChainErrors", false),
                         IgnoreCertificateRevocationErrors = Configuration.GetValue("mqtt:brokerTlsSettings:ignoreCertificateRevocationErrors", false),
-                        SslProtocol = System.Security.Authentication.SslProtocols.Tls12,
+                        SslProtocol = sslProtocol,
                         Certificates = brokerTlsCertificates
                     };
                 }
