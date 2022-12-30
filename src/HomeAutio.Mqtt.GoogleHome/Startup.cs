@@ -29,7 +29,6 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace HomeAutio.Mqtt.GoogleHome
 {
