@@ -207,7 +207,6 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
             }
 
             // Set new values
-            var existingtrait = device.Traits.FirstOrDefault(x => x.Trait == traitEnumId);
             var commands = !string.IsNullOrEmpty(viewModel.Commands) ? JsonConvert.DeserializeObject<Dictionary<string, IDictionary<string, string>>>(viewModel.Commands) : null;
             var trait = new DeviceTrait
             {
@@ -223,6 +222,10 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                     _ => null
                 }
             };
+
+            // Replace trait
+            device.Traits.Remove(device.Traits.First(x => x.Trait == traitEnumId));
+            device.Traits.Add(trait);
 
             // Final validation
             foreach (var error in DeviceTraitValidator.Validate(trait))

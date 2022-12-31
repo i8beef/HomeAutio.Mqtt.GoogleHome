@@ -234,7 +234,8 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
         [ExportModelState]
         public IActionResult Edit([Required] string deviceId, DeviceViewModel viewModel)
         {
-            if (!_deviceRepository.Contains(deviceId))
+            var existingDevice = _deviceRepository.FindById(deviceId);
+            if (existingDevice is null)
             {
                 return NotFound();
             }
@@ -276,7 +277,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Controllers
                 RoomHint = viewModel.RoomHint,
                 Name = nameInfo,
                 DeviceInfo = deviceInfo,
-                Traits = new List<DeviceTrait>()
+                Traits = existingDevice.Traits
             };
 
             // Final validation
