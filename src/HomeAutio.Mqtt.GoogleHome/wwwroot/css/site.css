@@ -61,6 +61,10 @@ a:hover {
   font-weight: bold;
 }
 
+.btn.dropdown-toggle {
+    white-space: break-spaces;
+}
+
 .card-header h1,
 .card-header h2,
 .card-header h3,
