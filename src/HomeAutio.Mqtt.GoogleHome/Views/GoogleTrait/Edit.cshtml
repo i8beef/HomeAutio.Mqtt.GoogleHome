@@ -176,41 +176,41 @@
                 <form id="deleteForm" method="post" asp-action="Delete" asp-route-deviceId="@(Context.Request.Query["deviceId"])" asp-route-traitId="@Model.Trait.ToEnumString()"></form>
                 <div class="card-body">
                     <fieldset>
-                        <div class="form-group">
-                            <label asp-for="Trait">Trait</label>
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="Trait">Trait</label>
                             <select form="editForm" class="form-select" asp-for="Trait" asp-items="@(Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.TraitType>().Where(x => x.Text != "Unknown"))" disabled>
                                 <option selected="selected" value="">Please select</option>
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="ChallengeType">Challenge Type</label>
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="ChallengeType">Challenge Type</label>
                             <select form="editForm" class="form-select" asp-for="ChallengeType" asp-items="@Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.State.Challenges.ChallengeType>()"></select>
                         </div>
 
-                        <div class="form-group" id="challengePin-form-group">
-                            <label asp-for="ChallengePin">Challenge Pin</label>
+                        <div class="mb-3" id="challengePin-form-group">
+                            <label class="form-label" asp-for="ChallengePin">Challenge Pin</label>
                             <input form="editForm" class="form-control" placeholder="Challenge Pin" asp-for="ChallengePin">
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="Attributes">Attributes</label>
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="Attributes">Attributes</label>
                             <textarea form="editForm" class="form-control" asp-for="Attributes"></textarea>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="Commands">Commands</label>
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="Commands">Commands</label>
                             <textarea form="editForm" class="form-control" asp-for="Commands"></textarea>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="State">State</label>
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="State">State</label>
                             <textarea form="editForm" class="form-control" asp-for="State"></textarea>
                         </div>
                     </fieldset>
                 </div>
                 <div class="card-footer d-flex justify-content-between align-items-center">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <button form="editForm" class="btn btn-primary" name="button" value="update">Update</button>
                         <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@(Context.Request.Query["deviceId"])" class="btn btn-default">Cancel</a>
                     </div>

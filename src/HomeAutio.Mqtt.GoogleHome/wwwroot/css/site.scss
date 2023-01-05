@@ -5,13 +5,26 @@ h4 { font-size: 1.3rem; }
 h5 { font-size: 1.2rem; }
 h6 { font-size: 1.1rem; }
 
+a {
+  color: var(--bs-cyan);
+}
+
+a:hover {
+  color: var(--bs-cyan);
+}
+
 .body-container {
     margin-top: 60px;
     padding-bottom:40px;
 }
 
-.navbar {
-    padding: .25rem 1rem;
+.navbar { padding: .25rem 1rem; }
+.navbar-brand { color: var(--bs-white); }
+.bg-primary .navbar-nav .nav-link {
+  color: var(--bs-white) !important;
+}
+.bg-primary .navbar-nav .nav-link:hover {
+  color: var(--bs-gray-600) !important;
 }
 
 .welcome-page {
@@ -48,14 +61,6 @@ h6 { font-size: 1.1rem; }
             font-weight: bold;
         }
     }
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-group label {
-    font-weight: bolder;
 }
 
 .card-header h1,

@@ -19,6 +19,10 @@ a:hover {
 }
 
 .navbar { padding: .25rem 1rem; }
+.navbar-brand { color: var(--bs-white); }
+.bg-primary .navbar-nav .nav-link {
+  color: var(--bs-white) !important;
+}
 .bg-primary .navbar-nav .nav-link:hover {
   color: var(--bs-gray-600) !important;
 }
@@ -55,14 +59,6 @@ a:hover {
 }
 .grants-page .card label {
   font-weight: bold;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  font-weight: bolder;
 }
 
 .card-header h1,

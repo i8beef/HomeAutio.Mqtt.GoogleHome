@@ -25,12 +25,12 @@
                 <form id="createForm" method="post"></form>
                 <div class="card-body">
                     <fieldset>
-                        <div class="form-group">
-                            <label asp-for="Id">Device Id</label>
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="Id">Device Id</label>
                             <input form="createForm" class="form-control" placeholder="Device Id" asp-for="Id" autofocus>
                         </div>
-                        <div class="form-group">
-                            <label asp-for="Type">Device Type</label>
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="Type">Device Type</label>
                             <div class="row">
                                 <div class="col-sm-8">
                                     <select form="createForm" class="form-select" asp-for="Type" asp-items="@(Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.DeviceType>().Where(x => x.Text != "Unknown"))">
@@ -42,20 +42,24 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label asp-for="Disabled">
-                                <input form="createForm" asp-for="Disabled" type="checkbox" />
-                                <strong>Disabled</strong>
-                            </label>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input form="createForm" class="form-check-input" asp-for="Disabled" type="checkbox" />
+                                <label class="form-check-label" asp-for="Disabled">
+                                    Disabled
+                                </label>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label asp-for="WillReportState">
-                                <input form="createForm" asp-for="WillReportState" type="checkbox" />
-                                <strong>Will Report State</strong>
-                            </label>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input form="createForm" class="form-check-input" asp-for="WillReportState" type="checkbox" />
+                                <label class="form-check-label" asp-for="WillReportState">
+                                    Will Report State
+                                </label>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label asp-for="RoomHint">Room Hint</label>
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="RoomHint">Room Hint</label>
                             <input form="createForm" class="form-control" placeholder="Room Hint" asp-for="RoomHint" autofocus>
                         </div>
                     </fieldset>
@@ -63,16 +67,16 @@
                     <div class="card">
                         <div class="card-header dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#NameInfo">Name Information</div>
                         <div id="NameInfo" class="card-body collapse show">
-                            <div class="form-group">
-                                <label asp-for="DefaultNames">Default Names</label>
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="DefaultNames">Default Names</label>
                                 <input form="createForm" class="form-control" placeholder="Default Names" asp-for="DefaultNames" autofocus disabled>
                             </div>
-                            <div class="form-group">
-                                <label asp-for="Name">Name</label>
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="Name">Name</label>
                                 <input form="createForm" class="form-control" placeholder="Name" asp-for="Name" autofocus>
                             </div>
-                            <div class="form-group">
-                                <label asp-for="Nicknames">Nicknames</label>
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="Nicknames">Nicknames</label>
                                 <input form="createForm" class="form-control" placeholder="Nicknames" asp-for="Nicknames" autofocus disabled>
                             </div>
                         </div>
@@ -81,27 +85,27 @@
                     <div class="card">
                         <div class="card-header dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#ManufacturerInfo">Manufacturer Information</div>
                         <div id="ManufacturerInfo" class="card-body collapse">
-                            <div class="form-group">
-                                <label asp-for="Manufacturer">Manufacturer</label>
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="Manufacturer">Manufacturer</label>
                                 <input form="createForm" class="form-control" placeholder="Manufacturer" asp-for="Manufacturer" autofocus>
                             </div>
-                            <div class="form-group">
-                                <label asp-for="Model">Model</label>
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="Model">Model</label>
                                 <input form="createForm" class="form-control" placeholder="Model" asp-for="Model" autofocus>
                             </div>
-                            <div class="form-group">
-                                <label asp-for="HwVersion">Hardware Version</label>
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="HwVersion">Hardware Version</label>
                                 <input form="createForm" class="form-control" placeholder="Hardware Version" asp-for="HwVersion" autofocus>
                             </div>
-                            <div class="form-group">
-                                <label asp-for="SwVersion">Software Version</label>
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="SwVersion">Software Version</label>
                                 <input form="createForm" class="form-control" placeholder="Software Version" asp-for="SwVersion" autofocus>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <button form="createForm" class="btn btn-primary" name="button" value="create">Create</button>
                         <a asp-controller="GoogleDevice" asp-action="Index" class="btn btn-default">Cancel</a>
                     </div>

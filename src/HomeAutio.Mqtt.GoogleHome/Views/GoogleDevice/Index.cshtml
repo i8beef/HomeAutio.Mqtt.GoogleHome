@@ -12,26 +12,25 @@
                     </a>
                 </div>
                 <div class="card-body">
-
                     @foreach (var group in Model.Select(x => x.RoomHint).Distinct().Order())
                     {
                         <h4 class="mt-3 mb-3">@(group is not null ? group : "(unspecified)")</h4>
-                        <div class="row row-cols-1 row-cols-md-3">
+                        <div class="row row-cols-1 row-cols-md-2">
                         @foreach (var device in Model.Where(x => x.RoomHint == group).OrderBy(x => x.Name.Name))
                         {
                             <div class="col mb-4">
-                                <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@device.Id" class="card rounded-5 @(device.Disabled ? "border-danger" : string.Empty)">
-                                    <div class="card-header rounded-5">
-                                        <span class="material-symbols-outlined d-inline-block align-middle">
+                                <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@device.Id" class="card rounded-4 @(device.Disabled ? "border-danger" : string.Empty)">
+                                    <div class="card-header rounded-4">
+                                        <div class="material-symbols-outlined d-inline-block align-middle">
                                             @HomeAutio.Mqtt.GoogleHome.Models.DeviceTypeIconMapper.Map(device.Type)
-                                        </span><span class="d-inline-block align-middle ms-2">
+                                        </div><div class="d-inline-block align-middle ms-2">
                                             <div class="lh-1">
                                                 @device.Name.Name
                                             </div>
                                             <div class="text-muted lh-1">
                                                 @device.Id
                                             </div>
-                                        </span>
+                                        </div>
                                     </div>
                                 </a>
                             </div>
@@ -52,7 +51,6 @@
                     </p>
                 </div>
             </div>
-
             <div class="card mt-3">
                 <div class="card-header">
                     <a asp-controller="GoogleDevice" asp-action="Json" class="btn btn-warning">Device JSON</a>
