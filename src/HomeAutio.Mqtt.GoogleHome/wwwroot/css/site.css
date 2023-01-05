@@ -20,6 +20,10 @@ a:hover {
 
 .navbar { padding: .25rem 1rem; }
 .navbar-brand { color: var(--bs-white); }
+.navbar-brand:hover {
+  color: var(--bs-gray-600);
+}
+
 .bg-primary .navbar-nav .nav-link {
   color: var(--bs-white) !important;
 }

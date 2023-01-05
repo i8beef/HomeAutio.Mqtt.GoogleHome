@@ -19,15 +19,16 @@
                         @foreach (var device in Model.Where(x => x.RoomHint == group).OrderBy(x => x.Name.Name))
                         {
                             <div class="col mb-4">
-                                <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@device.Id" class="card rounded-4 @(device.Disabled ? "border-danger" : string.Empty)">
+                                <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@device.Id" class="card rounded-4 text-decoration-none @(device.Disabled ? "border-danger" : string.Empty)">
                                     <div class="card-header rounded-4">
-                                        <div class="material-symbols-outlined d-inline-block align-middle">
+                                        <div class="material-symbols-outlined" style="position:absolute;top:calc(50% - 12px);left:12px;">
                                             @HomeAutio.Mqtt.GoogleHome.Models.DeviceTypeIconMapper.Map(device.Type)
-                                        </div><div class="d-inline-block align-middle ms-2">
-                                            <div class="lh-1">
+                                        </div>
+                                        <div class="align-middle ps-4">
+                                            <div class="lh-1 text-break">
                                                 @device.Name.Name
                                             </div>
-                                            <div class="text-muted lh-1">
+                                            <div class="text-muted lh-1 text-break">
                                                 @device.Id
                                             </div>
                                         </div>
