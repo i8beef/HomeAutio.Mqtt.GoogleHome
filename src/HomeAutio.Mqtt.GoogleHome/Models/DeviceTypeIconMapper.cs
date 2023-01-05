@@ -47,7 +47,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Models
                 DeviceType.FIREPLACE => "fireplace",
                 DeviceType.FREEZER => "kitchen",
                 DeviceType.FRYER => "cooking",
-                DeviceType.GARAGE => "garage",
+                DeviceType.GARAGE => "garage_home",
                 DeviceType.GATE => "gate",
                 DeviceType.GRILL => "outdoor_grill",
                 DeviceType.HEATER => "thermostat",

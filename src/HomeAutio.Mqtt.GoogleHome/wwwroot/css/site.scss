@@ -21,14 +21,14 @@ a:hover {
 .navbar { padding: .25rem 1rem; }
 .navbar-brand { color: var(--bs-white); }
 .navbar-brand:hover {
-  color: var(--bs-gray-600);
+  color: var(--bs-gray-500);
 }
 
 .bg-primary .navbar-nav .nav-link {
   color: var(--bs-white) !important;
 }
 .bg-primary .navbar-nav .nav-link:hover {
-  color: var(--bs-gray-600) !important;
+  color: var(--bs-gray-500) !important;
 }
 
 .welcome-page {
@@ -65,6 +65,14 @@ a:hover {
             font-weight: bold;
         }
     }
+}
+
+a.card.google-device {
+  color: var(--bs-body-color) !important;
+  text-decoration: none !important;
+}
+a.card.google-device:hover {
+  color: var(--bs-gray-500) !important;
 }
 
 .btn.dropdown-toggle {
