@@ -5,12 +5,23 @@ h4 { font-size: 1.3rem; }
 h5 { font-size: 1.2rem; }
 h6 { font-size: 1.1rem; }
 
+a {
+  color: var(--bs-cyan);
+}
+
+a:hover {
+  color: var(--bs-cyan);
+}
+
 .body-container {
   margin-top: 60px;
   padding-bottom: 40px;
 }
 
 .navbar { padding: .25rem 1rem; }
+.bg-primary .navbar-nav .nav-link:hover {
+  color: var(--bs-gray-600) !important;
+}
 
 .body-container {
   margin-top: 60px;
