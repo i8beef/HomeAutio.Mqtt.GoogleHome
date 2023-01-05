@@ -161,13 +161,13 @@ sup {
 }
 
 a {
-  color: #18bc9c;
+  color: #3498db;
   text-decoration: none;
   background-color: transparent;
 }
 
 a:hover {
-  color: #0f7864;
+  color: #2384c6;
   text-decoration: underline;
 }
 
@@ -10344,7 +10344,7 @@ a.text-dark:hover, a.text-dark:focus {
 .bg-primary .navbar-nav .show > .nav-link,
 .bg-primary .navbar-nav .nav-link.show,
 .bg-primary .navbar-nav .nav-link.active {
-  color: #18bc9c !important;
+  color: #2c3e50 !important;
 }
 
 .btn-secondary, .btn-secondary:hover, .btn-warning, .btn-warning:hover {

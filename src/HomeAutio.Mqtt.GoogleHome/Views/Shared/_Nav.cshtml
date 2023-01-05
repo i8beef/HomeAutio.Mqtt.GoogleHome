@@ -9,31 +9,28 @@
 }
 
 <div class="nav-page">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <a href="~/" class="navbar-brand">
             <img src="~/icon.png" class="icon-banner">
             HomeAutio.Mqtt.GoogleHome
         </a>
+    
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item btn-group" role="group" aria-label="Theme">
+                <button type="button" class="btn btn-light navbar-btn" data-theme="light">Light</button>
+                <button type="button" class="btn btn-dark navbar-btn" data-theme="dark">Dark</button>
+            </li>
 
-        @if (!string.IsNullOrWhiteSpace(name))
-        {
-            <ul class="navbar-nav mr-auto">
+            @if (!string.IsNullOrWhiteSpace(name))
+            {
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">@name <b class="caret"></b></a>
-                    
+
                     <div class="dropdown-menu">
                         <a class="dropdown-item" asp-action="Logout" asp-controller="Account">Logout</a>
                     </div>
                 </li>
-            </ul>
-        }
-    
-            <p class="navbar-text navbar-right">
-                <div class="btn-group navbar-right" role="group" aria-label="Theme">
-                    <button type="button" class="btn btn-light navbar-btn" data-theme="light">Light</button>
-                    <button type="button" class="btn btn-dark navbar-btn" data-theme="dark">Dark</button>
-                </div>
-            </p>
+            }
+        </ul>
     </nav>
 </div>

@@ -21,92 +21,91 @@
     <partial name="_ValidationSummary" />
 
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-6 mt-3">
             <div class="card">
                 <div class="card-header">
                     <h2>Device Information</h2>
                 </div>
-                <form method="post">
-                    <div class="card-body">
-                        <fieldset>
-                            <div class="form-group">
-                                <label asp-for="Id">Device Id</label>
-                                <input class="form-control" placeholder="Device Id" asp-for="Id" autofocus>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Type">Device Type</label>
-                                <select class="form-control" asp-for="Type" asp-items="@(Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.DeviceType>().Where(x => x.Text != "Unknown"))">
-                                    <option selected="selected" value="">Please select</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <a onclick="openDocumentation()" class="btn btn-warning">Device documentation</a>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Disabled">
-                                    <input asp-for="Disabled" type="checkbox" />
-                                    <strong>Disabled</strong>
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="WillReportState">
-                                    <input asp-for="WillReportState" type="checkbox" />
-                                    <strong>Will Report State</strong>
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="RoomHint">Room Hint</label>
-                                <input class="form-control" placeholder="Room Hint" asp-for="RoomHint" autofocus>
-                            </div>
-                        </fieldset>
-
-                        <div class="card">
-                            <div class="card-header" data-toggle="collapse" data-target="#NameInfo">Name Information</div>
-                            <div id="NameInfo" class="card-body collapse show">
-                                <div class="form-group">
-                                    <label asp-for="DefaultNames">Default Names</label>
-                                    <input class="form-control" placeholder="Default Names" asp-for="DefaultNames" autofocus disabled>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="Name">Name</label>
-                                    <input class="form-control" placeholder="Name" asp-for="Name" autofocus>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="Nicknames">Nicknames</label>
-                                    <input class="form-control" placeholder="Nicknames" asp-for="Nicknames" autofocus disabled>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header" data-toggle="collapse" data-target="#ManufacturerInfo">Manufacturer Information</div>
-                            <div id="ManufacturerInfo" class="card-body collapse">
-                                <div class="form-group">
-                                    <label asp-for="Manufacturer">Manufacturer</label>
-                                    <input class="form-control" placeholder="Manufacturer" asp-for="Manufacturer" autofocus>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="Model">Model</label>
-                                    <input class="form-control" placeholder="Model" asp-for="Model" autofocus>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="HwVersion">Hardware Version</label>
-                                    <input class="form-control" placeholder="Hardware Version" asp-for="HwVersion" autofocus>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="SwVersion">Software Version</label>
-                                    <input class="form-control" placeholder="Software Version" asp-for="SwVersion" autofocus>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
+                <form id="createForm" method="post"></form>
+                <div class="card-body">
+                    <fieldset>
                         <div class="form-group">
-                            <button class="btn btn-primary" name="button" value="create">Create</button>
-                            <a asp-controller="GoogleDevice" asp-action="Index" class="btn btn-default">Cancel</a>
+                            <label asp-for="Id">Device Id</label>
+                            <input form="createForm" class="form-control" placeholder="Device Id" asp-for="Id" autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Type">Device Type</label>
+                            <select form="createForm" class="form-control" asp-for="Type" asp-items="@(Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.DeviceType>().Where(x => x.Text != "Unknown"))">
+                                <option selected="selected" value="">Please select</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <a onclick="openDocumentation()" class="btn btn-warning">Device documentation</a>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Disabled">
+                                <input form="createForm" asp-for="Disabled" type="checkbox" />
+                                <strong>Disabled</strong>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="WillReportState">
+                                <input form="createForm" asp-for="WillReportState" type="checkbox" />
+                                <strong>Will Report State</strong>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RoomHint">Room Hint</label>
+                            <input form="createForm" class="form-control" placeholder="Room Hint" asp-for="RoomHint" autofocus>
+                        </div>
+                    </fieldset>
+
+                    <div class="card">
+                        <div class="card-header" data-toggle="collapse" data-target="#NameInfo">Name Information</div>
+                        <div id="NameInfo" class="card-body collapse show">
+                            <div class="form-group">
+                                <label asp-for="DefaultNames">Default Names</label>
+                                <input form="createForm" class="form-control" placeholder="Default Names" asp-for="DefaultNames" autofocus disabled>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Name">Name</label>
+                                <input form="createForm" class="form-control" placeholder="Name" asp-for="Name" autofocus>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Nicknames">Nicknames</label>
+                                <input form="createForm" class="form-control" placeholder="Nicknames" asp-for="Nicknames" autofocus disabled>
+                            </div>
                         </div>
                     </div>
-                </form>
+
+                    <div class="card">
+                        <div class="card-header" data-toggle="collapse" data-target="#ManufacturerInfo">Manufacturer Information</div>
+                        <div id="ManufacturerInfo" class="card-body collapse">
+                            <div class="form-group">
+                                <label asp-for="Manufacturer">Manufacturer</label>
+                                <input form="createForm" class="form-control" placeholder="Manufacturer" asp-for="Manufacturer" autofocus>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Model">Model</label>
+                                <input form="createForm" class="form-control" placeholder="Model" asp-for="Model" autofocus>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="HwVersion">Hardware Version</label>
+                                <input form="createForm" class="form-control" placeholder="Hardware Version" asp-for="HwVersion" autofocus>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="SwVersion">Software Version</label>
+                                <input form="createForm" class="form-control" placeholder="Software Version" asp-for="SwVersion" autofocus>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="form-group">
+                        <button form="createForm" class="btn btn-primary" name="button" value="create">Create</button>
+                        <a asp-controller="GoogleDevice" asp-action="Index" class="btn btn-default">Cancel</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -8,40 +8,73 @@
     <partial name="_ValidationSummary" />
 
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-9 mt-3">
             <div class="card">
                 <div class="card-header">
-                    <h2>Edit Devices</h2>
+                    <a asp-controller="GoogleDevice" asp-action="Create" class="btn btn-warning">
+                        Add Device
+                    </a>
                 </div>
                 <div class="card-body">
-                    <div class="list-group">
-                        <a asp-controller="GoogleDevice" asp-action="Create" class="list-group-item list-group-item-action active">Add Device</a>
-                        @foreach (var device in Model)
+
+                    @foreach (var group in Model.Select(x => x.RoomHint).Distinct().Order())
+                    {
+                        <h4 class="mt-3 mb-3">@(group is not null ? group : "(unspecified)")</h4>
+                        <div class="row row-cols-1 row-cols-md-3">
+                        @foreach (var device in Model.Where(x => x.RoomHint == group).OrderBy(x => x.Name.Name))
                         {
-                            <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@device.Id" class="list-group-item list-group-item-action">
-                                @if (device.Disabled)
-                                {
-                                    <span class="badge badge-primary">disabled</span>
-                                }
-                                @device.Id
-                            </a>
+                            <div class="col mb-4">
+                                <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@device.Id" class="card">
+                                    <div class="card-header rounded-lg">
+                                        <span class="material-symbols-outlined align-top d-inline-block">
+                                            @HomeAutio.Mqtt.GoogleHome.Models.DeviceTypeIconMapper.Map(device.Type)
+                                        </span>
+                                        <span class="d-inline-block">
+                                            <div>
+                                                @device.Name.Name
+                                            </div>
+                                            <div>
+                                                <small class="text-muted">
+                                                    @device.Id
+                                                </small>
+                                            </div>
+                                            <div>
+                                                @if (device.Disabled)
+                                                {
+                                                    <span class="badge badge-primary">disabled</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>&nbsp;</span>
+                                                }
+                                            </div>
+                                        </span>
+                                    </div>
+                                </a>
+                            </div>
                         }
-                    </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-3 mt-3">
             <div class="card">
                 <div class="card-header">
-                    <h2>Tools</h2>
+                    <a asp-controller="GoogleDevice" asp-action="SyncValidate" class="btn btn-warning">SYNC Response</a>
                 </div>
                 <div class="card-body">
-                    <a asp-controller="GoogleDevice" asp-action="SyncValidate" class="btn btn-warning">SYNC Response</a>
                     <p>
                         Paste into the <a href="https://developers.google.com/assistant/smarthome/tools/validator">Google Validator</a> to check for issues.
                     </p>
+                </div>
+            </div>
 
+            <div class="card mt-3">
+                <div class="card-header">
                     <a asp-controller="GoogleDevice" asp-action="Json" class="btn btn-warning">Device JSON</a>
+                </div>
+                <div class="card-body">
                     <p>
                         Current device JSON
                     </p>

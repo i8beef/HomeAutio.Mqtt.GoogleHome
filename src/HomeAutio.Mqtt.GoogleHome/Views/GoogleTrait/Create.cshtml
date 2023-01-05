@@ -171,60 +171,60 @@
     <partial name="_ValidationSummary" />
 
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-6 mt-3">
             <div class="card">
                 <div class="card-header">
                     <h2>Trait Information</h2>
                 </div>
-                <form method="post">
-                    <div class="card-body">
-                        <fieldset>
-                            <div class="form-group">
-                                <label asp-for="Trait">Trait</label>
-                                <select class="form-control" asp-for="Trait" asp-items="@(Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.TraitType>().Where(x => x.Text != "Unknown"))" onchange="loadTemplate()">
-                                    <option selected="selected" value="">Please select</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label asp-for="ChallengeType">Challenge Type</label>
-                                <select class="form-control" asp-for="ChallengeType" asp-items="@Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.State.Challenges.ChallengeType>()"></select>
-                            </div>
-
-                            <div class="form-group" id="challengePin-form-group">
-                                <label asp-for="ChallengePin">Challenge Pin</label>
-                                <input class="form-control" placeholder="Challenge Pin" asp-for="ChallengePin">
-                            </div>
-
-                            <div class="form-group">
-                                <label asp-for="Attributes">Attributes</label>
-                                <textarea class="form-control" asp-for="Attributes"></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label asp-for="Commands">Commands</label>
-                                <textarea class="form-control" asp-for="Commands"></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label asp-for="State">State</label>
-                                <textarea class="form-control" asp-for="State"></textarea>
-                            </div>
-                        </fieldset>
-                    </div>
-                    <div class="card-footer">
+                <form id="createForm" method="post"></form>
+                <div class="card-body">
+                    <fieldset>
                         <div class="form-group">
-                            <button class="btn btn-primary" name="button" value="update">Create</button>
-                            <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@(Context.Request.Query["deviceId"])" class="btn btn-default">Cancel</a>
+                            <label asp-for="Trait">Trait</label>
+                            <select form="createForm" class="form-control" asp-for="Trait" asp-items="@(Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.TraitType>().Where(x => x.Text != "Unknown"))" onchange="loadTemplate()">
+                                <option selected="selected" value="">Please select</option>
+                            </select>
                         </div>
+
+                        <div class="form-group">
+                            <label asp-for="ChallengeType">Challenge Type</label>
+                            <select form="createForm" class="form-control" asp-for="ChallengeType" asp-items="@Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.State.Challenges.ChallengeType>()"></select>
+                        </div>
+
+                        <div class="form-group" id="challengePin-form-group">
+                            <label asp-for="ChallengePin">Challenge Pin</label>
+                            <input form="createForm" class="form-control" placeholder="Challenge Pin" asp-for="ChallengePin">
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Attributes">Attributes</label>
+                            <textarea form="createForm" class="form-control" asp-for="Attributes"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Commands">Commands</label>
+                            <textarea form="createForm" class="form-control" asp-for="Commands"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="State">State</label>
+                            <textarea form="createForm" class="form-control" asp-for="State"></textarea>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="card-footer">
+                    <div class="form-group">
+                        <button form="createForm" class="btn btn-primary" name="button" value="update">Create</button>
+                        <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@(Context.Request.Query["deviceId"])" class="btn btn-default">Cancel</a>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-6 mt-3">
             <div class="card">
-                <div class="card-header">
-                    <h2>Examples <button onclick="openDocumentation()" class="btn btn-warning">Trait documentation</button></h2>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2>Examples</h2>
+                    <button onclick="openDocumentation()" class="btn btn-warning">Trait documentation</button>
                 </div>
                 <div class="card-body">
                     <h6>Attribute Examples</h6>
