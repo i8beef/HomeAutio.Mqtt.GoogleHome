@@ -1,6 +1,17 @@
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.4rem; }
+h4 { font-size: 1.3rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1.1rem; }
+
 .body-container {
     margin-top: 60px;
     padding-bottom:40px;
+}
+
+.navbar {
+    padding: .25rem 1rem;
 }
 
 .welcome-page {
@@ -39,4 +50,23 @@
     }
 }
 
+.form-group {
+    margin-bottom: 1rem;
+}
 
+.form-group label {
+    font-weight: bolder;
+}
+
+.card-header h1,
+.card-header h2,
+.card-header h3,
+.card-header h4,
+.card-header h5,
+.card-header h6 {
+    margin-bottom: 0;
+}
+
+.card-footer .form-group {
+    margin-bottom: 0;
+}

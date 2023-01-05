@@ -1,10 +1,6 @@
 @model IList<HomeAutio.Mqtt.GoogleHome.Models.State.Device>
 
 <div class="devices-page">
-    <div class="lead">
-        <h1>Devices</h1>
-    </div>
-
     <partial name="_ValidationSummary" />
 
     <div class="row">
@@ -24,29 +20,16 @@
                         @foreach (var device in Model.Where(x => x.RoomHint == group).OrderBy(x => x.Name.Name))
                         {
                             <div class="col mb-4">
-                                <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@device.Id" class="card">
-                                    <div class="card-header rounded-lg">
-                                        <span class="material-symbols-outlined align-top d-inline-block">
+                                <a asp-controller="GoogleDevice" asp-action="Edit" asp-route-deviceId="@device.Id" class="card rounded-5 @(device.Disabled ? "border-danger" : string.Empty)">
+                                    <div class="card-header rounded-5">
+                                        <span class="material-symbols-outlined d-inline-block align-middle">
                                             @HomeAutio.Mqtt.GoogleHome.Models.DeviceTypeIconMapper.Map(device.Type)
-                                        </span>
-                                        <span class="d-inline-block">
-                                            <div>
+                                        </span><span class="d-inline-block align-middle ms-2">
+                                            <div class="lh-1">
                                                 @device.Name.Name
                                             </div>
-                                            <div>
-                                                <small class="text-muted">
-                                                    @device.Id
-                                                </small>
-                                            </div>
-                                            <div>
-                                                @if (device.Disabled)
-                                                {
-                                                    <span class="badge badge-primary">disabled</span>
-                                                }
-                                                else
-                                                {
-                                                    <span>&nbsp;</span>
-                                                }
+                                            <div class="text-muted lh-1">
+                                                @device.Id
                                             </div>
                                         </span>
                                     </div>

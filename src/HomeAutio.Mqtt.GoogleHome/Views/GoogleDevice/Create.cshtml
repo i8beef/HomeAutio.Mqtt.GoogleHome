@@ -14,10 +14,6 @@
 }
 
 <div class="device-page">
-    <div class="lead">
-        <h1>Create Device</h1>
-    </div>
-
     <partial name="_ValidationSummary" />
 
     <div class="row">
@@ -35,12 +31,16 @@
                         </div>
                         <div class="form-group">
                             <label asp-for="Type">Device Type</label>
-                            <select form="createForm" class="form-control" asp-for="Type" asp-items="@(Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.DeviceType>().Where(x => x.Text != "Unknown"))">
-                                <option selected="selected" value="">Please select</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <a onclick="openDocumentation()" class="btn btn-warning">Device documentation</a>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <select form="createForm" class="form-select" asp-for="Type" asp-items="@(Html.GetEnumSelectList<HomeAutio.Mqtt.GoogleHome.Models.DeviceType>().Where(x => x.Text != "Unknown"))">
+                                        <option selected="selected" value="">Please select</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <a onclick="openDocumentation()" class="btn btn-warning">Device documentation</a>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label asp-for="Disabled">
@@ -61,7 +61,7 @@
                     </fieldset>
 
                     <div class="card">
-                        <div class="card-header" data-toggle="collapse" data-target="#NameInfo">Name Information</div>
+                        <div class="card-header dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#NameInfo">Name Information</div>
                         <div id="NameInfo" class="card-body collapse show">
                             <div class="form-group">
                                 <label asp-for="DefaultNames">Default Names</label>
@@ -79,7 +79,7 @@
                     </div>
 
                     <div class="card">
-                        <div class="card-header" data-toggle="collapse" data-target="#ManufacturerInfo">Manufacturer Information</div>
+                        <div class="card-header dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#ManufacturerInfo">Manufacturer Information</div>
                         <div id="ManufacturerInfo" class="card-body collapse">
                             <div class="form-group">
                                 <label asp-for="Manufacturer">Manufacturer</label>
