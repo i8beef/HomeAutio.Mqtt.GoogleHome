@@ -28,7 +28,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 .SetBasePath(Environment.CurrentDirectory)
                 .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json", optional: false)
-                .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "config", $"appsettings.{environmentName}.json"), optional: true)
+                .AddJsonFile(Path.Combine(Environment.CurrentDirectory, $"appsettings.{environmentName}.json"), optional: true)
                 .Build();
 
             // Setup logging
@@ -36,7 +36,7 @@ namespace HomeAutio.Mqtt.GoogleHome
                 .ReadFrom.Configuration(config)
                 .CreateLogger();
 
-            Log.Logger.Information($"Loaded with configuration from: appsettings.json, {Path.Combine(Environment.CurrentDirectory, "config", $"appsettings.{environmentName}.json")}");
+            Log.Logger.Information($"Loaded with configuration from: appsettings.json, {Path.Combine(Environment.CurrentDirectory, $"appsettings.{environmentName}.json")}");
 
             // Turn on or off PII data from Microsoft Identity stuff
             Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = config.GetValue("logPII", false);
