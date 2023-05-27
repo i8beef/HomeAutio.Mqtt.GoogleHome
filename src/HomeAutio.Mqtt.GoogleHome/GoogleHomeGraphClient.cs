@@ -216,11 +216,7 @@ namespace HomeAutio.Mqtt.GoogleHome
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            var accessToken = JsonConvert.DeserializeObject<AccessTokenResponse>(content);
-            if (accessToken is null)
-            {
-                throw new GoogleHomeGraphAuthException($"Received malformed access token");
-            }
+            var accessToken = JsonConvert.DeserializeObject<AccessTokenResponse>(content) ?? throw new GoogleHomeGraphAuthException($"Received malformed access token");
 
             _log.LogDebug("Received access token");
 

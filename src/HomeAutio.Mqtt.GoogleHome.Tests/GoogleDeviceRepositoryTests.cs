@@ -55,7 +55,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
             var device = DeviceTestData.FullDevice();
 
             var expectedAddedTopics = device.Traits
-                .SelectMany(trait => trait.State)
+                .SelectMany(trait => trait.State!)
                 .Where(x => x.Value.Topic != null)
                 .Select(x => x.Value.Topic);
 
@@ -86,13 +86,13 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
             var device = DeviceTestData.FullDevice2();
 
             var expectedDeletedTopics = oldDevice.Traits
-                .SelectMany(trait => trait.State)
+                .SelectMany(trait => trait.State!)
                 .Where(x => x.Value.Topic != null)
                 .Select(x => x.Value.Topic)
                 .ToList();
 
             var expectedAddedTopics = device.Traits
-                .SelectMany(trait => trait.State)
+                .SelectMany(trait => trait.State!)
                 .Where(x => x.Value.Topic is not null)
                 .Select(x => x.Value.Topic);
 
@@ -130,7 +130,7 @@ namespace HomeAutio.Mqtt.GoogleHome.Tests
             var repository = new GoogleDeviceRepository(_logMock.Object, _messageHubMock.Object, _testFilePath);
             var device = repository.FindById(DeviceTestData.FullDevice2().Id);
             var expectedDeletedTopics = device!.Traits
-                .SelectMany(trait => trait.State)
+                .SelectMany(trait => trait.State!)
                 .Where(x => x.Value.Topic != null)
                 .Select(x => x.Value.Topic);
 

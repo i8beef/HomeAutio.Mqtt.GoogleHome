@@ -116,11 +116,7 @@ namespace HomeAutio.Mqtt.GoogleHome
         /// <inheritdoc />
         public Device GetDetached(string deviceId)
         {
-            var device = FindById(deviceId);
-            if (device is null)
-            {
-                throw new InvalidOperationException($"Device id {deviceId} not found");
-            }
+            var device = FindById(deviceId) ?? throw new InvalidOperationException($"Device id {deviceId} not found");
 
             return JsonConvert.DeserializeObject<Device>(JsonConvert.SerializeObject(device))!;
         }
